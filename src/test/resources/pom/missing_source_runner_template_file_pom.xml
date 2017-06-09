@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project>
+    <modelVersion>4.0.0</modelVersion>
+    <artifactId>cucable-plugin-test</artifactId>
+    <build>
+        <plugins>
+            <plugin>
+                <artifactId>cucable-plugin</artifactId>
+
+                <configuration>
+                    <sourceFeatureDirectory>src/test/resources/features</sourceFeatureDirectory>
+                    <generatedFeatureDirectory>src/test/resources/parallel/features
+                    </generatedFeatureDirectory>
+                    <generatedRunnerDirectory>src/test/java/parallel/runners
+                    </generatedRunnerDirectory>
+                </configuration>
+                <executions>
+                    <execution>
+                        <id>generate-test-resources</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>parallel</goal>
+                        </goals>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+</project>
