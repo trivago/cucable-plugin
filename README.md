@@ -16,6 +16,7 @@
   - [3. Aggregation of a single test report after all test runs](#3-aggregation-of-a-single-test-report-after-all-test-runs)
   - [4. Passing or failing of the build according to the test results](#4-passing-or-failing-of-the-build-according-to-the-test-results)
   - [Example POM](#example-pom)
+- [Building](#building)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
@@ -330,6 +331,11 @@ So all specified plugins will execute one after the other.
     </profile>
             
 ```
+# Building
+
+Cucable requires Java 8 and it uses Maven for its dependencies.
+
+
 # License
 
 Copyright 2017 trivago GmbH
