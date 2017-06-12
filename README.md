@@ -153,7 +153,7 @@ However, if this is specified, the build will not fail in case of failing tests!
 
 ## 3. Aggregation of a single test report after all test runs
 
-We use the __maven-cucumber-reporting__ to aggregate the __.json__ report files that are generated per single feature.
+We use the [Maven Cucumber Reporting](https://mvnrepository.com/artifact/net.masterthought/cucumber-reporting) library to aggregate all generated __.json__ report files into one overall test report.
 
 ```
 <plugin>
