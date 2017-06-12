@@ -1,5 +1,7 @@
 ![cucable logo](documentation/img/cucable.png)
 
+[![Apache V2 License](http://img.shields.io/badge/license-Apache%20V2-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
@@ -108,9 +110,17 @@ The path where your __existing__ Cucumber .feature files are located (e.g. _src/
 
 The path where the __generated__ Cucumber .feature files should be located (e.g. _src/test/resources/parallel_).
 
+**Hint:** This directory should be located under a valid resource folder to be included as a test source by Maven.
+
+**Caution:** This directory will be wiped prior to the feature file generation!
+
 #### generatedRunnerDirectory
 
 The path where the __generated__ runner classes should be located (e.g. _src/test/java/parallel/runners_).
+
+**Hint:** This directory should be located under a valid source folder to be included as a test source by Maven.
+
+**Caution:** This directory will be wiped prior to the runner file generation!
 
 ## 2. Running them with Maven failsafe
 
@@ -335,6 +345,12 @@ So all specified plugins will execute one after the other.
 
 Cucable requires Java 8 and it uses Maven for its dependencies.
 
+# Future improvements
+
+* Offer the possibility to generate runners and features directly in the target folder
+* Support running specific scenarios in parallel
+* Support running the whole test suite multiple times
+* Support running single tests multiple times
 
 # License
 
