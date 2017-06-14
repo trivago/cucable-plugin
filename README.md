@@ -153,6 +153,12 @@ Feature: This is the feature name
 This is the runner template file that is used to generate single scenario runners.
 The **[FEATURE_FILE_NAME]** placeholder will be automatically replaced with the name of each generated scenario.
 
+It is possible to specify a custom runner using ```@RunWith(MyCustomCucumberRunner.class)```!
+
+By specifying _tags_, we can also split the tests even further if needed. In this case we just ignore all tests that are annotated with ```ignore```.
+
+The _format_ option tells Cucumber where to put the json report files for the aggregated test report.
+
 <pre>
 package parallel.runners;
 
@@ -223,7 +229,9 @@ Then I see <b>85</b> items
 
 #### Generated runners
 
-This is an example for one of the generated runners:
+The generated runners point to each one of the generated feature files.
+
+This is an example for one of the generated runners - note how the placeholders are now replaced with the name of the feature to run:
 
 *Example_00003_IT.java*
 
