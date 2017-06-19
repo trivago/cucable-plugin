@@ -84,4 +84,14 @@ public final class FileUtils {
             }
         }
     }
+
+    /**
+     * Creates a directory if it does not exists
+     * @param dirName Name of directory.
+     * @return true if directory exists or was created.
+     */
+    public static boolean createDir(String dirName){
+        File directory = new File(dirName);
+        return directory.exists() || directory.mkdir();
+    }
 }
