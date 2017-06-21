@@ -35,6 +35,16 @@ Those generated runners and features can then be used with [Maven Failsafe](http
 
 This plugin was inspired by the [Cucumber Slices Maven Plugin](https://github.com/DisneyStudios/cucumber-slices-maven-plugin).
 
+# Maven dependency
+
+```
+<dependency>
+    <groupId>com.trivago.rta</groupId>
+    <artifactId>cucable-plugin</artifactId>
+    <version>0.0.4</version>
+</dependency>
+```
+
 # Data flow
 
 The typical flow is
