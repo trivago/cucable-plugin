@@ -45,7 +45,7 @@ This plugin was inspired by the [Cucumber Slices Maven Plugin](https://github.co
 
 # Maven dependency
 
-```
+```xml
 <dependency>
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-plugin</artifactId>
@@ -66,7 +66,7 @@ The following sections break down the above steps.
 
 ## 1. Generation of runners and features
 
-```
+```xml
 <plugin>
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-plugin</artifactId>
@@ -97,7 +97,8 @@ The path to a text file (e.g. _src/test/resources/parallel/cucable.template_) wi
 This file will be used to generate runners for every generated feature file.
 
 Example:
-```
+
+```java
 package com.example;
 
 import com.example.YourTestRunner;
@@ -276,7 +277,7 @@ Since all generated runner classes from the step before end with ___IT__, they a
 If all tests should be run regardless of their result, it is important to set ```<testFailureIgnore>true</testFailureIgnore>``` for Failsafe - otherwise the plugin execution will stop on failing tests.
 However, if this is specified, the build will not fail in case of failing tests! To circumvent that, it is possible to specify a custom Maven fail rule.
 
-```
+```xml
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-surefire-plugin</artifactId>
@@ -311,7 +312,7 @@ However, if this is specified, the build will not fail in case of failing tests!
 
 We use the [Maven Cucumber Reporting](https://mvnrepository.com/artifact/net.masterthought/cucumber-reporting) library to aggregate all generated __.json__ report files into one overall test report.
 
-```
+```xml
 <plugin>
     <groupId>net.masterthought</groupId>
     <artifactId>maven-cucumber-reporting</artifactId>
@@ -338,7 +339,7 @@ We use the [Maven Cucumber Reporting](https://mvnrepository.com/artifact/net.mas
 You can use a custom Maven fail rule that passes or fails the complete build based on test failures. It could check the Failsafe summary report that is generated for each test run.
 Without this rule we would have a successful build every time in case we specify.
 
-```
+```xml
 <plugin>
     <groupId>org.apache.maven.plugins</groupId>
     <artifactId>maven-enforcer-plugin</artifactId>
@@ -374,7 +375,7 @@ This is the complete Maven profile that is used when invoking
 
 So all specified plugins will execute one after the other.
 
-```
+```xml
 <profiles>
     <profile>
         <id>parallel</id>
@@ -484,9 +485,9 @@ So all specified plugins will execute one after the other.
                 <url>http://artifactory.rta.trivago.trv:8081/artifactory/libs-release</url>
             </pluginRepository>
         </pluginRepositories>
-    </profile>
-            
+    </profile>         
 ```
+
 # Building
 
 Cucable requires Java 8 and it uses Maven for its dependencies.
