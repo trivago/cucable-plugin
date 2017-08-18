@@ -24,6 +24,7 @@ import com.trivago.rta.utils.FileUtils;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.ParserException;
+import gherkin.ast.Background;
 import gherkin.ast.Feature;
 import gherkin.ast.GherkinDocument;
 import gherkin.ast.ScenarioDefinition;
@@ -46,7 +47,7 @@ import java.util.Map;
  * This class is responsible for converting feature files
  * into single scenario feature files and runners.
  */
-public class FeatureFileConverter {
+public final class FeatureFileConverter {
     /**
      * Prepare Gherkin parser.
      */
@@ -73,7 +74,8 @@ public class FeatureFileConverter {
             final Path featureFilePath,
             final String generatedFeatureDirectory,
             final String generatedRunnerDirectory,
-            final String sourceRunnerTemplateFile) throws CucablePluginException {
+            final String sourceRunnerTemplateFile)
+            throws CucablePluginException {
 
         // Create directories
         FileUtils.createDir(generatedFeatureDirectory);
@@ -94,15 +96,31 @@ public class FeatureFileConverter {
         // for each step in the current scenario
         List<List<String>> scenarioKeywords = new ArrayList<>();
         List<String> stepKeywords;
+        List<String> backgroundKeywords;
 
         Feature feature = gherkinDocument.getFeature();
+        backgroundKeywords = new ArrayList<>();
+
         for (ScenarioDefinition scenario : feature.getChildren()) {
             stepKeywords = new ArrayList<>();
-            List<Step> steps = scenario.getSteps();
-            for (Step step : steps) {
-                stepKeywords.add(step.getKeyword().trim());
+
+            if (scenario instanceof Background) {
+                // Save background steps in order to add them to
+                // all scenarios inside the same feature files
+                Background background = (Background) scenario;
+                List<Step> backgroundSteps = background.getSteps();
+                for (Step step : background.getSteps()) {
+                    backgroundKeywords.add(step.getKeyword().trim());
+                }
+            } else {
+                stepKeywords.addAll(backgroundKeywords);
+                List<Step> steps = scenario.getSteps();
+                for (Step step : steps) {
+                    stepKeywords.add(step.getKeyword().trim());
+                }
+
+                scenarioKeywords.add(stepKeywords);
             }
-            scenarioKeywords.add(stepKeywords);
         }
 
         // Break feature file into scenarios
