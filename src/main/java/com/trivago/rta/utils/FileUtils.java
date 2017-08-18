@@ -86,11 +86,11 @@ public final class FileUtils {
     }
 
     /**
-     * Creates a directory if it does not exists
+     * Creates a directory if it does not exists.
      *
      * @param dirName Name of directory.
      */
-    public static void createDir(String dirName) {
+    public static void createDir(final String dirName) {
         File directory = new File(dirName);
         if (!directory.exists()) {
             directory.mkdirs();

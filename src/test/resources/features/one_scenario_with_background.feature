@@ -1,6 +1,10 @@
 Feature: FeatureName
 
-  # Valid scenario
+  # Scenario with background
+
+  Background:
+    Given BackgroundGivenStep
+    And BackgroundGivenStep2
 
   @tag1
   @tag2

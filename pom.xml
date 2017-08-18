@@ -6,7 +6,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-plugin</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
     <url>https://github.com/trivago/cucable-plugin</url>
 
     <name>Cucable Maven Plugin</name>
@@ -24,6 +24,9 @@
             <name>Benjamin Bischoff</name>
             <organization>trivago GmbH</organization>
             <organizationUrl>http://www.trivago.de</organizationUrl>
+            <roles>
+                <role>Web Test Automation Engineer</role>
+            </roles>
         </developer>
     </developers>
 

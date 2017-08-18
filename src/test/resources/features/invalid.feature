@@ -1,5 +1,7 @@
 Feature: Broken
 
+  # Scenario name is missing
+
   @tag1
   @tag2
   Scenario
