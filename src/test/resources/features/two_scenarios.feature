@@ -1,5 +1,7 @@
 Feature: FeatureName
 
+  # Multiple scenarios
+
   @tag1.1
   @tag1.2
   Scenario: ScenarioName
