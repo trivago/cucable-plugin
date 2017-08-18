@@ -16,9 +16,9 @@
 
 package com.trivago.rta;
 
+import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.exceptions.MissingFileException;
 import com.trivago.rta.exceptions.MissingPropertyException;
-import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.feature.FeatureFileConverter;
 import com.trivago.rta.utils.FileUtils;
 import org.apache.maven.plugin.AbstractMojo;
@@ -55,6 +55,7 @@ public final class CucablePlugin extends AbstractMojo {
      */
     private static final String
             GENERATED_FEATURE_DIRECTORY = "<generatedFeatureDirectory>";
+
     /**
      * Automatically filled source runner template file property from the pom.
      */
@@ -80,11 +81,13 @@ public final class CucablePlugin extends AbstractMojo {
      * Standard mojo main method.
      *
      * @throws CucablePluginException When thrown,
-     *                              the plugin execution is stopped.
+     *                                the plugin execution is stopped.
      */
     public void execute() throws CucablePluginException {
         validatePluginPomSettings();
         clearTempDirectories();
+
+        logCucableInfo();
 
         int counter = 0;
         FeatureFileConverter featureFileConverter = new FeatureFileConverter();
@@ -99,7 +102,8 @@ public final class CucablePlugin extends AbstractMojo {
             );
             counter++;
         }
-        getLog().info("Finished processing "
+
+        getLog().info("Cucable finished processing "
                 + counter + " feature file(s).");
     }
 
@@ -107,7 +111,7 @@ public final class CucablePlugin extends AbstractMojo {
      * Checks the pom settings for the plugin.
      *
      * @throws CucablePluginException Thrown when a required setting
-     *                              is not specified in the pom.
+     *                                is not specified in the pom.
      */
     private void validatePluginPomSettings() throws CucablePluginException {
         if (sourceRunnerTemplateFile.equals("")) {
@@ -151,6 +155,23 @@ public final class CucablePlugin extends AbstractMojo {
         FileUtils.removeFilesFromPath(generatedFeatureDirectory, "feature");
         FileUtils.removeFilesFromPath(generatedRunnerDirectory, "java");
     }
+
+    /**
+     * Log Cucable POM parameter values
+     */
+    private void logCucableInfo() {
+        getLog().info("Running Cucable with "
+                + sourceFeatureDirectory);
+        getLog().info("  sourceFeatureDirectory   : "
+                + sourceFeatureDirectory);
+        getLog().info("  generatedFeatureDirectory: "
+                + generatedFeatureDirectory);
+        getLog().info("  sourceRunnerTemplateFile : "
+                + sourceRunnerTemplateFile);
+        getLog().info("  generatedRunnerDirectory : "
+                + generatedRunnerDirectory);
+    }
+
 }
 
 
