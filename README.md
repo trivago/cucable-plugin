@@ -49,7 +49,7 @@ This plugin was inspired by the [Cucumber Slices Maven Plugin](https://github.co
 <dependency>
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-plugin</artifactId>
-    <version>0.0.4</version>
+    <version>0.0.5</version>
 </dependency>
 ```
 
