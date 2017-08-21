@@ -476,16 +476,6 @@ So all specified plugins will execute one after the other.
                 </plugin>
             </plugins>
         </build>
-        <pluginRepositories>
-            <pluginRepository>
-                <snapshots>
-                    <enabled>false</enabled>
-                </snapshots>
-                <id>parallel</id>
-                <name>libs-release</name>
-                <url>http://artifactory.rta.trivago.trv:8081/artifactory/libs-release</url>
-            </pluginRepository>
-        </pluginRepositories>
     </profile>         
 ```
 

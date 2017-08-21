@@ -18,3 +18,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 ## 0.0.4 - 2017-06-01
 
 Initial project version on GitHub.
+
+[Unreleased]: https://github.com/trivago/cucable-plugin/compare/v.0.0.5...HEAD
+[0.0.5]: https://github.com/trivago/cucable-plugin/compare/v0.0.4...v0.0.5
+[0.0.4]: https://github.com/trivago/cucable-plugin/v0.0.4
