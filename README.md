@@ -94,7 +94,7 @@ The following sections break down the above steps.
 
 #### sourceRunnerTemplateFile
 
-The path to a text file (e.g. _src/test/resources/parallel/cucable.template_) with **FEATURE_FILE_NAME** placeholders for the generated feature file name.
+The path to a text file (e.g. _src/test/resources/parallel/cucable.template_) with **[FEATURE_FILE_NAME]** placeholders for the generated feature file name.
 This file will be used to generate runners for every generated feature file.
 
 Example:
@@ -109,14 +109,14 @@ import org.junit.runner.RunWith;
 @RunWith(YourTestRunner.class)
 @CucumberOptions(
     monochrome = false,
-    features = {"classpath:parallel/features/FEATURE_FILE_NAME.feature"},
-    format = {"json:target/cucumber-report/FEATURE_FILE_NAME.json"},
+    features = {"classpath:parallel/features/[FEATURE_FILE_NAME].feature"},
+    format = {"json:target/cucumber-report/[FEATURE_FILE_NAME].json"},
     strict = false,
     dryRun = false,
     glue = {"com.example.glue"},
     tags = {"~@ignore"}
 )
-public class FEATURE_FILE_NAME {
+public class [FEATURE_FILE_NAME] {
 }
 
 ```
@@ -171,7 +171,7 @@ Feature: This is the feature name
 #### Runner template file
 
 This is the runner template file that is used to generate single scenario runners.
-The **FEATURE_FILE_NAME** placeholder will be automatically replaced with the name of each generated scenario.
+The **[FEATURE_FILE_NAME]** placeholder will be automatically replaced with the name of each generated scenario.
 
 It is possible to specify a custom runner using ```@RunWith(MyCustomCucumberRunner.class)```!
 
@@ -189,14 +189,14 @@ import org.junit.runner.RunWith;
 @RunWith(MyCustomCucumberRunner.class)
 @CucumberOptions(
     monochrome = false,
-    features = {"classpath:parallel/features/<b>FEATURE_FILE_NAME</b>.feature"},
-    format = {"json:target/cucumber-report/<b>FEATURE_FILE_NAME</b>.json"},
+    features = {"classpath:parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
+    format = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"},
     strict = false,
     dryRun = false,
     glue = {"com.trivago.glue"},
     tags = {"~@ignore"}
 )
-public class <b>FEATURE_FILE_NAME</b> {
+public class <b>[FEATURE_FILE_NAME]</b> {
 }
 </pre>
 
@@ -476,7 +476,7 @@ So all specified plugins will execute one after the other.
                 </plugin>
             </plugins>
         </build>
-    </profile>         
+    </profile>
 ```
 
 # Building
