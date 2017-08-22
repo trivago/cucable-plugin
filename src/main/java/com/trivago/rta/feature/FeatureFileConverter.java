@@ -20,7 +20,6 @@ import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.exceptions.FeatureFileParseException;
 import com.trivago.rta.exceptions.MissingFileException;
 import com.trivago.rta.runner.SingleScenarioRunner;
-import com.trivago.rta.utils.FileUtils;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.ParserException;
@@ -76,10 +75,6 @@ public final class FeatureFileConverter {
             final String generatedRunnerDirectory,
             final String sourceRunnerTemplateFile)
             throws CucablePluginException {
-
-        // Create directories
-        FileUtils.createDir(generatedFeatureDirectory);
-        FileUtils.createDir(generatedRunnerDirectory);
 
         GherkinDocument gherkinDocument;
 

@@ -10,9 +10,9 @@
                     <sourceRunnerTemplateFile>src/test/resources/parallel/cucable_parallel_runner.template
                     </sourceRunnerTemplateFile>
                     <sourceFeatureDirectory>src/test/resources/features</sourceFeatureDirectory>
-                    <generatedFeatureDirectory>src/test/resources/parallel/features
+                    <generatedFeatureDirectory>target/parallel/features
                     </generatedFeatureDirectory>
-                    <generatedRunnerDirectory>src/test/java/parallel/runners
+                    <generatedRunnerDirectory>target/parallel/runners
                     </generatedRunnerDirectory>
                 </configuration>
                 <executions>

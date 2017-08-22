@@ -14,10 +14,13 @@
  * limitations under the License.
  */
 
-package com.trivago.rta.utils;
+package com.trivago.rta.files;
 
 import com.trivago.rta.exceptions.CucablePluginException;
+import com.trivago.rta.properties.PropertyManager;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -26,34 +29,41 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.stream.Collectors;
 
-/**
- * General file utilities.
- */
-public final class FileUtils {
-    /**
-     * Private constructor since this is a class
-     * providing static helper methods.
-     */
-    private FileUtils() {
+@Singleton
+public class FileManager {
+
+    private final PropertyManager propertyManager;
+
+    @Inject
+    public FileManager(PropertyManager propertyManager) {
+        this.propertyManager = propertyManager;
     }
 
     /**
-     * Returns a list of feature file paths located
-     * in the given directory or its subdirectories.
+     * Create generated feature and runner dirs if they don't exist and clear their contents.
+     */
+    public void prepareGeneratedFeatureAndRunnerDirs() {
+        createDirIfNotExists(propertyManager.getGeneratedFeatureDirectory());
+        removeFilesFromPath(propertyManager.getGeneratedFeatureDirectory(), "feature");
+
+        createDirIfNotExists(propertyManager.getGeneratedRunnerDirectory());
+        removeFilesFromPath(propertyManager.getGeneratedRunnerDirectory(), "java");
+    }
+
+    /**
+     * Returns a list of feature file paths located in the specified source feature directory.
      *
-     * @param sourceFeatureDirectory The directory
-     *                               where the source feature files are stored.
      * @return a list of feature file paths.
      * @throws CucablePluginException see {@link CucablePluginException}
      */
-    public static List<Path> getFeatureFilePaths(
-            final String sourceFeatureDirectory
-    ) throws CucablePluginException {
+    public List<Path> getFeatureFilePaths() throws CucablePluginException {
+
+        String sourceFeatureDirectory = propertyManager.getSourceFeatureDirectory();
+
         List<Path> featureFilesLocations;
         try {
             featureFilesLocations =
-                    Files
-                            .walk(Paths.get(sourceFeatureDirectory))
+                    Files.walk(Paths.get(sourceFeatureDirectory))
                             .filter(Files::isRegularFile)
                             .filter(p -> p.toString().endsWith(".feature"))
                             .collect(Collectors.toList());
@@ -66,34 +76,32 @@ public final class FileUtils {
     }
 
     /**
-     * Removes specific files from the given path.
-     *
-     * @param path    The path to clear.
-     * @param postfix The file postfixes to consider.
-     */
-    public static void removeFilesFromPath(
-            final String path, final String postfix
-    ) {
-        File basePath = new File(path);
-        File[] files = basePath.listFiles();
-        if (files != null) {
-            for (File file : files) {
-                if (file.getName().endsWith("." + postfix)) {
-                    file.delete();
-                }
-            }
-        }
-    }
-
-    /**
      * Creates a directory if it does not exists.
      *
      * @param dirName Name of directory.
      */
-    public static void createDir(final String dirName) {
+    private void createDirIfNotExists(final String dirName) {
         File directory = new File(dirName);
         if (!directory.exists()) {
             directory.mkdirs();
+        }
+    }
+
+    /**
+     * Removes files with the specified extension from the given path.
+     *
+     * @param path          The path to clear.
+     * @param fileExtension The file extension to consider.
+     */
+    private void removeFilesFromPath(final String path, final String fileExtension) {
+        File basePath = new File(path);
+        File[] files = basePath.listFiles();
+        if (files != null) {
+            for (File file : files) {
+                if (file.getName().endsWith("." + fileExtension)) {
+                    file.delete();
+                }
+            }
         }
     }
 }

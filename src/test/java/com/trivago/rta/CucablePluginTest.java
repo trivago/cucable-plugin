@@ -67,7 +67,6 @@ public class CucablePluginTest {
     public void testMojoInstantiation() throws Exception {
         CucablePlugin mojo = createMojoFromPomFile(VALID_POM);
         assertThat(mojo, is(notNullValue()));
-        mojo.execute();
     }
 
     @Test
@@ -124,6 +123,12 @@ public class CucablePluginTest {
         expectedException.expect(MissingPropertyException.class);
         expectedException.expectMessage(SOURCE_RUNNER_TEMPLATE_MISSING_MESSAGE);
         CucablePlugin mojo = createMojoFromPomFile(MISSING_SOURCE_RUNNER_TEMPLATE_POM);
+        mojo.execute();
+    }
+
+    @Test
+    public void testValidRun() throws Exception {
+        CucablePlugin mojo = createMojoFromPomFile(VALID_POM);
         mojo.execute();
     }
 
