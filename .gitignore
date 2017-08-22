@@ -1,0 +1,7 @@
+*.iml
+.idea/
+/target
+.idea_modules/
+
+src/test/java/parallel/runners/**.java
+src/test/resources/parallel/features/**.feature
