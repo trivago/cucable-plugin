@@ -17,6 +17,8 @@
 package com.trivago.rta.files;
 
 import com.trivago.rta.exceptions.CucablePluginException;
+import com.trivago.rta.exceptions.FileDeletionException;
+import com.trivago.rta.exceptions.PathCreationException;
 import com.trivago.rta.properties.PropertyManager;
 
 import javax.inject.Inject;
@@ -42,7 +44,7 @@ public class FileManager {
     /**
      * Create generated feature and runner dirs if they don't exist and clear their contents.
      */
-    public void prepareGeneratedFeatureAndRunnerDirs() {
+    public void prepareGeneratedFeatureAndRunnerDirs() throws CucablePluginException {
         createDirIfNotExists(propertyManager.getGeneratedFeatureDirectory());
         removeFilesFromPath(propertyManager.getGeneratedFeatureDirectory(), "feature");
 
@@ -80,10 +82,12 @@ public class FileManager {
      *
      * @param dirName Name of directory.
      */
-    private void createDirIfNotExists(final String dirName) {
+    private void createDirIfNotExists(final String dirName) throws PathCreationException {
         File directory = new File(dirName);
         if (!directory.exists()) {
-            directory.mkdirs();
+            if (!directory.mkdirs()) {
+                throw new PathCreationException(dirName);
+            }
         }
     }
 
@@ -93,13 +97,17 @@ public class FileManager {
      * @param path          The path to clear.
      * @param fileExtension The file extension to consider.
      */
-    private void removeFilesFromPath(final String path, final String fileExtension) {
+    private void removeFilesFromPath(final String path, final String fileExtension)
+            throws FileDeletionException {
+
         File basePath = new File(path);
         File[] files = basePath.listFiles();
         if (files != null) {
             for (File file : files) {
                 if (file.getName().endsWith("." + fileExtension)) {
-                    file.delete();
+                    if (!file.delete()) {
+                        throw new FileDeletionException(file.getName());
+                    }
                 }
             }
         }

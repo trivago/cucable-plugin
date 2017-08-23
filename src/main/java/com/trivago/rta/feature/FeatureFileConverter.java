@@ -18,7 +18,9 @@ package com.trivago.rta.feature;
 
 import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.exceptions.FeatureFileParseException;
+import com.trivago.rta.exceptions.FileCreationException;
 import com.trivago.rta.exceptions.MissingFileException;
+import com.trivago.rta.properties.PropertyManager;
 import com.trivago.rta.runner.SingleScenarioRunner;
 import gherkin.AstBuilder;
 import gherkin.Parser;
@@ -32,6 +34,8 @@ import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
 
+import javax.inject.Inject;
+import javax.inject.Singleton;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
@@ -46,34 +50,31 @@ import java.util.Map;
  * This class is responsible for converting feature files
  * into single scenario feature files and runners.
  */
+@Singleton
 public final class FeatureFileConverter {
-    /**
-     * Prepare Gherkin parser.
-     */
+
+    private final PropertyManager propertyManager;
+
+    // Prepare Gherkin parser.
     private Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
 
-    /**
-     * Holds the current number of single features per feature key
-     * (in a scenario outline, each example yields a single feature
-     * with the same key).
-     */
+    // Holds the current number of single features per feature key
+    // (in a scenario outline, each example yields a single feature with the same key).
     private Map<String, Integer> singleFeatureCounters = new HashMap<>();
+
+    @Inject
+    public FeatureFileConverter(PropertyManager propertyManager) {
+        this.propertyManager = propertyManager;
+    }
 
     /**
      * Converts all scenarios in the given feature file to single
      * scenario feature files and their respective runners.
      *
-     * @param featureFilePath           location of the feature file to process.
-     * @param generatedFeatureDirectory path for generated features.
-     * @param generatedRunnerDirectory  path for generated runners.
-     * @param sourceRunnerTemplateFile  location of the runner template file.
+     * @param featureFilePath location of the feature file to process.
      * @throws CucablePluginException see {@link CucablePluginException}
      */
-    public void convertToSingleScenariosAndRunners(
-            final Path featureFilePath,
-            final String generatedFeatureDirectory,
-            final String generatedRunnerDirectory,
-            final String sourceRunnerTemplateFile)
+    public void convertToSingleScenariosAndRunners(final Path featureFilePath)
             throws CucablePluginException {
 
         GherkinDocument gherkinDocument;
@@ -102,18 +103,14 @@ public final class FeatureFileConverter {
             if (scenario instanceof Background) {
                 // Save background steps in order to add them to
                 // all scenarios inside the same feature files
-                Background background = (Background) scenario;
-                List<Step> backgroundSteps = background.getSteps();
-                for (Step step : background.getSteps()) {
+                for (Step step : scenario.getSteps()) {
                     backgroundKeywords.add(step.getKeyword().trim());
                 }
             } else {
                 stepKeywords.addAll(backgroundKeywords);
-                List<Step> steps = scenario.getSteps();
-                for (Step step : steps) {
+                for (Step step : scenario.getSteps()) {
                     stepKeywords.add(step.getKeyword().trim());
                 }
-
                 scenarioKeywords.add(stepKeywords);
             }
         }
@@ -164,7 +161,7 @@ public final class FeatureFileConverter {
             // it an integration test automatically.
             String newFeatureName = featureName.concat(postfix).concat("_IT");
 
-            String newFeatureFilePath = generatedFeatureDirectory + "/"
+            String newFeatureFilePath = propertyManager.getGeneratedFeatureDirectory() + "/"
                     + newFeatureName.concat(".feature");
             singleFeatureCounters.put(featureName, featureCounter);
 
@@ -182,24 +179,19 @@ public final class FeatureFileConverter {
             try (PrintStream ps = new PrintStream(newFeatureFilePath)) {
                 ps.println(singleFeature.getRenderedFeatureFileContent());
             } catch (FileNotFoundException e) {
-                throw new CucablePluginException(
-                        "Unable to create new feature file "
-                                + newFeatureName + ": " + e.getMessage());
+                throw new FileCreationException(newFeatureName);
             }
 
-            // Generate runner for the newly generated
-            // single scenario feature file
+            // Generate runner for the newly generated single scenario feature file
             SingleScenarioRunner singleScenarioRunner =
                     new SingleScenarioRunner(
-                            sourceRunnerTemplateFile, newFeatureName);
-            String newRunnerFilePath = generatedRunnerDirectory + "/"
+                            propertyManager.getSourceRunnerTemplateFile(), newFeatureName);
+            String newRunnerFilePath = propertyManager.getGeneratedRunnerDirectory() + "/"
                     + newFeatureName.concat(".java");
             try (PrintStream ps = new PrintStream(newRunnerFilePath)) {
                 ps.println(singleScenarioRunner.getRenderedRunnerFileContent());
             } catch (IOException e) {
-                throw new CucablePluginException("Unable to create new runner "
-                        + newRunnerFilePath + " for feature "
-                        + newFeatureName + ": " + e.getMessage());
+                throw new CucablePluginException(newRunnerFilePath);
             }
         }
     }

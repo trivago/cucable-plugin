@@ -28,20 +28,13 @@ import java.util.Date;
  * Represents a test runner for a single scenario.
  */
 public final class SingleScenarioRunner {
-    /**
-     * Template variable that needs to be replaced by the
-     * real feature file name inside the runner template.
-     */
-    private static final String FEATURE_PLACEHOLDER = "[FEATURE_FILE_NAME]";
+    // Template variable that needs to be replaced by the real feature file name inside the runner template.
+    private static final String FEATURE_FILE_NAME_PLACEHOLDER = "[FEATURE_FILE_NAME]";
 
-    /**
-     * The path to the runner file template.
-     */
+    // The path to the runner file template.
     private final String runnerTemplateLocation;
 
-    /**
-     * The name of the feature file this runner belongs to.
-     */
+    // The name of the feature file this runner belongs to.
     private final String featureFile;
 
     /**
@@ -70,7 +63,7 @@ public final class SingleScenarioRunner {
                     Files.readAllBytes(
                             Paths.get(runnerTemplateLocation)),
                     StandardCharsets.UTF_8);
-            fileString = fileString.replace(FEATURE_PLACEHOLDER, featureFile);
+            fileString = fileString.replace(FEATURE_FILE_NAME_PLACEHOLDER, featureFile);
             fileString = addCucableComment(fileString);
         } catch (IOException e) {
             throw new MissingFileException(runnerTemplateLocation);

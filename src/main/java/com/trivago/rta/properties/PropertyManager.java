@@ -122,9 +122,9 @@ public class PropertyManager {
     public String toString() {
         String lineFeed = System.lineSeparator();
         return "Cucable properties:" + lineFeed +
-                "-- sourceRunnerTemplateFile  : " + sourceRunnerTemplateFile + lineFeed +
-                "-- generatedRunnerDirectory  : " + generatedRunnerDirectory + lineFeed +
-                "-- sourceFeatureDirectory    : " + sourceFeatureDirectory + lineFeed +
-                "-- generatedFeatureDirectory : " + generatedFeatureDirectory + lineFeed;
+                "       - sourceRunnerTemplateFile  : " + sourceRunnerTemplateFile + lineFeed +
+                "       - generatedRunnerDirectory  : " + generatedRunnerDirectory + lineFeed +
+                "       - sourceFeatureDirectory    : " + sourceFeatureDirectory + lineFeed +
+                "       - generatedFeatureDirectory : " + generatedFeatureDirectory;
     }
 }

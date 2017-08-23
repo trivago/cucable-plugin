@@ -28,29 +28,19 @@ import java.util.List;
  * tags, steps and keywords.
  */
 public final class SingleScenarioFeature {
-    /**
-     * A list of tags for the current scenario.
-     */
+    // A list of tags for the current scenario.
     private List<String> tags;
 
-    /**
-     * The name of the feature this scenario belongs to.
-     */
+    // The name of the feature this scenario belongs to.
     private String featureName;
 
-    /**
-     * The name of the scenario.
-     */
+    // The name of the scenario.
     private String name;
 
-    /**
-     * A list of steps inside this scenario (without the keywords).
-     */
+    // A list of steps inside this scenario (without the keywords).
     private List<String> steps;
 
-    /**
-     * A list of keywords (given, when, then, and) inside the scenario.
-     */
+    // A list of keywords (given, when, then, and) inside the scenario.
     private List<String> keywords;
 
     /**

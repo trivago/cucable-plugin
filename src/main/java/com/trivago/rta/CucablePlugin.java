@@ -79,22 +79,17 @@ public final class CucablePlugin extends AbstractMojo {
 
         fileManager.prepareGeneratedFeatureAndRunnerDirs();
 
-        int counter = 0;
-        FeatureFileConverter featureFileConverter = new FeatureFileConverter();
+        getLog().info("Cucable starting conversion...");
+        int processedFilesCounter = 0;
         List<Path> featureFilePaths =
                 fileManager.getFeatureFilePaths();
         for (Path featureFileLocation : featureFilePaths) {
-            featureFileConverter.convertToSingleScenariosAndRunners(
-                    featureFileLocation,
-                    propertyManager.getGeneratedFeatureDirectory(),
-                    propertyManager.getGeneratedRunnerDirectory(),
-                    propertyManager.getSourceRunnerTemplateFile()
-            );
-            counter++;
+            featureFileConverter.convertToSingleScenariosAndRunners(featureFileLocation);
+            processedFilesCounter++;
         }
 
         getLog().info("Cucable finished processing "
-                + counter + " feature file(s).");
+                + processedFilesCounter + " feature file(s)!");
     }
 }
 
