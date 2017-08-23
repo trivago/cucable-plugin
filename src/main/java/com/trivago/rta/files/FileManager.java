@@ -71,8 +71,7 @@ public class FileManager {
                             .collect(Collectors.toList());
         } catch (IOException e) {
             throw new CucablePluginException(
-                    "Unable to traverse feature files in "
-                            + sourceFeatureDirectory + ": " + e.getMessage());
+                    "Unable to traverse feature files in " + sourceFeatureDirectory);
         }
         return featureFilesLocations;
     }
@@ -84,10 +83,8 @@ public class FileManager {
      */
     private void createDirIfNotExists(final String dirName) throws PathCreationException {
         File directory = new File(dirName);
-        if (!directory.exists()) {
-            if (!directory.mkdirs()) {
-                throw new PathCreationException(dirName);
-            }
+        if (!directory.exists() && !directory.mkdirs()) {
+            throw new PathCreationException(dirName);
         }
     }
 
@@ -104,10 +101,8 @@ public class FileManager {
         File[] files = basePath.listFiles();
         if (files != null) {
             for (File file : files) {
-                if (file.getName().endsWith("." + fileExtension)) {
-                    if (!file.delete()) {
-                        throw new FileDeletionException(file.getName());
-                    }
+                if (file.getName().endsWith("." + fileExtension) && !file.delete()) {
+                    throw new FileDeletionException(file.getName());
                 }
             }
         }

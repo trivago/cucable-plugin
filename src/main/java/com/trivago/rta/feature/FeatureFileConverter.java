@@ -22,14 +22,11 @@ import com.trivago.rta.exceptions.FileCreationException;
 import com.trivago.rta.exceptions.MissingFileException;
 import com.trivago.rta.properties.PropertyManager;
 import com.trivago.rta.runner.SingleScenarioRunner;
-import gherkin.AstBuilder;
-import gherkin.Parser;
 import gherkin.ParserException;
 import gherkin.ast.Background;
 import gherkin.ast.Feature;
 import gherkin.ast.GherkinDocument;
 import gherkin.ast.ScenarioDefinition;
-import gherkin.ast.Step;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 import gherkin.pickles.PickleLocation;
@@ -54,17 +51,16 @@ import java.util.Map;
 public final class FeatureFileConverter {
 
     private final PropertyManager propertyManager;
-
-    // Prepare Gherkin parser.
-    private Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
+    private final ScenarioParser scenarioParser;
 
     // Holds the current number of single features per feature key
     // (in a scenario outline, each example yields a single feature with the same key).
     private Map<String, Integer> singleFeatureCounters = new HashMap<>();
 
     @Inject
-    public FeatureFileConverter(PropertyManager propertyManager) {
+    public FeatureFileConverter(PropertyManager propertyManager, ScenarioParser scenarioParser) {
         this.propertyManager = propertyManager;
+        this.scenarioParser = scenarioParser;
     }
 
     /**
@@ -81,7 +77,7 @@ public final class FeatureFileConverter {
 
         try {
             FileReader fileReader = new FileReader(featureFilePath.toFile());
-            gherkinDocument = parser.parse(fileReader);
+            gherkinDocument = scenarioParser.parse(fileReader);
         } catch (FileNotFoundException e) {
             throw new MissingFileException(featureFilePath.toString());
         } catch (ParserException parserException) {
@@ -98,19 +94,14 @@ public final class FeatureFileConverter {
         backgroundKeywords = new ArrayList<>();
 
         for (ScenarioDefinition scenario : feature.getChildren()) {
-            stepKeywords = new ArrayList<>();
-
             if (scenario instanceof Background) {
                 // Save background steps in order to add them to
                 // all scenarios inside the same feature files
-                for (Step step : scenario.getSteps()) {
-                    backgroundKeywords.add(step.getKeyword().trim());
-                }
+                scenario.getSteps().stream().map(step -> step.getKeyword().trim()).forEach(backgroundKeywords::add);
             } else {
+                stepKeywords = new ArrayList<>();
                 stepKeywords.addAll(backgroundKeywords);
-                for (Step step : scenario.getSteps()) {
-                    stepKeywords.add(step.getKeyword().trim());
-                }
+                scenario.getSteps().stream().map(step -> step.getKeyword().trim()).forEach(stepKeywords::add);
                 scenarioKeywords.add(stepKeywords);
             }
         }

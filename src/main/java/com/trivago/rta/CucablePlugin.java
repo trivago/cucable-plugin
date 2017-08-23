@@ -26,7 +26,6 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import javax.inject.Inject;
 import java.nio.file.Path;
-import java.util.List;
 
 /**
  * The main plugin class.
@@ -73,17 +72,15 @@ public final class CucablePlugin extends AbstractMojo {
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDirectory);
         propertyManager.setSourceFeatureDirectory(sourceFeatureDirectory);
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDirectory);
-        propertyManager.validateSettings();
 
         getLog().info(propertyManager.toString());
+        propertyManager.validateSettings();
 
         fileManager.prepareGeneratedFeatureAndRunnerDirs();
 
         getLog().info("Cucable starting conversion...");
         int processedFilesCounter = 0;
-        List<Path> featureFilePaths =
-                fileManager.getFeatureFilePaths();
-        for (Path featureFileLocation : featureFilePaths) {
+        for (Path featureFileLocation : fileManager.getFeatureFilePaths()) {
             featureFileConverter.convertToSingleScenariosAndRunners(featureFileLocation);
             processedFilesCounter++;
         }

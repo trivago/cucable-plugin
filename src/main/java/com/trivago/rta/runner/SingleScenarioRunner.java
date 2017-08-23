@@ -20,9 +20,10 @@ import com.trivago.rta.exceptions.MissingFileException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
 import java.nio.file.Paths;
 import java.util.Date;
+
+import static java.nio.file.Files.readAllBytes;
 
 /**
  * Represents a test runner for a single scenario.
@@ -60,7 +61,7 @@ public final class SingleScenarioRunner {
         String fileString = null;
         try {
             fileString = new String(
-                    Files.readAllBytes(
+                    readAllBytes(
                             Paths.get(runnerTemplateLocation)),
                     StandardCharsets.UTF_8);
             fileString = fileString.replace(FEATURE_FILE_NAME_PLACEHOLDER, featureFile);
