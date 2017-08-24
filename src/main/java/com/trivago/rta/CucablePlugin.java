@@ -49,6 +49,9 @@ public final class CucablePlugin extends AbstractMojo {
     @Parameter(property = "parallel.generatedFeatureDirectory", required = true)
     private String generatedFeatureDirectory = "";
 
+    @Parameter(property = "parallel.numberOfTestRuns", required = false)
+    private Integer numberOfTestRuns = 1;
+
     @Inject
     public CucablePlugin(
             PropertyManager propertyManager,
@@ -72,6 +75,7 @@ public final class CucablePlugin extends AbstractMojo {
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDirectory);
         propertyManager.setSourceFeatures(sourceFeatures);
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDirectory);
+        propertyManager.setNumberOfTestRuns(numberOfTestRuns);
 
         getLog().info(propertyManager.toString());
         propertyManager.validateSettings();

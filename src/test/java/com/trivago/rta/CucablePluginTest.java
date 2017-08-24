@@ -32,6 +32,7 @@ import static org.junit.Assert.assertThat;
 public class CucablePluginTest {
     private static final String TEST_POM_PATH = "src/test/resources/pom/";
     private static final String VALID_POM = TEST_POM_PATH + "valid_pom.xml";
+    private static final String VALID_POM_2_RUNS = TEST_POM_PATH + "valid_pom_2_runs.xml";
     private static final String MISSING_SOURCE_RUNNER_TEMPLATE_POM =
             TEST_POM_PATH + "missing_source_runner_template_file_pom.xml";
     private static final String MISSING_SOURCE_FEATURE_DIRECTORY_POM =
@@ -45,6 +46,7 @@ public class CucablePluginTest {
     private static final String SOURCE_FEATURES = "sourceFeatures";
     private static final String GENERATED_FEATURE_DIRECTORY = "generatedFeatureDirectory";
     private static final String GENERATED_RUNNER_DIRECTORY = "generatedRunnerDirectory";
+    private static final String NUMBER_OF_TEST_RUNS = "numberOfTestRuns";
 
     private static final String MAVEN_GOAL = "parallel";
 
@@ -75,23 +77,31 @@ public class CucablePluginTest {
 
         String sourceRunnerTemplateFile =
                 (String) mojoRule.getVariableValueFromObject(mojo, SOURCE_RUNNER_TEMPLATE_FILE);
-        assertThat(sourceRunnerTemplateFile,
-                is("src/test/resources/parallel/cucable_parallel_runner.template"));
+        assertThat(sourceRunnerTemplateFile, is("src/test/resources/parallel/cucable_parallel_runner.template"));
 
         String sourceFeatureDirectory =
                 (String) mojoRule.getVariableValueFromObject(mojo, SOURCE_FEATURES);
-        assertThat(sourceFeatureDirectory,
-                is("src/test/resources/features"));
+        assertThat(sourceFeatureDirectory, is("src/test/resources/features"));
 
         String generatedFeatureDirectory =
                 (String) mojoRule.getVariableValueFromObject(mojo, GENERATED_FEATURE_DIRECTORY);
-        assertThat(generatedFeatureDirectory,
-                is("target/parallel/features"));
+        assertThat(generatedFeatureDirectory, is("target/parallel/features"));
 
         String generatedRunnerDirectory =
                 (String) mojoRule.getVariableValueFromObject(mojo, GENERATED_RUNNER_DIRECTORY);
-        assertThat(generatedRunnerDirectory,
-                is("target/parallel/runners"));
+        assertThat(generatedRunnerDirectory, is("target/parallel/runners"));
+
+        Integer numberOfTestRuns =
+                (Integer) mojoRule.getVariableValueFromObject(mojo, NUMBER_OF_TEST_RUNS);
+        assertThat(numberOfTestRuns, is(1));
+    }
+
+    @Test
+    public void testNumberOfTestRunsOverride() throws Exception {
+        CucablePlugin mojo = createMojoFromPomFile(VALID_POM_2_RUNS);
+        Integer numberOfTestRuns =
+                (Integer) mojoRule.getVariableValueFromObject(mojo, NUMBER_OF_TEST_RUNS);
+        assertThat(numberOfTestRuns, is(2));
     }
 
     @Test
@@ -125,12 +135,6 @@ public class CucablePluginTest {
         CucablePlugin mojo = createMojoFromPomFile(MISSING_SOURCE_RUNNER_TEMPLATE_POM);
         mojo.execute();
     }
-
-//    @Test
-//    public void testValidRun() throws Exception {
-//        CucablePlugin mojo = createMojoFromPomFile(VALID_POM);
-//        mojo.execute();
-//    }
 
     private CucablePlugin createMojoFromPomFile(String pomLocation) throws Exception {
         File testPom = new File(getBasedir(), pomLocation);

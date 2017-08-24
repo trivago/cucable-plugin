@@ -32,46 +32,59 @@ public class PropertyManager {
     private static final String GENERATED_RUNNER_DIRECTORY = "<generatedRunnerDirectory>";
 
     // Source features placeholder for logging.
-    private static final String SOURCE_FEATURES= "<sourceFeatures>";
+    private static final String SOURCE_FEATURES = "<sourceFeatures>";
 
     // Generated feature directory placeholder for logging.
     private static final String GENERATED_FEATURE_DIRECTORY = "<generatedFeatureDirectory>";
+
+    // Number of test runs.
+    private static final String NUMBER_OF_TEST_RUNS = "<numberOfTestRuns>";
 
     private String sourceRunnerTemplateFile;
     private String generatedRunnerDirectory;
     private String sourceFeatures;
     private String generatedFeatureDirectory;
+    private Integer numberOfTestRuns;
 
     public String getSourceRunnerTemplateFile() {
         return sourceRunnerTemplateFile;
-    }
-
-    public String getGeneratedRunnerDirectory() {
-        return generatedRunnerDirectory;
-    }
-
-    public String getSourceFeatures() {
-        return sourceFeatures;
-    }
-
-    public String getGeneratedFeatureDirectory() {
-        return generatedFeatureDirectory;
     }
 
     public void setSourceRunnerTemplateFile(final String sourceRunnerTemplateFile) {
         this.sourceRunnerTemplateFile = sourceRunnerTemplateFile;
     }
 
+    public String getGeneratedRunnerDirectory() {
+        return generatedRunnerDirectory;
+    }
+
     public void setGeneratedRunnerDirectory(final String generatedRunnerDirectory) {
         this.generatedRunnerDirectory = generatedRunnerDirectory;
+    }
+
+    public String getSourceFeatures() {
+        return sourceFeatures;
     }
 
     public void setSourceFeatures(final String sourceFeatures) {
         this.sourceFeatures = sourceFeatures;
     }
 
+    public String getGeneratedFeatureDirectory() {
+        return generatedFeatureDirectory;
+    }
+
     public void setGeneratedFeatureDirectory(final String generatedFeatureDirectory) {
         this.generatedFeatureDirectory = generatedFeatureDirectory;
+    }
+
+
+    public Integer getNumberOfTestRuns() {
+        return numberOfTestRuns;
+    }
+
+    public void setNumberOfTestRuns(final Integer numberOfTestRuns) {
+        this.numberOfTestRuns = numberOfTestRuns;
     }
 
     /**
@@ -122,6 +135,7 @@ public class PropertyManager {
                 "       - sourceRunnerTemplateFile  : " + sourceRunnerTemplateFile + lineFeed +
                 "       - generatedRunnerDirectory  : " + generatedRunnerDirectory + lineFeed +
                 "       - sourceFeatures            : " + sourceFeatures + lineFeed +
-                "       - generatedFeatureDirectory : " + generatedFeatureDirectory;
+                "       - generatedFeatureDirectory : " + generatedFeatureDirectory + lineFeed +
+                "       - numberOfTestRuns          : " + numberOfTestRuns;
     }
 }
