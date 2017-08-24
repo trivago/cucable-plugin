@@ -17,11 +17,9 @@
 package com.trivago.rta.properties;
 
 import com.trivago.rta.exceptions.CucablePluginException;
-import com.trivago.rta.exceptions.MissingFileException;
 import com.trivago.rta.exceptions.MissingPropertyException;
 
 import javax.inject.Singleton;
-import java.io.File;
 
 @Singleton
 public class PropertyManager {
@@ -108,23 +106,6 @@ public class PropertyManager {
 
         if (generatedFeatureDirectory.equals("")) {
             throw new MissingPropertyException(GENERATED_FEATURE_DIRECTORY);
-        }
-
-        // Runner template file
-        File runnerTemplateFile = new File(sourceRunnerTemplateFile);
-        if (!runnerTemplateFile.exists()) {
-            throw new MissingFileException(sourceRunnerTemplateFile);
-        }
-
-        // TODO: consider if it is a direct path to a single feature (or feature scenario) or a directory
-        // Source features
-        File featureDirectory = new File(sourceFeatures);
-        if (!featureDirectory.exists() || !featureDirectory.isDirectory()) {
-            throw new CucablePluginException(
-                    SOURCE_FEATURES
-                            + " does not exist or is not a directory: "
-                            + sourceFeatures
-            );
         }
     }
 

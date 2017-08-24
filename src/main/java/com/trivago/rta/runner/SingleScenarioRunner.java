@@ -33,7 +33,7 @@ public final class SingleScenarioRunner {
     private static final String FEATURE_FILE_NAME_PLACEHOLDER = "[FEATURE_FILE_NAME]";
 
     // The path to the runner file template.
-    private final String runnerTemplateLocation;
+    private final String runnerTemplatePath;
 
     // The name of the feature file this runner belongs to.
     private final String featureFile;
@@ -47,7 +47,7 @@ public final class SingleScenarioRunner {
     public SingleScenarioRunner(
             final String runnerTemplatePath,
             final String featureFileName) {
-        this.runnerTemplateLocation = runnerTemplatePath;
+        this.runnerTemplatePath = runnerTemplatePath;
         this.featureFile = featureFileName;
     }
 
@@ -62,12 +62,12 @@ public final class SingleScenarioRunner {
         try {
             fileString = new String(
                     readAllBytes(
-                            Paths.get(runnerTemplateLocation)),
+                            Paths.get(runnerTemplatePath)),
                     StandardCharsets.UTF_8);
             fileString = fileString.replace(FEATURE_FILE_NAME_PLACEHOLDER, featureFile);
             fileString = addCucableComment(fileString);
         } catch (IOException e) {
-            throw new MissingFileException(runnerTemplateLocation);
+            throw new MissingFileException(runnerTemplatePath);
         }
         return fileString;
     }
@@ -87,7 +87,7 @@ public final class SingleScenarioRunner {
     @Override
     public String toString() {
         return "SingleScenarioRunner{"
-                + "runnerTemplateLocation='" + runnerTemplateLocation + '\''
+                + "runnerTemplatePath='" + runnerTemplatePath + '\''
                 + ", featureFile='" + featureFile + '\''
                 + '}';
     }

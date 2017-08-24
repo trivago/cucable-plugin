@@ -79,9 +79,9 @@ public class CucablePluginTest {
                 (String) mojoRule.getVariableValueFromObject(mojo, SOURCE_RUNNER_TEMPLATE_FILE);
         assertThat(sourceRunnerTemplateFile, is("src/test/resources/parallel/cucable_parallel_runner.template"));
 
-        String sourceFeatureDirectory =
+        String sourceFeatures =
                 (String) mojoRule.getVariableValueFromObject(mojo, SOURCE_FEATURES);
-        assertThat(sourceFeatureDirectory, is("src/test/resources/features"));
+        assertThat(sourceFeatures, is("src/test/resources/features"));
 
         String generatedFeatureDirectory =
                 (String) mojoRule.getVariableValueFromObject(mojo, GENERATED_FEATURE_DIRECTORY);
@@ -121,7 +121,7 @@ public class CucablePluginTest {
     }
 
     @Test
-    public void testMissingSourceFeatureDirectory() throws Exception {
+    public void testMissingSourceFeatures() throws Exception {
         expectedException.expect(MissingPropertyException.class);
         expectedException.expectMessage(SOURCE_FEATURES_MISSING_MESSAGE);
         CucablePlugin mojo = createMojoFromPomFile(MISSING_SOURCE_FEATURE_DIRECTORY_POM);

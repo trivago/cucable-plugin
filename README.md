@@ -7,15 +7,17 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [What is Cucable](#what-is-cucable)
 - [Maven dependency](#maven-dependency)
 - [Data flow](#data-flow)
   - [1. Generation of runners and features](#1-generation-of-runners-and-features)
     - [Parameters](#parameters)
       - [sourceRunnerTemplateFile](#sourcerunnertemplatefile)
-      - [sourceFeatureDirectory](#sourcefeaturedirectory)
+      - [sourceFeatures](#sourcefeatures)
       - [generatedFeatureDirectory](#generatedfeaturedirectory)
       - [generatedRunnerDirectory](#generatedrunnerdirectory)
+      - [numberOfTestRuns](#numberoftestruns)
     - [Example](#example)
       - [Source feature file](#source-feature-file)
       - [Runner template file](#runner-template-file)
@@ -81,7 +83,7 @@ The following sections break down the above steps.
             </goals>
             <configuration>
                 <sourceRunnerTemplateFile>src/test/resources/parallel/cucable.template</sourceRunnerTemplateFile>
-                <sourceFeatureDirectory>src/test/resources/features</sourceFeatureDirectory>
+                <sourceFeatures>src/test/resources/features</sourceFeatures>
                 <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
                 <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
             </configuration>
@@ -121,9 +123,9 @@ public class [FEATURE_FILE_NAME] {
 
 ```
 
-#### sourceFeatureDirectory
+#### sourceFeatures
 
-The path where your __existing__ Cucumber .feature files are located (e.g. _src/test/resources/features_).
+The path where your __existing__ Cucumber .feature files are located (e.g. _src/test/resources/features_) _or_ a single .feature file (e.g. src/test/resources/features/MyFeature.feature).
 
 #### generatedFeatureDirectory
 
@@ -140,6 +142,10 @@ The path where the __generated__ runner classes should be located (e.g. _src/tes
 **Hint:** This directory should be located under a valid source folder to be included as a test source by Maven.
 
 **Caution:** This directory will be wiped prior to the runner file generation!
+
+#### numberOfTestRuns
+
+Optional number of test runs. If it is not set, its default value is __1__.
 
 ### Example
 
@@ -395,7 +401,7 @@ So all specified plugins will execute one after the other.
                             </goals>
                             <configuration>
                                 <sourceRunnerTemplateFile>src/test/resources/parallel/cucable.template</sourceRunnerTemplateFile>
-                                <sourceFeatureDirectory>src/test/resources/features</sourceFeatureDirectory>
+                                <sourceFeatures>src/test/resources/features</sourceFeatures>
                                 <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
                                 <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
                             </configuration>
@@ -487,7 +493,6 @@ Cucable requires Java 8 and it uses Maven for its dependencies.
 
 * Offer the possibility to generate runners and features directly in the target folder
 * Support running specific scenarios in parallel
-* Support running the whole test suite multiple times
 * Support running single tests multiple times
 
 # License

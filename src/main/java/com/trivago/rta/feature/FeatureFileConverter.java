@@ -67,7 +67,7 @@ public final class FeatureFileConverter {
      * Converts all scenarios in the given feature file to single
      * scenario feature files and their respective runners.
      *
-     * @param featureFilePath location of the feature file to process.
+     * @param featureFilePath feature file to process.
      * @throws CucablePluginException see {@link CucablePluginException}
      */
     public void convertToSingleScenariosAndRunners(final Path featureFilePath)

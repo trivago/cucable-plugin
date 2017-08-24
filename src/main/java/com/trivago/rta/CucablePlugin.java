@@ -37,18 +37,33 @@ public final class CucablePlugin extends AbstractMojo {
     private final FileManager fileManager;
     private final FeatureFileConverter featureFileConverter;
 
+    /**
+     * The complete path to the runner template file.
+     */
     @Parameter(property = "parallel.sourceRunnerTemplateFile", required = true)
     private String sourceRunnerTemplateFile = "";
 
+    /**
+     * The path where the generated runner classes should be created.
+     */
     @Parameter(property = "parallel.generatedRunnerDirectory", required = true)
     private String generatedRunnerDirectory = "";
 
+    /**
+     * The path to .feature files or a concrete single feature file.
+     */
     @Parameter(property = "parallel.sourceFeatures", required = true)
     private String sourceFeatures = "";
 
+    /**
+     * The path where the generated .feature files should be created.
+     */
     @Parameter(property = "parallel.generatedFeatureDirectory", required = true)
     private String generatedFeatureDirectory = "";
 
+    /**
+     * An optional number of test runs for each generated .feature file.
+     */
     @Parameter(property = "parallel.numberOfTestRuns", required = false)
     private Integer numberOfTestRuns = 1;
 

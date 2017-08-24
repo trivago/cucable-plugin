@@ -28,6 +28,7 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -60,20 +61,34 @@ public class FileManager {
      */
     public List<Path> getFeatureFilePaths() throws CucablePluginException {
 
-        String sourceFeatureDirectory = propertyManager.getSourceFeatures();
+        List<Path> featureFilePaths = new ArrayList<>();
+        String sourceFeatures = propertyManager.getSourceFeatures();
 
-        List<Path> featureFilesLocations;
-        try {
-            featureFilesLocations =
-                    Files.walk(Paths.get(sourceFeatureDirectory))
-                            .filter(Files::isRegularFile)
-                            .filter(p -> p.toString().endsWith(".feature"))
-                            .collect(Collectors.toList());
-        } catch (IOException e) {
+        // Check if the property value is a directory
+        File sourceFeaturesFile = new File(sourceFeatures);
+
+        if (sourceFeaturesFile.isFile() && sourceFeatures.endsWith(".feature")) {
+            System.out.println(sourceFeatures + " is a file.");
+            featureFilePaths.add(Paths.get(sourceFeatures));
+        } else if (sourceFeaturesFile.isDirectory()) {
+            try {
+                featureFilePaths =
+                        Files.walk(Paths.get(sourceFeatures))
+                                .filter(Files::isRegularFile)
+                                .filter(p -> p.toString().endsWith(".feature"))
+                                .collect(Collectors.toList());
+
+            } catch (IOException e) {
+                throw new CucablePluginException(
+                        "Unable to traverse feature files in " + sourceFeatures);
+            }
+        } else {
             throw new CucablePluginException(
-                    "Unable to traverse feature files in " + sourceFeatureDirectory);
+                    sourceFeatures + " is not a feature file or a directory."
+            );
         }
-        return featureFilesLocations;
+
+        return featureFilePaths;
     }
 
     /**
