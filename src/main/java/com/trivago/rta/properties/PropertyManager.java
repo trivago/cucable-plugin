@@ -26,24 +26,20 @@ import java.io.File;
 @Singleton
 public class PropertyManager {
     // Generated source runner template file placeholder for logging.
-    private static final String
-            SOURCE_RUNNER_TEMPLATE_FILE = "<sourceRunnerTemplateFile>";
+    private static final String SOURCE_RUNNER_TEMPLATE_FILE = "<sourceRunnerTemplateFile>";
 
     // Generated runner directory placeholder for logging.
-    private static final String
-            GENERATED_RUNNER_DIRECTORY = "<generatedRunnerDirectory>";
+    private static final String GENERATED_RUNNER_DIRECTORY = "<generatedRunnerDirectory>";
 
-    // Source feature directory placeholder for logging.
-    private static final String
-            SOURCE_FEATURE_DIRECTORY = "<sourceFeatureDirectory>";
+    // Source features placeholder for logging.
+    private static final String SOURCE_FEATURES= "<sourceFeatures>";
 
     // Generated feature directory placeholder for logging.
-    private static final String
-            GENERATED_FEATURE_DIRECTORY = "<generatedFeatureDirectory>";
+    private static final String GENERATED_FEATURE_DIRECTORY = "<generatedFeatureDirectory>";
 
     private String sourceRunnerTemplateFile;
     private String generatedRunnerDirectory;
-    private String sourceFeatureDirectory;
+    private String sourceFeatures;
     private String generatedFeatureDirectory;
 
     public String getSourceRunnerTemplateFile() {
@@ -54,8 +50,8 @@ public class PropertyManager {
         return generatedRunnerDirectory;
     }
 
-    public String getSourceFeatureDirectory() {
-        return sourceFeatureDirectory;
+    public String getSourceFeatures() {
+        return sourceFeatures;
     }
 
     public String getGeneratedFeatureDirectory() {
@@ -70,8 +66,8 @@ public class PropertyManager {
         this.generatedRunnerDirectory = generatedRunnerDirectory;
     }
 
-    public void setSourceFeatureDirectory(final String sourceFeatureDirectory) {
-        this.sourceFeatureDirectory = sourceFeatureDirectory;
+    public void setSourceFeatures(final String sourceFeatures) {
+        this.sourceFeatures = sourceFeatures;
     }
 
     public void setGeneratedFeatureDirectory(final String generatedFeatureDirectory) {
@@ -93,8 +89,8 @@ public class PropertyManager {
             throw new MissingPropertyException(GENERATED_RUNNER_DIRECTORY);
         }
 
-        if (generatedFeatureDirectory.equals("")) {
-            throw new MissingPropertyException(SOURCE_FEATURE_DIRECTORY);
+        if (sourceFeatures.equals("")) {
+            throw new MissingPropertyException(SOURCE_FEATURES);
         }
 
         if (generatedFeatureDirectory.equals("")) {
@@ -107,13 +103,14 @@ public class PropertyManager {
             throw new MissingFileException(sourceRunnerTemplateFile);
         }
 
-        // SingleScenarioFeature directory
-        File featureDirectory = new File(sourceFeatureDirectory);
+        // TODO: consider if it is a direct path to a single feature (or feature scenario) or a directory
+        // Source features
+        File featureDirectory = new File(sourceFeatures);
         if (!featureDirectory.exists() || !featureDirectory.isDirectory()) {
             throw new CucablePluginException(
-                    SOURCE_FEATURE_DIRECTORY
+                    SOURCE_FEATURES
                             + " does not exist or is not a directory: "
-                            + sourceFeatureDirectory
+                            + sourceFeatures
             );
         }
     }
@@ -124,7 +121,7 @@ public class PropertyManager {
         return "Cucable properties:" + lineFeed +
                 "       - sourceRunnerTemplateFile  : " + sourceRunnerTemplateFile + lineFeed +
                 "       - generatedRunnerDirectory  : " + generatedRunnerDirectory + lineFeed +
-                "       - sourceFeatureDirectory    : " + sourceFeatureDirectory + lineFeed +
+                "       - sourceFeatures            : " + sourceFeatures + lineFeed +
                 "       - generatedFeatureDirectory : " + generatedFeatureDirectory;
     }
 }

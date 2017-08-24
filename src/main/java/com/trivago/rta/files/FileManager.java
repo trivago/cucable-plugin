@@ -60,7 +60,7 @@ public class FileManager {
      */
     public List<Path> getFeatureFilePaths() throws CucablePluginException {
 
-        String sourceFeatureDirectory = propertyManager.getSourceFeatureDirectory();
+        String sourceFeatureDirectory = propertyManager.getSourceFeatures();
 
         List<Path> featureFilesLocations;
         try {

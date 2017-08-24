@@ -43,8 +43,8 @@ public final class CucablePlugin extends AbstractMojo {
     @Parameter(property = "parallel.generatedRunnerDirectory", required = true)
     private String generatedRunnerDirectory = "";
 
-    @Parameter(property = "parallel.sourceFeatureDirectory", required = true)
-    private String sourceFeatureDirectory = "";
+    @Parameter(property = "parallel.sourceFeatures", required = true)
+    private String sourceFeatures = "";
 
     @Parameter(property = "parallel.generatedFeatureDirectory", required = true)
     private String generatedFeatureDirectory = "";
@@ -70,7 +70,7 @@ public final class CucablePlugin extends AbstractMojo {
         // Initialize and validate passed pom properties
         propertyManager.setSourceRunnerTemplateFile(sourceRunnerTemplateFile);
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDirectory);
-        propertyManager.setSourceFeatureDirectory(sourceFeatureDirectory);
+        propertyManager.setSourceFeatures(sourceFeatures);
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDirectory);
 
         getLog().info(propertyManager.toString());

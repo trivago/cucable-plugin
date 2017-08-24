@@ -9,7 +9,7 @@
                 <configuration>
                     <sourceRunnerTemplateFile>src/test/resources/parallel/cucable_parallel_runner.template
                     </sourceRunnerTemplateFile>
-                    <sourceFeatureDirectory>src/test/resources/features</sourceFeatureDirectory>
+                    <sourceFeatures>src/test/resources/features</sourceFeatures>
                     <generatedFeatureDirectory>target/parallel/features
                     </generatedFeatureDirectory>
                     <generatedRunnerDirectory>target/parallel/runners
