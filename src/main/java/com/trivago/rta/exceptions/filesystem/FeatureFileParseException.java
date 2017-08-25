@@ -14,18 +14,18 @@
  * limitations under the License.
  */
 
-package com.trivago.rta.exceptions;
+package com.trivago.rta.exceptions.filesystem;
+
+import com.trivago.rta.exceptions.CucablePluginException;
 
 /**
- * Thrown when a file is not found.
+ * Thrown when a feature file cannot be parsed.
  */
-public class MissingFileException extends CucablePluginException {
+public class FeatureFileParseException extends CucablePluginException {
     /**
-     * Constructor.
-     *
-     * @param fileName The name of the missing file.
+     * @param featureFileName The name of the unparsable feature file.
      */
-    public MissingFileException(final String fileName) {
-        super("File " + fileName + " could not be found.");
+    public FeatureFileParseException(final String featureFileName) {
+        super("Could not parse feature file " + featureFileName);
     }
 }

@@ -14,22 +14,20 @@
  * limitations under the License.
  */
 
-package com.trivago.rta.exceptions;
+package com.trivago.rta.exceptions.filesystem;
+
+import com.trivago.rta.exceptions.CucablePluginException;
 
 /**
- * Thrown when an expected plugin property is
- * not found (typically set inside a configuration
- * block within the pom file).
+ * Thrown when a file cannot be created.
  */
-public class MissingPropertyException extends CucablePluginException {
+public class FileCreationException extends CucablePluginException {
     /**
      * Constructor.
      *
-     * @param property The name of the missing property.
+     * @param fileName The file to be created.
      */
-    public MissingPropertyException(final String property) {
-        super("Property " + property
-                + " is not specified in the configuration section "
-                + "of your pom file or is empty.");
+    public FileCreationException(final String fileName) {
+        super("File " + fileName + " could not be created.");
     }
 }

@@ -16,7 +16,7 @@
 
 package com.trivago.rta;
 
-import com.trivago.rta.exceptions.MissingPropertyException;
+import com.trivago.rta.exceptions.properties.MissingPropertyException;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -91,16 +91,18 @@ public class CucablePluginTest {
                 (String) mojoRule.getVariableValueFromObject(mojo, GENERATED_RUNNER_DIRECTORY);
         assertThat(generatedRunnerDirectory, is("target/parallel/runners"));
 
-        Integer numberOfTestRuns =
-                (Integer) mojoRule.getVariableValueFromObject(mojo, NUMBER_OF_TEST_RUNS);
+        System.out.println("mojoRule.getVariableValueFromObject(mojo, NUMBER_OF_TEST_RUNS) = " + mojoRule.getVariableValueFromObject(mojo, NUMBER_OF_TEST_RUNS));
+
+        int numberOfTestRuns =
+                (int) mojoRule.getVariableValueFromObject(mojo, NUMBER_OF_TEST_RUNS);
         assertThat(numberOfTestRuns, is(1));
     }
 
     @Test
     public void testNumberOfTestRunsOverride() throws Exception {
         CucablePlugin mojo = createMojoFromPomFile(VALID_POM_2_RUNS);
-        Integer numberOfTestRuns =
-                (Integer) mojoRule.getVariableValueFromObject(mojo, NUMBER_OF_TEST_RUNS);
+        int numberOfTestRuns =
+                (int) mojoRule.getVariableValueFromObject(mojo, NUMBER_OF_TEST_RUNS);
         assertThat(numberOfTestRuns, is(2));
     }
 

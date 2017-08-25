@@ -17,7 +17,7 @@
 package com.trivago.rta.properties;
 
 import com.trivago.rta.exceptions.CucablePluginException;
-import com.trivago.rta.exceptions.MissingPropertyException;
+import com.trivago.rta.exceptions.properties.MissingPropertyException;
 
 import javax.inject.Singleton;
 
@@ -42,7 +42,7 @@ public class PropertyManager {
     private String generatedRunnerDirectory;
     private String sourceFeatures;
     private String generatedFeatureDirectory;
-    private Integer numberOfTestRuns;
+    private int numberOfTestRuns;
 
     public String getSourceRunnerTemplateFile() {
         return sourceRunnerTemplateFile;
@@ -77,11 +77,11 @@ public class PropertyManager {
     }
 
 
-    public Integer getNumberOfTestRuns() {
+    public int getNumberOfTestRuns() {
         return numberOfTestRuns;
     }
 
-    public void setNumberOfTestRuns(final Integer numberOfTestRuns) {
+    public void setNumberOfTestRuns(final int numberOfTestRuns) {
         this.numberOfTestRuns = numberOfTestRuns;
     }
 

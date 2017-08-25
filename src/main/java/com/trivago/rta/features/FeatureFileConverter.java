@@ -14,14 +14,15 @@
  * limitations under the License.
  */
 
-package com.trivago.rta.feature;
+package com.trivago.rta.features;
 
 import com.trivago.rta.exceptions.CucablePluginException;
-import com.trivago.rta.exceptions.FeatureFileParseException;
-import com.trivago.rta.exceptions.FileCreationException;
-import com.trivago.rta.exceptions.MissingFileException;
+import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
+import com.trivago.rta.exceptions.filesystem.FileCreationException;
+import com.trivago.rta.exceptions.filesystem.MissingFileException;
 import com.trivago.rta.properties.PropertyManager;
-import com.trivago.rta.runner.SingleScenarioRunner;
+import com.trivago.rta.vo.SingleScenarioRunner;
+import com.trivago.rta.vo.SingleScenarioFeature;
 import gherkin.ParserException;
 import gherkin.ast.Background;
 import gherkin.ast.Feature;
@@ -51,16 +52,34 @@ import java.util.Map;
 public final class FeatureFileConverter {
 
     private final PropertyManager propertyManager;
-    private final ScenarioParser scenarioParser;
+    private final GherkinDocumentParser gherkinDocumentParser;
 
     // Holds the current number of single features per feature key
     // (in a scenario outline, each example yields a single feature with the same key).
     private Map<String, Integer> singleFeatureCounters = new HashMap<>();
 
     @Inject
-    public FeatureFileConverter(PropertyManager propertyManager, ScenarioParser scenarioParser) {
+    public FeatureFileConverter(PropertyManager propertyManager, GherkinDocumentParser gherkinDocumentParser) {
         this.propertyManager = propertyManager;
-        this.scenarioParser = scenarioParser;
+        this.gherkinDocumentParser = gherkinDocumentParser;
+    }
+
+    /**
+     * Converts a list of feature files
+     *
+     * @param featureFilePaths feature files to process
+     * @return the number of successfully processed feature files
+     */
+    public int convertToSingleScenariosAndRunners(
+            final List<Path> featureFilePaths) throws CucablePluginException {
+
+        int processedFilesCounter = 0;
+        for (Path featureFilePath : featureFilePaths) {
+            convertToSingleScenariosAndRunners(featureFilePath);
+            processedFilesCounter++;
+        }
+
+        return processedFilesCounter;
     }
 
     /**
@@ -70,22 +89,20 @@ public final class FeatureFileConverter {
      * @param featureFilePath feature file to process.
      * @throws CucablePluginException see {@link CucablePluginException}
      */
-    public void convertToSingleScenariosAndRunners(final Path featureFilePath)
+    private void convertToSingleScenariosAndRunners(final Path featureFilePath)
             throws CucablePluginException {
 
         GherkinDocument gherkinDocument;
-
         try {
             FileReader fileReader = new FileReader(featureFilePath.toFile());
-            gherkinDocument = scenarioParser.parse(fileReader);
+            gherkinDocument = gherkinDocumentParser.parse(fileReader);
         } catch (FileNotFoundException e) {
             throw new MissingFileException(featureFilePath.toString());
         } catch (ParserException parserException) {
             throw new FeatureFileParseException(featureFilePath.toString());
         }
 
-        // Store keywords ("Given", "When", "Then", "And")
-        // for each step in the current scenario
+        // Store keywords ("Given", "When", "Then", "And") for each step in the current scenario
         List<List<String>> scenarioKeywords = new ArrayList<>();
         List<String> stepKeywords;
         List<String> backgroundKeywords;

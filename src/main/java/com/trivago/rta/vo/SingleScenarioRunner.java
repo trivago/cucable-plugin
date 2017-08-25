@@ -14,9 +14,9 @@
  * limitations under the License.
  */
 
-package com.trivago.rta.runner;
+package com.trivago.rta.vo;
 
-import com.trivago.rta.exceptions.MissingFileException;
+import com.trivago.rta.exceptions.filesystem.MissingFileException;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -58,7 +58,7 @@ public final class SingleScenarioRunner {
      * @throws MissingFileException Thrown if the runner file is missing.
      */
     public String getRenderedRunnerFileContent() throws MissingFileException {
-        String fileString = null;
+        String fileString;
         try {
             fileString = new String(
                     readAllBytes(

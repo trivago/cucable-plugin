@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package com.trivago.rta.feature;
+package com.trivago.rta.vo;
 
 import gherkin.pickles.PickleStep;
 import gherkin.pickles.PickleTag;
@@ -52,7 +52,7 @@ public final class SingleScenarioFeature {
      * @param pickleSteps       A list of steps in {@link PickleStep} format.
      * @param stepKeywords      A list of keywords (given, when, then, and).
      */
-    SingleScenarioFeature(
+    public SingleScenarioFeature(
             final List<PickleTag> pickleTags,
             final String parentFeatureName,
             final String scenarioName,
@@ -80,7 +80,7 @@ public final class SingleScenarioFeature {
      *
      * @return the feature file content.
      */
-    String getRenderedFeatureFileContent() {
+    public String getRenderedFeatureFileContent() {
         StringBuilder renderedContent = new StringBuilder();
 
         // add feature name

@@ -1,4 +1,4 @@
-package com.trivago.rta.feature;
+package com.trivago.rta.features;
 
 import gherkin.AstBuilder;
 import gherkin.Parser;
@@ -8,7 +8,7 @@ import javax.inject.Singleton;
 import java.io.FileReader;
 
 @Singleton
-public class ScenarioParser {
+public class GherkinDocumentParser {
     // Prepare Gherkin parser.
     private Parser<GherkinDocument> gherkinDocumentParser = new Parser<>(new AstBuilder());
 

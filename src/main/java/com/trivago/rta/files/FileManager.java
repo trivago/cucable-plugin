@@ -17,8 +17,8 @@
 package com.trivago.rta.files;
 
 import com.trivago.rta.exceptions.CucablePluginException;
-import com.trivago.rta.exceptions.FileDeletionException;
-import com.trivago.rta.exceptions.PathCreationException;
+import com.trivago.rta.exceptions.filesystem.FileDeletionException;
+import com.trivago.rta.exceptions.filesystem.PathCreationException;
 import com.trivago.rta.properties.PropertyManager;
 
 import javax.inject.Inject;

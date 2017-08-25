@@ -14,16 +14,20 @@
  * limitations under the License.
  */
 
-package com.trivago.rta.exceptions;
+package com.trivago.rta.exceptions.filesystem;
+
+import com.trivago.rta.exceptions.CucablePluginException;
 
 /**
- * Thrown when a feature file cannot be parsed.
+ * Thrown when a path cannot be created.
  */
-public class FeatureFileParseException extends CucablePluginException {
+public class PathCreationException extends CucablePluginException {
     /**
-     * @param featureFileName The name of the unparsable feature file.
+     * Constructor.
+     *
+     * @param path The path to be created.
      */
-    public FeatureFileParseException(final String featureFileName) {
-        super("Could not parse feature file " + featureFileName);
+    public PathCreationException(final String path) {
+        super("Path " + path + " could not be created.");
     }
 }

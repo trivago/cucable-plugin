@@ -17,7 +17,7 @@
 package com.trivago.rta;
 
 import com.trivago.rta.exceptions.CucablePluginException;
-import com.trivago.rta.feature.FeatureFileConverter;
+import com.trivago.rta.features.FeatureFileConverter;
 import com.trivago.rta.files.FileManager;
 import com.trivago.rta.properties.PropertyManager;
 import org.apache.maven.plugin.AbstractMojo;
@@ -25,7 +25,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import javax.inject.Inject;
-import java.nio.file.Path;
 
 /**
  * The main plugin class.
@@ -64,8 +63,8 @@ public final class CucablePlugin extends AbstractMojo {
     /**
      * An optional number of test runs for each generated .feature file.
      */
-    @Parameter(property = "parallel.numberOfTestRuns", required = false)
-    private Integer numberOfTestRuns = 1;
+    @Parameter(property = "parallel.numberOfTestRuns", required = false, defaultValue = "1")
+    private int numberOfTestRuns = 1;
 
     @Inject
     public CucablePlugin(
@@ -97,15 +96,14 @@ public final class CucablePlugin extends AbstractMojo {
 
         fileManager.prepareGeneratedFeatureAndRunnerDirs();
 
-        getLog().info("Cucable starting conversion...");
-        int processedFilesCounter = 0;
-        for (Path featureFileLocation : fileManager.getFeatureFilePaths()) {
-            featureFileConverter.convertToSingleScenariosAndRunners(featureFileLocation);
-            processedFilesCounter++;
-        }
+        getLog().info("Cucable - starting conversion...");
+        int numberOfProcessedFeatureFiles =
+                featureFileConverter.convertToSingleScenariosAndRunners(
+                        fileManager.getFeatureFilePaths()
+                );
 
-        getLog().info("Cucable finished processing "
-                + processedFilesCounter + " feature file(s)!");
+        getLog().info("Cucable - finished processing "
+                + numberOfProcessedFeatureFiles + " feature file(s)!");
     }
 }
 

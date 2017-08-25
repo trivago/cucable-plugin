@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package com.trivago.rta.exceptions;
+package com.trivago.rta.exceptions.filesystem;
+
+import com.trivago.rta.exceptions.CucablePluginException;
 
 /**
- * Thrown when a file cannot be created.
+ * Thrown when a file cannot be deleted.
  */
-public class FileCreationException extends CucablePluginException {
+public class FileDeletionException extends CucablePluginException {
     /**
      * Constructor.
      *
-     * @param fileName The file to be created.
+     * @param fileName The file to be deleted.
      */
-    public FileCreationException(final String fileName) {
-        super("File " + fileName + " could not be created.");
+    public FileDeletionException(final String fileName) {
+        super("File " + fileName + " could not be deleted.");
     }
 }
