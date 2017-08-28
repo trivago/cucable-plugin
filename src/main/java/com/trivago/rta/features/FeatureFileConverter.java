@@ -20,9 +20,11 @@ import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
 import com.trivago.rta.exceptions.filesystem.FileCreationException;
 import com.trivago.rta.exceptions.filesystem.MissingFileException;
+import com.trivago.rta.files.FeatureFileContentRenderer;
+import com.trivago.rta.files.RunnerFileContentRenderer;
 import com.trivago.rta.properties.PropertyManager;
-import com.trivago.rta.vo.SingleScenarioRunner;
 import com.trivago.rta.vo.SingleScenarioFeature;
+import com.trivago.rta.vo.SingleScenarioRunner;
 import gherkin.ParserException;
 import gherkin.ast.Background;
 import gherkin.ast.Feature;
@@ -53,15 +55,25 @@ public final class FeatureFileConverter {
 
     private final PropertyManager propertyManager;
     private final GherkinDocumentParser gherkinDocumentParser;
+    private final FeatureFileContentRenderer featureFileContentRenderer;
+    private final RunnerFileContentRenderer runnerFileContentRenderer;
 
     // Holds the current number of single features per feature key
     // (in a scenario outline, each example yields a single feature with the same key).
     private Map<String, Integer> singleFeatureCounters = new HashMap<>();
 
     @Inject
-    public FeatureFileConverter(PropertyManager propertyManager, GherkinDocumentParser gherkinDocumentParser) {
+    public FeatureFileConverter(
+            PropertyManager propertyManager,
+            GherkinDocumentParser gherkinDocumentParser,
+            FeatureFileContentRenderer featureFileContentRenderer,
+            RunnerFileContentRenderer runnerFileContentRenderer
+    ) {
         this.propertyManager = propertyManager;
         this.gherkinDocumentParser = gherkinDocumentParser;
+        this.featureFileContentRenderer = featureFileContentRenderer;
+        this.runnerFileContentRenderer = runnerFileContentRenderer;
+
     }
 
     /**
@@ -164,10 +176,10 @@ public final class FeatureFileConverter {
             featureCounter++;
 
             // Add counter to filename
-            String postfix = String.format("_%05d", featureCounter);
+            String featureFileCounterPostfix = String.format("_scenario%03d", featureCounter);
             // Append "_IT" to the filename so Failsafe considers
             // it an integration test automatically.
-            String newFeatureName = featureName.concat(postfix).concat("_IT");
+            String newFeatureName = featureName.concat(featureFileCounterPostfix).concat("_IT");
 
             String newFeatureFilePath = propertyManager.getGeneratedFeatureDirectory() + "/"
                     + newFeatureName.concat(".feature");
@@ -185,7 +197,7 @@ public final class FeatureFileConverter {
 
             // Save scenario information to new feature file
             try (PrintStream ps = new PrintStream(newFeatureFilePath)) {
-                ps.println(singleFeature.getRenderedFeatureFileContent());
+                ps.println(featureFileContentRenderer.getRenderedFeatureFileContent(singleFeature));
             } catch (FileNotFoundException e) {
                 throw new FileCreationException(newFeatureName);
             }
@@ -194,12 +206,18 @@ public final class FeatureFileConverter {
             SingleScenarioRunner singleScenarioRunner =
                     new SingleScenarioRunner(
                             propertyManager.getSourceRunnerTemplateFile(), newFeatureName);
-            String newRunnerFilePath = propertyManager.getGeneratedRunnerDirectory() + "/"
-                    + newFeatureName.concat(".java");
-            try (PrintStream ps = new PrintStream(newRunnerFilePath)) {
-                ps.println(singleScenarioRunner.getRenderedRunnerFileContent());
-            } catch (IOException e) {
-                throw new CucablePluginException(newRunnerFilePath);
+            String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(singleScenarioRunner);
+            for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
+                String testRunsPostfix = String.format("_run%03d", testRuns);
+                String newRunnerName = featureName.concat(featureFileCounterPostfix).concat(testRunsPostfix).concat("_IT");
+
+                String newRunnerFilePath = propertyManager.getGeneratedRunnerDirectory() + "/"
+                        + newRunnerName.concat(".java");
+                try (PrintStream ps = new PrintStream(newRunnerFilePath)) {
+                    ps.println(renderedRunnerFileContent);
+                } catch (IOException e) {
+                    throw new FileCreationException(newRunnerFilePath);
+                }
             }
         }
     }

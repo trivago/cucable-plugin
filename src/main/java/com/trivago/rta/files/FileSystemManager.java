@@ -33,12 +33,12 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Singleton
-public class FileManager {
+public class FileSystemManager {
 
     private final PropertyManager propertyManager;
 
     @Inject
-    public FileManager(PropertyManager propertyManager) {
+    public FileSystemManager(PropertyManager propertyManager) {
         this.propertyManager = propertyManager;
     }
 
@@ -71,6 +71,7 @@ public class FileManager {
             System.out.println(sourceFeatures + " is a file.");
             featureFilePaths.add(Paths.get(sourceFeatures));
         } else if (sourceFeaturesFile.isDirectory()) {
+            System.out.println(sourceFeatures + " is a directory.");
             try {
                 featureFilePaths =
                         Files.walk(Paths.get(sourceFeatures))

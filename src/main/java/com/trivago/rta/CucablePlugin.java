@@ -18,7 +18,7 @@ package com.trivago.rta;
 
 import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.features.FeatureFileConverter;
-import com.trivago.rta.files.FileManager;
+import com.trivago.rta.files.FileSystemManager;
 import com.trivago.rta.properties.PropertyManager;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -33,7 +33,7 @@ import javax.inject.Inject;
 public final class CucablePlugin extends AbstractMojo {
 
     private final PropertyManager propertyManager;
-    private final FileManager fileManager;
+    private final FileSystemManager fileManager;
     private final FeatureFileConverter featureFileConverter;
 
     /**
@@ -69,7 +69,7 @@ public final class CucablePlugin extends AbstractMojo {
     @Inject
     public CucablePlugin(
             PropertyManager propertyManager,
-            FileManager fileManager,
+            FileSystemManager fileManager,
             FeatureFileConverter featureFileConverter
     ) {
         this.propertyManager = propertyManager;
