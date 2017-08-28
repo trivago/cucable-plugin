@@ -95,7 +95,6 @@ public final class CucablePlugin extends AbstractMojo {
         propertyManager.validateSettings();
 
         fileManager.prepareGeneratedFeatureAndRunnerDirs();
-
         getLog().info("Cucable - starting conversion...");
         int numberOfProcessedFeatureFiles =
                 featureFileConverter.convertToSingleScenariosAndRunners(

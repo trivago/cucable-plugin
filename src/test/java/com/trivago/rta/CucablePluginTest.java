@@ -69,6 +69,7 @@ public class CucablePluginTest {
     public void testMojoInstantiation() throws Exception {
         CucablePlugin mojo = createMojoFromPomFile(VALID_POM);
         assertThat(mojo, is(notNullValue()));
+        mojo.execute();
     }
 
     @Test

@@ -64,14 +64,12 @@ public class FileSystemManager {
         List<Path> featureFilePaths = new ArrayList<>();
         String sourceFeatures = propertyManager.getSourceFeatures();
 
-        // Check if the property value is a directory
         File sourceFeaturesFile = new File(sourceFeatures);
 
+        // Check if the property value is a single file or a directory
         if (sourceFeaturesFile.isFile() && sourceFeatures.endsWith(".feature")) {
-            System.out.println(sourceFeatures + " is a file.");
             featureFilePaths.add(Paths.get(sourceFeatures));
         } else if (sourceFeaturesFile.isDirectory()) {
-            System.out.println(sourceFeatures + " is a directory.");
             try {
                 featureFilePaths =
                         Files.walk(Paths.get(sourceFeatures))
