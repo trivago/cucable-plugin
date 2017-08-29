@@ -38,8 +38,8 @@ Cucable is a Maven plugin for [Cucumber](https://cucumber.io) scenarios that sim
 
 This plugin has two purposes:
 
-- Generating single Cucumber features from .feature files
-- Generating Cucumber runners for every generated feature file
+- Generating single Cucumber features from all scenarios inside specified .feature files
+- Generating Cucumber runners for every generated "single scenario" feature file
 
 Those generated runners and features can then be used with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/) in order to parallelize test runs.
 
@@ -127,6 +127,8 @@ public class [FEATURE_FILE_NAME] {
 
 The path where your __existing__ Cucumber .feature files are located (e.g. _src/test/resources/features_) _or_ a single .feature file (e.g. src/test/resources/features/MyFeature.feature).
 
+__Note:__ This used to be called _sourceFeatureDirectory_ in older versions of Cucable. Since its capabilities changed so it now also supports single features, this was renamed!
+
 #### generatedFeatureDirectory
 
 The path where the __generated__ Cucumber .feature files should be located (e.g. _src/test/resources/parallel_).
@@ -155,6 +157,7 @@ Below, you can see a full example of what Cucable does.
 
 This is our source feature file. It contains a scenario and a scenario outline with two examples.
 
+*MyFeature.feature*
 ```
 Feature: This is the feature name
 
@@ -210,7 +213,7 @@ public class <b>[FEATURE_FILE_NAME]</b> {
 
 For each scenario, a single feature file is created: 
 
-*Example_00001_IT.feature*
+*MyFeature_scenario001_run001_IT.feature*
 
 ```
 Feature: This is the feature name
@@ -223,7 +226,7 @@ Then I see an error message
 
 Note that for the scenario outlines, each example is converted to its own scenario and feature file:
 
-*Example_00002_IT.feature*
+*MyFeature_scenario002_run001_IT.feature*
 
 <pre>
 Feature: This is the feature name
@@ -235,7 +238,7 @@ And I navigate to the shopping basket
 Then I see <b>12</b> items
 </pre>
 
-*Example_00003_IT.feature*
+*MyFeature_scenario003_run001_IT.feature*
 
 <pre>
 Feature: This is the feature name
@@ -253,7 +256,7 @@ The generated runners point to each one of the generated feature files.
 
 This is an example for one of the generated runners - note how the placeholders are now replaced with the name of the feature to run:
 
-*Example_00003_IT.java*
+*MyFeature_scenario001_run001_IT.java*
 
 <pre>
 package parallel.runners;
@@ -265,14 +268,14 @@ import org.junit.runner.RunWith;
 @RunWith(TrupiCucumberRunner.class)
 @CucumberOptions(
     monochrome = false,
-    features = {"classpath:parallel/features/<b>Example_00001_IT</b>.feature"},
-    format = {"json:target/cucumber-report/<b>Example_00001_IT.feature</b>.json"},
+    features = {"classpath:parallel/features/<b>MyFeature_scenario001_run001_IT</b>.feature"},
+    format = {"json:target/cucumber-report/<b>MyFeature_scenario001_run001_IT</b>.json"},
     strict = false,
     dryRun = false,
     glue = {"com.trivago.glue"},
     tags = {"~@ignore"}
 )
-public class <b>Example_00001_IT</b> {
+public class <b>MyFeature_scenario001_run001_IT</b> {
 }
 </pre>
 
