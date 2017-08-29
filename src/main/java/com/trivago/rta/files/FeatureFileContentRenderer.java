@@ -30,8 +30,9 @@ public class FeatureFileContentRenderer {
 
         // add steps
         for (int i = 0; i < singleScenarioFeature.getSteps().size(); i++) {
-            renderedContent.append(singleScenarioFeature.getKeywords().get(i)).append(" ")
-                    .append(singleScenarioFeature.getSteps().get(i)).append(System.lineSeparator());
+            String stepText = singleScenarioFeature.getSteps().get(i);
+            String keyword = singleScenarioFeature.getKeywords().get(i);
+            renderedContent.append(keyword).append(" ").append(stepText).append(System.lineSeparator());
         }
 
         renderedContent.append(System.lineSeparator())

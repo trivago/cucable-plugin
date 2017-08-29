@@ -16,7 +16,11 @@
 
 package com.trivago.rta.vo;
 
+import gherkin.pickles.Argument;
+import gherkin.pickles.PickleCell;
+import gherkin.pickles.PickleRow;
 import gherkin.pickles.PickleStep;
+import gherkin.pickles.PickleTable;
 import gherkin.pickles.PickleTag;
 
 import java.util.ArrayList;
@@ -27,6 +31,8 @@ import java.util.List;
  * tags, steps and keywords.
  */
 public final class SingleScenarioFeature {
+    private static final String DATA_TABLE_SEPARATOR = "|";
+
     // A list of tags for the current scenario.
     private List<String> tags;
 
@@ -68,10 +74,43 @@ public final class SingleScenarioFeature {
 
         steps = new ArrayList<>();
         for (PickleStep pickleStep : pickleSteps) {
-            steps.add(pickleStep.getText());
+            String stepText = pickleStep.getText();
+
+            // Convert step data tables into string
+            String dataTableString = getDataTableString(pickleStep);
+            if (!dataTableString.isEmpty()) {
+                stepText = stepText.concat(dataTableString);
+            }
+
+            // Add step text and optional data table content
+            steps.add(stepText);
         }
 
         this.keywords = stepKeywords;
+    }
+
+    private String getDataTableString(final PickleStep pickleStep) {
+        String dataTableString = "";
+        List<Argument> arguments = pickleStep.getArgument();
+        for (Argument argument : arguments) {
+            if (argument instanceof PickleTable) {
+                PickleTable table = (PickleTable) argument;
+                for (PickleRow row : table.getRows()) {
+                    List<String> rowStrings = new ArrayList<>();
+                    for (PickleCell cell : row.getCells()) {
+                        rowStrings.add(cell.getValue());
+                    }
+                    if (rowStrings.size() > 0) {
+                        String rowString =
+                                "    ".concat(System.lineSeparator()).concat(DATA_TABLE_SEPARATOR)
+                                        .concat(String.join("|", rowStrings))
+                                        .concat("|");
+                        dataTableString = dataTableString.concat(rowString);
+                    }
+                }
+            }
+        }
+        return dataTableString;
     }
 
     public List<String> getTags() {

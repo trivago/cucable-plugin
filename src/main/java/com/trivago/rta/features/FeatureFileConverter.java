@@ -114,7 +114,6 @@ public final class FeatureFileConverter {
         int scenarioKeywordIndex = 0;
         ScenarioKey previousScenarioKey = null;
         for (Pickle scenario : scenarios) {
-
             ScenarioKey currentScenarioKey = new ScenarioKey(scenario);
 
             // Set the old scenario key to the current one (only done for the very first scenario)
