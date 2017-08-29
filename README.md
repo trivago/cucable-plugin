@@ -148,6 +148,12 @@ The path where the __generated__ runner classes should be located (e.g. _src/tes
 #### numberOfTestRuns
 
 Optional number of test runs. If it is not set, its default value is __1__.
+For each test run, the whole set of features and runners is generated like this:
+
+- MyFeature_scenario001_run001_IT.feature
+- MyFeature_scenario001_run002_IT.feature
+- MyFeature_scenario001_run003_IT.feature
+- etc.
 
 ### Example
 
