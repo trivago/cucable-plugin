@@ -7,7 +7,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [What is Cucable](#what-is-cucable)
 - [Maven dependency](#maven-dependency)
 - [Data flow](#data-flow)
@@ -86,6 +85,7 @@ The following sections break down the above steps.
                 <sourceFeatures>src/test/resources/features</sourceFeatures>
                 <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
                 <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
+                <numberOfTestRuns>1</numberOfTestRuns>
             </configuration>
         </execution>
     </executions>
@@ -404,6 +404,7 @@ So all specified plugins will execute one after the other.
                                 <sourceFeatures>src/test/resources/features</sourceFeatures>
                                 <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
                                 <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
+                                <numberOfTestRuns>1</numberOfTestRuns>
                             </configuration>
                         </execution>
                     </executions>
@@ -493,7 +494,6 @@ Cucable requires Java 8 and it uses Maven for its dependencies.
 
 * Offer the possibility to generate runners and features directly in the target folder
 * Support running specific scenarios in parallel
-* Support running single tests multiple times
 
 # License
 
