@@ -61,5 +61,4 @@ public class FeatureFileConverterTest {
 
         featureFileConverter.convertToSingleScenariosAndRunners(mockPath);
     }
-
 }

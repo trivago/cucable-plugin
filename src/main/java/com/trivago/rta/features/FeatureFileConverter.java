@@ -101,8 +101,6 @@ public final class FeatureFileConverter {
     void convertToSingleScenariosAndRunners(final Path featureFilePath)
             throws CucablePluginException {
 
-        // TODO: Check if this is a feature file
-
         GherkinDocument gherkinDocument = gherkinDocumentParser.getGherkinDocumentFromFeatureFile(featureFilePath);
         List<List<String>> scenarioKeywords = gherkinDocumentParser.getKeywordsFromGherkinDocument(gherkinDocument);
 
