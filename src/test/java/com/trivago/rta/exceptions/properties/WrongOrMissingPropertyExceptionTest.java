@@ -16,22 +16,16 @@
 
 package com.trivago.rta.exceptions.properties;
 
-import com.trivago.rta.exceptions.CucablePluginException;
+import org.junit.Test;
 
-/**
- * Thrown when an expected plugin property is
- * not found (typically set inside a configuration
- * block within the pom file).
- */
-public class MissingPropertyException extends CucablePluginException {
-    /**
-     * Constructor.
-     *
-     * @param property The name of the missing property.
-     */
-    public MissingPropertyException(final String property) {
-        super("Property " + property
-                + " is not specified in the configuration section "
-                + "of your pom file or is empty.");
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+public class WrongOrMissingPropertyExceptionTest {
+
+    @Test
+    public void testErrorMessage(){
+        WrongOrMissingPropertyException exception = new WrongOrMissingPropertyException("PropertyName");
+        assertThat(exception.getMessage(), is("Property 'PropertyName' is not specified in the configuration section of your pom file or contains an invalid value."));
     }
 }

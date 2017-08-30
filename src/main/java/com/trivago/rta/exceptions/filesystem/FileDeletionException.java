@@ -28,6 +28,6 @@ public class FileDeletionException extends CucablePluginException {
      * @param fileName The file to be deleted.
      */
     public FileDeletionException(final String fileName) {
-        super("File " + fileName + " could not be deleted.");
+        super("File '" + fileName + "' could not be deleted.");
     }
 }

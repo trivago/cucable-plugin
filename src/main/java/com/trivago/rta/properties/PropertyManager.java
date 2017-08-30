@@ -17,7 +17,7 @@
 package com.trivago.rta.properties;
 
 import com.trivago.rta.exceptions.CucablePluginException;
-import com.trivago.rta.exceptions.properties.MissingPropertyException;
+import com.trivago.rta.exceptions.properties.WrongOrMissingPropertyException;
 
 import javax.inject.Singleton;
 
@@ -92,20 +92,21 @@ public class PropertyManager {
      *                                is not specified in the pom.
      */
     public void validateSettings() throws CucablePluginException {
+
+        String missingProperty = null;
+
         if (sourceRunnerTemplateFile.equals("")) {
-            throw new MissingPropertyException(SOURCE_RUNNER_TEMPLATE_FILE);
+            missingProperty = SOURCE_RUNNER_TEMPLATE_FILE;
+        } else if (generatedRunnerDirectory.equals("")) {
+            missingProperty = GENERATED_RUNNER_DIRECTORY;
+        } else if (sourceFeatures.equals("")) {
+            missingProperty = SOURCE_FEATURES;
+        } else if (generatedFeatureDirectory.equals("")) {
+            missingProperty = GENERATED_FEATURE_DIRECTORY;
         }
 
-        if (generatedRunnerDirectory.equals("")) {
-            throw new MissingPropertyException(GENERATED_RUNNER_DIRECTORY);
-        }
-
-        if (sourceFeatures.equals("")) {
-            throw new MissingPropertyException(SOURCE_FEATURES);
-        }
-
-        if (generatedFeatureDirectory.equals("")) {
-            throw new MissingPropertyException(GENERATED_FEATURE_DIRECTORY);
+        if (missingProperty != null) {
+            throw new WrongOrMissingPropertyException(missingProperty);
         }
     }
 

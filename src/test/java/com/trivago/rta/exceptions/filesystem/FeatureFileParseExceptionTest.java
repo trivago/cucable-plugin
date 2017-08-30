@@ -16,18 +16,16 @@
 
 package com.trivago.rta.exceptions.filesystem;
 
-import com.trivago.rta.exceptions.CucablePluginException;
+import org.junit.Test;
 
-/**
- * Thrown when a path cannot be created.
- */
-public class PathCreationException extends CucablePluginException {
-    /**
-     * Constructor.
-     *
-     * @param path The path to be created.
-     */
-    public PathCreationException(final String path) {
-        super("Path '" + path + "' could not be created.");
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+public class FeatureFileParseExceptionTest {
+
+    @Test
+    public void testErrorMessage(){
+        FeatureFileParseException exception = new FeatureFileParseException("Filename");
+        assertThat(exception.getMessage(), is("Could not parse feature file 'Filename'."));
     }
 }

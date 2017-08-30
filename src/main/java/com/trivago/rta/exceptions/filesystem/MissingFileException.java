@@ -28,6 +28,6 @@ public class MissingFileException extends CucablePluginException {
      * @param fileName The name of the missing file.
      */
     public MissingFileException(final String fileName) {
-        super("File " + fileName + " could not be found.");
+        super("File '" + fileName + "' could not be found.");
     }
 }

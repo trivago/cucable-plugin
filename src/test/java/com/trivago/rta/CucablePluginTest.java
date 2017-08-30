@@ -16,7 +16,7 @@
 
 package com.trivago.rta;
 
-import com.trivago.rta.exceptions.properties.MissingPropertyException;
+import com.trivago.rta.exceptions.properties.WrongOrMissingPropertyException;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -49,15 +49,6 @@ public class CucablePluginTest {
     private static final String NUMBER_OF_TEST_RUNS = "numberOfTestRuns";
 
     private static final String MAVEN_GOAL = "parallel";
-
-    private static final String GENERATED_FEATURE_DIRECTORY_MISSING_MESSAGE =
-            "Property <generatedFeatureDirectory> is not specified in the configuration section of your pom file or is empty.";
-    private static final String GENERATED_RUNNER_DIRECTORY_MISSING_MESSAGE =
-            "Property <generatedRunnerDirectory> is not specified in the configuration section of your pom file or is empty.";
-    private static final String SOURCE_FEATURES_MISSING_MESSAGE =
-            "Property <sourceFeatures> is not specified in the configuration section of your pom file or is empty.";
-    private static final String SOURCE_RUNNER_TEMPLATE_MISSING_MESSAGE =
-            "Property <sourceRunnerTemplateFile> is not specified in the configuration section of your pom file or is empty.";
 
     @Rule
     public MojoRule mojoRule = new MojoRule();
@@ -107,32 +98,28 @@ public class CucablePluginTest {
 
     @Test
     public void testMissingGeneratedFeatureDirectory() throws Exception {
-        expectedException.expect(MissingPropertyException.class);
-        expectedException.expectMessage(GENERATED_FEATURE_DIRECTORY_MISSING_MESSAGE);
+        expectedException.expect(WrongOrMissingPropertyException.class);
         CucablePlugin mojo = createMojoFromPomFile(MISSING_GENERATED_FEATURE_DIRECTORY_POM);
         mojo.execute();
     }
 
     @Test
     public void testMissingGeneratedRunnerDirectory() throws Exception {
-        expectedException.expect(MissingPropertyException.class);
-        expectedException.expectMessage(GENERATED_RUNNER_DIRECTORY_MISSING_MESSAGE);
+        expectedException.expect(WrongOrMissingPropertyException.class);
         CucablePlugin mojo = createMojoFromPomFile(MISSING_GENERATED_RUNNER_DIRECTORY_POM);
         mojo.execute();
     }
 
     @Test
     public void testMissingSourceFeatures() throws Exception {
-        expectedException.expect(MissingPropertyException.class);
-        expectedException.expectMessage(SOURCE_FEATURES_MISSING_MESSAGE);
+        expectedException.expect(WrongOrMissingPropertyException.class);
         CucablePlugin mojo = createMojoFromPomFile(MISSING_SOURCE_FEATURE_DIRECTORY_POM);
         mojo.execute();
     }
 
     @Test
     public void testMissingSourceRunnerTemplateFile() throws Exception {
-        expectedException.expect(MissingPropertyException.class);
-        expectedException.expectMessage(SOURCE_RUNNER_TEMPLATE_MISSING_MESSAGE);
+        expectedException.expect(WrongOrMissingPropertyException.class);
         CucablePlugin mojo = createMojoFromPomFile(MISSING_SOURCE_RUNNER_TEMPLATE_POM);
         mojo.execute();
     }

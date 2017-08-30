@@ -28,6 +28,6 @@ public class FileCreationException extends CucablePluginException {
      * @param fileName The file to be created.
      */
     public FileCreationException(final String fileName) {
-        super("File " + fileName + " could not be created.");
+        super("File '" + fileName + "' could not be created.");
     }
 }
