@@ -25,7 +25,7 @@ public class PathCreationExceptionTest {
 
     @Test
     public void testErrorMessage(){
-        MissingFileException exception = new MissingFileException("Filename");
-        assertThat(exception.getMessage(), is("File 'Filename' could not be found."));
+        PathCreationException exception = new PathCreationException("PathName");
+        assertThat(exception.getMessage(), is("Path 'PathName' could not be created."));
     }
 }
