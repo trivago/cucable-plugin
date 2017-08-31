@@ -45,6 +45,10 @@ Those generated runners and features can then be used with [Maven Failsafe](http
 
 This plugin was inspired by the [Cucumber Slices Maven Plugin](https://github.com/DisneyStudios/cucumber-slices-maven-plugin).
 
+## Changelog
+
+All changes are documented in the [full changelog](CHANGELOG.md).
+
 # Maven dependency
 
 ```xml

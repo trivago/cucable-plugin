@@ -17,6 +17,7 @@
 package com.trivago.rta.features;
 
 import com.trivago.rta.exceptions.CucablePluginException;
+import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
 import com.trivago.rta.files.FeatureFileContentRenderer;
 import com.trivago.rta.files.FileWriter;
 import com.trivago.rta.files.RunnerFileContentRenderer;
@@ -98,10 +99,14 @@ public final class FeatureFileConverter {
      * @param featureFilePath feature file to process.
      * @throws CucablePluginException see {@link CucablePluginException}
      */
-    void convertToSingleScenariosAndRunners(final Path featureFilePath)
+    private void convertToSingleScenariosAndRunners(final Path featureFilePath)
             throws CucablePluginException {
 
         GherkinDocument gherkinDocument = gherkinDocumentParser.getGherkinDocumentFromFeatureFile(featureFilePath);
+        if (gherkinDocument == null){
+            throw new FeatureFileParseException(featureFilePath.toString());
+        }
+
         List<List<String>> scenarioKeywords = gherkinDocumentParser.getKeywordsFromGherkinDocument(gherkinDocument);
 
         // Break feature file into scenarios
