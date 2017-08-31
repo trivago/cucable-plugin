@@ -35,4 +35,4 @@ Initial project version on GitHub and Maven Central.
 [Unreleased]: https://github.com/trivago/cucable-plugin/compare/0.0.6...HEAD
 [0.0.6]: https://github.com/trivago/cucable-plugin/compare/0.0.5...0.0.6
 [0.0.5]: https://github.com/trivago/cucable-plugin/compare/v0.0.4...0.0.5
-[0.0.4]: https://github.com/trivago/cucable-plugin/v0.0.4
+[0.0.4]: https://github.com/trivago/cucable-plugin/tree/v0.0.4
