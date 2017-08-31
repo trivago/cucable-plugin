@@ -7,7 +7,9 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [What is Cucable](#what-is-cucable)
+  - [Changelog](#changelog)
 - [Maven dependency](#maven-dependency)
 - [Data flow](#data-flow)
   - [1. Generation of runners and features](#1-generation-of-runners-and-features)
