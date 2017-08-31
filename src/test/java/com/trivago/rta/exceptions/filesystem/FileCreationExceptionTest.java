@@ -14,7 +14,18 @@
  * limitations under the License.
  */
 
-/**
- * Miscellaneous helper classes.
- */
-package com.trivago.rta.utils;
+package com.trivago.rta.exceptions.filesystem;
+
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+public class FileCreationExceptionTest {
+
+    @Test
+    public void testErrorMessage(){
+        FileCreationException exception = new FileCreationException("Filename");
+        assertThat(exception.getMessage(), is("File 'Filename' could not be created."));
+    }
+}

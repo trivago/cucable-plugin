@@ -16,7 +16,7 @@
 
 package com.trivago.rta;
 
-import com.trivago.rta.exceptions.MissingPropertyException;
+import com.trivago.rta.exceptions.properties.WrongOrMissingPropertyException;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -32,15 +32,21 @@ import static org.junit.Assert.assertThat;
 public class CucablePluginTest {
     private static final String TEST_POM_PATH = "src/test/resources/pom/";
     private static final String VALID_POM = TEST_POM_PATH + "valid_pom.xml";
-    private static final String MISSING_SOURCE_RUNNER_TEMPLATE_POM = TEST_POM_PATH + "missing_source_runner_template_file_pom.xml";
-    private static final String MISSING_SOURCE_FEATURE_DIRECTORY_POM = TEST_POM_PATH + "missing_source_feature_directory_pom.xml";
-    private static final String MISSING_GENERATED_FEATURE_DIRECTORY_POM = TEST_POM_PATH + "missing_generated_feature_directory_pom.xml";
-    private static final String MISSING_GENERATED_RUNNER_DIRECTORY_POM = TEST_POM_PATH + "missing_generated_runner_directory_pom.xml";
+    private static final String VALID_POM_2_RUNS = TEST_POM_PATH + "valid_pom_2_runs.xml";
+    private static final String MISSING_SOURCE_RUNNER_TEMPLATE_POM =
+            TEST_POM_PATH + "missing_source_runner_template_file_pom.xml";
+    private static final String MISSING_SOURCE_FEATURE_DIRECTORY_POM =
+            TEST_POM_PATH + "missing_source_features_pom.xml";
+    private static final String MISSING_GENERATED_FEATURE_DIRECTORY_POM =
+            TEST_POM_PATH + "missing_generated_feature_directory_pom.xml";
+    private static final String MISSING_GENERATED_RUNNER_DIRECTORY_POM =
+            TEST_POM_PATH + "missing_generated_runner_directory_pom.xml";
 
     private static final String SOURCE_RUNNER_TEMPLATE_FILE = "sourceRunnerTemplateFile";
-    private static final String SOURCE_FEATURE_DIRECTORY = "sourceFeatureDirectory";
+    private static final String SOURCE_FEATURES = "sourceFeatures";
     private static final String GENERATED_FEATURE_DIRECTORY = "generatedFeatureDirectory";
     private static final String GENERATED_RUNNER_DIRECTORY = "generatedRunnerDirectory";
+    private static final String NUMBER_OF_TEST_RUNS = "numberOfTestRuns";
 
     private static final String MAVEN_GOAL = "parallel";
 
@@ -54,53 +60,66 @@ public class CucablePluginTest {
     public void testMojoInstantiation() throws Exception {
         CucablePlugin mojo = createMojoFromPomFile(VALID_POM);
         assertThat(mojo, is(notNullValue()));
+        mojo.execute();
     }
 
     @Test
     public void testValidConfiguration() throws Exception {
         CucablePlugin mojo = createMojoFromPomFile(VALID_POM);
 
-        String sourceRunnerTemplateFile = (String) mojoRule.getVariableValueFromObject(mojo, SOURCE_RUNNER_TEMPLATE_FILE);
+        String sourceRunnerTemplateFile =
+                (String) mojoRule.getVariableValueFromObject(mojo, SOURCE_RUNNER_TEMPLATE_FILE);
         assertThat(sourceRunnerTemplateFile, is("src/test/resources/parallel/cucable_parallel_runner.template"));
 
-        String sourceFeatureDirectory = (String) mojoRule.getVariableValueFromObject(mojo, SOURCE_FEATURE_DIRECTORY);
-        assertThat(sourceFeatureDirectory, is("src/test/resources/features"));
+        String sourceFeatures =
+                (String) mojoRule.getVariableValueFromObject(mojo, SOURCE_FEATURES);
+        assertThat(sourceFeatures, is("src/test/resources/features"));
 
-        String generatedFeatureDirectory = (String) mojoRule.getVariableValueFromObject(mojo, GENERATED_FEATURE_DIRECTORY);
-        assertThat(generatedFeatureDirectory, is("src/test/resources/parallel/features"));
+        String generatedFeatureDirectory =
+                (String) mojoRule.getVariableValueFromObject(mojo, GENERATED_FEATURE_DIRECTORY);
+        assertThat(generatedFeatureDirectory, is("target/parallel/features"));
 
-        String generatedRunnerDirectory = (String) mojoRule.getVariableValueFromObject(mojo, GENERATED_RUNNER_DIRECTORY);
-        assertThat(generatedRunnerDirectory, is("src/test/java/parallel/runners"));
+        String generatedRunnerDirectory =
+                (String) mojoRule.getVariableValueFromObject(mojo, GENERATED_RUNNER_DIRECTORY);
+        assertThat(generatedRunnerDirectory, is("target/parallel/runners"));
+
+        int numberOfTestRuns =
+                (int) mojoRule.getVariableValueFromObject(mojo, NUMBER_OF_TEST_RUNS);
+        assertThat(numberOfTestRuns, is(1));
+    }
+
+    @Test
+    public void testNumberOfTestRunsOverride() throws Exception {
+        CucablePlugin mojo = createMojoFromPomFile(VALID_POM_2_RUNS);
+        int numberOfTestRuns =
+                (int) mojoRule.getVariableValueFromObject(mojo, NUMBER_OF_TEST_RUNS);
+        assertThat(numberOfTestRuns, is(2));
     }
 
     @Test
     public void testMissingGeneratedFeatureDirectory() throws Exception {
-        expectedException.expect(MissingPropertyException.class);
-        expectedException.expectMessage("Property <generatedFeatureDirectory> is not specified in the configuration section of your pom file or is empty.");
+        expectedException.expect(WrongOrMissingPropertyException.class);
         CucablePlugin mojo = createMojoFromPomFile(MISSING_GENERATED_FEATURE_DIRECTORY_POM);
         mojo.execute();
     }
 
     @Test
     public void testMissingGeneratedRunnerDirectory() throws Exception {
-        expectedException.expect(MissingPropertyException.class);
-        expectedException.expectMessage("Property <generatedRunnerDirectory> is not specified in the configuration section of your pom file or is empty.");
+        expectedException.expect(WrongOrMissingPropertyException.class);
         CucablePlugin mojo = createMojoFromPomFile(MISSING_GENERATED_RUNNER_DIRECTORY_POM);
         mojo.execute();
     }
 
     @Test
-    public void testMissingSourceFeatureDirectory() throws Exception {
-        expectedException.expect(MissingPropertyException.class);
-        expectedException.expectMessage("Property <sourceFeatureDirectory> is not specified in the configuration section of your pom file or is empty.");
+    public void testMissingSourceFeatures() throws Exception {
+        expectedException.expect(WrongOrMissingPropertyException.class);
         CucablePlugin mojo = createMojoFromPomFile(MISSING_SOURCE_FEATURE_DIRECTORY_POM);
         mojo.execute();
     }
 
     @Test
     public void testMissingSourceRunnerTemplateFile() throws Exception {
-        expectedException.expect(MissingPropertyException.class);
-        expectedException.expectMessage("Property <sourceRunnerTemplateFile> is not specified in the configuration section of your pom file or is empty.");
+        expectedException.expect(WrongOrMissingPropertyException.class);
         CucablePlugin mojo = createMojoFromPomFile(MISSING_SOURCE_RUNNER_TEMPLATE_POM);
         mojo.execute();
     }

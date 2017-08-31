@@ -14,7 +14,18 @@
  * limitations under the License.
  */
 
-/**
- * Runner related classes.
- */
-package com.trivago.rta.runner;
+package com.trivago.rta.exceptions.filesystem;
+
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+public class MissingFileExceptionTest {
+
+    @Test
+    public void testErrorMessage(){
+        MissingFileException exception = new MissingFileException("Filename");
+        assertThat(exception.getMessage(), is("File 'Filename' could not be found."));
+    }
+}

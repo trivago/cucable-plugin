@@ -14,18 +14,20 @@
  * limitations under the License.
  */
 
-package com.trivago.rta.exceptions;
+package com.trivago.rta.exceptions.filesystem;
+
+import com.trivago.rta.exceptions.CucablePluginException;
 
 /**
- * Thrown when a file is not found.
+ * Thrown when a file cannot be deleted.
  */
-public class MissingFileException extends CucablePluginException {
+public class FileDeletionException extends CucablePluginException {
     /**
      * Constructor.
      *
-     * @param fileName The name of the missing file.
+     * @param fileName The file to be deleted.
      */
-    public MissingFileException(final String fileName) {
-        super("File " + fileName + " could not be found.");
+    public FileDeletionException(final String fileName) {
+        super("File '" + fileName + "' could not be deleted.");
     }
 }

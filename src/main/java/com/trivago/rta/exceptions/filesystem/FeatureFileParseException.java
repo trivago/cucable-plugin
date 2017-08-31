@@ -14,7 +14,9 @@
  * limitations under the License.
  */
 
-package com.trivago.rta.exceptions;
+package com.trivago.rta.exceptions.filesystem;
+
+import com.trivago.rta.exceptions.CucablePluginException;
 
 /**
  * Thrown when a feature file cannot be parsed.
@@ -24,6 +26,6 @@ public class FeatureFileParseException extends CucablePluginException {
      * @param featureFileName The name of the unparsable feature file.
      */
     public FeatureFileParseException(final String featureFileName) {
-        super("Could not parse feature file " + featureFileName);
+        super("Could not parse feature file '" + featureFileName + "'.");
     }
 }

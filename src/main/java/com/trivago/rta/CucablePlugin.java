@@ -17,17 +17,14 @@
 package com.trivago.rta;
 
 import com.trivago.rta.exceptions.CucablePluginException;
-import com.trivago.rta.exceptions.MissingFileException;
-import com.trivago.rta.exceptions.MissingPropertyException;
-import com.trivago.rta.feature.FeatureFileConverter;
-import com.trivago.rta.utils.FileUtils;
+import com.trivago.rta.features.FeatureFileConverter;
+import com.trivago.rta.files.FileSystemManager;
+import com.trivago.rta.properties.PropertyManager;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
-import java.io.File;
-import java.nio.file.Path;
-import java.util.List;
+import javax.inject.Inject;
 
 /**
  * The main plugin class.
@@ -35,143 +32,78 @@ import java.util.List;
 @Mojo(name = "parallel")
 public final class CucablePlugin extends AbstractMojo {
 
-    /**
-     * Generated source runner template file placeholder for logging.
-     */
-    private static final String
-            SOURCE_RUNNER_TEMPLATE_FILE = "<sourceRunnerTemplateFile>";
-    /**
-     * Generated runner directory placeholder for logging.
-     */
-    private static final String
-            GENERATED_RUNNER_DIRECTORY = "<generatedRunnerDirectory>";
-    /**
-     * Source feature directory placeholder for logging.
-     */
-    private static final String
-            SOURCE_FEATURE_DIRECTORY = "<sourceFeatureDirectory>";
-    /**
-     * Generated feature directory placeholder for logging.
-     */
-    private static final String
-            GENERATED_FEATURE_DIRECTORY = "<generatedFeatureDirectory>";
+    private final PropertyManager propertyManager;
+    private final FileSystemManager fileManager;
+    private final FeatureFileConverter featureFileConverter;
 
     /**
-     * Automatically filled source runner template file property from the pom.
+     * The complete path to the runner template file.
      */
     @Parameter(property = "parallel.sourceRunnerTemplateFile", required = true)
     private String sourceRunnerTemplateFile = "";
+
     /**
-     * Automatically filled generated runner directory property from the pom.
+     * The path where the generated runner classes should be created.
      */
     @Parameter(property = "parallel.generatedRunnerDirectory", required = true)
     private String generatedRunnerDirectory = "";
+
     /**
-     * Automatically filled source feature directory property from the pom.
+     * The path to .feature files or a concrete single feature file.
      */
-    @Parameter(property = "parallel.sourceFeatureDirectory", required = true)
-    private String sourceFeatureDirectory = "";
+    @Parameter(property = "parallel.sourceFeatures", required = true)
+    private String sourceFeatures = "";
+
     /**
-     * Automatically filled generated feature directory property from the pom.
+     * The path where the generated .feature files should be created.
      */
     @Parameter(property = "parallel.generatedFeatureDirectory", required = true)
     private String generatedFeatureDirectory = "";
 
     /**
-     * Standard mojo main method.
+     * An optional number of test runs for each generated .feature file.
+     */
+    @Parameter(property = "parallel.numberOfTestRuns", required = false, defaultValue = "1")
+    private int numberOfTestRuns = 1;
+
+    @Inject
+    public CucablePlugin(
+            PropertyManager propertyManager,
+            FileSystemManager fileManager,
+            FeatureFileConverter featureFileConverter
+    ) {
+        this.propertyManager = propertyManager;
+        this.fileManager = fileManager;
+        this.featureFileConverter = featureFileConverter;
+    }
+
+    /**
+     * Cucable start method.
      *
-     * @throws CucablePluginException When thrown,
-     *                                the plugin execution is stopped.
+     * @throws CucablePluginException When thrown, the plugin execution is stopped.
      */
     public void execute() throws CucablePluginException {
-        validatePluginPomSettings();
-        clearTempDirectories();
 
-        logCucableInfo();
+        // Initialize and validate passed pom properties
+        propertyManager.setSourceRunnerTemplateFile(sourceRunnerTemplateFile);
+        propertyManager.setGeneratedRunnerDirectory(generatedRunnerDirectory);
+        propertyManager.setSourceFeatures(sourceFeatures);
+        propertyManager.setGeneratedFeatureDirectory(generatedFeatureDirectory);
+        propertyManager.setNumberOfTestRuns(numberOfTestRuns);
 
-        int counter = 0;
-        FeatureFileConverter featureFileConverter = new FeatureFileConverter();
-        List<Path> featureFilePaths =
-                FileUtils.getFeatureFilePaths(sourceFeatureDirectory);
-        for (Path featureFileLocation : featureFilePaths) {
-            featureFileConverter.convertToSingleScenariosAndRunners(
-                    featureFileLocation,
-                    generatedFeatureDirectory,
-                    generatedRunnerDirectory,
-                    sourceRunnerTemplateFile
-            );
-            counter++;
-        }
+        getLog().info(propertyManager.toString());
+        propertyManager.validateSettings();
 
-        getLog().info("Cucable finished processing "
-                + counter + " feature file(s).");
+        fileManager.prepareGeneratedFeatureAndRunnerDirs();
+        getLog().info("Cucable - starting conversion...");
+        int numberOfProcessedFeatureFiles =
+                featureFileConverter.convertToSingleScenariosAndRunners(
+                        fileManager.getFeatureFilePaths()
+                );
+
+        getLog().info("Cucable - finished processing "
+                + numberOfProcessedFeatureFiles + " feature file(s)!");
     }
-
-    /**
-     * Checks the pom settings for the plugin.
-     *
-     * @throws CucablePluginException Thrown when a required setting
-     *                                is not specified in the pom.
-     */
-    private void validatePluginPomSettings() throws CucablePluginException {
-        if (sourceRunnerTemplateFile.equals("")) {
-            throw new MissingPropertyException(SOURCE_RUNNER_TEMPLATE_FILE);
-        }
-
-        if (generatedRunnerDirectory.equals("")) {
-            throw new MissingPropertyException(GENERATED_RUNNER_DIRECTORY);
-        }
-
-        if (sourceFeatureDirectory.equals("")) {
-            throw new MissingPropertyException(SOURCE_FEATURE_DIRECTORY);
-        }
-
-        if (generatedFeatureDirectory.equals("")) {
-            throw new MissingPropertyException(GENERATED_FEATURE_DIRECTORY);
-        }
-
-        // Runner template file
-        File runnerTemplateFile = new File(sourceRunnerTemplateFile);
-        if (!runnerTemplateFile.exists()) {
-            throw new MissingFileException(sourceRunnerTemplateFile);
-        }
-
-        // SingleScenarioFeature directory
-        File featureDirectory = new File(sourceFeatureDirectory);
-        if (!featureDirectory.exists() || !featureDirectory.isDirectory()) {
-            throw new CucablePluginException(
-                    SOURCE_FEATURE_DIRECTORY
-                            + " does not exist or is not a directory: "
-                            + sourceFeatureDirectory
-            );
-        }
-    }
-
-    /**
-     * Removes all files from the specified generated
-     * feature directory and generated runner directory.
-     */
-    private void clearTempDirectories() {
-        FileUtils.removeFilesFromPath(generatedFeatureDirectory, "feature");
-        FileUtils.removeFilesFromPath(generatedRunnerDirectory, "java");
-    }
-
-    /**
-     * Log Cucable POM parameter values
-     */
-    private void logCucableInfo() {
-        getLog().info("Running Cucable with "
-                + sourceFeatureDirectory);
-        getLog().info("  sourceFeatureDirectory   : "
-                + sourceFeatureDirectory);
-        getLog().info("  generatedFeatureDirectory: "
-                + generatedFeatureDirectory);
-        getLog().info("  sourceRunnerTemplateFile : "
-                + sourceRunnerTemplateFile);
-        getLog().info("  generatedRunnerDirectory : "
-                + generatedRunnerDirectory);
-    }
-
 }
 
 

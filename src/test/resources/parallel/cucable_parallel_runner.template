@@ -1,10 +1,8 @@
 package parallel.runners;
 
-import com.trivago.rta.CustomCucumberRunner;
 import cucumber.api.CucumberOptions;
 import org.junit.runner.RunWith;
 
-@RunWith(CustomCucumberRunner.class)
 @CucumberOptions(
     monochrome = false,
     features = {"classpath:parallel/features/[FEATURE_FILE_NAME].feature"},

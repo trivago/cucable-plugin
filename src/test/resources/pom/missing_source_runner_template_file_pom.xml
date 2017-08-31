@@ -8,7 +8,7 @@
                 <artifactId>cucable-plugin</artifactId>
 
                 <configuration>
-                    <sourceFeatureDirectory>src/test/resources/features</sourceFeatureDirectory>
+                    <sourceFeatures>src/test/resources/features</sourceFeatures>
                     <generatedFeatureDirectory>src/test/resources/parallel/features
                     </generatedFeatureDirectory>
                     <generatedRunnerDirectory>src/test/java/parallel/runners

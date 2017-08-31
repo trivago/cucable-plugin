@@ -14,7 +14,20 @@
  * limitations under the License.
  */
 
+package com.trivago.rta.exceptions.filesystem;
+
+import com.trivago.rta.exceptions.CucablePluginException;
+
 /**
- * Main plugin package.
+ * Thrown when a path cannot be created.
  */
-package com.trivago.rta;
+public class PathCreationException extends CucablePluginException {
+    /**
+     * Constructor.
+     *
+     * @param path The path to be created.
+     */
+    public PathCreationException(final String path) {
+        super("Path '" + path + "' could not be created.");
+    }
+}

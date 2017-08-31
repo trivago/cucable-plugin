@@ -7,15 +7,18 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [What is Cucable](#what-is-cucable)
+  - [Changelog](#changelog)
 - [Maven dependency](#maven-dependency)
 - [Data flow](#data-flow)
   - [1. Generation of runners and features](#1-generation-of-runners-and-features)
     - [Parameters](#parameters)
       - [sourceRunnerTemplateFile](#sourcerunnertemplatefile)
-      - [sourceFeatureDirectory](#sourcefeaturedirectory)
+      - [sourceFeatures](#sourcefeatures)
       - [generatedFeatureDirectory](#generatedfeaturedirectory)
       - [generatedRunnerDirectory](#generatedrunnerdirectory)
+      - [numberOfTestRuns](#numberoftestruns)
     - [Example](#example)
       - [Source feature file](#source-feature-file)
       - [Runner template file](#runner-template-file)
@@ -37,12 +40,16 @@ Cucable is a Maven plugin for [Cucumber](https://cucumber.io) scenarios that sim
 
 This plugin has two purposes:
 
-- Generating single Cucumber features from .feature files
-- Generating Cucumber runners for every generated feature file
+- Generating single Cucumber features from all scenarios inside specified .feature files
+- Generating Cucumber runners for every generated "single scenario" feature file
 
 Those generated runners and features can then be used with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/) in order to parallelize test runs.
 
 This plugin was inspired by the [Cucumber Slices Maven Plugin](https://github.com/DisneyStudios/cucumber-slices-maven-plugin).
+
+## Changelog
+
+All changes are documented in the [full changelog](CHANGELOG.md).
 
 # Maven dependency
 
@@ -81,9 +88,10 @@ The following sections break down the above steps.
             </goals>
             <configuration>
                 <sourceRunnerTemplateFile>src/test/resources/parallel/cucable.template</sourceRunnerTemplateFile>
-                <sourceFeatureDirectory>src/test/resources/features</sourceFeatureDirectory>
+                <sourceFeatures>src/test/resources/features</sourceFeatures>
                 <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
                 <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
+                <numberOfTestRuns>1</numberOfTestRuns>
             </configuration>
         </execution>
     </executions>
@@ -121,9 +129,11 @@ public class [FEATURE_FILE_NAME] {
 
 ```
 
-#### sourceFeatureDirectory
+#### sourceFeatures
 
-The path where your __existing__ Cucumber .feature files are located (e.g. _src/test/resources/features_).
+The path where your __existing__ Cucumber .feature files are located (e.g. _src/test/resources/features_) _or_ a single .feature file (e.g. src/test/resources/features/MyFeature.feature).
+
+__Note:__ This used to be called _sourceFeatureDirectory_ in older versions of Cucable. Since its capabilities changed so it now also supports single features, this was renamed!
 
 #### generatedFeatureDirectory
 
@@ -141,6 +151,16 @@ The path where the __generated__ runner classes should be located (e.g. _src/tes
 
 **Caution:** This directory will be wiped prior to the runner file generation!
 
+#### numberOfTestRuns
+
+Optional number of test runs. If it is not set, its default value is __1__.
+For each test run, the whole set of features and runners is generated like this:
+
+- MyFeature_scenario001_run001_IT.feature
+- MyFeature_scenario001_run002_IT.feature
+- MyFeature_scenario001_run003_IT.feature
+- etc.
+
 ### Example
 
 Below, you can see a full example of what Cucable does.
@@ -149,6 +169,7 @@ Below, you can see a full example of what Cucable does.
 
 This is our source feature file. It contains a scenario and a scenario outline with two examples.
 
+*MyFeature.feature*
 ```
 Feature: This is the feature name
 
@@ -204,7 +225,7 @@ public class <b>[FEATURE_FILE_NAME]</b> {
 
 For each scenario, a single feature file is created: 
 
-*Example_00001_IT.feature*
+*MyFeature_scenario001_run001_IT.feature*
 
 ```
 Feature: This is the feature name
@@ -217,7 +238,7 @@ Then I see an error message
 
 Note that for the scenario outlines, each example is converted to its own scenario and feature file:
 
-*Example_00002_IT.feature*
+*MyFeature_scenario002_run001_IT.feature*
 
 <pre>
 Feature: This is the feature name
@@ -229,7 +250,7 @@ And I navigate to the shopping basket
 Then I see <b>12</b> items
 </pre>
 
-*Example_00003_IT.feature*
+*MyFeature_scenario003_run001_IT.feature*
 
 <pre>
 Feature: This is the feature name
@@ -247,7 +268,7 @@ The generated runners point to each one of the generated feature files.
 
 This is an example for one of the generated runners - note how the placeholders are now replaced with the name of the feature to run:
 
-*Example_00003_IT.java*
+*MyFeature_scenario001_run001_IT.java*
 
 <pre>
 package parallel.runners;
@@ -259,14 +280,14 @@ import org.junit.runner.RunWith;
 @RunWith(TrupiCucumberRunner.class)
 @CucumberOptions(
     monochrome = false,
-    features = {"classpath:parallel/features/<b>Example_00001_IT</b>.feature"},
-    format = {"json:target/cucumber-report/<b>Example_00001_IT.feature</b>.json"},
+    features = {"classpath:parallel/features/<b>MyFeature_scenario001_run001_IT</b>.feature"},
+    format = {"json:target/cucumber-report/<b>MyFeature_scenario001_run001_IT</b>.json"},
     strict = false,
     dryRun = false,
     glue = {"com.trivago.glue"},
     tags = {"~@ignore"}
 )
-public class <b>Example_00001_IT</b> {
+public class <b>MyFeature_scenario001_run001_IT</b> {
 }
 </pre>
 
@@ -395,9 +416,10 @@ So all specified plugins will execute one after the other.
                             </goals>
                             <configuration>
                                 <sourceRunnerTemplateFile>src/test/resources/parallel/cucable.template</sourceRunnerTemplateFile>
-                                <sourceFeatureDirectory>src/test/resources/features</sourceFeatureDirectory>
+                                <sourceFeatures>src/test/resources/features</sourceFeatures>
                                 <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
                                 <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
+                                <numberOfTestRuns>1</numberOfTestRuns>
                             </configuration>
                         </execution>
                     </executions>
@@ -476,7 +498,7 @@ So all specified plugins will execute one after the other.
                 </plugin>
             </plugins>
         </build>
-    </profile>         
+    </profile>
 ```
 
 # Building
@@ -487,8 +509,6 @@ Cucable requires Java 8 and it uses Maven for its dependencies.
 
 * Offer the possibility to generate runners and features directly in the target folder
 * Support running specific scenarios in parallel
-* Support running the whole test suite multiple times
-* Support running single tests multiple times
 
 # License
 

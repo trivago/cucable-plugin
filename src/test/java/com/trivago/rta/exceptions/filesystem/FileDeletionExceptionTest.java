@@ -14,7 +14,18 @@
  * limitations under the License.
  */
 
-/**
- * Plugin exceptions.
- */
-package com.trivago.rta.exceptions;
+package com.trivago.rta.exceptions.filesystem;
+
+import org.junit.Test;
+
+import static org.hamcrest.CoreMatchers.is;
+import static org.junit.Assert.assertThat;
+
+public class FileDeletionExceptionTest {
+
+    @Test
+    public void testErrorMessage(){
+        FileDeletionException exception = new FileDeletionException("Filename");
+        assertThat(exception.getMessage(), is("File 'Filename' could not be deleted."));
+    }
+}

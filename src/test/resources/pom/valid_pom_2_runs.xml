@@ -6,13 +6,15 @@
         <plugins>
             <plugin>
                 <artifactId>cucable-plugin</artifactId>
-
                 <configuration>
                     <sourceRunnerTemplateFile>src/test/resources/parallel/cucable_parallel_runner.template
                     </sourceRunnerTemplateFile>
                     <sourceFeatures>src/test/resources/features</sourceFeatures>
-                    <generatedFeatureDirectory>src/test/resources/parallel/features
+                    <generatedFeatureDirectory>target/parallel/features
                     </generatedFeatureDirectory>
+                    <generatedRunnerDirectory>target/parallel/runners
+                    </generatedRunnerDirectory>
+                    <numberOfTestRuns>2</numberOfTestRuns>
                 </configuration>
                 <executions>
                     <execution>
