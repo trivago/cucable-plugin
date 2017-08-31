@@ -13,11 +13,12 @@ Back to [Readme](README.md).
 
 ### Added
 - Ability to run single features multiple times in parallel
-- Added unit tests
+- Properties are now logged on plugin start
+- More unit tests
 
 ### Changed
-- Complete project now uses dependency injection via Google Guice
-- POM parameter _featureFileDirectory_ was renamed to _featureFiles_ since it now supports specifying either a directory or a single feature file
+- Complete project now uses dependency injection via Google [Guice](https://github.com/google/guice)
+- POM parameter _featureFileDirectory_ was renamed to _sourceFeatures_ since it now supports specifying either a directory or a single feature file
 
 ## [0.0.5] - 2017-08-18
 
