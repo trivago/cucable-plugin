@@ -18,7 +18,9 @@ package com.trivago.rta.properties;
 
 import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.exceptions.properties.WrongOrMissingPropertyException;
+import com.trivago.rta.logging.CucableLogger;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
@@ -35,14 +37,18 @@ public class PropertyManager {
     // Generated feature directory placeholder for logging.
     private static final String GENERATED_FEATURE_DIRECTORY = "<generatedFeatureDirectory>";
 
-    // Number of test runs.
-    private static final String NUMBER_OF_TEST_RUNS = "<numberOfTestRuns>";
+    private final CucableLogger logger;
 
     private String sourceRunnerTemplateFile;
     private String generatedRunnerDirectory;
     private String sourceFeatures;
     private String generatedFeatureDirectory;
     private int numberOfTestRuns;
+
+    @Inject
+    public PropertyManager(CucableLogger logger) {
+        this.logger = logger;
+    }
 
     public String getSourceRunnerTemplateFile() {
         return sourceRunnerTemplateFile;
@@ -108,6 +114,10 @@ public class PropertyManager {
         if (missingProperty != null) {
             throw new WrongOrMissingPropertyException(missingProperty);
         }
+    }
+
+    public void logProperties() {
+        logger.info(this.toString());
     }
 
     @Override

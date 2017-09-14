@@ -40,12 +40,13 @@ public class GherkinDocumentParser {
 
     /**
      * Get a list of lists of keywords (one entry per scenario).
+     *
      * @param gherkinDocument {@link GherkinDocument}
      * @return A list of lists of keywords
-     * @throws FeatureFileParseException
-     * @throws MissingFileException
+     * @throws FeatureFileParseException in case a feature cannot be parsed.
+     * @throws MissingFileException      in case a requested feature file does not exist.
      */
-    public List<List<String>> getKeywordsFromGherkinDocument(GherkinDocument gherkinDocument) throws FeatureFileParseException, MissingFileException {
+    List<List<String>> getKeywordsFromGherkinDocument(GherkinDocument gherkinDocument) throws FeatureFileParseException, MissingFileException {
 
         // Store keywords ("Given", "When", "Then", "And") for each step in the current scenario
         List<List<String>> scenarioKeywords = new ArrayList<>();
@@ -64,14 +65,18 @@ public class GherkinDocumentParser {
                 stepKeywords = new ArrayList<>();
                 stepKeywords.addAll(backgroundKeywords);
                 scenario.getSteps().stream().map(step -> step.getKeyword().trim()).forEach(stepKeywords::add);
-                scenarioKeywords.add(stepKeywords);
+
+                // Ignore scenarios without steps
+                if (stepKeywords.size() > 0) {
+                    scenarioKeywords.add(stepKeywords);
+                }
             }
         }
 
         return scenarioKeywords;
     }
 
-    public GherkinDocument getGherkinDocumentFromFeatureFile(final Path featureFilePath) throws MissingFileException, FeatureFileParseException {
+    GherkinDocument getGherkinDocumentFromFeatureFile(final Path featureFilePath) throws MissingFileException, FeatureFileParseException {
         Parser<GherkinDocument> gherkinDocumentParser = new Parser<>(new AstBuilder());
         GherkinDocument gherkinDocument;
         try {
@@ -86,7 +91,7 @@ public class GherkinDocumentParser {
         return gherkinDocument;
     }
 
-    public  List<Pickle> getPicklesFromGherkinDocument(GherkinDocument gherkinDocument){
+    List<Pickle> getPicklesFromGherkinDocument(GherkinDocument gherkinDocument) {
         return new Compiler().compile(gherkinDocument);
     }
 }

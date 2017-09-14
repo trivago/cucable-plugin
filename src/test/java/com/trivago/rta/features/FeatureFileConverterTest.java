@@ -4,6 +4,7 @@ import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
 import com.trivago.rta.files.FeatureFileContentRenderer;
 import com.trivago.rta.files.FileWriter;
 import com.trivago.rta.files.RunnerFileContentRenderer;
+import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.properties.PropertyManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,8 +13,6 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
@@ -29,13 +28,15 @@ public class FeatureFileConverterTest {
         FeatureFileContentRenderer featureFileContentRenderer = mock(FeatureFileContentRenderer.class);
         RunnerFileContentRenderer runnerFileContentRenderer = mock(RunnerFileContentRenderer.class);
         FileWriter fileWriter = mock(FileWriter.class);
+        CucableLogger logger = mock(CucableLogger.class);
 
         featureFileConverter = new FeatureFileConverter(
                 propertyManager,
                 gherkinDocumentParser,
                 featureFileContentRenderer,
                 runnerFileContentRenderer,
-                fileWriter
+                fileWriter,
+                logger
         );
     }
 
@@ -44,8 +45,7 @@ public class FeatureFileConverterTest {
         List<Path> pathList = new ArrayList<>();
         Path mockPath = getMockPath("dummyfeature.feature");
         pathList.add(mockPath);
-        int counter = featureFileConverter.convertToSingleScenariosAndRunners(pathList);
-        assertThat(counter, is(1));
+        featureFileConverter.convertToSingleScenariosAndRunners(pathList);
     }
 
     private Path getMockPath(String filePath) {

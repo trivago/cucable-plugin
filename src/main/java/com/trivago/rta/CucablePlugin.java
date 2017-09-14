@@ -19,6 +19,7 @@ package com.trivago.rta;
 import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.features.FeatureFileConverter;
 import com.trivago.rta.files.FileSystemManager;
+import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.properties.PropertyManager;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -35,6 +36,7 @@ public final class CucablePlugin extends AbstractMojo {
     private final PropertyManager propertyManager;
     private final FileSystemManager fileManager;
     private final FeatureFileConverter featureFileConverter;
+    private final CucableLogger logger;
 
     /**
      * The complete path to the runner template file.
@@ -70,11 +72,13 @@ public final class CucablePlugin extends AbstractMojo {
     public CucablePlugin(
             PropertyManager propertyManager,
             FileSystemManager fileManager,
-            FeatureFileConverter featureFileConverter
+            FeatureFileConverter featureFileConverter,
+            CucableLogger logger
     ) {
         this.propertyManager = propertyManager;
         this.fileManager = fileManager;
         this.featureFileConverter = featureFileConverter;
+        this.logger = logger;
     }
 
     /**
@@ -84,6 +88,9 @@ public final class CucablePlugin extends AbstractMojo {
      */
     public void execute() throws CucablePluginException {
 
+        // Initialize logger to be available outside the AbstractMojo class
+        logger.setMojoLogger(getLog());
+
         // Initialize and validate passed pom properties
         propertyManager.setSourceRunnerTemplateFile(sourceRunnerTemplateFile);
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDirectory);
@@ -91,18 +98,14 @@ public final class CucablePlugin extends AbstractMojo {
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDirectory);
         propertyManager.setNumberOfTestRuns(numberOfTestRuns);
 
-        getLog().info(propertyManager.toString());
+        propertyManager.logProperties();
         propertyManager.validateSettings();
 
         fileManager.prepareGeneratedFeatureAndRunnerDirs();
-        getLog().info("Cucable - starting conversion...");
-        int numberOfProcessedFeatureFiles =
-                featureFileConverter.convertToSingleScenariosAndRunners(
-                        fileManager.getFeatureFilePaths()
-                );
 
-        getLog().info("Cucable - finished processing "
-                + numberOfProcessedFeatureFiles + " feature file(s)!");
+        featureFileConverter.convertToSingleScenariosAndRunners(
+                fileManager.getFeatureFilePaths()
+        );
     }
 }
 

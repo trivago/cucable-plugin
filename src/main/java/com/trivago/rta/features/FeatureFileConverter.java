@@ -21,6 +21,7 @@ import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
 import com.trivago.rta.files.FeatureFileContentRenderer;
 import com.trivago.rta.files.FileWriter;
 import com.trivago.rta.files.RunnerFileContentRenderer;
+import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.properties.PropertyManager;
 import com.trivago.rta.vo.ScenarioKey;
 import com.trivago.rta.vo.SingleScenarioFeature;
@@ -54,6 +55,7 @@ public final class FeatureFileConverter {
     private final FeatureFileContentRenderer featureFileContentRenderer;
     private final RunnerFileContentRenderer runnerFileContentRenderer;
     private final FileWriter fileWriter;
+    private final CucableLogger logger;
 
     // Holds the current number of single features per feature key
     // (in a scenario outline, each example yields a single feature with the same key).
@@ -65,23 +67,26 @@ public final class FeatureFileConverter {
             GherkinDocumentParser gherkinDocumentParser,
             FeatureFileContentRenderer featureFileContentRenderer,
             RunnerFileContentRenderer runnerFileContentRenderer,
-            FileWriter fileWriter
+            FileWriter fileWriter,
+            CucableLogger logger
     ) {
         this.propertyManager = propertyManager;
         this.gherkinDocumentParser = gherkinDocumentParser;
         this.featureFileContentRenderer = featureFileContentRenderer;
         this.runnerFileContentRenderer = runnerFileContentRenderer;
         this.fileWriter = fileWriter;
+        this.logger = logger;
     }
 
     /**
      * Converts a list of feature files
      *
      * @param featureFilePaths feature files to process
-     * @return the number of successfully processed feature files
      */
-    public int convertToSingleScenariosAndRunners(
+    public void convertToSingleScenariosAndRunners(
             final List<Path> featureFilePaths) throws CucablePluginException {
+
+        logger.info("Cucable - starting conversion...");
 
         int processedFilesCounter = 0;
         for (Path featureFilePath : featureFilePaths) {
@@ -89,7 +94,10 @@ public final class FeatureFileConverter {
             processedFilesCounter++;
         }
 
-        return processedFilesCounter;
+        logger.info("");
+
+        logger.info("Cucable - finished processing "
+                + processedFilesCounter + " feature file(s)!");
     }
 
     /**
@@ -102,8 +110,10 @@ public final class FeatureFileConverter {
     private void convertToSingleScenariosAndRunners(final Path featureFilePath)
             throws CucablePluginException {
 
+        logger.info("Converting " + featureFilePath + " ...");
+
         GherkinDocument gherkinDocument = gherkinDocumentParser.getGherkinDocumentFromFeatureFile(featureFilePath);
-        if (gherkinDocument == null){
+        if (gherkinDocument == null) {
             throw new FeatureFileParseException(featureFilePath.toString());
         }
 
