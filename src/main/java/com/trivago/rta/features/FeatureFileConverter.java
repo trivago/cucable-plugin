@@ -16,8 +16,9 @@
 
 package com.trivago.rta.features;
 
-import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
+import com.trivago.rta.exceptions.filesystem.FileCreationException;
+import com.trivago.rta.exceptions.filesystem.MissingFileException;
 import com.trivago.rta.files.FeatureFileContentRenderer;
 import com.trivago.rta.files.FileIO;
 import com.trivago.rta.files.RunnerFileContentRenderer;
@@ -82,9 +83,12 @@ public final class FeatureFileConverter {
      * Converts a list of feature files
      *
      * @param featureFilePaths feature files to process
+     * @throws FeatureFileParseException see {@link FeatureFileParseException}
+     * @throws MissingFileException      see {@link MissingFileException}
+     * @throws FileCreationException     see {@link FileCreationException}
      */
     public void convertToSingleScenariosAndRunners(
-            final List<Path> featureFilePaths) throws CucablePluginException {
+            final List<Path> featureFilePaths) throws MissingFileException, FeatureFileParseException, FileCreationException {
 
         logger.info("Cucable - starting conversion...");
 
@@ -100,17 +104,20 @@ public final class FeatureFileConverter {
      * scenario feature files and their respective runners.
      *
      * @param featureFilePath feature file to process.
-     * @throws CucablePluginException see {@link CucablePluginException}
+     * @throws FeatureFileParseException see {@link FeatureFileParseException}
+     * @throws MissingFileException      see {@link MissingFileException}
+     * @throws FileCreationException     see {@link FileCreationException}
      */
     private void convertToSingleScenariosAndRunners(final Path featureFilePath)
-            throws CucablePluginException {
+            throws FeatureFileParseException, MissingFileException, FileCreationException {
+
+        if (featureFilePath.toString() == null || featureFilePath.toString().equals("")) {
+            throw new MissingFileException(featureFilePath.toString());
+        }
 
         logger.info("Converting " + featureFilePath + " ...");
 
         GherkinDocument gherkinDocument = gherkinDocumentParser.getGherkinDocumentFromFeatureFile(featureFilePath);
-        if (gherkinDocument == null) {
-            throw new FeatureFileParseException(featureFilePath.toString());
-        }
 
         List<List<String>> scenarioKeywords = gherkinDocumentParser.getKeywordsFromGherkinDocument(gherkinDocument);
 
@@ -124,6 +131,9 @@ public final class FeatureFileConverter {
         int scenarioKeywordIndex = 0;
         ScenarioKey previousScenarioKey = null;
         for (Pickle scenario : scenarios) {
+
+            logger.info("PickleScenario: " + scenario.getName());
+
             ScenarioKey currentScenarioKey = new ScenarioKey(scenario);
 
             // Set the old scenario key to the current one (only done for the very first scenario)

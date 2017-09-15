@@ -84,12 +84,18 @@ public class GherkinDocumentParser {
     }
 
     GherkinDocument getGherkinDocumentFromFeatureFile(final Path featureFilePath) throws MissingFileException, FeatureFileParseException {
+
         Parser<GherkinDocument> gherkinDocumentParser = new Parser<>(new AstBuilder());
         GherkinDocument gherkinDocument;
+
         try {
             String content = fileIO.readContentFromFile(featureFilePath.toString());
             gherkinDocument = gherkinDocumentParser.parse(content);
         } catch (ParserException parserException) {
+            throw new FeatureFileParseException(featureFilePath.toString());
+        }
+
+        if (gherkinDocument == null) {
             throw new FeatureFileParseException(featureFilePath.toString());
         }
 

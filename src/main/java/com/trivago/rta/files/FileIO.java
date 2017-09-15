@@ -20,11 +20,11 @@ import com.trivago.rta.exceptions.filesystem.FileCreationException;
 import com.trivago.rta.exceptions.filesystem.MissingFileException;
 
 import javax.inject.Singleton;
-import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.PrintStream;
-import java.util.Scanner;
+import java.nio.file.Paths;
+
+import static java.nio.file.Files.readAllBytes;
 
 @Singleton
 public class FileIO {
@@ -37,22 +37,11 @@ public class FileIO {
     }
 
     public String readContentFromFile(String filePath) throws MissingFileException {
-        File file = new File(filePath);
-        StringBuilder fileContents = new StringBuilder((int) file.length());
-        Scanner scanner = null;
         try {
-            scanner = new Scanner(file);
-        } catch (FileNotFoundException e) {
+            byte[] bytes = readAllBytes(Paths.get(filePath));
+            return new String(bytes).trim();
+        } catch (IOException e) {
             throw new MissingFileException(filePath);
-        }
-        String lineSeparator = System.lineSeparator();
-        try {
-            while (scanner.hasNextLine()) {
-                fileContents.append(scanner.nextLine()).append(lineSeparator);
-            }
-            return fileContents.toString().trim();
-        } finally {
-            scanner.close();
         }
     }
 }

@@ -1,6 +1,6 @@
 package com.trivago.rta.features;
 
-import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
+import com.trivago.rta.exceptions.filesystem.MissingFileException;
 import com.trivago.rta.files.FeatureFileContentRenderer;
 import com.trivago.rta.files.FileIO;
 import com.trivago.rta.files.RunnerFileContentRenderer;
@@ -18,7 +18,7 @@ import static org.mockito.Mockito.when;
 
 public class FeatureFileConverterTest {
 
-    FeatureFileConverter featureFileConverter;
+    private FeatureFileConverter featureFileConverter;
 
     @Before
     public void setup() {
@@ -40,20 +40,15 @@ public class FeatureFileConverterTest {
         );
     }
 
-    @Test(expected = FeatureFileParseException.class)
-    public void testConvertInvalidPathListToSingleScenariosAndRunners() throws Exception {
+    @Test(expected = MissingFileException.class)
+    public void testConvertmptyPathListToSingleScenariosAndRunners() throws Exception {
         List<Path> pathList = new ArrayList<>();
-        Path mockPath = getMockPath("dummyfeature.feature");
-        pathList.add(mockPath);
-        featureFileConverter.convertToSingleScenariosAndRunners(pathList);
-    }
-
-    private Path getMockPath(String filePath) {
         Path mockPath = mock(Path.class);
         Path mockFilePath = mock(Path.class);
-        when(mockFilePath.toString()).thenReturn(filePath);
+        when(mockFilePath.toString()).thenReturn("");
         when(mockPath.getFileName()).thenReturn(mockFilePath);
-        when(mockPath.toString()).thenReturn(filePath);
-        return mockPath;
+        when(mockPath.toString()).thenReturn("");
+        pathList.add(mockPath);
+        featureFileConverter.convertToSingleScenariosAndRunners(pathList);
     }
 }
