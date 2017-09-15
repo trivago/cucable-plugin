@@ -45,9 +45,4 @@ public class ScenarioKey {
         ScenarioKey scenarioKey = (ScenarioKey) object;
         return key != null ? key.equals(scenarioKey.key) : scenarioKey.key == null;
     }
-
-    @Override
-    public int hashCode() {
-        return key != null ? key.hashCode() : 0;
-    }
 }

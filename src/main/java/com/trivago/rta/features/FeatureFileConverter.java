@@ -88,16 +88,11 @@ public final class FeatureFileConverter {
 
         logger.info("Cucable - starting conversion...");
 
-        int processedFilesCounter = 0;
         for (Path featureFilePath : featureFilePaths) {
             convertToSingleScenariosAndRunners(featureFilePath);
-            processedFilesCounter++;
         }
 
-        logger.info("");
-
-        logger.info("Cucable - finished processing "
-                + processedFilesCounter + " feature file(s)!");
+        logger.info("Cucable - finished conversion.");
     }
 
     /**

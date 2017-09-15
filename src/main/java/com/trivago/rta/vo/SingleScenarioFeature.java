@@ -132,15 +132,4 @@ public final class SingleScenarioFeature {
     public List<String> getKeywords() {
         return keywords;
     }
-
-    @Override
-    public String toString() {
-        return "SingleScenarioFeature{"
-                + "tags=" + tags
-                + ", featureName='" + featureName + '\''
-                + ", name='" + name + '\''
-                + ", steps=" + steps
-                + ", keywords=" + keywords
-                + '}';
-    }
 }
