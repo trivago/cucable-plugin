@@ -18,6 +18,7 @@ package com.trivago.rta.features;
 
 import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
 import com.trivago.rta.exceptions.filesystem.MissingFileException;
+import com.trivago.rta.files.FileIO;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.ParserException;
@@ -28,15 +29,21 @@ import gherkin.ast.ScenarioDefinition;
 import gherkin.pickles.Compiler;
 import gherkin.pickles.Pickle;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
 @Singleton
 public class GherkinDocumentParser {
+
+    private final FileIO fileIO;
+
+    @Inject
+    public GherkinDocumentParser(FileIO fileIO) {
+        this.fileIO = fileIO;
+    }
 
     /**
      * Get a list of lists of keywords (one entry per scenario).
@@ -80,10 +87,8 @@ public class GherkinDocumentParser {
         Parser<GherkinDocument> gherkinDocumentParser = new Parser<>(new AstBuilder());
         GherkinDocument gherkinDocument;
         try {
-            FileReader fileReader = new FileReader(featureFilePath.toFile());
-            gherkinDocument = gherkinDocumentParser.parse(fileReader);
-        } catch (FileNotFoundException e) {
-            throw new MissingFileException(featureFilePath.toString());
+            String content = fileIO.readContentFromFile(featureFilePath.toString());
+            gherkinDocument = gherkinDocumentParser.parse(content);
         } catch (ParserException parserException) {
             throw new FeatureFileParseException(featureFilePath.toString());
         }

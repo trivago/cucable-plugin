@@ -19,7 +19,7 @@ package com.trivago.rta.features;
 import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
 import com.trivago.rta.files.FeatureFileContentRenderer;
-import com.trivago.rta.files.FileWriter;
+import com.trivago.rta.files.FileIO;
 import com.trivago.rta.files.RunnerFileContentRenderer;
 import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.properties.PropertyManager;
@@ -54,7 +54,7 @@ public final class FeatureFileConverter {
     private final GherkinDocumentParser gherkinDocumentParser;
     private final FeatureFileContentRenderer featureFileContentRenderer;
     private final RunnerFileContentRenderer runnerFileContentRenderer;
-    private final FileWriter fileWriter;
+    private final FileIO fileIO;
     private final CucableLogger logger;
 
     // Holds the current number of single features per feature key
@@ -67,14 +67,14 @@ public final class FeatureFileConverter {
             GherkinDocumentParser gherkinDocumentParser,
             FeatureFileContentRenderer featureFileContentRenderer,
             RunnerFileContentRenderer runnerFileContentRenderer,
-            FileWriter fileWriter,
+            FileIO fileIO,
             CucableLogger logger
     ) {
         this.propertyManager = propertyManager;
         this.gherkinDocumentParser = gherkinDocumentParser;
         this.featureFileContentRenderer = featureFileContentRenderer;
         this.runnerFileContentRenderer = runnerFileContentRenderer;
-        this.fileWriter = fileWriter;
+        this.fileIO = fileIO;
         this.logger = logger;
     }
 
@@ -174,7 +174,7 @@ public final class FeatureFileConverter {
                 singleFeatureCounters.put(featureFileName, featureCounter);
 
                 // Save scenario information to new feature file
-                fileWriter.writeContentToFile(renderedFeatureFileContent, generatedFeatureFilePath);
+                fileIO.writeContentToFile(renderedFeatureFileContent, generatedFeatureFilePath);
 
                 // Generate runner for the newly generated single scenario feature file
                 SingleScenarioRunner singleScenarioRunner =
@@ -186,7 +186,7 @@ public final class FeatureFileConverter {
                                 .concat(PATH_SEPARATOR)
                                 .concat(generatedFileName)
                                 .concat(RUNNER_FILE_EXTENSION);
-                fileWriter.writeContentToFile(renderedRunnerFileContent, generatedRunnerFilePath);
+                fileIO.writeContentToFile(renderedRunnerFileContent, generatedRunnerFilePath);
             }
         }
     }

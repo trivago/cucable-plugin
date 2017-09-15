@@ -2,7 +2,7 @@ package com.trivago.rta.features;
 
 import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
 import com.trivago.rta.files.FeatureFileContentRenderer;
-import com.trivago.rta.files.FileWriter;
+import com.trivago.rta.files.FileIO;
 import com.trivago.rta.files.RunnerFileContentRenderer;
 import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.properties.PropertyManager;
@@ -27,7 +27,7 @@ public class FeatureFileConverterTest {
         GherkinDocumentParser gherkinDocumentParser = mock(GherkinDocumentParser.class);
         FeatureFileContentRenderer featureFileContentRenderer = mock(FeatureFileContentRenderer.class);
         RunnerFileContentRenderer runnerFileContentRenderer = mock(RunnerFileContentRenderer.class);
-        FileWriter fileWriter = mock(FileWriter.class);
+        FileIO fileIO = mock(FileIO.class);
         CucableLogger logger = mock(CucableLogger.class);
 
         featureFileConverter = new FeatureFileConverter(
@@ -35,7 +35,7 @@ public class FeatureFileConverterTest {
                 gherkinDocumentParser,
                 featureFileContentRenderer,
                 runnerFileContentRenderer,
-                fileWriter,
+                fileIO,
                 logger
         );
     }

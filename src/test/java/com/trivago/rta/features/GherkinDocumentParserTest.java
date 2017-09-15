@@ -1,5 +1,6 @@
 package com.trivago.rta.features;
 
+import com.trivago.rta.files.FileIO;
 import gherkin.ast.Comment;
 import gherkin.ast.Feature;
 import gherkin.ast.GherkinDocument;
@@ -7,6 +8,7 @@ import gherkin.ast.Location;
 import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.Step;
 import gherkin.ast.Tag;
+import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -19,7 +21,13 @@ import static org.mockito.Mockito.when;
 
 public class GherkinDocumentParserTest {
 
-    private GherkinDocumentParser gherkinDocumentParser = new GherkinDocumentParser();
+    private GherkinDocumentParser gherkinDocumentParser;
+
+    @Before
+    public void setup() {
+        FileIO fileIO = mock(FileIO.class);
+        gherkinDocumentParser = new GherkinDocumentParser(fileIO);
+    }
 
     @Test
     public void oneKeywordScenario() throws Exception {
