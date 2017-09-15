@@ -37,6 +37,25 @@ public class GherkinDocumentParserTest {
         assertThat(keywordsFromGherkinDocument.get(0).get(0), is("given"));
     }
 
+    @Test
+    public void twoKeywordScenario() throws Exception {
+        ScenarioDefinition mockScenario = mock(ScenarioDefinition.class);
+
+        List<Step> steps = new ArrayList<>();
+        Step step1 = new Step(new Location(1, 1), "given ", "this is step 1", null);
+        steps.add(step1);
+        Step step2 = new Step(new Location(2, 1), "then ", "this is step 2", null);
+        steps.add(step2);
+        when(mockScenario.getSteps()).thenReturn(steps);
+        GherkinDocument gherkinDocument = getGherkinDocument(mockScenario);
+
+        List<List<String>> keywordsFromGherkinDocument = gherkinDocumentParser.getKeywordsFromGherkinDocument(gherkinDocument);
+        assertThat(keywordsFromGherkinDocument.size(), is(1));
+        assertThat(keywordsFromGherkinDocument.get(0).size(), is(2));
+        assertThat(keywordsFromGherkinDocument.get(0).get(0), is("given"));
+        assertThat(keywordsFromGherkinDocument.get(0).get(1), is("then"));
+    }
+
     private GherkinDocument getGherkinDocument(final ScenarioDefinition scenarioDefinition) {
         List<Tag> tags = new ArrayList<>();
         Location location = new Location(11, 22);
