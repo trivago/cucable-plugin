@@ -3,6 +3,7 @@ package com.trivago.rta.features;
 import com.trivago.rta.files.FileIO;
 import com.trivago.rta.gherkin.GherkinDocumentParser;
 import com.trivago.rta.gherkin.GherkinToCucableConverter;
+import com.trivago.rta.logging.CucableLogger;
 import gherkin.ast.Comment;
 import gherkin.ast.Feature;
 import gherkin.ast.GherkinDocument;
@@ -24,7 +25,8 @@ public class GherkinDocumentParserTest {
     public void setup() {
         FileIO fileIO = mock(FileIO.class);
         GherkinToCucableConverter gherkinToCucableConverter = mock(GherkinToCucableConverter.class);
-        gherkinDocumentParser = new GherkinDocumentParser(fileIO, gherkinToCucableConverter);
+        CucableLogger logger = mock(CucableLogger.class);
+        gherkinDocumentParser = new GherkinDocumentParser(fileIO, gherkinToCucableConverter, logger);
     }
 
 //    @Test

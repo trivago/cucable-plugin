@@ -20,6 +20,7 @@ import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
 import com.trivago.rta.exceptions.filesystem.MissingFileException;
 import com.trivago.rta.files.FileIO;
+import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.vo.SingleScenario;
 import com.trivago.rta.vo.Step;
 import gherkin.AstBuilder;
@@ -32,24 +33,28 @@ import gherkin.ast.GherkinDocument;
 import gherkin.ast.Scenario;
 import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.ScenarioOutline;
-import gherkin.ast.TableCell;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 @Singleton
 public class GherkinDocumentParser {
 
     private final FileIO fileIO;
     private final GherkinToCucableConverter gherkinToCucableConverter;
+    private final CucableLogger logger;
 
     @Inject
-    public GherkinDocumentParser(FileIO fileIO, GherkinToCucableConverter gherkinToCucableConverter) {
+    public GherkinDocumentParser(
+            FileIO fileIO, GherkinToCucableConverter gherkinToCucableConverter, CucableLogger logger) {
+
         this.fileIO = fileIO;
         this.gherkinToCucableConverter = gherkinToCucableConverter;
+        this.logger = logger;
     }
 
     /**
@@ -59,14 +64,15 @@ public class GherkinDocumentParser {
      * @return a {@link com.trivago.rta.vo.SingleScenario} list.
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
-    public ArrayList<SingleScenario> getSingleScenariosFromFeatureFile(final Path featureFilePath) throws CucablePluginException {
+    public List<SingleScenario> getSingleScenariosFromFeatureFile(final Path featureFilePath) throws CucablePluginException {
 
         GherkinDocument gherkinDocument = getGherkinDocumentFromFeatureFile(featureFilePath);
 
-//        List<Pickle> pickles = new Compiler().compile(gherkinDocument);
-
         Feature feature = gherkinDocument.getFeature();
         String featureName = feature.getName();
+
+        logger.info("Feature: " + featureName);
+
         List<String> featureTags =
                 gherkinToCucableConverter.convertGherkinTagsToCucableTags(feature.getTags());
 
@@ -86,14 +92,9 @@ public class GherkinDocumentParser {
             }
 
             if (scenarioDefinition instanceof Scenario) {
-                System.out.println("============================ SCENARIO =================================");
-
                 SingleScenario singleScenario = new SingleScenario(featureName, scenarioName, featureTags, backgroundSteps);
                 Scenario scenario = (Scenario) scenarioDefinition;
-                addScenarioInformationToSingleScenario(scenario, singleScenario);
-
-                System.out.println(singleScenario);
-
+                addGherkinScenarioInformationToSingleScenario(scenario, singleScenario);
                 singleScenarioFeatures.add(singleScenario);
                 continue;
             }
@@ -102,43 +103,68 @@ public class GherkinDocumentParser {
                 System.out.println("============================ SCENARIO OUTLINE =========================");
 
                 ScenarioOutline scenarioOutline = (ScenarioOutline) scenarioDefinition;
-
+                List<SingleScenario> outlineScenarios =
+                        getSingleScenariosFromOutline(scenarioOutline, featureName, featureTags, backgroundSteps);
+                singleScenarioFeatures.addAll(outlineScenarios);
             }
         }
 
-        System.out.println();
-
+        System.out.println("---");
         return singleScenarioFeatures;
     }
 
-    private void addScenarioOutlineInformationToSingleScenario(final ScenarioOutline scenarioOutline, final SingleScenario singleScenario) {
-        // add scenario tags
-        List<String> tags = gherkinToCucableConverter.convertGherkinTagsToCucableTags(scenarioOutline.getTags());
-        singleScenario.setScenarioTags(tags);
+    /**
+     * Returns a list of Cucable single scenarios from a Gherkin scenario outline.
+     *
+     * @param scenarioOutline a Gherkin {@link ScenarioOutline}.
+     * @param featureName The name of the feature this scenario outline belongs to.
+     * @param featureTags The feature tags of the parent feature.
+     * @param backgroundSteps return a Cucable {@link SingleScenario} list.
+     * @throws CucablePluginException thrown when the scenario outline does not contain an example table.
+     */
+    private List<SingleScenario> getSingleScenariosFromOutline(final ScenarioOutline scenarioOutline, final String featureName, final List<String> featureTags, final List<Step> backgroundSteps)
+            throws CucablePluginException {
 
-        List<Examples> examples = scenarioOutline.getExamples();
-        for (Examples example : examples) {
-            System.out.println("Example name: " + example.getName());
-            System.out.println("Example description: " + example.getDescription());
-            System.out.println("Example keyword: " + example.getKeyword());
-            System.out.println("Example tags: " + example.getTags());
+        String scenarioName = scenarioOutline.getName();
+        List<String> scenarioTags =
+                gherkinToCucableConverter.convertGherkinTagsToCucableTags(scenarioOutline.getTags());
 
-            List<TableCell> cells = example.getTableHeader().getCells();
-            for (TableCell cell : cells) {
-                System.out.println("Table cell: " + cell.getValue());
-            }
+        List<SingleScenario> outlineScenarios = new ArrayList<>();
 
-            System.out.println(example.getTableHeader().getCells());
-            System.out.println(example.getTableBody());
+        List<Step> steps = gherkinToCucableConverter.convertGherkinStepsToCucableSteps(scenarioOutline.getSteps());
+
+        if (scenarioOutline.getExamples().isEmpty()) {
+            throw new CucablePluginException("Scenario outline without examples table!");
         }
 
+        Examples exampleTable = scenarioOutline.getExamples().get(0);
+        Map<String, List<String>> exampleMap =
+                gherkinToCucableConverter.convertGherkinExampleTableToCucableExampleMap(exampleTable);
+
+        // for each example row, create a new single scenario
+        for (int i = 0; i < exampleMap.values().size(); i++) {
+            SingleScenario singleScenario =
+                    new SingleScenario(featureName, scenarioName, featureTags, backgroundSteps);
+            singleScenario.setScenarioTags(scenarioTags);
+            outlineScenarios.add(singleScenario);
+        }
+
+        return outlineScenarios;
     }
 
-    private void addScenarioInformationToSingleScenario(final Scenario scenario, final SingleScenario singleScenario) {
-        List<String> tags = gherkinToCucableConverter.convertGherkinTagsToCucableTags(scenario.getTags());
+    /**
+     * Adds tags and steps from a Gherkin scenario to an existing single scenario.
+     *
+     * @param gherkinScenario a Gherkin {@link Scenario}.
+     * @param singleScenario  an existing Cucable {@link SingleScenario}.
+     */
+    private void addGherkinScenarioInformationToSingleScenario(
+            final Scenario gherkinScenario, final SingleScenario singleScenario) {
+
+        List<String> tags = gherkinToCucableConverter.convertGherkinTagsToCucableTags(gherkinScenario.getTags());
         singleScenario.setScenarioTags(tags);
 
-        List<Step> steps = gherkinToCucableConverter.convertGherkinStepsToCucableSteps(scenario.getSteps());
+        List<Step> steps = gherkinToCucableConverter.convertGherkinStepsToCucableSteps(gherkinScenario.getSteps());
         singleScenario.setSteps(steps);
     }
 

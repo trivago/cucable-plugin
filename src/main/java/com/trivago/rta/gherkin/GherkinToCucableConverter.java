@@ -17,6 +17,7 @@
 package com.trivago.rta.gherkin;
 
 import gherkin.ast.DataTable;
+import gherkin.ast.Examples;
 import gherkin.ast.Node;
 import gherkin.ast.Step;
 import gherkin.ast.TableCell;
@@ -25,7 +26,9 @@ import gherkin.ast.Tag;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @Singleton
 public class GherkinToCucableConverter {
@@ -36,9 +39,7 @@ public class GherkinToCucableConverter {
      * @param gherkinSteps a {@link Step} list.
      * @return a {@link com.trivago.rta.vo.Step} list.
      */
-    List<com.trivago.rta.vo.Step> convertGherkinStepsToCucableSteps(
-            final List<Step> gherkinSteps
-    ) {
+    List<com.trivago.rta.vo.Step> convertGherkinStepsToCucableSteps(final List<Step> gherkinSteps) {
         List<com.trivago.rta.vo.Step> steps = new ArrayList<>();
 
         for (Step gherkinStep : gherkinSteps) {
@@ -49,7 +50,6 @@ public class GherkinToCucableConverter {
             Node argument = gherkinStep.getArgument();
             if (argument instanceof DataTable) {
                 dataTableString = convertGherkinDataTableToString((DataTable) argument);
-                System.out.println("Data Table found");
             }
 
             String keywordAndName = gherkinStep.getKeyword().concat(gherkinStep.getText());
@@ -60,11 +60,17 @@ public class GherkinToCucableConverter {
         return steps;
     }
 
-    private String convertGherkinDataTableToString(DataTable dataTable) {
+    /**
+     * Convert a Gherkin data table to a string representation
+     *
+     * @param gherkinDataTable a Gherkin {@link DataTable}.
+     * @return a string containing the whole data table.
+     */
+    private String convertGherkinDataTableToString(DataTable gherkinDataTable) {
         final String DATA_TABLE_SEPARATOR = "|";
 
         String dataTableString = "";
-        for (TableRow row : dataTable.getRows()) {
+        for (TableRow row : gherkinDataTable.getRows()) {
             List<String> rowStrings = new ArrayList<>();
             for (TableCell cell : row.getCells()) {
                 rowStrings.add(cell.getValue());
@@ -80,7 +86,7 @@ public class GherkinToCucableConverter {
     }
 
     /**
-     * Converts a list of Gherkin tags to Cucable string tags.
+     * Converts a list of Gherkin tags to simple Cucable string tags.
      *
      * @param gherkinTags a {@link Tag} list.
      * @return a {@link String} list of tags.
@@ -93,4 +99,30 @@ public class GherkinToCucableConverter {
         return featureTags;
     }
 
+    /**
+     * Converts a Gherkin example table to a map of columns (keys) and rows (values)
+     *
+     * @param exampleTable a Gherkin {@link Examples} instance.
+     * @return a map where the keys are the column headers and the values are lists of strings.
+     */
+    Map<String, List<String>> convertGherkinExampleTableToCucableExampleMap(Examples exampleTable) {
+        Map<String, List<String>> exampleMap = new LinkedHashMap<>();
+
+        List<TableCell> headerCells = exampleTable.getTableHeader().getCells();
+        for (TableCell headerCell : headerCells) {
+            exampleMap.put(headerCell.getValue(), new ArrayList<>());
+        }
+        Object[] columnKeys = exampleMap.keySet().toArray();
+
+        List<TableRow> tableBody = exampleTable.getTableBody();
+        for (TableRow tableRow : tableBody) {
+            List<TableCell> cells = tableRow.getCells();
+            for (int i = 0; i < cells.size(); i++) {
+                String columnKey = (String) columnKeys[i];
+                List<String> values = exampleMap.get(columnKey);
+                values.add(cells.get(i).getValue());
+            }
+        }
+        return exampleMap;
+    }
 }
