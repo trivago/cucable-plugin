@@ -87,7 +87,6 @@ public final class CucablePlugin extends AbstractMojo {
      * @throws CucablePluginException When thrown, the plugin execution is stopped.
      */
     public void execute() throws CucablePluginException {
-
         // Initialize logger to be available outside the AbstractMojo class
         logger.setMojoLogger(getLog());
 
@@ -97,15 +96,11 @@ public final class CucablePlugin extends AbstractMojo {
         propertyManager.setSourceFeatures(sourceFeatures);
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDirectory);
         propertyManager.setNumberOfTestRuns(numberOfTestRuns);
-
         propertyManager.logProperties();
         propertyManager.validateSettings();
 
         fileManager.prepareGeneratedFeatureAndRunnerDirs();
-
-        featureFileConverter.convertToSingleScenariosAndRunners(
-                fileManager.getFeatureFilePaths()
-        );
+        featureFileConverter.convertToSingleScenariosAndRunners(fileManager.getFeatureFilePaths());
     }
 }
 

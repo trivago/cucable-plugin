@@ -1,9 +1,9 @@
 package com.trivago.rta.features;
 
 import com.trivago.rta.exceptions.filesystem.MissingFileException;
-import com.trivago.rta.files.FeatureFileContentRenderer;
 import com.trivago.rta.files.FileIO;
-import com.trivago.rta.files.RunnerFileContentRenderer;
+import com.trivago.rta.runners.RunnerFileContentRenderer;
+import com.trivago.rta.gherkin.GherkinDocumentParser;
 import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.properties.PropertyManager;
 import org.junit.Before;
@@ -41,7 +41,7 @@ public class FeatureFileConverterTest {
     }
 
     @Test(expected = MissingFileException.class)
-    public void testConvertmptyPathListToSingleScenariosAndRunners() throws Exception {
+    public void testConvertEmptyPathListToSingleScenariosAndRunners() throws Exception {
         List<Path> pathList = new ArrayList<>();
         Path mockPath = mock(Path.class);
         Path mockFilePath = mock(Path.class);

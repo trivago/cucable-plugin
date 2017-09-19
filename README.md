@@ -122,7 +122,7 @@ import org.junit.runner.RunWith;
     strict = false,
     dryRun = false,
     glue = {"com.example.glue"},
-    tags = {"~@ignore"}
+    featureTags = {"~@ignore"}
 )
 public class [FEATURE_FILE_NAME] {
 }
@@ -215,7 +215,7 @@ import org.junit.runner.RunWith;
     strict = false,
     dryRun = false,
     glue = {"com.trivago.glue"},
-    tags = {"~@ignore"}
+    featureTags = {"~@ignore"}
 )
 public class <b>[FEATURE_FILE_NAME]</b> {
 }
@@ -285,7 +285,7 @@ import org.junit.runner.RunWith;
     strict = false,
     dryRun = false,
     glue = {"com.trivago.glue"},
-    tags = {"~@ignore"}
+    featureTags = {"~@ignore"}
 )
 public class <b>MyFeature_scenario001_run001_IT</b> {
 }
