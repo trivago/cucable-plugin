@@ -33,6 +33,6 @@ public class GherkinToCucableConverterTest {
         com.trivago.rta.vo.Step firstStep = steps.get(0);
         assertThat(firstStep.getName(), is("Given this is a test step"));
         com.trivago.rta.vo.Step secondStep = steps.get(1);
-        assertThat(secondStep.getName(), is("Then I get test results"));
+        assertThat(secondStep.getName(), is("Then I get a test result"));
     }
 }
