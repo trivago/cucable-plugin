@@ -17,18 +17,31 @@
 package com.trivago.rta.files;
 
 import com.trivago.rta.exceptions.filesystem.FileCreationException;
+import com.trivago.rta.exceptions.filesystem.MissingFileException;
 
 import javax.inject.Singleton;
 import java.io.IOException;
 import java.io.PrintStream;
+import java.nio.file.Paths;
+
+import static java.nio.file.Files.readAllBytes;
 
 @Singleton
-public class FileWriter {
+public class FileIO {
     public void writeContentToFile(String content, String filePath) throws FileCreationException {
         try (PrintStream ps = new PrintStream(filePath)) {
             ps.println(content);
         } catch (IOException e) {
             throw new FileCreationException(filePath);
+        }
+    }
+
+    public String readContentFromFile(String filePath) throws MissingFileException {
+        try {
+            byte[] bytes = readAllBytes(Paths.get(filePath));
+            return new String(bytes).trim();
+        } catch (IOException e) {
+            throw new MissingFileException(filePath);
         }
     }
 }

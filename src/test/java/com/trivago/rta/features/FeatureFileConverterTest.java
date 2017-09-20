@@ -1,9 +1,10 @@
 package com.trivago.rta.features;
 
-import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
-import com.trivago.rta.files.FeatureFileContentRenderer;
-import com.trivago.rta.files.FileWriter;
-import com.trivago.rta.files.RunnerFileContentRenderer;
+import com.trivago.rta.exceptions.filesystem.MissingFileException;
+import com.trivago.rta.files.FileIO;
+import com.trivago.rta.runners.RunnerFileContentRenderer;
+import com.trivago.rta.gherkin.GherkinDocumentParser;
+import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.properties.PropertyManager;
 import org.junit.Before;
 import org.junit.Test;
@@ -12,14 +13,12 @@ import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class FeatureFileConverterTest {
 
-    FeatureFileConverter featureFileConverter;
+    private FeatureFileConverter featureFileConverter;
 
     @Before
     public void setup() {
@@ -28,32 +27,28 @@ public class FeatureFileConverterTest {
         GherkinDocumentParser gherkinDocumentParser = mock(GherkinDocumentParser.class);
         FeatureFileContentRenderer featureFileContentRenderer = mock(FeatureFileContentRenderer.class);
         RunnerFileContentRenderer runnerFileContentRenderer = mock(RunnerFileContentRenderer.class);
-        FileWriter fileWriter = mock(FileWriter.class);
+        FileIO fileIO = mock(FileIO.class);
+        CucableLogger logger = mock(CucableLogger.class);
 
         featureFileConverter = new FeatureFileConverter(
                 propertyManager,
                 gherkinDocumentParser,
                 featureFileContentRenderer,
                 runnerFileContentRenderer,
-                fileWriter
+                fileIO,
+                logger
         );
     }
 
-    @Test(expected = FeatureFileParseException.class)
-    public void testConvertInvalidPathListToSingleScenariosAndRunners() throws Exception {
+    @Test(expected = MissingFileException.class)
+    public void testConvertEmptyPathListToSingleScenariosAndRunners() throws Exception {
         List<Path> pathList = new ArrayList<>();
-        Path mockPath = getMockPath("dummyfeature.feature");
-        pathList.add(mockPath);
-        int counter = featureFileConverter.convertToSingleScenariosAndRunners(pathList);
-        assertThat(counter, is(1));
-    }
-
-    private Path getMockPath(String filePath) {
         Path mockPath = mock(Path.class);
         Path mockFilePath = mock(Path.class);
-        when(mockFilePath.toString()).thenReturn(filePath);
+        when(mockFilePath.toString()).thenReturn("");
         when(mockPath.getFileName()).thenReturn(mockFilePath);
-        when(mockPath.toString()).thenReturn(filePath);
-        return mockPath;
+        when(mockPath.toString()).thenReturn("");
+        pathList.add(mockPath);
+        featureFileConverter.convertToSingleScenariosAndRunners(pathList);
     }
 }

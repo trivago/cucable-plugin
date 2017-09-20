@@ -18,7 +18,9 @@ package com.trivago.rta.properties;
 
 import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.exceptions.properties.WrongOrMissingPropertyException;
+import com.trivago.rta.logging.CucableLogger;
 
+import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
@@ -35,14 +37,18 @@ public class PropertyManager {
     // Generated feature directory placeholder for logging.
     private static final String GENERATED_FEATURE_DIRECTORY = "<generatedFeatureDirectory>";
 
-    // Number of test runs.
-    private static final String NUMBER_OF_TEST_RUNS = "<numberOfTestRuns>";
+    private final CucableLogger logger;
 
     private String sourceRunnerTemplateFile;
     private String generatedRunnerDirectory;
     private String sourceFeatures;
     private String generatedFeatureDirectory;
     private int numberOfTestRuns;
+
+    @Inject
+    public PropertyManager(CucableLogger logger) {
+        this.logger = logger;
+    }
 
     public String getSourceRunnerTemplateFile() {
         return sourceRunnerTemplateFile;
@@ -92,9 +98,7 @@ public class PropertyManager {
      *                                is not specified in the pom.
      */
     public void validateSettings() throws CucablePluginException {
-
         String missingProperty = null;
-
         if (sourceRunnerTemplateFile.equals("")) {
             missingProperty = SOURCE_RUNNER_TEMPLATE_FILE;
         } else if (generatedRunnerDirectory.equals("")) {
@@ -110,14 +114,11 @@ public class PropertyManager {
         }
     }
 
-    @Override
-    public String toString() {
-        String lineFeed = System.lineSeparator();
-        return "Cucable properties:" + lineFeed +
-                "       - sourceRunnerTemplateFile  : " + sourceRunnerTemplateFile + lineFeed +
-                "       - generatedRunnerDirectory  : " + generatedRunnerDirectory + lineFeed +
-                "       - sourceFeatures            : " + sourceFeatures + lineFeed +
-                "       - generatedFeatureDirectory : " + generatedFeatureDirectory + lineFeed +
-                "       - numberOfTestRuns          : " + numberOfTestRuns;
+    public void logProperties() {
+        logger.info("─ sourceRunnerTemplateFile  : " + sourceRunnerTemplateFile);
+        logger.info("─ generatedRunnerDirectory  : " + generatedRunnerDirectory);
+        logger.info("─ sourceFeatures            : " + sourceFeatures);
+        logger.info("─ generatedFeatureDirectory : " + generatedFeatureDirectory);
+        logger.info("─ numberOfTestRuns          : " + numberOfTestRuns);
     }
 }

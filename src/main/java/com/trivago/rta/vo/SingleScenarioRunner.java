@@ -47,12 +47,4 @@ public final class SingleScenarioRunner {
     public String getFeatureFileName(){
         return featureFileName;
     }
-
-    @Override
-    public String toString() {
-        return "SingleScenarioRunner{"
-                + "runnerTemplatePath='" + runnerTemplatePath + '\''
-                + ", featureFileName='" + featureFileName + '\''
-                + '}';
-    }
 }

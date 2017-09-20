@@ -18,15 +18,15 @@ package com.trivago.rta.features;
 
 import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
-import com.trivago.rta.files.FeatureFileContentRenderer;
-import com.trivago.rta.files.FileWriter;
-import com.trivago.rta.files.RunnerFileContentRenderer;
+import com.trivago.rta.exceptions.filesystem.FileCreationException;
+import com.trivago.rta.exceptions.filesystem.MissingFileException;
+import com.trivago.rta.files.FileIO;
+import com.trivago.rta.gherkin.GherkinDocumentParser;
+import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.properties.PropertyManager;
-import com.trivago.rta.vo.ScenarioKey;
-import com.trivago.rta.vo.SingleScenarioFeature;
+import com.trivago.rta.runners.RunnerFileContentRenderer;
+import com.trivago.rta.vo.SingleScenario;
 import com.trivago.rta.vo.SingleScenarioRunner;
-import gherkin.ast.GherkinDocument;
-import gherkin.pickles.Pickle;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -53,7 +53,8 @@ public final class FeatureFileConverter {
     private final GherkinDocumentParser gherkinDocumentParser;
     private final FeatureFileContentRenderer featureFileContentRenderer;
     private final RunnerFileContentRenderer runnerFileContentRenderer;
-    private final FileWriter fileWriter;
+    private final FileIO fileIO;
+    private final CucableLogger logger;
 
     // Holds the current number of single features per feature key
     // (in a scenario outline, each example yields a single feature with the same key).
@@ -65,31 +66,37 @@ public final class FeatureFileConverter {
             GherkinDocumentParser gherkinDocumentParser,
             FeatureFileContentRenderer featureFileContentRenderer,
             RunnerFileContentRenderer runnerFileContentRenderer,
-            FileWriter fileWriter
+            FileIO fileIO,
+            CucableLogger logger
     ) {
         this.propertyManager = propertyManager;
         this.gherkinDocumentParser = gherkinDocumentParser;
         this.featureFileContentRenderer = featureFileContentRenderer;
         this.runnerFileContentRenderer = runnerFileContentRenderer;
-        this.fileWriter = fileWriter;
+        this.fileIO = fileIO;
+        this.logger = logger;
     }
 
     /**
      * Converts a list of feature files
      *
      * @param featureFilePaths feature files to process
-     * @return the number of successfully processed feature files
+     * @throws CucablePluginException see {@link CucablePluginException}
      */
-    public int convertToSingleScenariosAndRunners(
+    public void convertToSingleScenariosAndRunners(
             final List<Path> featureFilePaths) throws CucablePluginException {
 
-        int processedFilesCounter = 0;
+        logger.info("──────────────────────────────────────");
+        logger.info("Cucable - starting conversion.");
+        logger.info("──────────────────────────────────────");
+
         for (Path featureFilePath : featureFilePaths) {
             convertToSingleScenariosAndRunners(featureFilePath);
-            processedFilesCounter++;
         }
 
-        return processedFilesCounter;
+        logger.info("──────────────────────────────────────");
+        logger.info("Cucable - finished conversion.");
+        logger.info("──────────────────────────────────────");
     }
 
     /**
@@ -97,68 +104,48 @@ public final class FeatureFileConverter {
      * scenario feature files and their respective runners.
      *
      * @param featureFilePath feature file to process.
-     * @throws CucablePluginException see {@link CucablePluginException}
+     * @throws FeatureFileParseException see {@link FeatureFileParseException}
+     * @throws MissingFileException      see {@link MissingFileException}
+     * @throws FileCreationException     see {@link FileCreationException}
      */
     private void convertToSingleScenariosAndRunners(final Path featureFilePath)
             throws CucablePluginException {
 
-        GherkinDocument gherkinDocument = gherkinDocumentParser.getGherkinDocumentFromFeatureFile(featureFilePath);
-        if (gherkinDocument == null){
+        if (featureFilePath.toString() == null || featureFilePath.toString().equals("")) {
+            throw new MissingFileException(featureFilePath.toString());
+        }
+
+        logger.info(" Converting " + featureFilePath + " ...");
+
+        String featureFile = fileIO.readContentFromFile(featureFilePath.toString());
+        List<SingleScenario> singleScenarios;
+        try {
+            singleScenarios =
+                    gherkinDocumentParser.getSingleScenariosFromFeature(featureFile);
+        } catch (CucablePluginException e) {
             throw new FeatureFileParseException(featureFilePath.toString());
         }
 
-        List<List<String>> scenarioKeywords = gherkinDocumentParser.getKeywordsFromGherkinDocument(gherkinDocument);
+        for (SingleScenario singleScenario : singleScenarios) {
+            String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
 
-        // Break feature file into scenarios
-        List<Pickle> scenarios = gherkinDocumentParser.getPicklesFromGherkinDocument(gherkinDocument);
+            String fullFeatureFileName = featureFilePath.getFileName().toString();
+            String featureFileName = fullFeatureFileName.substring(0, fullFeatureFileName.lastIndexOf("."));
 
-        // remove extension from feature file
-        String fullFeatureFileName = featureFilePath.getFileName().toString();
-        String featureFileName = fullFeatureFileName.substring(0, fullFeatureFileName.lastIndexOf("."));
-
-        int scenarioKeywordIndex = 0;
-        ScenarioKey previousScenarioKey = null;
-        for (Pickle scenario : scenarios) {
-            ScenarioKey currentScenarioKey = new ScenarioKey(scenario);
-
-            // Set the old scenario key to the current one (only done for the very first scenario)
-            if (previousScenarioKey == null) {
-                previousScenarioKey = currentScenarioKey;
-                scenarioKeywordIndex = 0;
-            }
-
-            // Determine if the scenario changed from the one before by comparing their keys (does not happen with scenario outlines)
-            if (!currentScenarioKey.equals(previousScenarioKey)) {
-                previousScenarioKey = currentScenarioKey;
-                scenarioKeywordIndex++;
-            }
-
-            // Determine new feature file name from the current scenario key's counter
             Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
             featureCounter++;
 
-            // Save scenario information
-            SingleScenarioFeature singleFeature =
-                    new SingleScenarioFeature(
-                            scenario.getTags(),
-                            gherkinDocument.getFeature().getName(),
-                            scenario.getName(),
-                            scenario.getSteps(),
-                            scenarioKeywords.get(scenarioKeywordIndex)
-                    );
-            String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleFeature);
-
-            // Add counter to filename
-            String featureFileCounterPostfix = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
+            String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
 
             for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
-                String testRunsPostfix = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
+                String testRunsCounterFilenamePart = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
 
-                // Append "_IT" to the filename so Failsafe considers it an integration test automatically.
+                // Append the scenario and test run counters to the filename.
+                // Also add the "_IT" postfix so Failsafe considers it an integration test automatically.
                 String generatedFileName =
                         featureFileName
-                                .concat(featureFileCounterPostfix)
-                                .concat(testRunsPostfix)
+                                .concat(scenarioCounterFilenamePart)
+                                .concat(testRunsCounterFilenamePart)
                                 .concat(INTEGRATION_TEST_POSTFIX);
 
                 String generatedFeatureFilePath =
@@ -169,20 +156,24 @@ public final class FeatureFileConverter {
                 singleFeatureCounters.put(featureFileName, featureCounter);
 
                 // Save scenario information to new feature file
-                fileWriter.writeContentToFile(renderedFeatureFileContent, generatedFeatureFilePath);
+                fileIO.writeContentToFile(renderedFeatureFileContent, generatedFeatureFilePath);
 
                 // Generate runner for the newly generated single scenario feature file
                 SingleScenarioRunner singleScenarioRunner =
                         new SingleScenarioRunner(
                                 propertyManager.getSourceRunnerTemplateFile(), generatedFileName);
                 String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(singleScenarioRunner);
+
                 String generatedRunnerFilePath =
                         propertyManager.getGeneratedRunnerDirectory()
                                 .concat(PATH_SEPARATOR)
                                 .concat(generatedFileName)
                                 .concat(RUNNER_FILE_EXTENSION);
-                fileWriter.writeContentToFile(renderedRunnerFileContent, generatedRunnerFilePath);
+                fileIO.writeContentToFile(renderedRunnerFileContent, generatedRunnerFilePath);
             }
         }
+
+        logger.info(" ↳ Done.");
     }
 }
+
