@@ -1,4 +1,4 @@
-package com.trivago.rta.files;
+package com.trivago.rta.features;
 
 public class FeatureFileContentRendererTest {
     // tbd

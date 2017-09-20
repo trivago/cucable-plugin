@@ -1,8 +1,6 @@
-package com.trivago.rta.features;
+package com.trivago.rta.gherkin;
 
 import com.trivago.rta.files.FileIO;
-import com.trivago.rta.gherkin.GherkinDocumentParser;
-import com.trivago.rta.gherkin.GherkinToCucableConverter;
 import com.trivago.rta.logging.CucableLogger;
 import gherkin.ast.Comment;
 import gherkin.ast.Feature;

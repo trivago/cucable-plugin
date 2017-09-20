@@ -1,4 +1,4 @@
-package com.trivago.rta.files;
+package com.trivago.rta.runners;
 
 public class RunnerFileContentRendererTest {
     // tbd
