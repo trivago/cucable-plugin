@@ -26,6 +26,7 @@ import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.properties.PropertyManager;
 import com.trivago.rta.runners.RunnerFileContentRenderer;
 import com.trivago.rta.vo.SingleScenario;
+import com.trivago.rta.vo.SingleScenarioRunner;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -55,8 +56,6 @@ public final class FeatureFileConverter {
     private final FileIO fileIO;
     private final CucableLogger logger;
 
-    // Holds the current number of single features per feature key
-    // (in a scenario outline, each example yields a single feature with the same key).
     private Map<String, Integer> singleFeatureCounters = new HashMap<>();
 
     @Inject
@@ -85,13 +84,17 @@ public final class FeatureFileConverter {
     public void convertToSingleScenariosAndRunners(
             final List<Path> featureFilePaths) throws CucablePluginException {
 
-        logger.info("Cucable - starting conversion...");
+        logger.info("──────────────────────────────────────");
+        logger.info("Cucable - starting conversion.");
+        logger.info("──────────────────────────────────────");
 
         for (Path featureFilePath : featureFilePaths) {
             convertToSingleScenariosAndRunners(featureFilePath);
         }
 
+        logger.info("──────────────────────────────────────");
         logger.info("Cucable - finished conversion.");
+        logger.info("──────────────────────────────────────");
     }
 
     /**
@@ -110,52 +113,20 @@ public final class FeatureFileConverter {
             throw new MissingFileException(featureFilePath.toString());
         }
 
-        logger.debug("Converting " + featureFilePath + " ...");
+        logger.info(" Converting " + featureFilePath + " ...");
 
-        List<SingleScenario> singleScenarioFeatures =
+        List<SingleScenario> singleScenarios =
                 gherkinDocumentParser.getSingleScenariosFromFeatureFile(featureFilePath);
 
-        System.out.println(singleScenarioFeatures);
+        for (SingleScenario singleScenario : singleScenarios) {
+            String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
 
-/*
+            String fullFeatureFileName = featureFilePath.getFileName().toString();
+            String featureFileName = fullFeatureFileName.substring(0, fullFeatureFileName.lastIndexOf("."));
 
-        // remove extension from feature file
-        String fullFeatureFileName = featureFilePath.getFileName().toString();
-        String featureFileName = fullFeatureFileName.substring(0, fullFeatureFileName.lastIndexOf("."));
-
-        int scenarioKeywordIndex = 0;
-        ScenarioKey previousScenarioKey = null;
-        for (Pickle scenario : scenarios) {
-
-            ScenarioKey currentScenarioKey = new ScenarioKey(scenario);
-
-            // Set the old scenario key to the current one (only done for the very first scenario)
-            if (previousScenarioKey == null) {
-                previousScenarioKey = currentScenarioKey;
-                scenarioKeywordIndex = 0;
-            }
-
-            // Determine if the scenario changed from the one before by comparing their keys (does not happen with scenario outlines)
-            if (!currentScenarioKey.equals(previousScenarioKey)) {
-                previousScenarioKey = currentScenarioKey;
-                scenarioKeywordIndex++;
-            }
-
-            // Determine new feature file name from the current scenario key's counter
             Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
             featureCounter++;
 
-            // Save scenario information
-            SingleScenarioFeature singleFeature =
-                    new SingleScenarioFeature(
-                            scenario.getFeatureTags(),
-                            gherkinDocument.getFeature().getName(),
-                            scenario.getName(),
-                            scenario.getSteps(),
-                            scenarioKeywords.get(scenarioKeywordIndex)
-                    );
-
-            String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleFeature);
             String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
 
             for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
@@ -190,8 +161,10 @@ public final class FeatureFileConverter {
                                 .concat(generatedFileName)
                                 .concat(RUNNER_FILE_EXTENSION);
                 fileIO.writeContentToFile(renderedRunnerFileContent, generatedRunnerFilePath);
-    }
-    */
+            }
+        }
+
+        logger.info(" ↳ Done.");
     }
 }
 

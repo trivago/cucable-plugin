@@ -98,9 +98,7 @@ public class PropertyManager {
      *                                is not specified in the pom.
      */
     public void validateSettings() throws CucablePluginException {
-
         String missingProperty = null;
-
         if (sourceRunnerTemplateFile.equals("")) {
             missingProperty = SOURCE_RUNNER_TEMPLATE_FILE;
         } else if (generatedRunnerDirectory.equals("")) {
@@ -117,17 +115,10 @@ public class PropertyManager {
     }
 
     public void logProperties() {
-        logger.info(this.toString());
-    }
-
-    @Override
-    public String toString() {
-        String lineFeed = System.lineSeparator();
-        return "Cucable properties:" + lineFeed +
-                "       - sourceRunnerTemplateFile  : " + sourceRunnerTemplateFile + lineFeed +
-                "       - generatedRunnerDirectory  : " + generatedRunnerDirectory + lineFeed +
-                "       - sourceFeatures            : " + sourceFeatures + lineFeed +
-                "       - generatedFeatureDirectory : " + generatedFeatureDirectory + lineFeed +
-                "       - numberOfTestRuns          : " + numberOfTestRuns;
+        logger.info("─ sourceRunnerTemplateFile  : " + sourceRunnerTemplateFile);
+        logger.info("─ generatedRunnerDirectory  : " + generatedRunnerDirectory);
+        logger.info("─ sourceFeatures            : " + sourceFeatures);
+        logger.info("─ generatedFeatureDirectory : " + generatedFeatureDirectory);
+        logger.info("─ numberOfTestRuns          : " + numberOfTestRuns);
     }
 }

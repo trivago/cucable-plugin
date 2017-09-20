@@ -110,7 +110,7 @@ public class GherkinToCucableConverter {
 
         List<TableCell> headerCells = exampleTable.getTableHeader().getCells();
         for (TableCell headerCell : headerCells) {
-            exampleMap.put(headerCell.getValue(), new ArrayList<>());
+            exampleMap.put("<" + headerCell.getValue() + ">", new ArrayList<>());
         }
         Object[] columnKeys = exampleMap.keySet().toArray();
 

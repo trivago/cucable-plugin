@@ -70,17 +70,13 @@ public class GherkinDocumentParser {
 
         Feature feature = gherkinDocument.getFeature();
         String featureName = feature.getName();
-
-        logger.info("Feature: " + featureName);
-
         List<String> featureTags =
                 gherkinToCucableConverter.convertGherkinTagsToCucableTags(feature.getTags());
-
-        List<ScenarioDefinition> scenarioDefinitions = feature.getChildren();
 
         ArrayList<SingleScenario> singleScenarioFeatures = new ArrayList<>();
         List<Step> backgroundSteps = new ArrayList<>();
 
+        List<ScenarioDefinition> scenarioDefinitions = feature.getChildren();
         for (ScenarioDefinition scenarioDefinition : scenarioDefinitions) {
             String scenarioName = scenarioDefinition.getName();
 
@@ -100,16 +96,12 @@ public class GherkinDocumentParser {
             }
 
             if (scenarioDefinition instanceof ScenarioOutline) {
-                System.out.println("============================ SCENARIO OUTLINE =========================");
-
                 ScenarioOutline scenarioOutline = (ScenarioOutline) scenarioDefinition;
                 List<SingleScenario> outlineScenarios =
                         getSingleScenariosFromOutline(scenarioOutline, featureName, featureTags, backgroundSteps);
                 singleScenarioFeatures.addAll(outlineScenarios);
             }
         }
-
-        System.out.println("---");
         return singleScenarioFeatures;
     }
 
@@ -117,13 +109,16 @@ public class GherkinDocumentParser {
      * Returns a list of Cucable single scenarios from a Gherkin scenario outline.
      *
      * @param scenarioOutline a Gherkin {@link ScenarioOutline}.
-     * @param featureName The name of the feature this scenario outline belongs to.
-     * @param featureTags The feature tags of the parent feature.
+     * @param featureName     The name of the feature this scenario outline belongs to.
+     * @param featureTags     The feature tags of the parent feature.
      * @param backgroundSteps return a Cucable {@link SingleScenario} list.
      * @throws CucablePluginException thrown when the scenario outline does not contain an example table.
      */
-    private List<SingleScenario> getSingleScenariosFromOutline(final ScenarioOutline scenarioOutline, final String featureName, final List<String> featureTags, final List<Step> backgroundSteps)
-            throws CucablePluginException {
+    private List<SingleScenario> getSingleScenariosFromOutline(
+            final ScenarioOutline scenarioOutline,
+            final String featureName,
+            final List<String> featureTags,
+            final List<Step> backgroundSteps) throws CucablePluginException {
 
         String scenarioName = scenarioOutline.getName();
         List<String> scenarioTags =
@@ -141,15 +136,44 @@ public class GherkinDocumentParser {
         Map<String, List<String>> exampleMap =
                 gherkinToCucableConverter.convertGherkinExampleTableToCucableExampleMap(exampleTable);
 
+        String firstColumnHeader = (String) exampleMap.keySet().toArray()[0];
+        int rowCount = exampleMap.get(firstColumnHeader).size();
+
         // for each example row, create a new single scenario
-        for (int i = 0; i < exampleMap.values().size(); i++) {
+        for (int i = 0; i < rowCount; i++) {
             SingleScenario singleScenario =
                     new SingleScenario(featureName, scenarioName, featureTags, backgroundSteps);
+
+            List<Step> substitutedSteps = substituteStepExamplePlaceholders(steps, exampleMap, i);
+            singleScenario.setSteps(substitutedSteps);
             singleScenario.setScenarioTags(scenarioTags);
             outlineScenarios.add(singleScenario);
         }
 
         return outlineScenarios;
+    }
+
+    /**
+     * Replaces the example value placeholders in steps by the actual example table values.
+     *
+     * @param steps      The Cucable {@link Step} list.
+     * @param exampleMap The generated example map from an example table.
+     * @param rowIndex   The row index of the example table to consider.
+     * @return a {@link Step} list with substituted names.
+     */
+    private List<Step> substituteStepExamplePlaceholders(
+            final List<Step> steps, final Map<String, List<String>> exampleMap, final int rowIndex) {
+
+        List<Step> substitutedSteps = new ArrayList<>();
+        for (Step step : steps) {
+            String stepName = step.getName();
+            for (String columnName : exampleMap.keySet()) {
+                String columnValue = exampleMap.get(columnName).get(rowIndex);
+                stepName = stepName.replace(columnName, columnValue);
+            }
+            substitutedSteps.add(new Step(stepName, step.getDataTableString()));
+        }
+        return substitutedSteps;
     }
 
     /**
@@ -188,11 +212,9 @@ public class GherkinDocumentParser {
         } catch (ParserException parserException) {
             throw new FeatureFileParseException(featureFilePath.toString());
         }
-
         if (gherkinDocument == null) {
             throw new FeatureFileParseException(featureFilePath.toString());
         }
-
         return gherkinDocument;
     }
 }
