@@ -43,7 +43,6 @@ public class GherkinToCucableConverter {
         List<com.trivago.rta.vo.Step> steps = new ArrayList<>();
 
         for (Step gherkinStep : gherkinSteps) {
-
             com.trivago.rta.vo.Step step;
             String dataTableString = "";
 
@@ -53,7 +52,6 @@ public class GherkinToCucableConverter {
             }
 
             String keywordAndName = gherkinStep.getKeyword().concat(gherkinStep.getText());
-
             step = new com.trivago.rta.vo.Step(keywordAndName, dataTableString);
             steps.add(step);
         }

@@ -17,10 +17,6 @@
 package com.trivago.rta.gherkin;
 
 import com.trivago.rta.exceptions.CucablePluginException;
-import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
-import com.trivago.rta.exceptions.filesystem.MissingFileException;
-import com.trivago.rta.files.FileIO;
-import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.vo.SingleScenario;
 import com.trivago.rta.vo.Step;
 import gherkin.AstBuilder;
@@ -36,7 +32,6 @@ import gherkin.ast.ScenarioOutline;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -44,29 +39,23 @@ import java.util.Map;
 @Singleton
 public class GherkinDocumentParser {
 
-    private final FileIO fileIO;
     private final GherkinToCucableConverter gherkinToCucableConverter;
-    private final CucableLogger logger;
 
     @Inject
-    public GherkinDocumentParser(
-            FileIO fileIO, GherkinToCucableConverter gherkinToCucableConverter, CucableLogger logger) {
-
-        this.fileIO = fileIO;
+    public GherkinDocumentParser(final GherkinToCucableConverter gherkinToCucableConverter) {
         this.gherkinToCucableConverter = gherkinToCucableConverter;
-        this.logger = logger;
     }
 
     /**
      * Returns a {@link com.trivago.rta.vo.SingleScenario} list from a given feature file.
      *
-     * @param featureFilePath the path to a feature file.
+     * @param featureContent a feature string.
      * @return a {@link com.trivago.rta.vo.SingleScenario} list.
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
-    public List<SingleScenario> getSingleScenariosFromFeatureFile(final Path featureFilePath) throws CucablePluginException {
+    public List<SingleScenario> getSingleScenariosFromFeature(final String featureContent) throws CucablePluginException {
 
-        GherkinDocument gherkinDocument = getGherkinDocumentFromFeatureFile(featureFilePath);
+        GherkinDocument gherkinDocument = getGherkinDocumentFromFeatureFileContent(featureContent);
 
         Feature feature = gherkinDocument.getFeature();
         String featureName = feature.getName();
@@ -195,26 +184,26 @@ public class GherkinDocumentParser {
     /**
      * Get a {@link GherkinDocument} from a feature file for further processing.
      *
-     * @param featureFilePath the path to a feature file.
+     * @param featureContent a feature string.
      * @return a {@link GherkinDocument}.
-     * @throws MissingFileException      see {@link MissingFileException}.
-     * @throws FeatureFileParseException see {@link FeatureFileParseException}.
+     * @throws CucablePluginException see {@link CucablePluginException}.
      */
-    private GherkinDocument getGherkinDocumentFromFeatureFile(final Path featureFilePath)
-            throws MissingFileException, FeatureFileParseException {
+    private GherkinDocument getGherkinDocumentFromFeatureFileContent(final String featureContent)
+            throws CucablePluginException {
 
         Parser<GherkinDocument> gherkinDocumentParser = new Parser<>(new AstBuilder());
         GherkinDocument gherkinDocument;
 
         try {
-            String content = fileIO.readContentFromFile(featureFilePath.toString());
-            gherkinDocument = gherkinDocumentParser.parse(content);
+            gherkinDocument = gherkinDocumentParser.parse(featureContent);
         } catch (ParserException parserException) {
-            throw new FeatureFileParseException(featureFilePath.toString());
+            throw new CucablePluginException("Could not parse feature!");
         }
-        if (gherkinDocument == null) {
-            throw new FeatureFileParseException(featureFilePath.toString());
+
+        if (gherkinDocument == null || gherkinDocument.getFeature() == null) {
+            throw new CucablePluginException("Could not parse feature!");
         }
+
         return gherkinDocument;
     }
 }

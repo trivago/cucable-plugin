@@ -117,8 +117,14 @@ public final class FeatureFileConverter {
 
         logger.info(" Converting " + featureFilePath + " ...");
 
-        List<SingleScenario> singleScenarios =
-                gherkinDocumentParser.getSingleScenariosFromFeatureFile(featureFilePath);
+        String featureFile = fileIO.readContentFromFile(featureFilePath.toString());
+        List<SingleScenario> singleScenarios;
+        try {
+            singleScenarios =
+                    gherkinDocumentParser.getSingleScenariosFromFeature(featureFile);
+        } catch (CucablePluginException e) {
+            throw new FeatureFileParseException(featureFilePath.toString());
+        }
 
         for (SingleScenario singleScenario : singleScenarios) {
             String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
@@ -157,6 +163,7 @@ public final class FeatureFileConverter {
                         new SingleScenarioRunner(
                                 propertyManager.getSourceRunnerTemplateFile(), generatedFileName);
                 String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(singleScenarioRunner);
+
                 String generatedRunnerFilePath =
                         propertyManager.getGeneratedRunnerDirectory()
                                 .concat(PATH_SEPARATOR)

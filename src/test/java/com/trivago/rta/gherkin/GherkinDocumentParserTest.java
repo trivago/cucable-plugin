@@ -1,80 +1,49 @@
 package com.trivago.rta.gherkin;
 
-import com.trivago.rta.files.FileIO;
-import com.trivago.rta.logging.CucableLogger;
-import gherkin.ast.Comment;
-import gherkin.ast.Feature;
-import gherkin.ast.GherkinDocument;
-import gherkin.ast.Location;
-import gherkin.ast.ScenarioDefinition;
-import gherkin.ast.Tag;
+import com.trivago.rta.exceptions.CucablePluginException;
+import com.trivago.rta.vo.SingleScenario;
 import org.junit.Before;
+import org.junit.Test;
 
-import java.util.ArrayList;
 import java.util.List;
 
-import static org.mockito.Mockito.mock;
+import static org.hamcrest.core.Is.is;
+import static org.junit.Assert.assertThat;
 
 public class GherkinDocumentParserTest {
 
+    private GherkinToCucableConverter gherkinToCucableConverter;
     private GherkinDocumentParser gherkinDocumentParser;
 
     @Before
     public void setup() {
-        FileIO fileIO = mock(FileIO.class);
-        GherkinToCucableConverter gherkinToCucableConverter = mock(GherkinToCucableConverter.class);
-        CucableLogger logger = mock(CucableLogger.class);
-        gherkinDocumentParser = new GherkinDocumentParser(fileIO, gherkinToCucableConverter, logger);
+        gherkinToCucableConverter = new GherkinToCucableConverter();
+        gherkinDocumentParser = new GherkinDocumentParser(gherkinToCucableConverter);
     }
 
-//    @Test
-//    public void oneKeywordScenario() throws Exception {
-//        ScenarioDefinition mockScenario = mock(ScenarioDefinition.class);
-//
-//        List<Step> steps = new ArrayList<>();
-//        Step step1 = new Step(new Location(1, 1), "given ", "this is step 1", null);
-//        steps.add(step1);
-//        when(mockScenario.getSteps()).thenReturn(steps);
-//        GherkinDocument gherkinDocument = getGherkinDocument(mockScenario);
-//
-//        List<List<String>> keywordsFromGherkinDocument = gherkinDocumentParser.getKeywordsFromGherkinDocument(gherkinDocument);
-//        assertThat(keywordsFromGherkinDocument.size(), is(1));
-//        assertThat(keywordsFromGherkinDocument.get(0).size(), is(1));
-//        assertThat(keywordsFromGherkinDocument.get(0).get(0), is("given"));
-//    }
-//
-//    @Test
-//    public void twoKeywordScenario() throws Exception {
-//        ScenarioDefinition mockScenario = mock(ScenarioDefinition.class);
-//
-//        List<Step> steps = new ArrayList<>();
-//        Step step1 = new Step(new Location(1, 1), "given ", "this is step 1", null);
-//        steps.add(step1);
-//        Step step2 = new Step(new Location(2, 1), "then ", "this is step 2", null);
-//        steps.add(step2);
-//        when(mockScenario.getSteps()).thenReturn(steps);
-//        GherkinDocument gherkinDocument = getGherkinDocument(mockScenario);
-//
-//        List<List<String>> keywordsFromGherkinDocument = gherkinDocumentParser.getKeywordsFromGherkinDocument(gherkinDocument);
-//        assertThat(keywordsFromGherkinDocument.size(), is(1));
-//        assertThat(keywordsFromGherkinDocument.get(0).size(), is(2));
-//        assertThat(keywordsFromGherkinDocument.get(0).get(0), is("given"));
-//        assertThat(keywordsFromGherkinDocument.get(0).get(1), is("then"));
-//    }
+    @Test(expected = CucablePluginException.class)
+    public void invalidFeatureTest() throws Exception {
+        gherkinDocumentParser.getSingleScenariosFromFeature("");
+    }
 
-    private GherkinDocument getGherkinDocument(final ScenarioDefinition scenarioDefinition) {
-        List<Tag> tags = new ArrayList<>();
-        Location location = new Location(11, 22);
-        String language = "language";
-        String keyword = "keyword";
-        String name = "name";
-        String description = "description";
+    @Test
+    public void validFeatureTest() throws Exception {
+        String featureContent = "@featureTag\n" +
+                "Feature: test feature\n" +
+                "\n" +
+                "@scenario1Tag1\n" +
+                "@scenario1Tag2\n" +
+                "Scenario: This is a scenario with two steps\n" +
+                "Given this is step 1\n"+
+                "Then this is step 2\n";
 
-        List<ScenarioDefinition> children = new ArrayList<>();
-        children.add(scenarioDefinition);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent);
+        assertThat(singleScenariosFromFeature.size(), is(1));
 
-        Feature feature = new Feature(tags, location, language, keyword, name, description, children);
-        List<Comment> comments = new ArrayList<>();
-        return new GherkinDocument(feature, comments);
+        SingleScenario scenario = singleScenariosFromFeature.get(0);
+
+        assertThat(scenario.getScenarioName(), is("This is a scenario with two steps"));
+        assertThat(scenario.getSteps().size(), is(2));
+
     }
 }
