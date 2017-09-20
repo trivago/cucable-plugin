@@ -28,6 +28,7 @@
   - [3. Aggregation of a single test report after all test runs](#3-aggregation-of-a-single-test-report-after-all-test-runs)
   - [4. Passing or failing of the build according to the test results](#4-passing-or-failing-of-the-build-according-to-the-test-results)
   - [Example POM](#example-pom)
+- [Example project](#example-project)
 - [Building](#building)
 - [Future improvements](#future-improvements)
 - [License](#license)
@@ -501,9 +502,15 @@ So all specified plugins will execute one after the other.
     </profile>
 ```
 
+# Example project
+
+An example project to test Cucable's behavior can be found here:
+
+https://github.com/laxersaz/cucable-test-project
+
 # Building
 
-Cucable requires Java 8 and it uses Maven for its dependencies.
+Cucable requires Java 8 and Maven 3.3.9.
 
 # Future improvements
 
