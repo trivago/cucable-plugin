@@ -10,7 +10,7 @@ Back to [Readme](README.md).
 - Ability to generate features and runners in Maven's target folder
 - Ability to run multiple features per generated runner
 
-## [0.0.7] - 2017-09-21
+## [0.0.7] - 2017-09-20
 
 ### Changed
 * Complete rewrite of the internal logic of the plugin to support all edge cases like
