@@ -160,7 +160,7 @@ public class GherkinDocumentParser {
                 String columnValue = exampleMap.get(columnName).get(rowIndex);
                 stepName = stepName.replace(columnName, columnValue);
             }
-            substitutedSteps.add(new Step(stepName, step.getDataTableString()));
+            substitutedSteps.add(new Step(stepName, step.getDataTable()));
         }
         return substitutedSteps;
     }

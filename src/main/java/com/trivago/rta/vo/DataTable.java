@@ -17,32 +17,24 @@
 package com.trivago.rta.vo;
 
 
-public class Step {
-    private String name;
-    private final DataTable dataTable;
+import java.util.ArrayList;
+import java.util.List;
 
-    public Step(final String name, final DataTable dataTable) {
-        this.name = name;
-        this.dataTable = dataTable;
+public class DataTable {
+    private List<List<String>> values = new ArrayList<>();
+
+    public void addRow(List<String> rowValues) {
+        this.values.add(rowValues);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public DataTable getDataTable() {
-        return dataTable;
+    public List<List<String>> getValues() {
+        return values;
     }
 
     @Override
     public String toString() {
-        return "Step{" +
-                "name='" + name + '\'' +
-                ", dataTableString='" + dataTable + '\'' +
+        return "DataTable{" +
+                "values=" + values +
                 '}';
     }
 }

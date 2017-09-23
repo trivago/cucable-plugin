@@ -16,6 +16,7 @@
 
 package com.trivago.rta.features;
 
+import com.trivago.rta.vo.DataTable;
 import com.trivago.rta.vo.SingleScenario;
 import com.trivago.rta.vo.Step;
 
@@ -59,11 +60,7 @@ public class FeatureFileContentRenderer {
         }
         for (Step step : steps) {
             stringBuilder.append(step.getName()).append(LINE_SEPARATOR);
-            if (!step.getDataTableString().isEmpty()) {
-                stringBuilder
-                        .append(formatDataTableString(step.getDataTableString()))
-                        .append(LINE_SEPARATOR);
-            }
+            stringBuilder.append(formatDataTableString(step.getDataTable()));
         }
     }
 
@@ -88,8 +85,19 @@ public class FeatureFileContentRenderer {
         }
     }
 
-    private String formatDataTableString(final String dataTableString) {
-        String[] dataTableRows = dataTableString.split("\\|\\|");
-        return "  " + String.join("|" + LINE_SEPARATOR + "  |", dataTableRows);
+    private String formatDataTableString(final DataTable dataTable) {
+        if (dataTable == null) {
+            return "";
+        }
+        char dataTableSeparator = '|';
+        StringBuilder dataTableStringBuilder = new StringBuilder();
+        for (List<String> rowValues : dataTable.getValues()) {
+            dataTableStringBuilder.append(dataTableSeparator);
+            for (String rowValue : rowValues) {
+                dataTableStringBuilder.append(rowValue).append(dataTableSeparator);
+            }
+            dataTableStringBuilder.append(LINE_SEPARATOR);
+        }
+        return dataTableStringBuilder.toString();
     }
 }
