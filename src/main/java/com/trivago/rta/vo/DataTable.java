@@ -21,20 +21,20 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataTable {
-    private List<List<String>> values = new ArrayList<>();
+    private List<List<String>> rows = new ArrayList<>();
 
     public void addRow(List<String> rowValues) {
-        this.values.add(rowValues);
+        this.rows.add(rowValues);
     }
 
-    public List<List<String>> getValues() {
-        return values;
+    public List<List<String>> getRows() {
+        return rows;
     }
 
     @Override
     public String toString() {
         return "DataTable{" +
-                "values=" + values +
+                "rows=" + rows +
                 '}';
     }
 }

@@ -44,7 +44,6 @@ public class GherkinToCucableConverter {
 
         for (Step gherkinStep : gherkinSteps) {
             com.trivago.rta.vo.Step step;
-            String dataTableString = "";
             com.trivago.rta.vo.DataTable dataTable = null;
 
             Node argument = gherkinStep.getArgument();

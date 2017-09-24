@@ -91,7 +91,7 @@ public class FeatureFileContentRenderer {
         }
         char dataTableSeparator = '|';
         StringBuilder dataTableStringBuilder = new StringBuilder();
-        for (List<String> rowValues : dataTable.getValues()) {
+        for (List<String> rowValues : dataTable.getRows()) {
             dataTableStringBuilder.append(dataTableSeparator);
             for (String rowValue : rowValues) {
                 dataTableStringBuilder.append(rowValue).append(dataTableSeparator);
