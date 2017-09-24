@@ -185,7 +185,7 @@ public final class FeatureFileConverter {
     private String getFeatureFileNameFromPath(final Path featureFilePath) {
         String fullFeatureFileName = featureFilePath.getFileName().toString();
         String featureFileName = fullFeatureFileName.substring(0, fullFeatureFileName.lastIndexOf("."));
-        return featureFileName.replaceAll("\\W", "");
+        return featureFileName.replaceAll("\\W", "_");
     }
 }
 
