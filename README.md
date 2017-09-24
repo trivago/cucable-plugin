@@ -14,11 +14,11 @@
 - [Data flow](#data-flow)
   - [1. Generation of runners and features](#1-generation-of-runners-and-features)
     - [Parameters](#parameters)
-      - [sourceRunnerTemplateFile](#sourcerunnertemplatefile)
-      - [sourceFeatures](#sourcefeatures)
-      - [generatedFeatureDirectory](#generatedfeaturedirectory)
-      - [generatedRunnerDirectory](#generatedrunnerdirectory)
-      - [numberOfTestRuns](#numberoftestruns)
+      - [(Required) sourceRunnerTemplateFile](#required-sourcerunnertemplatefile)
+      - [(Required) sourceFeatures](#required-sourcefeatures)
+      - [(Required) generatedFeatureDirectory](#required-generatedfeaturedirectory)
+      - [(Required) generatedRunnerDirectory](#required-generatedrunnerdirectory)
+      - [(Optional) numberOfTestRuns](#optional-numberoftestruns)
     - [Example](#example)
       - [Source feature file](#source-feature-file)
       - [Runner template file](#runner-template-file)
@@ -101,14 +101,14 @@ The following sections break down the above steps.
 
 ### Parameters
 
-#### sourceRunnerTemplateFile
+#### (Required) sourceRunnerTemplateFile
 
 The path to a text file (e.g. _src/test/resources/parallel/cucable.template_) with **[FEATURE_FILE_NAME]** placeholders for the generated feature file name.
 This file will be used to generate runners for every generated feature file.
 
 Example:
 
-```java
+<pre>
 package com.example;
 
 import com.example.YourTestRunner;
@@ -118,25 +118,25 @@ import org.junit.runner.RunWith;
 @RunWith(YourTestRunner.class)
 @CucumberOptions(
     monochrome = false,
-    features = {"classpath:parallel/features/[FEATURE_FILE_NAME].feature"},
-    format = {"json:target/cucumber-report/[FEATURE_FILE_NAME].json"},
+    features = {"classpath:parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
+    format = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"},
     strict = false,
     dryRun = false,
     glue = {"com.example.glue"},
     tags = {"~@ignore"}
 )
-public class [FEATURE_FILE_NAME] {
+public class <b>[FEATURE_FILE_NAME]</b> {
 }
 
-```
+</pre>
 
-#### sourceFeatures
+#### (Required) sourceFeatures
 
 The path where your __existing__ Cucumber .feature files are located (e.g. _src/test/resources/features_) _or_ a single .feature file (e.g. src/test/resources/features/MyFeature.feature).
 
 __Note:__ This used to be called _sourceFeatureDirectory_ in older versions of Cucable. Since its capabilities changed so it now also supports single features, this was renamed!
 
-#### generatedFeatureDirectory
+#### (Required) generatedFeatureDirectory
 
 The path where the __generated__ Cucumber .feature files should be located (e.g. _src/test/resources/parallel_).
 
@@ -144,7 +144,7 @@ The path where the __generated__ Cucumber .feature files should be located (e.g.
 
 **Caution:** This directory will be wiped prior to the feature file generation!
 
-#### generatedRunnerDirectory
+#### (Required) generatedRunnerDirectory
 
 The path where the __generated__ runner classes should be located (e.g. _src/test/java/parallel/runners_).
 
@@ -152,7 +152,7 @@ The path where the __generated__ runner classes should be located (e.g. _src/tes
 
 **Caution:** This directory will be wiped prior to the runner file generation!
 
-#### numberOfTestRuns
+#### (Optional) numberOfTestRuns
 
 Optional number of test runs. If it is not set, its default value is __1__.
 For each test run, the whole set of features and runners is generated like this:
@@ -161,6 +161,8 @@ For each test run, the whole set of features and runners is generated like this:
 - MyFeature_scenario001_run002_IT.feature
 - MyFeature_scenario001_run003_IT.feature
 - etc.
+
+**Note:** Characters other than letters from A to Z, numbers and underscores will be stripped out of the feature file name.
 
 ### Example
 
@@ -500,6 +502,7 @@ So all specified plugins will execute one after the other.
             </plugins>
         </build>
     </profile>
+</profiles>
 ```
 
 # Example project
@@ -511,11 +514,12 @@ https://github.com/laxersaz/cucable-test-project
 # Building
 
 Cucable requires Java 8 and Maven 3.3.9.
+It is available in [Maven central](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.trivago.rta%22%20AND%20a%3A%22cucable-plugin%22).
 
 # Future improvements
 
 * Offer the possibility to generate runners and features directly in the target folder
-* Support running specific scenarios in parallel
+* Integrate Travis CI.
 
 # License
 

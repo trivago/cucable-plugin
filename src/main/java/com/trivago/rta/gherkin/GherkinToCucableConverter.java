@@ -44,43 +44,37 @@ public class GherkinToCucableConverter {
 
         for (Step gherkinStep : gherkinSteps) {
             com.trivago.rta.vo.Step step;
-            String dataTableString = "";
+            com.trivago.rta.vo.DataTable dataTable = null;
 
             Node argument = gherkinStep.getArgument();
             if (argument instanceof DataTable) {
-                dataTableString = convertGherkinDataTableToString((DataTable) argument);
+                dataTable = convertGherkinDataTableToCucumberDataTable((DataTable) argument);
             }
 
             String keywordAndName = gherkinStep.getKeyword().concat(gherkinStep.getText());
-            step = new com.trivago.rta.vo.Step(keywordAndName, dataTableString);
+            step = new com.trivago.rta.vo.Step(keywordAndName, dataTable);
             steps.add(step);
         }
         return steps;
     }
 
     /**
-     * Convert a Gherkin data table to a string representation
+     * Converts a Gherkin data table to a Cucable data table.
      *
-     * @param gherkinDataTable a Gherkin {@link DataTable}.
-     * @return a string containing the whole data table.
+     * @param gherkinDataTable a {@link DataTable}.
+     * @return a {@link com.trivago.rta.vo.DataTable}.
      */
-    private String convertGherkinDataTableToString(DataTable gherkinDataTable) {
-        final String DATA_TABLE_SEPARATOR = "|";
-
-        String dataTableString = "";
+    private com.trivago.rta.vo.DataTable convertGherkinDataTableToCucumberDataTable(final DataTable gherkinDataTable) {
+        com.trivago.rta.vo.DataTable dataTable = new com.trivago.rta.vo.DataTable();
         for (TableRow row : gherkinDataTable.getRows()) {
-            List<String> rowStrings = new ArrayList<>();
-            for (TableCell cell : row.getCells()) {
-                rowStrings.add(cell.getValue());
+            List<TableCell> cells = row.getCells();
+            List<String> rowValues = new ArrayList<>();
+            for (TableCell cell : cells) {
+                rowValues.add(cell.getValue());
             }
-            if (rowStrings.size() > 0) {
-                String rowString = DATA_TABLE_SEPARATOR
-                        .concat(String.join(DATA_TABLE_SEPARATOR, rowStrings))
-                        .concat(DATA_TABLE_SEPARATOR);
-                dataTableString = dataTableString.concat(rowString);
-            }
+            dataTable.addRow(rowValues);
         }
-        return dataTableString;
+        return dataTable;
     }
 
     /**
@@ -90,11 +84,11 @@ public class GherkinToCucableConverter {
      * @return a {@link String} list of tags.
      */
     List<String> convertGherkinTagsToCucableTags(final List<Tag> gherkinTags) {
-        List<String> featureTags = new ArrayList<>();
+        List<String> tags = new ArrayList<>();
         for (Tag gherkinTag : gherkinTags) {
-            featureTags.add(gherkinTag.getName());
+            tags.add(gherkinTag.getName());
         }
-        return featureTags;
+        return tags;
     }
 
     /**

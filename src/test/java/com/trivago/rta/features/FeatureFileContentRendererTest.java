@@ -40,8 +40,8 @@ public class FeatureFileContentRendererTest {
         List<String> featureTags = Arrays.asList("@featureTag1", "@featureTag2");
         String scenarioName = "scenarioName";
         List<Step> backgroundSteps = Arrays.asList(
-                new Step("Step 1", ""),
-                new Step("Step 2", "")
+                new Step("Step 1", null),
+                new Step("Step 2", null)
         );
         List<String> scenarioTags = Arrays.asList("@scenarioTag1", "@scenarioTag2");
 

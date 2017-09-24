@@ -59,6 +59,7 @@ public final class FeatureFileConverter {
     // Holds the current number of single features per feature key
     // (in a scenario outline, each example yields a single feature with the same key).
     private Map<String, Integer> singleFeatureCounters = new HashMap<>();
+    private String featureFileName;
 
     @Inject
     public FeatureFileConverter(
@@ -129,8 +130,7 @@ public final class FeatureFileConverter {
         for (SingleScenario singleScenario : singleScenarios) {
             String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
 
-            String fullFeatureFileName = featureFilePath.getFileName().toString();
-            String featureFileName = fullFeatureFileName.substring(0, fullFeatureFileName.lastIndexOf("."));
+            String featureFileName = getFeatureFileNameFromPath(featureFilePath);
 
             Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
             featureCounter++;
@@ -174,6 +174,18 @@ public final class FeatureFileConverter {
         }
 
         logger.info(" ↳ Done.");
+    }
+
+    /**
+     * Get the feature file name without the extension and with replaced special chars from the full feature file path.
+     *
+     * @param featureFilePath The path to the feature file.
+     * @return The cleaned up feature file name.
+     */
+    private String getFeatureFileNameFromPath(final Path featureFilePath) {
+        String fullFeatureFileName = featureFilePath.getFileName().toString();
+        String featureFileName = fullFeatureFileName.substring(0, fullFeatureFileName.lastIndexOf("."));
+        return featureFileName.replaceAll("\\W", "_");
     }
 }
 
