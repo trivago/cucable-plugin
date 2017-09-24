@@ -14,11 +14,11 @@
 - [Data flow](#data-flow)
   - [1. Generation of runners and features](#1-generation-of-runners-and-features)
     - [Parameters](#parameters)
-      - [sourceRunnerTemplateFile](#sourcerunnertemplatefile)
-      - [sourceFeatures](#sourcefeatures)
-      - [generatedFeatureDirectory](#generatedfeaturedirectory)
-      - [generatedRunnerDirectory](#generatedrunnerdirectory)
-      - [numberOfTestRuns](#numberoftestruns)
+      - [(Required) sourceRunnerTemplateFile](#required-sourcerunnertemplatefile)
+      - [(Required) sourceFeatures](#required-sourcefeatures)
+      - [(Required) generatedFeatureDirectory](#required-generatedfeaturedirectory)
+      - [(Required) generatedRunnerDirectory](#required-generatedrunnerdirectory)
+      - [(Optional) numberOfTestRuns](#optional-numberoftestruns)
     - [Example](#example)
       - [Source feature file](#source-feature-file)
       - [Runner template file](#runner-template-file)
@@ -101,7 +101,7 @@ The following sections break down the above steps.
 
 ### Parameters
 
-#### [Required] sourceRunnerTemplateFile
+#### (Required) sourceRunnerTemplateFile
 
 The path to a text file (e.g. _src/test/resources/parallel/cucable.template_) with **[FEATURE_FILE_NAME]** placeholders for the generated feature file name.
 This file will be used to generate runners for every generated feature file.
@@ -130,13 +130,13 @@ public class <b>[FEATURE_FILE_NAME]</b> {
 
 </pre>
 
-#### [Required] sourceFeatures
+#### (Required) sourceFeatures
 
 The path where your __existing__ Cucumber .feature files are located (e.g. _src/test/resources/features_) _or_ a single .feature file (e.g. src/test/resources/features/MyFeature.feature).
 
 __Note:__ This used to be called _sourceFeatureDirectory_ in older versions of Cucable. Since its capabilities changed so it now also supports single features, this was renamed!
 
-#### [Required] generatedFeatureDirectory
+#### (Required) generatedFeatureDirectory
 
 The path where the __generated__ Cucumber .feature files should be located (e.g. _src/test/resources/parallel_).
 
@@ -144,7 +144,7 @@ The path where the __generated__ Cucumber .feature files should be located (e.g.
 
 **Caution:** This directory will be wiped prior to the feature file generation!
 
-#### [Required] generatedRunnerDirectory
+#### (Required) generatedRunnerDirectory
 
 The path where the __generated__ runner classes should be located (e.g. _src/test/java/parallel/runners_).
 
@@ -152,7 +152,7 @@ The path where the __generated__ runner classes should be located (e.g. _src/tes
 
 **Caution:** This directory will be wiped prior to the runner file generation!
 
-#### [Optional] numberOfTestRuns
+#### (Optional) numberOfTestRuns
 
 Optional number of test runs. If it is not set, its default value is __1__.
 For each test run, the whole set of features and runners is generated like this:
