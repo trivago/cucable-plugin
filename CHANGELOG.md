@@ -10,14 +10,23 @@ Back to [Readme](README.md).
 - Ability to generate features and runners in Maven's target folder
 - Ability to run multiple features per generated runner
 
+## [0.0.8] - 2017-09-24
+
+### Changed
+- Fixed parse error on empty cells in data tables
+- Fixed file name generation bug with special chars in source feature file names
+
+### Added
+- Unit tests for data table handling
+
 ## [0.0.7] - 2017-09-20
 
 ### Changed
-* Complete rewrite of the internal logic of the plugin to support all edge cases like
-  * empty scenarios
-  * background steps (also with data tables)
-  * scenario steps with data tables
-  * complex scenario outlines
+- Complete rewrite of the internal logic of the plugin to support all edge cases like
+  - empty scenarios
+  - background steps (also with data tables)
+  - scenario steps with data tables
+  - complex scenario outlines
 
 ### Added
 - Better logging (including plugin version)
@@ -46,7 +55,8 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
-[Unreleased]: https://github.com/trivago/cucable-plugin/compare/0.0.7...HEAD
+[Unreleased]: https://github.com/trivago/cucable-plugin/compare/0.0.8...HEAD
+[0.0.8]: https://github.com/trivago/cucable-plugin/compare/0.0.7...0.0.8
 [0.0.7]: https://github.com/trivago/cucable-plugin/compare/0.0.6...0.0.7
 [0.0.6]: https://github.com/trivago/cucable-plugin/compare/0.0.5...0.0.6
 [0.0.5]: https://github.com/trivago/cucable-plugin/compare/v0.0.4...0.0.5
