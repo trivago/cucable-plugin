@@ -397,7 +397,7 @@ Without this rule we would have a successful build every time in case we specify
 
 This is the complete Maven profile that is used when invoking
 
-```mvn clean verify -Pparallel```
+```mvn clean verify -P parallel```
 
 So all specified plugins will execute one after the other.
 
@@ -520,7 +520,6 @@ It is available in [Maven central](https://search.maven.org/#search%7Cgav%7C1%7C
 # Future improvements
 
 * Offer the possibility to generate runners and features directly in the target folder
-* Integrate Travis CI.
 
 # License
 
