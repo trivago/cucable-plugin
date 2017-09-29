@@ -3,7 +3,7 @@
 [![Apache V2 License](http://img.shields.io/badge/license-Apache%20V2-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Maven Central](https://img.shields.io/maven-central/v/com.trivago.rta/cucable-plugin.svg)](http://repo1.maven.org/maven2/com/trivago/rta/cucable-plugin/)
 [![Build Status](https://travis-ci.org/trivago/cucable-plugin.svg?branch=master)](https://travis-ci.org/trivago/cucable-plugin)
-[![codecov.io](https://codecov.io/gh/Muskuloese/cucable-plugin/coverage.svg?branch=master)](https://codecov.io/gh/Muskuloese/cucable-plugin/branch/master)
+[![codecov](https://codecov.io/gh/trivago/cucable-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/trivago/cucable-plugin)
 [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/bischoffdev)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
