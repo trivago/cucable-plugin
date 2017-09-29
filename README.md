@@ -521,7 +521,7 @@ It is available in [Maven central](https://search.maven.org/#search%7Cgav%7C1%7C
 # Future improvements
 
 * Offer the possibility to generate runners and features directly in the target folder
-* Integrate Travis CI.
+* Use a real Java file for the runner template
 
 # License
 
