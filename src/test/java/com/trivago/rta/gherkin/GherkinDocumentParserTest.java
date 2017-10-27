@@ -13,12 +13,11 @@ import static org.junit.Assert.assertThat;
 
 public class GherkinDocumentParserTest {
 
-    private GherkinToCucableConverter gherkinToCucableConverter;
     private GherkinDocumentParser gherkinDocumentParser;
 
     @Before
     public void setup() {
-        gherkinToCucableConverter = new GherkinToCucableConverter();
+        GherkinToCucableConverter gherkinToCucableConverter = new GherkinToCucableConverter();
         gherkinDocumentParser = new GherkinDocumentParser(gherkinToCucableConverter);
     }
 

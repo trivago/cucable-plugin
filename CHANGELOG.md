@@ -10,6 +10,16 @@ Back to [Readme](README.md).
 - Ability to generate features and runners in Maven's target folder
 - Ability to run multiple features per generated runner
 
+## [0.0.9] - 2017-10-27
+
+### Changed
+- Logging is now more compact
+- Changed license blocks from trivago GmbH to trivago N.V.
+
+### Added
+- It is now possible to process a specific scenario inside a feature file by specifying a line number prefix (like in Cucumber), e.g. ```myFeature.feature:12```.
+- More unit tests added.
+
 ## [0.0.8] - 2017-09-24
 
 ### Changed
@@ -55,7 +65,8 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
-[Unreleased]: https://github.com/trivago/cucable-plugin/compare/0.0.8...HEAD
+[Unreleased]: https://github.com/trivago/cucable-plugin/compare/0.0.9...HEAD
+[0.0.9]: https://github.com/trivago/cucable-plugin/compare/0.0.8...0.0.9
 [0.0.8]: https://github.com/trivago/cucable-plugin/compare/0.0.7...0.0.8
 [0.0.7]: https://github.com/trivago/cucable-plugin/compare/0.0.6...0.0.7
 [0.0.6]: https://github.com/trivago/cucable-plugin/compare/0.0.5...0.0.6

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 trivago GmbH
+ * Copyright 2017 trivago N.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -35,6 +35,7 @@ import java.util.stream.Collectors;
 @Singleton
 public class FileSystemManager {
 
+    public static final String FEATURE_SUFFIX = ".feature";
     private final PropertyManager propertyManager;
 
     @Inject
@@ -63,18 +64,17 @@ public class FileSystemManager {
 
         List<Path> featureFilePaths = new ArrayList<>();
         String sourceFeatures = propertyManager.getSourceFeatures();
-
         File sourceFeaturesFile = new File(sourceFeatures);
 
         // Check if the property value is a single file or a directory
-        if (sourceFeaturesFile.isFile() && sourceFeatures.endsWith(".feature")) {
+        if (sourceFeaturesFile.isFile() && sourceFeatures.endsWith(FEATURE_SUFFIX)) {
             featureFilePaths.add(Paths.get(sourceFeatures));
         } else if (sourceFeaturesFile.isDirectory()) {
             try {
                 featureFilePaths =
                         Files.walk(Paths.get(sourceFeatures))
                                 .filter(Files::isRegularFile)
-                                .filter(p -> p.toString().endsWith(".feature"))
+                                .filter(p -> p.toString().endsWith(FEATURE_SUFFIX))
                                 .collect(Collectors.toList());
 
             } catch (IOException e) {

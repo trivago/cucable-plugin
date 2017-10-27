@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 trivago GmbH
+ * Copyright 2017 trivago N.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -59,7 +59,6 @@ public final class FeatureFileConverter {
     // Holds the current number of single features per feature key
     // (in a scenario outline, each example yields a single feature with the same key).
     private Map<String, Integer> singleFeatureCounters = new HashMap<>();
-    private String featureFileName;
 
     @Inject
     public FeatureFileConverter(
@@ -86,18 +85,10 @@ public final class FeatureFileConverter {
      */
     public void convertToSingleScenariosAndRunners(
             final List<Path> featureFilePaths) throws CucablePluginException {
-
-        logger.info("──────────────────────────────────────");
-        logger.info("Cucable - starting conversion.");
-        logger.info("──────────────────────────────────────");
-
+        logger.info("");
         for (Path featureFilePath : featureFilePaths) {
             convertToSingleScenariosAndRunners(featureFilePath);
         }
-
-        logger.info("──────────────────────────────────────");
-        logger.info("Cucable - finished conversion.");
-        logger.info("──────────────────────────────────────");
     }
 
     /**
@@ -112,29 +103,31 @@ public final class FeatureFileConverter {
     private void convertToSingleScenariosAndRunners(final Path featureFilePath)
             throws CucablePluginException {
 
-        if (featureFilePath.toString() == null || featureFilePath.toString().equals("")) {
-            throw new MissingFileException(featureFilePath.toString());
+        String featureFilePathString = featureFilePath.toString();
+
+        if (featureFilePathString == null || featureFilePathString.equals("")) {
+            throw new MissingFileException(featureFilePathString);
         }
 
-        logger.info(" Converting " + featureFilePath + " ...");
-
-        String featureFile = fileIO.readContentFromFile(featureFilePath.toString());
-        List<SingleScenario> singleScenarios;
+        Integer lineNumber = propertyManager.getScenarioLineNumber();
+        String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
+        List<SingleScenario> singleScenarios = null;
         try {
             singleScenarios =
-                    gherkinDocumentParser.getSingleScenariosFromFeature(featureFile);
+                    gherkinDocumentParser.getSingleScenariosFromFeature(featureFileContent, lineNumber);
         } catch (CucablePluginException e) {
-            throw new FeatureFileParseException(featureFilePath.toString());
+            throw new FeatureFileParseException(featureFilePathString);
+        }
+
+        if (propertyManager.hasValidScenarioLineNumber() && singleScenarios.size() == 0) {
+            throw new CucablePluginException("There is no parseable scenario or scenario outline at line " + lineNumber);
         }
 
         for (SingleScenario singleScenario : singleScenarios) {
             String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
-
             String featureFileName = getFeatureFileNameFromPath(featureFilePath);
-
             Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
             featureCounter++;
-
             String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
 
             for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
@@ -172,8 +165,15 @@ public final class FeatureFileConverter {
                 fileIO.writeContentToFile(renderedRunnerFileContent, generatedRunnerFilePath);
             }
         }
+        logCompleteMessage(featureFilePathString);
+    }
 
-        logger.info(" ↳ Done.");
+    private void logCompleteMessage(String featureFileName) {
+        String logPostfix = ".";
+        if (propertyManager.hasValidScenarioLineNumber()) {
+            logPostfix = String.format(" with line number %d.", propertyManager.getScenarioLineNumber());
+        }
+        logger.info(String.format("- Cucable processed [%s]%s", featureFileName, logPostfix));
     }
 
     /**

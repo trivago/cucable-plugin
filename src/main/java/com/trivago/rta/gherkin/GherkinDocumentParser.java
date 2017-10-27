@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 trivago GmbH
+ * Copyright 2017 trivago N.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -54,6 +54,10 @@ public class GherkinDocumentParser {
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
     public List<SingleScenario> getSingleScenariosFromFeature(final String featureContent) throws CucablePluginException {
+        return getSingleScenariosFromFeature(featureContent, null);
+    }
+
+    public List<SingleScenario> getSingleScenariosFromFeature(final String featureContent, final Integer scenarioLineNumber) throws CucablePluginException {
 
         GherkinDocument gherkinDocument = getGherkinDocumentFromFeatureFileContent(featureContent);
 
@@ -77,18 +81,22 @@ public class GherkinDocumentParser {
             }
 
             if (scenarioDefinition instanceof Scenario) {
-                SingleScenario singleScenario = new SingleScenario(featureName, scenarioName, featureTags, backgroundSteps);
                 Scenario scenario = (Scenario) scenarioDefinition;
-                addGherkinScenarioInformationToSingleScenario(scenario, singleScenario);
-                singleScenarioFeatures.add(singleScenario);
+                if (scenarioLineNumber == null || scenario.getLocation().getLine() == scenarioLineNumber) {
+                    SingleScenario singleScenario = new SingleScenario(featureName, scenarioName, featureTags, backgroundSteps);
+                    addGherkinScenarioInformationToSingleScenario(scenario, singleScenario);
+                    singleScenarioFeatures.add(singleScenario);
+                }
                 continue;
             }
 
             if (scenarioDefinition instanceof ScenarioOutline) {
                 ScenarioOutline scenarioOutline = (ScenarioOutline) scenarioDefinition;
-                List<SingleScenario> outlineScenarios =
-                        getSingleScenariosFromOutline(scenarioOutline, featureName, featureTags, backgroundSteps);
-                singleScenarioFeatures.addAll(outlineScenarios);
+                if (scenarioLineNumber == null || scenarioOutline.getLocation().getLine() == scenarioLineNumber) {
+                    List<SingleScenario> outlineScenarios =
+                            getSingleScenariosFromOutline(scenarioOutline, featureName, featureTags, backgroundSteps);
+                    singleScenarioFeatures.addAll(outlineScenarios);
+                }
             }
         }
         return singleScenarioFeatures;

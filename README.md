@@ -39,7 +39,7 @@
 
 # What is Cucable
 
-Cucable is a Maven plugin for [Cucumber](https://cucumber.io) scenarios that simplifies running scenarios in parallel.
+Cucable is a Maven plugin for [Cucumber](https://cucumber.io) scenarios that simplifies parallel test runs.
 
 This plugin has two purposes:
 
@@ -134,7 +134,10 @@ public class <b>[FEATURE_FILE_NAME]</b> {
 
 #### (Required) sourceFeatures
 
-The path where your __existing__ Cucumber .feature files are located (e.g. _src/test/resources/features_) _or_ a single .feature file (e.g. src/test/resources/features/MyFeature.feature).
+This can specify
+* the root path of your __existing__ Cucumber _.feature_ files (e.g. ```src/test/resources/features```)
+* the path to a specific __existing__ Cucumber _.feature_ file (e.g. ```src/test/resources/features/MyFeature.feature```)
+* the path to a specific __existing__ Cucumber _.feature_ file including the line number of a specific scenario/scenario outline inside this file (e.g. ```src/test/resources/features/MyFeature.feature:12``` would only convert the scenario starting at line _12_ inside _MyFeature.feature_)
 
 __Note:__ This used to be called _sourceFeatureDirectory_ in older versions of Cucable. Since its capabilities changed so it now also supports single features, this was renamed!
 
@@ -305,34 +308,35 @@ If all tests should be run regardless of their result, it is important to set ``
 However, if this is specified, the build will not fail in case of failing tests! To circumvent that, it is possible to specify a custom Maven fail rule.
 
 ```xml
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-surefire-plugin</artifactId>
-    <configuration>
-        <skipTests>true</skipTests>
-    </configuration>
-</plugin>
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-failsafe-plugin</artifactId>
-    <executions>
-        <execution>
-            <id>Run parallel tests</id>
-            <phase>integration-test</phase>
-            <goals>
-                <goal>integration-test</goal>
-                <goal>verify</goal>
-            </goals>
-        </execution>
-    </executions>
-    <configuration>
-        <testFailureIgnore>true</testFailureIgnore>
-        <forkCount>${maven.fork.count}</forkCount>
-        <reuseForks>false</reuseForks>
-        <argLine>-Dfile.encoding=UTF-8</argLine>
-        <disableXmlReport>true</disableXmlReport>
-    </configuration>
-</plugin>
+<plugins>
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+            <skipTests>true</skipTests>
+        </configuration>
+    </plugin>
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+            <execution>
+                <id>Run parallel tests</id>
+                <phase>integration-test</phase>
+                <goals>
+                    <goal>integration-test</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <testFailureIgnore>true</testFailureIgnore>
+            <forkCount>${maven.fork.count}</forkCount>
+            <reuseForks>false</reuseForks>
+            <argLine>-Dfile.encoding=UTF-8</argLine>
+            <disableXmlReport>true</disableXmlReport>
+        </configuration>
+    </plugin>
+</plugins>
 ```
 
 ## 3. Aggregation of a single test report after all test runs
@@ -379,7 +383,7 @@ Without this rule we would have a successful build every time in case we specify
     </dependencies>
     <executions>
         <execution>
-            <phase>post-integration-test</phase>
+            <phase>verify</phase>
             <goals>
                 <goal>enforce</goal>
             </goals>
@@ -442,16 +446,15 @@ So all specified plugins will execute one after the other.
                     <executions>
                         <execution>
                             <id>Run parallel tests</id>
-                            <phase>integration-test</phase>
-                            <goals>
-                                <goal>integration-test</goal>
-                                <goal>verify</goal>
-                            </goals>
+                                <phase>integration-test</phase>
+                                <goals>
+                                    <goal>integration-test</goal>
+                                </goals>
                         </execution>
                     </executions>
                     <configuration>
-                        <testFailureIgnore>true</testFailureIgnore>
                         <forkCount>${maven.fork.count}</forkCount>
+                        <testFailureIgnore>true</testFailureIgnore>
                         <reuseForks>false</reuseForks>
                         <argLine>-Dfile.encoding=UTF-8</argLine>
                         <disableXmlReport>true</disableXmlReport>
@@ -488,7 +491,7 @@ So all specified plugins will execute one after the other.
                     </dependencies>
                     <executions>
                         <execution>
-                            <phase>post-integration-test</phase>
+                            <phase>verify</phase>
                             <goals>
                                 <goal>enforce</goal>
                             </goals>
@@ -525,7 +528,7 @@ It is available in [Maven central](https://search.maven.org/#search%7Cgav%7C1%7C
 
 # License
 
-Copyright 2017 trivago GmbH
+Copyright 2017 trivago NV
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

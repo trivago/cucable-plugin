@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 trivago GmbH
+ * Copyright 2017 trivago N.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -43,6 +43,7 @@ public class PropertyManager {
     private String generatedRunnerDirectory;
     private String sourceFeatures;
     private String generatedFeatureDirectory;
+    private Integer scenarioLineNumber;
     private int numberOfTestRuns;
 
     @Inject
@@ -70,8 +71,27 @@ public class PropertyManager {
         return sourceFeatures;
     }
 
+    public Integer getScenarioLineNumber() {
+        return scenarioLineNumber;
+    }
+
+    public boolean hasValidScenarioLineNumber() {
+        return scenarioLineNumber != null;
+    }
+
     public void setSourceFeatures(final String sourceFeatures) {
-        this.sourceFeatures = sourceFeatures;
+        String sourceFeaturesWithoutLineNumber = sourceFeatures;
+        final int lastColonPosition = sourceFeatures.lastIndexOf(':');
+        if (lastColonPosition > -1) {
+            String scenarioLineNumber = sourceFeatures.substring(lastColonPosition + 1).trim();
+            try {
+                this.scenarioLineNumber = Integer.parseInt(scenarioLineNumber);
+                sourceFeaturesWithoutLineNumber = sourceFeatures.substring(0, lastColonPosition).trim();
+            } catch (NumberFormatException e) {
+                // Line number could not be parsed so keeping original sourceFeatures
+            }
+        }
+        this.sourceFeatures = sourceFeaturesWithoutLineNumber;
     }
 
     public String getGeneratedFeatureDirectory() {
@@ -81,7 +101,6 @@ public class PropertyManager {
     public void setGeneratedFeatureDirectory(final String generatedFeatureDirectory) {
         this.generatedFeatureDirectory = generatedFeatureDirectory;
     }
-
 
     public int getNumberOfTestRuns() {
         return numberOfTestRuns;
@@ -115,10 +134,13 @@ public class PropertyManager {
     }
 
     public void logProperties() {
-        logger.info("─ sourceRunnerTemplateFile  : " + sourceRunnerTemplateFile);
-        logger.info("─ generatedRunnerDirectory  : " + generatedRunnerDirectory);
-        logger.info("─ sourceFeatures            : " + sourceFeatures);
-        logger.info("─ generatedFeatureDirectory : " + generatedFeatureDirectory);
-        logger.info("─ numberOfTestRuns          : " + numberOfTestRuns);
+        logger.info(String.format("─ sourceRunnerTemplateFile : %s", sourceRunnerTemplateFile));
+        logger.info(String.format("─ generatedRunnerDirectory : %s", generatedRunnerDirectory));
+        logger.info(String.format("─ sourceFeatures           : %s", sourceFeatures));
+        if (hasValidScenarioLineNumber()) {
+            logger.info(String.format("                             with line number %d", scenarioLineNumber));
+        }
+        logger.info(String.format("─ generatedFeatureDirectory: %s", generatedFeatureDirectory));
+        logger.info(String.format("─ numberOfTestRuns         : %d", numberOfTestRuns));
     }
 }

@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 trivago GmbH
+ * Copyright 2017 trivago N.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -27,10 +27,6 @@ public class CucableLogger {
 
     public void setMojoLogger(final Log mojoLogger) {
         this.mojoLogger = mojoLogger;
-    }
-
-    public void debug(final CharSequence charSequence) {
-        mojoLogger.debug(charSequence);
     }
 
     public void info(final CharSequence charSequence) {

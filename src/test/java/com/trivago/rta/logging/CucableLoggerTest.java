@@ -13,7 +13,6 @@ public class CucableLoggerTest {
     private Log mockedLogger;
     private CucableLogger logger;
 
-
     @Before
     public void setup() {
         mockedLogger = mock(Log.class);
@@ -26,12 +25,5 @@ public class CucableLoggerTest {
         logger.info("Test");
         verify(mockedLogger, times(1))
                 .info("Test");
-    }
-
-    @Test
-    public void debugTest() {
-        logger.debug("Test");
-        verify(mockedLogger, times(1))
-                .debug("Test");
     }
 }

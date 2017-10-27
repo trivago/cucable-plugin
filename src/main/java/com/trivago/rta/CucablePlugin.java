@@ -1,5 +1,5 @@
 /*
- * Copyright 2017 trivago GmbH
+ * Copyright 2017 trivago N.V.
  *
  * Licensed under the Apache License, Version 2.0 (the "License");
  * you may not use this file except in compliance with the License.
@@ -31,7 +31,7 @@ import javax.inject.Inject;
  * The main plugin class.
  */
 @Mojo(name = "parallel")
-public final class CucablePlugin extends AbstractMojo {
+final class CucablePlugin extends AbstractMojo {
 
     private final PropertyManager propertyManager;
     private final FileSystemManager fileManager;
@@ -65,7 +65,7 @@ public final class CucablePlugin extends AbstractMojo {
     /**
      * An optional number of test runs for each generated .feature file.
      */
-    @Parameter(property = "parallel.numberOfTestRuns", required = false, defaultValue = "1")
+    @Parameter(property = "parallel.numberOfTestRuns", defaultValue = "1")
     private int numberOfTestRuns = 1;
 
     @Inject
@@ -98,10 +98,9 @@ public final class CucablePlugin extends AbstractMojo {
         propertyManager.setNumberOfTestRuns(numberOfTestRuns);
         propertyManager.validateSettings();
 
-        logger.info("╔═════════════════════════════════════╗");
-        logger.info("║ Cucable Maven Plugin, version " +
-                getClass().getPackage().getImplementationVersion() + " ║");
-        logger.info("╚═════════════════════════════════════╝");
+        logger.info("=====================================");
+        logger.info(String.format(" Cucable Maven Plugin, version %s", getClass().getPackage().getImplementationVersion()));
+        logger.info("=====================================");
         propertyManager.logProperties();
 
         fileManager.prepareGeneratedFeatureAndRunnerDirs();
