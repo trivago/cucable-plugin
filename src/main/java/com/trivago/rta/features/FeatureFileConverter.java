@@ -87,17 +87,11 @@ public final class FeatureFileConverter {
     public void convertToSingleScenariosAndRunners(
             final List<Path> featureFilePaths) throws CucablePluginException {
 
-        logger.info("--------------------------------------");
-        logger.info("Cucable - starting conversion.");
-        logger.info("--------------------------------------");
+        logger.info("");
 
         for (Path featureFilePath : featureFilePaths) {
             convertToSingleScenariosAndRunners(featureFilePath);
         }
-
-        logger.info("--------------------------------------");
-        logger.info("Cucable - finished conversion.");
-        logger.info("--------------------------------------");
     }
 
     /**
@@ -115,8 +109,6 @@ public final class FeatureFileConverter {
         if (featureFilePath.toString() == null || featureFilePath.toString().equals("")) {
             throw new MissingFileException(featureFilePath.toString());
         }
-
-        logger.info(" Converting " + featureFilePath + " ...");
 
         String featureFile = fileIO.readContentFromFile(featureFilePath.toString());
         List<SingleScenario> singleScenarios;
@@ -173,7 +165,7 @@ public final class FeatureFileConverter {
             }
         }
 
-        logger.info(" - Done.");
+        logger.info("- Cucable processed " + featureFilePath + ".");
     }
 
     /**

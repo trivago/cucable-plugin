@@ -135,15 +135,15 @@ public class PropertyManager {
     }
 
     public void logProperties() {
-        logger.info("─ sourceRunnerTemplateFile  : " + sourceRunnerTemplateFile);
-        logger.info("─ generatedRunnerDirectory  : " + generatedRunnerDirectory);
-        logger.info("─ sourceFeatures            : " + sourceFeatures);
+        logger.info("─ sourceRunnerTemplateFile : " + sourceRunnerTemplateFile);
+        logger.info("─ generatedRunnerDirectory : " + generatedRunnerDirectory);
 
+        logger.info("─ sourceFeatures           : " + sourceFeatures);
         if (scenarioLineNumber != null) {
-            logger.info("  ─ scenarioLineNumber      : " + scenarioLineNumber);
+            logger.info("                             (line: " + scenarioLineNumber + ")");
         }
 
-        logger.info("─ generatedFeatureDirectory : " + generatedFeatureDirectory);
-        logger.info("─ numberOfTestRuns          : " + numberOfTestRuns);
+        logger.info("─ generatedFeatureDirectory: " + generatedFeatureDirectory);
+        logger.info("─ numberOfTestRuns         : " + numberOfTestRuns);
     }
 }
