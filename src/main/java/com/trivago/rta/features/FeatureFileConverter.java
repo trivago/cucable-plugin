@@ -59,7 +59,6 @@ public final class FeatureFileConverter {
     // Holds the current number of single features per feature key
     // (in a scenario outline, each example yields a single feature with the same key).
     private Map<String, Integer> singleFeatureCounters = new HashMap<>();
-    private String featureFileName;
 
     @Inject
     public FeatureFileConverter(

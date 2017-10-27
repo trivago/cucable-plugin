@@ -29,10 +29,6 @@ public class CucableLogger {
         this.mojoLogger = mojoLogger;
     }
 
-    public void debug(final CharSequence charSequence) {
-        mojoLogger.debug(charSequence);
-    }
-
     public void info(final CharSequence charSequence) {
         mojoLogger.info(charSequence);
     }

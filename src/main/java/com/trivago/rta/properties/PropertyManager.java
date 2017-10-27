@@ -77,7 +77,6 @@ public class PropertyManager {
 
     public void setSourceFeatures(final String sourceFeatures) {
         String sourceFeaturesWithoutLineNumber = sourceFeatures;
-
         final int lastColonPosition = sourceFeatures.lastIndexOf(':');
         if (lastColonPosition > -1) {
             String scenarioLineNumber = sourceFeatures.substring(lastColonPosition + 1).trim();
@@ -88,10 +87,6 @@ public class PropertyManager {
                 // Line number could not be parsed so keeping original sourceFeatures
             }
         }
-
-        logger.info("Line: " + scenarioLineNumber);
-        logger.info("Line: " + sourceFeaturesWithoutLineNumber);
-
         this.sourceFeatures = sourceFeaturesWithoutLineNumber;
     }
 

@@ -31,7 +31,7 @@ import javax.inject.Inject;
  * The main plugin class.
  */
 @Mojo(name = "parallel")
-public final class CucablePlugin extends AbstractMojo {
+final class CucablePlugin extends AbstractMojo {
 
     private final PropertyManager propertyManager;
     private final FileSystemManager fileManager;
@@ -65,7 +65,7 @@ public final class CucablePlugin extends AbstractMojo {
     /**
      * An optional number of test runs for each generated .feature file.
      */
-    @Parameter(property = "parallel.numberOfTestRuns", required = false, defaultValue = "1")
+    @Parameter(property = "parallel.numberOfTestRuns", defaultValue = "1")
     private int numberOfTestRuns = 1;
 
     @Inject
