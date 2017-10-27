@@ -43,6 +43,7 @@ public class PropertyManager {
     private String generatedRunnerDirectory;
     private String sourceFeatures;
     private String generatedFeatureDirectory;
+    private Integer scenarioLineNumber;
     private int numberOfTestRuns;
 
     @Inject
@@ -70,8 +71,28 @@ public class PropertyManager {
         return sourceFeatures;
     }
 
+    public Integer getScenarioLineNumber() {
+        return scenarioLineNumber;
+    }
+
     public void setSourceFeatures(final String sourceFeatures) {
-        this.sourceFeatures = sourceFeatures;
+        String sourceFeaturesWithoutLineNumber = sourceFeatures;
+
+        final int lastColonPosition = sourceFeatures.lastIndexOf(':');
+        if (lastColonPosition > -1) {
+            String scenarioLineNumber = sourceFeatures.substring(lastColonPosition + 1).trim();
+            try {
+                this.scenarioLineNumber = Integer.parseInt(scenarioLineNumber);
+                sourceFeaturesWithoutLineNumber = sourceFeatures.substring(0, lastColonPosition).trim();
+            } catch (NumberFormatException e) {
+                // Line number could not be parsed so keeping original sourceFeatures
+            }
+        }
+
+        logger.info("Line: " + scenarioLineNumber);
+        logger.info("Line: " + sourceFeaturesWithoutLineNumber);
+
+        this.sourceFeatures = sourceFeaturesWithoutLineNumber;
     }
 
     public String getGeneratedFeatureDirectory() {
@@ -81,7 +102,6 @@ public class PropertyManager {
     public void setGeneratedFeatureDirectory(final String generatedFeatureDirectory) {
         this.generatedFeatureDirectory = generatedFeatureDirectory;
     }
-
 
     public int getNumberOfTestRuns() {
         return numberOfTestRuns;
@@ -118,6 +138,11 @@ public class PropertyManager {
         logger.info("─ sourceRunnerTemplateFile  : " + sourceRunnerTemplateFile);
         logger.info("─ generatedRunnerDirectory  : " + generatedRunnerDirectory);
         logger.info("─ sourceFeatures            : " + sourceFeatures);
+
+        if (scenarioLineNumber != null) {
+            logger.info("  ─ scenarioLineNumber      : " + scenarioLineNumber);
+        }
+
         logger.info("─ generatedFeatureDirectory : " + generatedFeatureDirectory);
         logger.info("─ numberOfTestRuns          : " + numberOfTestRuns);
     }

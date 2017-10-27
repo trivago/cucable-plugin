@@ -98,10 +98,10 @@ public final class CucablePlugin extends AbstractMojo {
         propertyManager.setNumberOfTestRuns(numberOfTestRuns);
         propertyManager.validateSettings();
 
-        logger.info("╔═════════════════════════════════════╗");
-        logger.info("║ Cucable Maven Plugin, version " +
-                getClass().getPackage().getImplementationVersion() + " ║");
-        logger.info("╚═════════════════════════════════════╝");
+        logger.info("=====================================");
+        logger.info(" Cucable Maven Plugin, version " +
+                getClass().getPackage().getImplementationVersion());
+        logger.info("=====================================");
         propertyManager.logProperties();
 
         fileManager.prepareGeneratedFeatureAndRunnerDirs();

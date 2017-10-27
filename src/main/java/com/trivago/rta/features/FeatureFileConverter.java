@@ -87,17 +87,17 @@ public final class FeatureFileConverter {
     public void convertToSingleScenariosAndRunners(
             final List<Path> featureFilePaths) throws CucablePluginException {
 
-        logger.info("──────────────────────────────────────");
+        logger.info("--------------------------------------");
         logger.info("Cucable - starting conversion.");
-        logger.info("──────────────────────────────────────");
+        logger.info("--------------------------------------");
 
         for (Path featureFilePath : featureFilePaths) {
             convertToSingleScenariosAndRunners(featureFilePath);
         }
 
-        logger.info("──────────────────────────────────────");
+        logger.info("--------------------------------------");
         logger.info("Cucable - finished conversion.");
-        logger.info("──────────────────────────────────────");
+        logger.info("--------------------------------------");
     }
 
     /**
@@ -173,7 +173,7 @@ public final class FeatureFileConverter {
             }
         }
 
-        logger.info(" ↳ Done.");
+        logger.info(" - Done.");
     }
 
     /**
