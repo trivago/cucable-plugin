@@ -39,7 +39,7 @@
 
 # What is Cucable
 
-Cucable is a Maven plugin for [Cucumber](https://cucumber.io) scenarios that simplifies running scenarios in parallel.
+Cucable is a Maven plugin for [Cucumber](https://cucumber.io) scenarios that simplifies parallel test runs.
 
 This plugin has two purposes:
 
@@ -305,34 +305,36 @@ If all tests should be run regardless of their result, it is important to set ``
 However, if this is specified, the build will not fail in case of failing tests! To circumvent that, it is possible to specify a custom Maven fail rule.
 
 ```xml
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-surefire-plugin</artifactId>
-    <configuration>
-        <skipTests>true</skipTests>
-    </configuration>
-</plugin>
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-failsafe-plugin</artifactId>
-    <executions>
-        <execution>
-            <id>Run parallel tests</id>
-            <phase>integration-test</phase>
-            <goals>
-                <goal>integration-test</goal>
-                <goal>verify</goal>
-            </goals>
-        </execution>
-    </executions>
-    <configuration>
-        <testFailureIgnore>true</testFailureIgnore>
-        <forkCount>${maven.fork.count}</forkCount>
-        <reuseForks>false</reuseForks>
-        <argLine>-Dfile.encoding=UTF-8</argLine>
-        <disableXmlReport>true</disableXmlReport>
-    </configuration>
-</plugin>
+<plugins>
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+            <skipTests>true</skipTests>
+        </configuration>
+    </plugin>
+    <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-failsafe-plugin</artifactId>
+        <executions>
+            <execution>
+                <id>Run parallel tests</id>
+                <phase>integration-test</phase>
+                <goals>
+                    <goal>integration-test</goal>
+                    <goal>verify</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <testFailureIgnore>true</testFailureIgnore>
+            <forkCount>${maven.fork.count}</forkCount>
+            <reuseForks>false</reuseForks>
+            <argLine>-Dfile.encoding=UTF-8</argLine>
+            <disableXmlReport>true</disableXmlReport>
+        </configuration>
+    </plugin>
+</plugins>
 ```
 
 ## 3. Aggregation of a single test report after all test runs
@@ -525,7 +527,7 @@ It is available in [Maven central](https://search.maven.org/#search%7Cgav%7C1%7C
 
 # License
 
-Copyright 2017 trivago GmbH
+Copyright 2017 trivago NV
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
