@@ -85,9 +85,7 @@ public final class FeatureFileConverter {
      */
     public void convertToSingleScenariosAndRunners(
             final List<Path> featureFilePaths) throws CucablePluginException {
-
         logger.info("");
-
         for (Path featureFilePath : featureFilePaths) {
             convertToSingleScenariosAndRunners(featureFilePath);
         }
@@ -105,17 +103,24 @@ public final class FeatureFileConverter {
     private void convertToSingleScenariosAndRunners(final Path featureFilePath)
             throws CucablePluginException {
 
-        if (featureFilePath.toString() == null || featureFilePath.toString().equals("")) {
-            throw new MissingFileException(featureFilePath.toString());
+        String featureFilePathString = featureFilePath.toString();
+
+        if (featureFilePathString == null || featureFilePathString.equals("")) {
+            throw new MissingFileException(featureFilePathString);
         }
 
-        String featureFile = fileIO.readContentFromFile(featureFilePath.toString());
-        List<SingleScenario> singleScenarios;
+        Integer lineNumber = propertyManager.getScenarioLineNumber();
+        String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
+        List<SingleScenario> singleScenarios = null;
         try {
             singleScenarios =
-                    gherkinDocumentParser.getSingleScenariosFromFeature(featureFile);
+                    gherkinDocumentParser.getSingleScenariosFromFeature(featureFileContent, lineNumber);
         } catch (CucablePluginException e) {
-            throw new FeatureFileParseException(featureFilePath.toString());
+            throw new FeatureFileParseException(featureFilePathString);
+        }
+
+        if (propertyManager.hasValidScenarioLineNumber() && singleScenarios.size() == 0) {
+            throw new CucablePluginException("There is no parseable scenario or scenario outline at line " + lineNumber);
         }
 
         for (SingleScenario singleScenario : singleScenarios) {
@@ -160,7 +165,15 @@ public final class FeatureFileConverter {
                 fileIO.writeContentToFile(renderedRunnerFileContent, generatedRunnerFilePath);
             }
         }
-        logger.info("- Cucable processed " + featureFilePath + ".");
+        logCompleteMessage(featureFilePathString);
+    }
+
+    private void logCompleteMessage(String featureFileName) {
+        String logPostfix = ".";
+        if (propertyManager.hasValidScenarioLineNumber()) {
+            logPostfix = String.format(" with line number %d.", propertyManager.getScenarioLineNumber());
+        }
+        logger.info(String.format("- Cucable processed [%s]%s", featureFileName, logPostfix));
     }
 
     /**

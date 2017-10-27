@@ -75,6 +75,10 @@ public class PropertyManager {
         return scenarioLineNumber;
     }
 
+    public boolean hasValidScenarioLineNumber() {
+        return scenarioLineNumber != null;
+    }
+
     public void setSourceFeatures(final String sourceFeatures) {
         String sourceFeaturesWithoutLineNumber = sourceFeatures;
         final int lastColonPosition = sourceFeatures.lastIndexOf(':');
@@ -130,15 +134,13 @@ public class PropertyManager {
     }
 
     public void logProperties() {
-        logger.info("─ sourceRunnerTemplateFile : " + sourceRunnerTemplateFile);
-        logger.info("─ generatedRunnerDirectory : " + generatedRunnerDirectory);
-
-        logger.info("─ sourceFeatures           : " + sourceFeatures);
-        if (scenarioLineNumber != null) {
-            logger.info("                             (line: " + scenarioLineNumber + ")");
+        logger.info(String.format("─ sourceRunnerTemplateFile : %s", sourceRunnerTemplateFile));
+        logger.info(String.format("─ generatedRunnerDirectory : %s", generatedRunnerDirectory));
+        logger.info(String.format("─ sourceFeatures           : %s", sourceFeatures));
+        if (hasValidScenarioLineNumber()) {
+            logger.info(String.format("                             with line number %d", scenarioLineNumber));
         }
-
-        logger.info("─ generatedFeatureDirectory: " + generatedFeatureDirectory);
-        logger.info("─ numberOfTestRuns         : " + numberOfTestRuns);
+        logger.info(String.format("─ generatedFeatureDirectory: %s", generatedFeatureDirectory));
+        logger.info(String.format("─ numberOfTestRuns         : %d", numberOfTestRuns));
     }
 }
