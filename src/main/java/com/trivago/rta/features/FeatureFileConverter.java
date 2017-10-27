@@ -121,12 +121,9 @@ public final class FeatureFileConverter {
 
         for (SingleScenario singleScenario : singleScenarios) {
             String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
-
             String featureFileName = getFeatureFileNameFromPath(featureFilePath);
-
             Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
             featureCounter++;
-
             String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
 
             for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
@@ -164,7 +161,6 @@ public final class FeatureFileConverter {
                 fileIO.writeContentToFile(renderedRunnerFileContent, generatedRunnerFilePath);
             }
         }
-
         logger.info("- Cucable processed " + featureFilePath + ".");
     }
 
