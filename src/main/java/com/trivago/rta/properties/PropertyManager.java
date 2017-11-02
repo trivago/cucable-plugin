@@ -134,13 +134,13 @@ public class PropertyManager {
     }
 
     public void logProperties() {
-        logger.info(String.format("─ sourceRunnerTemplateFile : %s", sourceRunnerTemplateFile));
-        logger.info(String.format("─ generatedRunnerDirectory : %s", generatedRunnerDirectory));
-        logger.info(String.format("─ sourceFeatures           : %s", sourceFeatures));
+        logger.info(String.format("- sourceRunnerTemplateFile : %s", sourceRunnerTemplateFile));
+        logger.info(String.format("- generatedRunnerDirectory : %s", generatedRunnerDirectory));
+        logger.info(String.format("- sourceFeatures           : %s", sourceFeatures));
         if (hasValidScenarioLineNumber()) {
             logger.info(String.format("                             with line number %d", scenarioLineNumber));
         }
-        logger.info(String.format("─ generatedFeatureDirectory: %s", generatedFeatureDirectory));
-        logger.info(String.format("─ numberOfTestRuns         : %d", numberOfTestRuns));
+        logger.info(String.format("- generatedFeatureDirectory: %s", generatedFeatureDirectory));
+        logger.info(String.format("- numberOfTestRuns         : %d", numberOfTestRuns));
     }
 }
