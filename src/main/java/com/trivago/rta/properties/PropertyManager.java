@@ -117,6 +117,8 @@ public class PropertyManager {
      *                                is not specified in the pom.
      */
     public void validateSettings() throws CucablePluginException {
+        System.out.println(sourceFeatures);
+
         String missingProperty = null;
         if (sourceRunnerTemplateFile.equals("")) {
             missingProperty = SOURCE_RUNNER_TEMPLATE_FILE;

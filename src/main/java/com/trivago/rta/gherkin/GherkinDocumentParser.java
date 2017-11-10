@@ -49,16 +49,12 @@ public class GherkinDocumentParser {
     /**
      * Returns a {@link com.trivago.rta.vo.SingleScenario} list from a given feature file.
      *
-     * @param featureContent a feature string.
+     * @param featureContent     a feature string.
+     * @param scenarioLineNumber an optional line number of a scenario inside a feature file.
      * @return a {@link com.trivago.rta.vo.SingleScenario} list.
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
-    public List<SingleScenario> getSingleScenariosFromFeature(final String featureContent) throws CucablePluginException {
-        return getSingleScenariosFromFeature(featureContent, null);
-    }
-
     public List<SingleScenario> getSingleScenariosFromFeature(final String featureContent, final Integer scenarioLineNumber) throws CucablePluginException {
-
         GherkinDocument gherkinDocument = getGherkinDocumentFromFeatureFileContent(featureContent);
 
         Feature feature = gherkinDocument.getFeature();

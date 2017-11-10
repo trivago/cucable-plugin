@@ -23,7 +23,7 @@ public class GherkinDocumentParserTest {
 
     @Test(expected = CucablePluginException.class)
     public void invalidFeatureTest() throws Exception {
-        gherkinDocumentParser.getSingleScenariosFromFeature("");
+        gherkinDocumentParser.getSingleScenariosFromFeature("", null);
     }
 
     @Test
@@ -37,7 +37,7 @@ public class GherkinDocumentParserTest {
                 "Given this is step 1\n" +
                 "Then this is step 2\n";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null);
         assertThat(singleScenariosFromFeature.size(), is(1));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -58,7 +58,7 @@ public class GherkinDocumentParserTest {
                 "|value1|value2|\n" +
                 "Then this is step 2\n";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null);
         assertThat(singleScenariosFromFeature.size(), is(1));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);

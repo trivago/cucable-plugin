@@ -111,6 +111,7 @@ public final class FeatureFileConverter {
 
         Integer lineNumber = propertyManager.getScenarioLineNumber();
         String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
+
         List<SingleScenario> singleScenarios = null;
         try {
             singleScenarios =
@@ -125,12 +126,14 @@ public final class FeatureFileConverter {
 
         for (SingleScenario singleScenario : singleScenarios) {
             String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
+
             String featureFileName = getFeatureFileNameFromPath(featureFilePath);
             Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
             featureCounter++;
             String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
 
             for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
+                System.out.println("YEAH");
                 String testRunsCounterFilenamePart = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
 
                 // Append the scenario and test run counters to the filename.
