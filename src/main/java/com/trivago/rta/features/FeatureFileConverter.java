@@ -112,7 +112,7 @@ public final class FeatureFileConverter {
         Integer lineNumber = propertyManager.getScenarioLineNumber();
         String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
 
-        List<SingleScenario> singleScenarios = null;
+        List<SingleScenario> singleScenarios;
         try {
             singleScenarios =
                     gherkinDocumentParser.getSingleScenariosFromFeature(featureFileContent, lineNumber);
@@ -120,6 +120,8 @@ public final class FeatureFileConverter {
             throw new FeatureFileParseException(featureFilePathString);
         }
 
+        // In case of a provided line number: if there are no scenarios created
+        // that means that the provided line number is wrong.
         if (propertyManager.hasValidScenarioLineNumber() && singleScenarios.size() == 0) {
             throw new CucablePluginException("There is no parseable scenario or scenario outline at line " + lineNumber);
         }
