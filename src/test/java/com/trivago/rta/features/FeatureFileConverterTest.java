@@ -7,14 +7,21 @@ import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.properties.PropertyManager;
 import com.trivago.rta.runners.RunnerFileContentRenderer;
 import com.trivago.rta.vo.SingleScenario;
+import com.trivago.rta.vo.SingleScenarioRunner;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.TemporaryFolder;
 
 import java.nio.file.Path;
 import java.util.ArrayList;
 import java.util.List;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.times;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 public class FeatureFileConverterTest {
@@ -24,13 +31,16 @@ public class FeatureFileConverterTest {
     private PropertyManager propertyManager;
     private GherkinDocumentParser gherkinDocumentParser;
     private FeatureFileContentRenderer featureFileContentRenderer;
+    private RunnerFileContentRenderer runnerFileContentRenderer;
+
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder();
 
     @Before
     public void setup() {
-
         gherkinDocumentParser = mock(GherkinDocumentParser.class);
         featureFileContentRenderer = mock(FeatureFileContentRenderer.class);
-        RunnerFileContentRenderer runnerFileContentRenderer = mock(RunnerFileContentRenderer.class);
+        runnerFileContentRenderer = mock(RunnerFileContentRenderer.class);
         fileIO = mock(FileIO.class);
         CucableLogger logger = mock(CucableLogger.class);
         propertyManager = new PropertyManager(logger);
@@ -59,11 +69,12 @@ public class FeatureFileConverterTest {
 
     @Test
     public void testConvertToSingleScenariosAndRunners() throws Exception {
-        // TODO use mocked file system to verify generated runners and features
+        String generatedFeatureDir = testFolder.getRoot().getPath().concat("/features/");
+        String generatedRunnerDir = testFolder.getRoot().getPath().concat("/runners/");
 
         propertyManager.setNumberOfTestRuns(1);
-        propertyManager.setGeneratedFeatureDirectory("");
-        propertyManager.setGeneratedRunnerDirectory("");
+        propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
+        propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
 
         when(fileIO.readContentFromFile("TEST_PATH")).thenReturn("TEST_CONTENT");
 
@@ -75,6 +86,8 @@ public class FeatureFileConverterTest {
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
 
+        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(SingleScenarioRunner.class))).thenReturn("RUNNER_CONTENT");
+
         List<Path> pathList = new ArrayList<>();
         Path mockPath = mock(Path.class);
         Path mockFilePath = mock(Path.class);
@@ -83,5 +96,7 @@ public class FeatureFileConverterTest {
         when(mockPath.toString()).thenReturn("TEST_PATH");
         pathList.add(mockPath);
         featureFileConverter.convertToSingleScenariosAndRunners(pathList);
+
+        verify(fileIO, times(2)).writeContentToFile(anyString(), anyString());
     }
 }

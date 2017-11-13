@@ -133,7 +133,6 @@ public final class FeatureFileConverter {
             String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
 
             for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
-                System.out.println("YEAH");
                 String testRunsCounterFilenamePart = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
 
                 // Append the scenario and test run counters to the filename.
@@ -158,6 +157,7 @@ public final class FeatureFileConverter {
                 SingleScenarioRunner singleScenarioRunner =
                         new SingleScenarioRunner(
                                 propertyManager.getSourceRunnerTemplateFile(), generatedFileName);
+
                 String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(singleScenarioRunner);
 
                 String generatedRunnerFilePath =
@@ -165,6 +165,7 @@ public final class FeatureFileConverter {
                                 .concat(PATH_SEPARATOR)
                                 .concat(generatedFileName)
                                 .concat(RUNNER_FILE_EXTENSION);
+
                 fileIO.writeContentToFile(renderedRunnerFileContent, generatedRunnerFilePath);
             }
         }
