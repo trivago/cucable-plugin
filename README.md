@@ -528,7 +528,7 @@ It is available in [Maven central](https://search.maven.org/#search%7Cgav%7C1%7C
 
 # License
 
-Copyright 2017 trivago NV
+Copyright 2017 trivago N.V.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
