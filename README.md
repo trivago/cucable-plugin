@@ -341,24 +341,23 @@ However, if this is specified, the build will not fail in case of failing tests!
 
 ## 3. Aggregation of a single test report after all test runs
 
-We use the [Maven Cucumber Reporting](https://mvnrepository.com/artifact/net.masterthought/cucumber-reporting) library to aggregate all generated __.json__ report files into one overall test report.
+We use the [Cluecumber](https://github.com/trivago/cluecumber-report-plugin) plugin to aggregate all generated __.json__ report files into one overall test report.
 
 ```xml
 <plugin>
-    <groupId>net.masterthought</groupId>
-    <artifactId>maven-cucumber-reporting</artifactId>
+    <groupId>com.trivago.rta</groupId>
+    <artifactId>cluecumber-report-plugin</artifactId>
+    <version>${cluecumber.report.version}</version>
     <executions>
         <execution>
             <id>report</id>
             <phase>post-integration-test</phase>
             <goals>
-                <goal>generate</goal>
+                <goal>reporting</goal>
             </goals>
             <configuration>
-                <outputDirectory>${project.build.directory}</outputDirectory>
-                <cucumberOutput>${project.build.directory}/cucumber-report</cucumberOutput>
-                <projectName>My Report</projectName>
-                <buildNumber>1</buildNumber>
+                <sourceJsonReportDirectory>${project.build.directory}/cucumber-report</sourceJsonReportDirectory>
+                <generatedHtmlReportDirectory>${project.build.directory}/test-report</generatedHtmlReportDirectory>
             </configuration>
         </execution>
     </executions>
@@ -412,6 +411,8 @@ So all specified plugins will execute one after the other.
         <id>parallel</id>
         <build>
             <plugins>
+            
+                <!-- Slicing scenarios with Cucable -->
                 <plugin>
                     <groupId>com.trivago.rta</groupId>
                     <artifactId>cucable-plugin</artifactId>
@@ -433,6 +434,8 @@ So all specified plugins will execute one after the other.
                         </execution>
                     </executions>
                 </plugin>
+                
+                <!-- Optional skipping of unit tests if needed -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-surefire-plugin</artifactId>
@@ -440,6 +443,8 @@ So all specified plugins will execute one after the other.
                         <skipTests>true</skipTests>
                     </configuration>
                 </plugin>
+                
+                <!-- Running the sliced scenarios -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-failsafe-plugin</artifactId>
@@ -460,25 +465,28 @@ So all specified plugins will execute one after the other.
                         <disableXmlReport>true</disableXmlReport>
                     </configuration>
                 </plugin>
+                
+                <!-- Report test results -->
                 <plugin>
-                    <groupId>net.masterthought</groupId>
-                    <artifactId>maven-cucumber-reporting</artifactId>
+                    <groupId>com.trivago.rta</groupId>
+                    <artifactId>cluecumber-report-plugin</artifactId>
+                    <version>${cluecumber.report.version}</version>
                     <executions>
                         <execution>
                             <id>report</id>
                             <phase>post-integration-test</phase>
                             <goals>
-                                <goal>generate</goal>
+                                <goal>reporting</goal>
                             </goals>
                             <configuration>
-                                <outputDirectory>${project.build.directory}</outputDirectory>
-                                <cucumberOutput>${project.build.directory}/cucumber-report</cucumberOutput>
-                                <projectName>My Report</projectName>
-                                <buildNumber>1</buildNumber>
+                                <sourceJsonReportDirectory>${project.build.directory}/cucumber-report</sourceJsonReportDirectory>
+                                <generatedHtmlReportDirectory>${project.build.directory}/test-report</generatedHtmlReportDirectory>
                             </configuration>
                         </execution>
                     </executions>
                 </plugin>
+                
+                <!-- Optional maven fail rule to pass or fail the build. -->
                 <plugin>
                     <groupId>org.apache.maven.plugins</groupId>
                     <artifactId>maven-enforcer-plugin</artifactId>
