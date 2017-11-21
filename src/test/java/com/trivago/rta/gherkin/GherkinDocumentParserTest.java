@@ -24,7 +24,7 @@ public class GherkinDocumentParserTest {
 
     @Test(expected = CucablePluginException.class)
     public void invalidFeatureTest() throws Exception {
-        gherkinDocumentParser.getSingleScenariosFromFeature("", null);
+        gherkinDocumentParser.getSingleScenariosFromFeature("", null, null);
     }
 
     @Test
@@ -38,7 +38,7 @@ public class GherkinDocumentParserTest {
                 "Given this is step 1\n" +
                 "Then this is step 2\n";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null);
         assertThat(singleScenariosFromFeature.size(), is(1));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -60,7 +60,7 @@ public class GherkinDocumentParserTest {
                 "|value1|value2|\n" +
                 "Then this is step 2\n";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null);
         assertThat(singleScenariosFromFeature.size(), is(1));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -86,7 +86,7 @@ public class GherkinDocumentParserTest {
                 "  Scenario: This is a scenario with background\n" +
                 "    Then ThenStep";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null);
         assertThat(singleScenariosFromFeature.size(), is(1));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -110,7 +110,7 @@ public class GherkinDocumentParserTest {
                 "      | 1   | one   |\n" +
                 "      | 2   | two   |";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null);
         assertThat(singleScenariosFromFeature.size(), is(2));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);

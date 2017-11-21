@@ -110,12 +110,13 @@ public final class FeatureFileConverter {
         }
 
         Integer lineNumber = propertyManager.getScenarioLineNumber();
+        List<String> excludeTags = propertyManager.getExcludeTags();
         String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
 
         List<SingleScenario> singleScenarios;
         try {
             singleScenarios =
-                    gherkinDocumentParser.getSingleScenariosFromFeature(featureFileContent, lineNumber);
+                    gherkinDocumentParser.getSingleScenariosFromFeature(featureFileContent, lineNumber, excludeTags);
         } catch (CucablePluginException e) {
             throw new FeatureFileParseException(featureFilePathString);
         }
@@ -174,6 +175,11 @@ public final class FeatureFileConverter {
         logCompleteMessage(featureFilePathString);
     }
 
+    /**
+     * Log the completion message for a feature file.
+     *
+     * @param featureFileName the name of the processed feature file.
+     */
     private void logCompleteMessage(String featureFileName) {
         String logPostfix = ".";
         if (propertyManager.hasValidScenarioLineNumber()) {

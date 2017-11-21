@@ -22,6 +22,7 @@ import com.trivago.rta.logging.CucableLogger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.List;
 
 @Singleton
 public class PropertyManager {
@@ -45,6 +46,7 @@ public class PropertyManager {
     private String generatedFeatureDirectory;
     private Integer scenarioLineNumber;
     private int numberOfTestRuns;
+    private List<String> excludeTags;
 
     @Inject
     public PropertyManager(CucableLogger logger) {
@@ -110,6 +112,14 @@ public class PropertyManager {
         this.numberOfTestRuns = numberOfTestRuns;
     }
 
+    public List<String> getExcludeTags() {
+        return excludeTags;
+    }
+
+    public void setExcludeScenarioTags(final List<String> excludeTags) {
+        this.excludeTags = excludeTags;
+    }
+
     /**
      * Checks the pom settings for the plugin.
      *
@@ -126,6 +136,12 @@ public class PropertyManager {
             missingProperty = SOURCE_FEATURES;
         } else if (generatedFeatureDirectory.equals("")) {
             missingProperty = GENERATED_FEATURE_DIRECTORY;
+        } else if (excludeTags != null) {
+            for (String excludeTag : excludeTags) {
+                if (!excludeTag.startsWith("@")) {
+                    throw new CucablePluginException("Exlude tag '" + excludeTag + "' does not start with an '@'.");
+                }
+            }
         }
 
         if (missingProperty != null) {
@@ -134,13 +150,19 @@ public class PropertyManager {
     }
 
     public void logProperties() {
-        logger.info(String.format("- sourceRunnerTemplateFile : %s", sourceRunnerTemplateFile));
-        logger.info(String.format("- generatedRunnerDirectory : %s", generatedRunnerDirectory));
-        logger.info(String.format("- sourceFeatures           : %s", sourceFeatures));
+        logger.info(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile));
+        logger.info(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory));
+        logger.info(String.format("- sourceFeatures            : %s", sourceFeatures));
         if (hasValidScenarioLineNumber()) {
-            logger.info(String.format("                             with line number %d", scenarioLineNumber));
+            logger.info(String.format("                              with line number %d", scenarioLineNumber));
         }
-        logger.info(String.format("- generatedFeatureDirectory: %s", generatedFeatureDirectory));
-        logger.info(String.format("- numberOfTestRuns         : %d", numberOfTestRuns));
+        if (excludeTags != null) {
+            logger.info("                              exclude tags:");
+            for (String excludeTag : excludeTags) {
+                logger.info(String.format("                              - %s", excludeTag));
+            }
+        }
+        logger.info(String.format("- generatedFeatureDirectory : %s", generatedFeatureDirectory));
+        logger.info(String.format("- numberOfTestRuns          : %d", numberOfTestRuns));
     }
 }

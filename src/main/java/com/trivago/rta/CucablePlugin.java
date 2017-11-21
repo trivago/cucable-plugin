@@ -26,6 +26,7 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import javax.inject.Inject;
+import java.util.List;
 
 /**
  * The main plugin class.
@@ -68,6 +69,12 @@ final class CucablePlugin extends AbstractMojo {
     @Parameter(property = "parallel.numberOfTestRuns", defaultValue = "1")
     private int numberOfTestRuns = 1;
 
+    /**
+     * Optional scenario tags to be excluded from feature and runner generation
+     */
+    @Parameter(property = "parallel.excludeScenarioTags")
+    private List<String> excludeScenarioTags;
+
     @Inject
     public CucablePlugin(
             PropertyManager propertyManager,
@@ -96,6 +103,7 @@ final class CucablePlugin extends AbstractMojo {
         propertyManager.setSourceFeatures(sourceFeatures);
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDirectory);
         propertyManager.setNumberOfTestRuns(numberOfTestRuns);
+        propertyManager.setExcludeScenarioTags(excludeScenarioTags);
         propertyManager.validateSettings();
 
         logger.info("=====================================");

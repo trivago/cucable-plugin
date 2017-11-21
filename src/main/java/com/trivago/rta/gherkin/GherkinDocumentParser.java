@@ -33,6 +33,7 @@ import gherkin.ast.ScenarioOutline;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 
@@ -49,12 +50,17 @@ public class GherkinDocumentParser {
     /**
      * Returns a {@link com.trivago.rta.vo.SingleScenario} list from a given feature file.
      *
-     * @param featureContent     a feature string.
-     * @param scenarioLineNumber an optional line number of a scenario inside a feature file.
+     * @param featureContent      a feature string.
+     * @param scenarioLineNumber  an optional line number of a scenario inside a feature file.
+     * @param excludeScenarioTags optional scenario tags to exclude from scenario generation.
      * @return a {@link com.trivago.rta.vo.SingleScenario} list.
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
-    public List<SingleScenario> getSingleScenariosFromFeature(final String featureContent, final Integer scenarioLineNumber) throws CucablePluginException {
+    public List<SingleScenario> getSingleScenariosFromFeature(
+            final String featureContent,
+            final Integer scenarioLineNumber,
+            final List<String> excludeScenarioTags) throws CucablePluginException {
+
         GherkinDocument gherkinDocument = getGherkinDocumentFromFeatureFileContent(featureContent);
 
         Feature feature = gherkinDocument.getFeature();
@@ -79,9 +85,13 @@ public class GherkinDocumentParser {
             if (scenarioDefinition instanceof Scenario) {
                 Scenario scenario = (Scenario) scenarioDefinition;
                 if (scenarioLineNumber == null || scenario.getLocation().getLine() == scenarioLineNumber) {
-                    SingleScenario singleScenario = new SingleScenario(featureName, scenarioName, featureTags, backgroundSteps);
+                    SingleScenario singleScenario =
+                            new SingleScenario(featureName, scenarioName, featureTags, backgroundSteps);
                     addGherkinScenarioInformationToSingleScenario(scenario, singleScenario);
-                    singleScenarioFeatures.add(singleScenario);
+
+                    if (!tagListContainsExcludeTags(singleScenario.getScenarioTags(), excludeScenarioTags)) {
+                        singleScenarioFeatures.add(singleScenario);
+                    }
                 }
                 continue;
             }
@@ -89,8 +99,8 @@ public class GherkinDocumentParser {
             if (scenarioDefinition instanceof ScenarioOutline) {
                 ScenarioOutline scenarioOutline = (ScenarioOutline) scenarioDefinition;
                 if (scenarioLineNumber == null || scenarioOutline.getLocation().getLine() == scenarioLineNumber) {
-                    List<SingleScenario> outlineScenarios =
-                            getSingleScenariosFromOutline(scenarioOutline, featureName, featureTags, backgroundSteps);
+                    List<SingleScenario> outlineScenarios = getSingleScenariosFromOutline(
+                            scenarioOutline, featureName, featureTags, backgroundSteps, excludeScenarioTags);
                     singleScenarioFeatures.addAll(outlineScenarios);
                 }
             }
@@ -101,21 +111,27 @@ public class GherkinDocumentParser {
     /**
      * Returns a list of Cucable single scenarios from a Gherkin scenario outline.
      *
-     * @param scenarioOutline a Gherkin {@link ScenarioOutline}.
-     * @param featureName     The name of the feature this scenario outline belongs to.
-     * @param featureTags     The feature tags of the parent feature.
-     * @param backgroundSteps return a Cucable {@link SingleScenario} list.
+     * @param scenarioOutline     a Gherkin {@link ScenarioOutline}.
+     * @param featureName         The name of the feature this scenario outline belongs to.
+     * @param featureTags         The feature tags of the parent feature.
+     * @param backgroundSteps     return a Cucable {@link SingleScenario} list.
+     * @param excludeScenarioTags optional scenario tags to exclude from scenario generation.
      * @throws CucablePluginException thrown when the scenario outline does not contain an example table.
      */
     private List<SingleScenario> getSingleScenariosFromOutline(
             final ScenarioOutline scenarioOutline,
             final String featureName,
             final List<String> featureTags,
-            final List<Step> backgroundSteps) throws CucablePluginException {
+            final List<Step> backgroundSteps,
+            final List<String> excludeScenarioTags) throws CucablePluginException {
 
         String scenarioName = scenarioOutline.getName();
         List<String> scenarioTags =
                 gherkinToCucableConverter.convertGherkinTagsToCucableTags(scenarioOutline.getTags());
+
+        if (tagListContainsExcludeTags(scenarioTags, excludeScenarioTags)) {
+            return Collections.emptyList();
+        }
 
         List<SingleScenario> outlineScenarios = new ArrayList<>();
 
@@ -209,5 +225,26 @@ public class GherkinDocumentParser {
         }
 
         return gherkinDocument;
+    }
+
+    /**
+     * Checks if a tag list contains elements of the exclude tags list.
+     *
+     * @param tags        the source tag list.
+     * @param excludeTags the exclude tags list.
+     * @return true if an exclude tag is included in the source tag list.
+     */
+    private boolean tagListContainsExcludeTags(final List<String> tags, final List<String> excludeTags) {
+        if (tags == null || tags.isEmpty() || excludeTags == null || excludeTags.isEmpty()) {
+            return false;
+        }
+        for (String tag : tags) {
+            for (String excludeTag : excludeTags) {
+                if (tag.trim().equalsIgnoreCase(excludeTag.trim())) {
+                    return true;
+                }
+            }
+        }
+        return false;
     }
 }
