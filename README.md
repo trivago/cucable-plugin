@@ -16,11 +16,12 @@
 - [Data flow](#data-flow)
   - [1. Generation of runners and features](#1-generation-of-runners-and-features)
     - [Parameters](#parameters)
-      - [(Required) sourceRunnerTemplateFile](#required-sourcerunnertemplatefile)
-      - [(Required) sourceFeatures](#required-sourcefeatures)
-      - [(Required) generatedFeatureDirectory](#required-generatedfeaturedirectory)
-      - [(Required) generatedRunnerDirectory](#required-generatedrunnerdirectory)
-      - [(Optional) numberOfTestRuns](#optional-numberoftestruns)
+      - [sourceRunnerTemplateFile (required)](#sourcerunnertemplatefile-required)
+      - [sourceFeatures (required)](#sourcefeatures-required)
+      - [generatedFeatureDirectory (required)](#generatedfeaturedirectory-required)
+      - [generatedRunnerDirectory (required)](#generatedrunnerdirectory-required)
+      - [numberOfTestRuns (optional)](#numberoftestruns-optional)
+      - [excludeScenarioTags (optional)](#excludescenariotags-optional)
     - [Example](#example)
       - [Source feature file](#source-feature-file)
       - [Runner template file](#runner-template-file)
@@ -95,6 +96,9 @@ The following sections break down the above steps.
                 <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
                 <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
                 <numberOfTestRuns>1</numberOfTestRuns>
+                <excludeScenarioTags>
+                    <param>@skip</param>
+                </excludeScenarioTags>
             </configuration>
         </execution>
     </executions>
@@ -103,7 +107,7 @@ The following sections break down the above steps.
 
 ### Parameters
 
-#### (Required) sourceRunnerTemplateFile
+#### sourceRunnerTemplateFile (required)
 
 The path to a text file (e.g. _src/test/resources/parallel/cucable.template_) with **[FEATURE_FILE_NAME]** placeholders for the generated feature file name.
 This file will be used to generate runners for every generated feature file.
@@ -132,7 +136,7 @@ public class <b>[FEATURE_FILE_NAME]</b> {
 
 </pre>
 
-#### (Required) sourceFeatures
+#### sourceFeatures (required)
 
 This can specify
 * the root path of your __existing__ Cucumber _.feature_ files (e.g. ```src/test/resources/features```)
@@ -141,7 +145,7 @@ This can specify
 
 __Note:__ This used to be called _sourceFeatureDirectory_ in older versions of Cucable. Since its capabilities changed so it now also supports single features, this was renamed!
 
-#### (Required) generatedFeatureDirectory
+#### generatedFeatureDirectory (required)
 
 The path where the __generated__ Cucumber .feature files should be located (e.g. _src/test/resources/parallel_).
 
@@ -149,7 +153,7 @@ The path where the __generated__ Cucumber .feature files should be located (e.g.
 
 **Caution:** This directory will be wiped prior to the feature file generation!
 
-#### (Required) generatedRunnerDirectory
+#### generatedRunnerDirectory (required)
 
 The path where the __generated__ runner classes should be located (e.g. _src/test/java/parallel/runners_).
 
@@ -157,7 +161,7 @@ The path where the __generated__ runner classes should be located (e.g. _src/tes
 
 **Caution:** This directory will be wiped prior to the runner file generation!
 
-#### (Optional) numberOfTestRuns
+#### numberOfTestRuns (optional)
 
 Optional number of test runs. If it is not set, its default value is __1__.
 For each test run, the whole set of features and runners is generated like this:
@@ -168,6 +172,18 @@ For each test run, the whole set of features and runners is generated like this:
 - etc.
 
 **Note:** Characters other than letters from A to Z, numbers and underscores will be stripped out of the feature file name.
+
+#### excludeScenarioTags (optional)
+
+Optional scenario tags that should not be included in the feature and runner generation.
+To include multiple tags, just add each one into as its own ```<param>```:
+
+```
+<excludeScenarioTags>
+    <param>@tag1</param>
+    <param>@tag2</param>
+</excludeScenarioTags>
+```
 
 ### Example
 
@@ -430,6 +446,9 @@ So all specified plugins will execute one after the other.
                                 <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
                                 <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
                                 <numberOfTestRuns>1</numberOfTestRuns>
+                                <excludeScenarioTags>
+                                    <param>@skip</param>
+                                </excludeScenarioTags>
                             </configuration>
                         </execution>
                     </executions>
