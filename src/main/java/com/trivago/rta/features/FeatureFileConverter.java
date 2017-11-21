@@ -179,7 +179,7 @@ public final class FeatureFileConverter {
         if (propertyManager.hasValidScenarioLineNumber()) {
             logPostfix = String.format(" with line number %d.", propertyManager.getScenarioLineNumber());
         }
-        logger.info(String.format("- Cucable processed [%s]%s", featureFileName, logPostfix));
+        logger.info(String.format("- Processed '%s'%s", featureFileName, logPostfix));
     }
 
     /**
