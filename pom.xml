@@ -81,6 +81,7 @@
 
         <mockito.version>2.9.0</mockito.version>
         <junit.version>4.12</junit.version>
+        <openpojo.version>0.8.6</openpojo.version>
     </properties>
 
     <profiles>
@@ -248,5 +249,11 @@
             <scope>test</scope>
         </dependency>
 
+        <dependency>
+            <groupId>com.openpojo</groupId>
+            <artifactId>openpojo</artifactId>
+            <version>${openpojo.version}</version>
+            <scope>test</scope>
+        </dependency>
     </dependencies>
 </project>
