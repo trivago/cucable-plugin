@@ -21,6 +21,7 @@
       - [generatedFeatureDirectory (required)](#generatedfeaturedirectory-required)
       - [generatedRunnerDirectory (required)](#generatedrunnerdirectory-required)
       - [numberOfTestRuns (optional)](#numberoftestruns-optional)
+      - [includeScenarioTags (optional)](#includescenariotags-optional)
       - [excludeScenarioTags (optional)](#excludescenariotags-optional)
     - [Example](#example)
       - [Source feature file](#source-feature-file)
