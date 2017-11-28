@@ -70,7 +70,15 @@ final class CucablePlugin extends AbstractMojo {
     private int numberOfTestRuns = 1;
 
     /**
+     * Optional scenario tags to be included from feature and runner generation.
+     * If used together with excludeScenarioTags, the excluded tags overrule this setting.
+     */
+    @Parameter(property = "parallel.includeScenarioTags")
+    private List<String> includeScenarioTags;
+
+    /**
      * Optional scenario tags to be excluded from feature and runner generation
+     * If used together with includeScenarioTags, the excluded tags overrule the included ones.
      */
     @Parameter(property = "parallel.excludeScenarioTags")
     private List<String> excludeScenarioTags;
@@ -104,6 +112,7 @@ final class CucablePlugin extends AbstractMojo {
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDirectory);
         propertyManager.setNumberOfTestRuns(numberOfTestRuns);
         propertyManager.setExcludeScenarioTags(excludeScenarioTags);
+        propertyManager.setIncludeScenarioTags(includeScenarioTags);
         propertyManager.validateSettings();
 
         logger.info("=====================================");

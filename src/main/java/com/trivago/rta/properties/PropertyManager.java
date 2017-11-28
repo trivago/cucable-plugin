@@ -46,7 +46,8 @@ public class PropertyManager {
     private String generatedFeatureDirectory;
     private Integer scenarioLineNumber;
     private int numberOfTestRuns;
-    private List<String> excludeTags;
+    private List<String> excludeScenarioTags;
+    private List<String> includeScenarioTags;
 
     @Inject
     public PropertyManager(CucableLogger logger) {
@@ -112,12 +113,20 @@ public class PropertyManager {
         this.numberOfTestRuns = numberOfTestRuns;
     }
 
-    public List<String> getExcludeTags() {
-        return excludeTags;
+    public List<String> getExcludeScenarioTags() {
+        return excludeScenarioTags;
     }
 
-    public void setExcludeScenarioTags(final List<String> excludeTags) {
-        this.excludeTags = excludeTags;
+    public void setExcludeScenarioTags(final List<String> excludeScenarioTags) {
+        this.excludeScenarioTags = excludeScenarioTags;
+    }
+
+    public List<String> getIncludeScenarioTags() {
+        return excludeScenarioTags;
+    }
+
+    public void setIncludeScenarioTags(final List<String> includeScenarioTags) {
+        this.includeScenarioTags = includeScenarioTags;
     }
 
     /**
@@ -136,8 +145,8 @@ public class PropertyManager {
             missingProperty = SOURCE_FEATURES;
         } else if (generatedFeatureDirectory.equals("")) {
             missingProperty = GENERATED_FEATURE_DIRECTORY;
-        } else if (excludeTags != null) {
-            for (String excludeTag : excludeTags) {
+        } else if (excludeScenarioTags != null) {
+            for (String excludeTag : excludeScenarioTags) {
                 if (!excludeTag.startsWith("@")) {
                     throw new CucablePluginException("Exlude tag '" + excludeTag + "' does not start with an '@'.");
                 }
@@ -152,16 +161,19 @@ public class PropertyManager {
     public void logProperties() {
         logger.info(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile));
         logger.info(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory));
+
         logger.info(String.format("- sourceFeatures            : %s", sourceFeatures));
         if (hasValidScenarioLineNumber()) {
-            logger.info(String.format("                              with line number %d", scenarioLineNumber));
+            logger.info(String.format("%30swith line number %d", " ", scenarioLineNumber));
         }
-        if (excludeTags != null) {
-            logger.info("                              exclude tags:");
-            for (String excludeTag : excludeTags) {
-                logger.info(String.format("                              - %s", excludeTag));
-            }
+
+        if (includeScenarioTags != null) {
+            logger.info(String.format("- include scenario tag(s)   : %s", String.join(", ", includeScenarioTags)));
         }
+        if (excludeScenarioTags != null) {
+            logger.info(String.format("- exclude scenario tag(s)   : %s", String.join(", ", excludeScenarioTags)));
+        }
+
         logger.info(String.format("- generatedFeatureDirectory : %s", generatedFeatureDirectory));
         logger.info(String.format("- numberOfTestRuns          : %d", numberOfTestRuns));
     }

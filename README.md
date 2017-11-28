@@ -173,9 +173,24 @@ For each test run, the whole set of features and runners is generated like this:
 
 **Note:** Characters other than letters from A to Z, numbers and underscores will be stripped out of the feature file name.
 
+#### includeScenarioTags (optional)
+
+Optional scenario tags that __should be included__ in the feature and runner generation.
+To include multiple tags, just add each one into as its own ```<param>```:
+
+```
+<includeScenarioTags>
+    <param>@scenario1Tag1</param>
+    <param>@scenario1Tag2</param>
+</includeScenarioTags>
+```
+
+__Note:__ When using _includeScenarioTags_ and _excludeScenarioTags_ together, the _excludeScenarioTags_ will override the _includeScenarioTags_.
+This means that a scenario containing an included tag __and__ an excluded tag will be __excluded__!
+
 #### excludeScenarioTags (optional)
 
-Optional scenario tags that should not be included in the feature and runner generation.
+Optional scenario tags that __should not be included__ in the feature and runner generation.
 To include multiple tags, just add each one into as its own ```<param>```:
 
 ```
@@ -184,6 +199,9 @@ To include multiple tags, just add each one into as its own ```<param>```:
     <param>@tag2</param>
 </excludeScenarioTags>
 ```
+
+__Note:__ When using _includeScenarioTags_ and _excludeScenarioTags_ together, the _excludeScenarioTags_ will override the _includeScenarioTags_.
+This means that a scenario containing an included tag __and__ an excluded tag will be __excluded__!
 
 ### Example
 

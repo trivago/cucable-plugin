@@ -85,6 +85,12 @@ public class FeatureFileContentRenderer {
         }
     }
 
+    /**
+     * Turns a {@link DataTable} instance into a printable string.
+     *
+     * @param dataTable the {@link DataTable} instance.
+     * @return the processed {@link String}.
+     */
     private String formatDataTableString(final DataTable dataTable) {
         if (dataTable == null) {
             return "";

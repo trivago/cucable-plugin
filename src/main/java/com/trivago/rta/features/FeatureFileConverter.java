@@ -110,13 +110,16 @@ public final class FeatureFileConverter {
         }
 
         Integer lineNumber = propertyManager.getScenarioLineNumber();
-        List<String> excludeTags = propertyManager.getExcludeTags();
+        List<String> includeScenarioTags = propertyManager.getIncludeScenarioTags();
+        List<String> excludeScenarioTags = propertyManager.getExcludeScenarioTags();
         String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
 
         List<SingleScenario> singleScenarios;
         try {
             singleScenarios =
-                    gherkinDocumentParser.getSingleScenariosFromFeature(featureFileContent, lineNumber, excludeTags);
+                    gherkinDocumentParser.getSingleScenariosFromFeature(
+                            featureFileContent, lineNumber, includeScenarioTags, excludeScenarioTags
+                    );
         } catch (CucablePluginException e) {
             throw new FeatureFileParseException(featureFilePathString);
         }

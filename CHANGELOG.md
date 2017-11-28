@@ -10,6 +10,12 @@ Back to [Readme](README.md).
 - Ability to generate features and runners in Maven's target folder
 - Ability to run multiple features per generated runner
 
+## [0.1.0] - 2017-11-28
+
+### Added
+- Ability to include and exclude scenarios based on certain tags
+- More unit tests
+
 ## [0.0.9] - 2017-10-27
 
 ### Changed
@@ -65,7 +71,8 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
-[Unreleased]: https://github.com/trivago/cucable-plugin/compare/0.0.9...HEAD
+[Unreleased]: https://github.com/trivago/cucable-plugin/compare/0.1.0...HEAD
+[0.1.0]: https://github.com/trivago/cucable-plugin/compare/0.0.9...0.1.0
 [0.0.9]: https://github.com/trivago/cucable-plugin/compare/0.0.8...0.0.9
 [0.0.8]: https://github.com/trivago/cucable-plugin/compare/0.0.7...0.0.8
 [0.0.7]: https://github.com/trivago/cucable-plugin/compare/0.0.6...0.0.7
