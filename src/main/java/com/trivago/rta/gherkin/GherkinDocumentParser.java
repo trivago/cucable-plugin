@@ -60,7 +60,8 @@ public class GherkinDocumentParser {
     public List<SingleScenario> getSingleScenariosFromFeature(
             final String featureContent,
             final Integer scenarioLineNumber,
-            final List<String> includeScenarioTags, final List<String> excludeScenarioTags) throws CucablePluginException {
+            final List<String> includeScenarioTags,
+            final List<String> excludeScenarioTags) throws CucablePluginException {
 
         GherkinDocument gherkinDocument = getGherkinDocumentFromFeatureFileContent(featureContent);
 
@@ -246,6 +247,11 @@ public class GherkinDocumentParser {
      */
     private boolean scenarioShouldBeIncluded(
             final List<String> scenarioTags, final List<String> includeScenarioTags, final List<String> excludeScenarioTags) {
+
+        System.out.println("*****************************************************");
+        System.out.println("scenarioTags:        " + scenarioTags);
+        System.out.println("includeScenarioTags: " + includeScenarioTags);
+        System.out.println("excludeScenarioTags: " + excludeScenarioTags);
 
         // If there are no scenario tags but include scenario tags, this scenario cannot be included.
         // If there are no scenario tags and no include scenario tags, this scenario can be directly included.

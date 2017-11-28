@@ -46,8 +46,8 @@ public class PropertyManager {
     private String generatedFeatureDirectory;
     private Integer scenarioLineNumber;
     private int numberOfTestRuns;
-    private List<String> excludeScenarioTags;
     private List<String> includeScenarioTags;
+    private List<String> excludeScenarioTags;
 
     @Inject
     public PropertyManager(CucableLogger logger) {
@@ -122,7 +122,7 @@ public class PropertyManager {
     }
 
     public List<String> getIncludeScenarioTags() {
-        return excludeScenarioTags;
+        return includeScenarioTags;
     }
 
     public void setIncludeScenarioTags(final List<String> includeScenarioTags) {
