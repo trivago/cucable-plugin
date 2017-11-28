@@ -28,7 +28,7 @@
       - [Runner template file](#runner-template-file)
       - [Generated Scenarios](#generated-scenarios)
       - [Generated runners](#generated-runners)
-  - [2. Running them with Maven failsafe](#2-running-them-with-maven-failsafe)
+  - [2. Running the generated tests with Maven failsafe](#2-running-the-generated-tests-with-maven-failsafe)
   - [3. Aggregation of a single test report after all test runs](#3-aggregation-of-a-single-test-report-after-all-test-runs)
   - [4. Passing or failing of the build according to the test results](#4-passing-or-failing-of-the-build-according-to-the-test-results)
   - [Example POM](#example-pom)
@@ -71,7 +71,7 @@ All changes are documented in the [full changelog](CHANGELOG.md).
 The typical flow is
 
 1. Generation of runners and features
-2. Running them with Maven failsafe
+2. Running the generated tests with Maven failsafe
 3. Aggregation of a single test report after all test runs
 4. *Optional* passing or failing of the build according to the test results
 
@@ -97,9 +97,13 @@ The following sections break down the above steps.
                 <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
                 <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
                 <numberOfTestRuns>1</numberOfTestRuns>
+                <includeScenarioTags>
+                    <param>@includeMe</param>
+                    <param>@includeMeAsWell</param>
+                </includeScenarioTags>                                
                 <excludeScenarioTags>
                     <param>@skip</param>
-                </excludeScenarioTags>
+                </excludeScenarioTags>                                
             </configuration>
         </execution>
     </executions>
@@ -334,7 +338,7 @@ public class <b>MyFeature_scenario001_run001_IT</b> {
 }
 </pre>
 
-## 2. Running them with Maven failsafe
+## 2. Running the generated tests with Maven failsafe
 
 This will skip the unit tests (if any) and run the generated runner classes with Failsafe.
 Since all generated runner classes from the step before end with ___IT__, they are automatically considered integration tests and run with failsafe.
@@ -465,9 +469,13 @@ So all specified plugins will execute one after the other.
                                 <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
                                 <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
                                 <numberOfTestRuns>1</numberOfTestRuns>
+                                <includeScenarioTags>
+                                    <param>@includeMe</param>
+                                    <param>@includeMeAsWell</param>
+                                </includeScenarioTags>                                
                                 <excludeScenarioTags>
                                     <param>@skip</param>
-                                </excludeScenarioTags>
+                                </excludeScenarioTags>                                
                             </configuration>
                         </execution>
                     </executions>
