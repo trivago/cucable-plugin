@@ -16,17 +16,19 @@
 - [Data flow](#data-flow)
   - [1. Generation of runners and features](#1-generation-of-runners-and-features)
     - [Parameters](#parameters)
-      - [(Required) sourceRunnerTemplateFile](#required-sourcerunnertemplatefile)
-      - [(Required) sourceFeatures](#required-sourcefeatures)
-      - [(Required) generatedFeatureDirectory](#required-generatedfeaturedirectory)
-      - [(Required) generatedRunnerDirectory](#required-generatedrunnerdirectory)
-      - [(Optional) numberOfTestRuns](#optional-numberoftestruns)
+      - [sourceRunnerTemplateFile (required)](#sourcerunnertemplatefile-required)
+      - [sourceFeatures (required)](#sourcefeatures-required)
+      - [generatedFeatureDirectory (required)](#generatedfeaturedirectory-required)
+      - [generatedRunnerDirectory (required)](#generatedrunnerdirectory-required)
+      - [numberOfTestRuns (optional)](#numberoftestruns-optional)
+      - [includeScenarioTags (optional)](#includescenariotags-optional)
+      - [excludeScenarioTags (optional)](#excludescenariotags-optional)
     - [Example](#example)
       - [Source feature file](#source-feature-file)
       - [Runner template file](#runner-template-file)
       - [Generated Scenarios](#generated-scenarios)
       - [Generated runners](#generated-runners)
-  - [2. Running them with Maven failsafe](#2-running-them-with-maven-failsafe)
+  - [2. Running the generated tests with Maven failsafe](#2-running-the-generated-tests-with-maven-failsafe)
   - [3. Aggregation of a single test report after all test runs](#3-aggregation-of-a-single-test-report-after-all-test-runs)
   - [4. Passing or failing of the build according to the test results](#4-passing-or-failing-of-the-build-according-to-the-test-results)
   - [Example POM](#example-pom)
@@ -69,7 +71,7 @@ All changes are documented in the [full changelog](CHANGELOG.md).
 The typical flow is
 
 1. Generation of runners and features
-2. Running them with Maven failsafe
+2. Running the generated tests with Maven failsafe
 3. Aggregation of a single test report after all test runs
 4. *Optional* passing or failing of the build according to the test results
 
@@ -95,6 +97,13 @@ The following sections break down the above steps.
                 <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
                 <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
                 <numberOfTestRuns>1</numberOfTestRuns>
+                <includeScenarioTags>
+                    <param>@includeMe</param>
+                    <param>@includeMeAsWell</param>
+                </includeScenarioTags>                                
+                <excludeScenarioTags>
+                    <param>@skip</param>
+                </excludeScenarioTags>                                
             </configuration>
         </execution>
     </executions>
@@ -103,7 +112,7 @@ The following sections break down the above steps.
 
 ### Parameters
 
-#### (Required) sourceRunnerTemplateFile
+#### sourceRunnerTemplateFile (required)
 
 The path to a text file (e.g. _src/test/resources/parallel/cucable.template_) with **[FEATURE_FILE_NAME]** placeholders for the generated feature file name.
 This file will be used to generate runners for every generated feature file.
@@ -132,7 +141,7 @@ public class <b>[FEATURE_FILE_NAME]</b> {
 
 </pre>
 
-#### (Required) sourceFeatures
+#### sourceFeatures (required)
 
 This can specify
 * the root path of your __existing__ Cucumber _.feature_ files (e.g. ```src/test/resources/features```)
@@ -141,7 +150,7 @@ This can specify
 
 __Note:__ This used to be called _sourceFeatureDirectory_ in older versions of Cucable. Since its capabilities changed so it now also supports single features, this was renamed!
 
-#### (Required) generatedFeatureDirectory
+#### generatedFeatureDirectory (required)
 
 The path where the __generated__ Cucumber .feature files should be located (e.g. _src/test/resources/parallel_).
 
@@ -149,7 +158,7 @@ The path where the __generated__ Cucumber .feature files should be located (e.g.
 
 **Caution:** This directory will be wiped prior to the feature file generation!
 
-#### (Required) generatedRunnerDirectory
+#### generatedRunnerDirectory (required)
 
 The path where the __generated__ runner classes should be located (e.g. _src/test/java/parallel/runners_).
 
@@ -157,7 +166,7 @@ The path where the __generated__ runner classes should be located (e.g. _src/tes
 
 **Caution:** This directory will be wiped prior to the runner file generation!
 
-#### (Optional) numberOfTestRuns
+#### numberOfTestRuns (optional)
 
 Optional number of test runs. If it is not set, its default value is __1__.
 For each test run, the whole set of features and runners is generated like this:
@@ -168,6 +177,36 @@ For each test run, the whole set of features and runners is generated like this:
 - etc.
 
 **Note:** Characters other than letters from A to Z, numbers and underscores will be stripped out of the feature file name.
+
+#### includeScenarioTags (optional)
+
+Optional scenario tags that __should be included__ in the feature and runner generation.
+To include multiple tags, just add each one into as its own ```<param>```:
+
+```
+<includeScenarioTags>
+    <param>@scenario1Tag1</param>
+    <param>@scenario1Tag2</param>
+</includeScenarioTags>
+```
+
+__Note:__ When using _includeScenarioTags_ and _excludeScenarioTags_ together, the _excludeScenarioTags_ will override the _includeScenarioTags_.
+This means that a scenario containing an included tag __and__ an excluded tag will be __excluded__!
+
+#### excludeScenarioTags (optional)
+
+Optional scenario tags that __should not be included__ in the feature and runner generation.
+To include multiple tags, just add each one into as its own ```<param>```:
+
+```
+<excludeScenarioTags>
+    <param>@tag1</param>
+    <param>@tag2</param>
+</excludeScenarioTags>
+```
+
+__Note:__ When using _includeScenarioTags_ and _excludeScenarioTags_ together, the _excludeScenarioTags_ will override the _includeScenarioTags_.
+This means that a scenario containing an included tag __and__ an excluded tag will be __excluded__!
 
 ### Example
 
@@ -299,7 +338,7 @@ public class <b>MyFeature_scenario001_run001_IT</b> {
 }
 </pre>
 
-## 2. Running them with Maven failsafe
+## 2. Running the generated tests with Maven failsafe
 
 This will skip the unit tests (if any) and run the generated runner classes with Failsafe.
 Since all generated runner classes from the step before end with ___IT__, they are automatically considered integration tests and run with failsafe.
@@ -430,6 +469,13 @@ So all specified plugins will execute one after the other.
                                 <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
                                 <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
                                 <numberOfTestRuns>1</numberOfTestRuns>
+                                <includeScenarioTags>
+                                    <param>@includeMe</param>
+                                    <param>@includeMeAsWell</param>
+                                </includeScenarioTags>                                
+                                <excludeScenarioTags>
+                                    <param>@skip</param>
+                                </excludeScenarioTags>                                
                             </configuration>
                         </execution>
                     </executions>
@@ -536,7 +582,7 @@ It is available in [Maven central](https://search.maven.org/#search%7Cgav%7C1%7C
 
 # License
 
-Copyright 2017 trivago NV
+Copyright 2017 trivago N.V.
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 

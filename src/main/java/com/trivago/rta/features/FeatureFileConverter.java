@@ -110,21 +110,29 @@ public final class FeatureFileConverter {
         }
 
         Integer lineNumber = propertyManager.getScenarioLineNumber();
+        List<String> includeScenarioTags = propertyManager.getIncludeScenarioTags();
+        List<String> excludeScenarioTags = propertyManager.getExcludeScenarioTags();
         String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
-        List<SingleScenario> singleScenarios = null;
+
+        List<SingleScenario> singleScenarios;
         try {
             singleScenarios =
-                    gherkinDocumentParser.getSingleScenariosFromFeature(featureFileContent, lineNumber);
+                    gherkinDocumentParser.getSingleScenariosFromFeature(
+                            featureFileContent, lineNumber, includeScenarioTags, excludeScenarioTags
+                    );
         } catch (CucablePluginException e) {
             throw new FeatureFileParseException(featureFilePathString);
         }
 
+        // In case of a provided line number: if there are no scenarios created
+        // that means that the provided line number is wrong.
         if (propertyManager.hasValidScenarioLineNumber() && singleScenarios.size() == 0) {
             throw new CucablePluginException("There is no parseable scenario or scenario outline at line " + lineNumber);
         }
 
         for (SingleScenario singleScenario : singleScenarios) {
             String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
+
             String featureFileName = getFeatureFileNameFromPath(featureFilePath);
             Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
             featureCounter++;
@@ -155,6 +163,7 @@ public final class FeatureFileConverter {
                 SingleScenarioRunner singleScenarioRunner =
                         new SingleScenarioRunner(
                                 propertyManager.getSourceRunnerTemplateFile(), generatedFileName);
+
                 String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(singleScenarioRunner);
 
                 String generatedRunnerFilePath =
@@ -162,18 +171,24 @@ public final class FeatureFileConverter {
                                 .concat(PATH_SEPARATOR)
                                 .concat(generatedFileName)
                                 .concat(RUNNER_FILE_EXTENSION);
+
                 fileIO.writeContentToFile(renderedRunnerFileContent, generatedRunnerFilePath);
             }
         }
         logCompleteMessage(featureFilePathString);
     }
 
+    /**
+     * Log the completion message for a feature file.
+     *
+     * @param featureFileName the name of the processed feature file.
+     */
     private void logCompleteMessage(String featureFileName) {
         String logPostfix = ".";
         if (propertyManager.hasValidScenarioLineNumber()) {
             logPostfix = String.format(" with line number %d.", propertyManager.getScenarioLineNumber());
         }
-        logger.info(String.format("- Cucable processed [%s]%s", featureFileName, logPostfix));
+        logger.info(String.format("- Processed '%s'%s", featureFileName, logPostfix));
     }
 
     /**
