@@ -249,10 +249,10 @@ public class GherkinDocumentParser {
     private boolean scenarioShouldBeIncluded(
             final List<String> featureTags, final List<String> scenarioTags, final List<String> includeScenarioTags, final List<String> excludeScenarioTags) {
 
+        // Combine scenario and feature tags to check against both.
         List<String> combinedSourceTags = new ArrayList<>();
         combinedSourceTags.addAll(featureTags);
         combinedSourceTags.addAll(scenarioTags);
-
 
         // If there are no scenario tags but include scenario tags, this scenario cannot be included.
         // If there are no scenario tags and no include scenario tags, this scenario can be directly included.
