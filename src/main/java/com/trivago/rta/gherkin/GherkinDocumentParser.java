@@ -91,7 +91,7 @@ public class GherkinDocumentParser {
                             new SingleScenario(featureName, scenarioName, featureTags, backgroundSteps);
                     addGherkinScenarioInformationToSingleScenario(scenario, singleScenario);
 
-                    if (scenarioShouldBeIncluded(singleScenario.getScenarioTags(), includeScenarioTags, excludeScenarioTags)) {
+                    if (scenarioShouldBeIncluded(singleScenario.getScenarioTags(), singleScenario.getFeatureTags(), includeScenarioTags, excludeScenarioTags)) {
                         singleScenarioFeatures.add(singleScenario);
                     }
                 }
@@ -139,7 +139,7 @@ public class GherkinDocumentParser {
         List<String> scenarioTags =
                 gherkinToCucableConverter.convertGherkinTagsToCucableTags(scenarioOutline.getTags());
 
-        if (!scenarioShouldBeIncluded(scenarioTags, includeScenarioTags, excludeScenarioTags)) {
+        if (!scenarioShouldBeIncluded(featureTags, scenarioTags, includeScenarioTags, excludeScenarioTags)) {
             return Collections.emptyList();
         }
 
@@ -240,25 +240,31 @@ public class GherkinDocumentParser {
     /**
      * Checks if a scenario should be included in the runner and feature generation based on the tag settings.
      *
-     * @param scenarioTags        the source tag list.
+     * @param featureTags         the source feature tag list.
+     * @param scenarioTags        the source scenario tag list.
      * @param includeScenarioTags the include tags list.
      * @param excludeScenarioTags the exclude tags list.
      * @return true if an include tag  and no exclude tags are included in the source tag list.
      */
     private boolean scenarioShouldBeIncluded(
-            final List<String> scenarioTags, final List<String> includeScenarioTags, final List<String> excludeScenarioTags) {
+            final List<String> featureTags, final List<String> scenarioTags, final List<String> includeScenarioTags, final List<String> excludeScenarioTags) {
+
+        List<String> combinedSourceTags = new ArrayList<>();
+        combinedSourceTags.addAll(featureTags);
+        combinedSourceTags.addAll(scenarioTags);
+
 
         // If there are no scenario tags but include scenario tags, this scenario cannot be included.
         // If there are no scenario tags and no include scenario tags, this scenario can be directly included.
-        if (scenarioTags == null || scenarioTags.isEmpty()) {
+        if (combinedSourceTags.isEmpty()) {
             return includeScenarioTags == null || includeScenarioTags.isEmpty();
         } else {
             boolean result = false;
-            for (String scenarioTag : scenarioTags) {
+            for (String sourceTag : combinedSourceTags) {
                 if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
                     // If there are include scenario tags, check if any scenario tag matches any include tag...
                     for (String includeScenarioTag : includeScenarioTags) {
-                        if (scenarioTag.equalsIgnoreCase(includeScenarioTag)) {
+                        if (sourceTag.equalsIgnoreCase(includeScenarioTag)) {
                             result = true;
                             break;
                         }
@@ -271,7 +277,7 @@ public class GherkinDocumentParser {
                 // If there are exclude scenario tags, check if any scenario tag matches any exclude tag.
                 if (excludeScenarioTags != null && !excludeScenarioTags.isEmpty()) {
                     for (String excludeScenarioTag : excludeScenarioTags) {
-                        if (scenarioTag.equalsIgnoreCase(excludeScenarioTag)) {
+                        if (sourceTag.equalsIgnoreCase(excludeScenarioTag)) {
                             return false;
                         }
                     }
