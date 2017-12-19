@@ -40,7 +40,7 @@ import java.util.Map;
  * into single scenario feature files and runners.
  */
 @Singleton
-public final class FeatureFileConverter {
+public class FeatureFileConverter {
 
     private static final String FEATURE_FILE_EXTENSION = ".feature";
     private static final String RUNNER_FILE_EXTENSION = ".java";

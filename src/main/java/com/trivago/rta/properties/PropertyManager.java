@@ -137,24 +137,32 @@ public class PropertyManager {
      */
     public void validateSettings() throws CucablePluginException {
         String missingProperty = null;
-        if (sourceRunnerTemplateFile.equals("")) {
+        if (sourceRunnerTemplateFile == null || sourceRunnerTemplateFile.equals("")) {
             missingProperty = SOURCE_RUNNER_TEMPLATE_FILE;
-        } else if (generatedRunnerDirectory.equals("")) {
+        } else if (generatedRunnerDirectory == null || generatedRunnerDirectory.equals("")) {
             missingProperty = GENERATED_RUNNER_DIRECTORY;
-        } else if (sourceFeatures.equals("")) {
+        } else if (sourceFeatures == null || sourceFeatures.equals("")) {
             missingProperty = SOURCE_FEATURES;
-        } else if (generatedFeatureDirectory.equals("")) {
+        } else if (generatedFeatureDirectory == null || generatedFeatureDirectory.equals("")) {
             missingProperty = GENERATED_FEATURE_DIRECTORY;
-        } else if (excludeScenarioTags != null) {
-            for (String excludeTag : excludeScenarioTags) {
-                if (!excludeTag.startsWith("@")) {
-                    throw new CucablePluginException("Exlude tag '" + excludeTag + "' does not start with an '@'.");
-                }
-            }
         }
 
         if (missingProperty != null) {
             throw new WrongOrMissingPropertyException(missingProperty);
+        }
+
+        if (includeScenarioTags != null) {
+            for (String includeTag : includeScenarioTags) {
+                if (!includeTag.startsWith("@")) {
+                    throw new CucablePluginException("Include tag '" + includeTag + "' does not start with '@'.");
+                }
+            }
+        } else if (excludeScenarioTags != null) {
+            for (String excludeTag : excludeScenarioTags) {
+                if (!excludeTag.startsWith("@")) {
+                    throw new CucablePluginException("Exclude tag '" + excludeTag + "' does not start with '@'.");
+                }
+            }
         }
     }
 
