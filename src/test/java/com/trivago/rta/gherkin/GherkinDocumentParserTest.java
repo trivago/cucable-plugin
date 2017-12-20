@@ -236,6 +236,23 @@ public class GherkinDocumentParserTest {
         assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value 'two'"));
     }
 
+    @Test
+    public void replaceDataTableExamplePlaceholderTest() throws Exception {
+        String featureContent = "Feature: test feature 3\n" +
+                "\n" +
+                "  Scenario Outline: This is a scenario outline\n" +
+                "    When I search for key <key>\n" +
+                "    | test | <key> | <value> |" +
+                "\n" +
+                "    Examples:\n" +
+                "      | key | value |\n" +
+                "      | 1   | one   |\n";
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null, null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+        assertThat(singleScenariosFromFeature.get(0).getSteps().size(), is(1));
+        assertThat(singleScenariosFromFeature.get(0).getSteps().get(0).getDataTable().toString(), is("DataTable{rows=[[test, 1, one]]}"));
+    }
+
     private String getTwoScenariosWithTags() {
         return "@featureTag\n" +
                 "Feature: test feature\n" +

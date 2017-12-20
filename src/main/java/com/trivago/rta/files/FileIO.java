@@ -32,7 +32,7 @@ import static java.nio.file.Files.readAllBytes;
 @Singleton
 public class FileIO {
     /**
-     * Write string content to a file.
+     * Writes string content to a file.
      *
      * @param content  the string content to be written.
      * @param filePath the complete path to the target file.
@@ -47,7 +47,7 @@ public class FileIO {
     }
 
     /**
-     * Read string content from a file.
+     * Reads string content from a file.
      *
      * @param filePath the complete path to the source file.
      * @return the file contents as a string.

@@ -17,6 +17,7 @@
 package com.trivago.rta.gherkin;
 
 import com.trivago.rta.exceptions.CucablePluginException;
+import com.trivago.rta.vo.DataTable;
 import com.trivago.rta.vo.SingleScenario;
 import com.trivago.rta.vo.Step;
 import gherkin.AstBuilder;
@@ -186,13 +187,43 @@ public class GherkinDocumentParser {
         List<Step> substitutedSteps = new ArrayList<>();
         for (Step step : steps) {
             String stepName = step.getName();
+            // substitute values in the step
+            DataTable dataTable = step.getDataTable();
             for (String columnName : exampleMap.keySet()) {
                 String columnValue = exampleMap.get(columnName).get(rowIndex);
                 stepName = stepName.replace(columnName, columnValue);
+                dataTable = replaceDataTableExamplePlaceholder(dataTable, columnName, columnValue);
             }
-            substitutedSteps.add(new Step(stepName, step.getDataTable()));
+            substitutedSteps.add(new Step(stepName, dataTable));
         }
+
         return substitutedSteps;
+    }
+
+    /**
+     * Replaces the example value placeholders in step data tables by the actual example table values.
+     *
+     * @param dataTable   The source {@link DataTable}.
+     * @param columnName  The current placeholder to replace with a value.
+     * @param columnValue The current value to replace.
+     * @return The resulting {@link DataTable}.
+     */
+    private DataTable replaceDataTableExamplePlaceholder(final DataTable dataTable, final String columnName, final String columnValue) {
+        if (dataTable == null) {
+            return null;
+        }
+
+        List<List<String>> dataTableRows = dataTable.getRows();
+        DataTable replacedDataTable = new DataTable();
+        for (List<String> dataTableRow : dataTableRows) {
+            List<String> replacedDataTableRow = new ArrayList<>();
+            for (String dataTableCell : dataTableRow) {
+                replacedDataTableRow.add(dataTableCell.replace(columnName, columnValue));
+            }
+            replacedDataTable.addRow(replacedDataTableRow);
+        }
+
+        return replacedDataTable;
     }
 
     /**
