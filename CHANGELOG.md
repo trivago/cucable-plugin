@@ -6,9 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
-## [Unreleased]
-- Ability to generate features and runners in Maven's target folder
-- Ability to run multiple features per generated runner
+## [0.1.3] - 2017-12-20
+
+### Fixed
+- Fixed handling of data tables that include example table values
 
 ## [0.1.2] - 2017-12-05
 
@@ -81,7 +82,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
-[Unreleased]: https://github.com/trivago/cucable-plugin/compare/0.1.2...HEAD
+[0.1.3]: https://github.com/trivago/cucable-plugin/compare/0.1.2...0.1.3
 [0.1.2]: https://github.com/trivago/cucable-plugin/compare/0.1.1...0.1.2
 [0.1.1]: https://github.com/trivago/cucable-plugin/compare/0.1.0...0.1.1
 [0.1.0]: https://github.com/trivago/cucable-plugin/compare/0.0.9...0.1.0
