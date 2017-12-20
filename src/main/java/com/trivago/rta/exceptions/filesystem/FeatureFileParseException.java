@@ -23,6 +23,8 @@ import com.trivago.rta.exceptions.CucablePluginException;
  */
 public class FeatureFileParseException extends CucablePluginException {
     /**
+     * Constructor.
+     *
      * @param featureFileName The name of the unparsable feature file.
      */
     public FeatureFileParseException(final String featureFileName) {

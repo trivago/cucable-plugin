@@ -25,11 +25,21 @@ public class CucableLogger {
 
     private Log mojoLogger;
 
+    /**
+     * Set the mojo logger so it can be used in any class that injects a CucableLogger.
+     *
+     * @param mojoLogger The current {@link Log}.
+     */
     public void setMojoLogger(final Log mojoLogger) {
         this.mojoLogger = mojoLogger;
     }
 
-    public void info(final CharSequence charSequence) {
-        mojoLogger.info(charSequence);
+    /**
+     * Info logging.
+     *
+     * @param logString The {@link String} to be logged.
+     */
+    public void info(final CharSequence logString) {
+        mojoLogger.info(logString);
     }
 }

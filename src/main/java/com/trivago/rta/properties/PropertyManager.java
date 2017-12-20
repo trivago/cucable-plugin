@@ -166,6 +166,9 @@ public class PropertyManager {
         }
     }
 
+    /**
+     * Logs all passed property values.
+     */
     public void logProperties() {
         logger.info(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile));
         logger.info(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory));

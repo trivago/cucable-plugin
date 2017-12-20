@@ -40,11 +40,19 @@ public final class SingleScenarioRunner {
         this.featureFileName = featureFileName;
     }
 
-    public String getRunnerTemplatePath(){
+    public String getRunnerTemplatePath() {
         return runnerTemplatePath;
     }
 
-    public String getFeatureFileName(){
+    public String getFeatureFileName() {
         return featureFileName;
+    }
+
+    @Override
+    public String toString() {
+        return "SingleScenarioRunner{" +
+                "runnerTemplatePath='" + runnerTemplatePath + '\'' +
+                ", featureFileName='" + featureFileName + '\'' +
+                '}';
     }
 }
