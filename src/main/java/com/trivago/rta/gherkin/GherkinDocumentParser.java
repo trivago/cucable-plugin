@@ -68,6 +68,7 @@ public class GherkinDocumentParser {
 
         Feature feature = gherkinDocument.getFeature();
         String featureName = feature.getName();
+        String featureDescription = feature.getDescription();
         List<String> featureTags =
                 gherkinToCucableConverter.convertGherkinTagsToCucableTags(feature.getTags());
 
@@ -77,6 +78,7 @@ public class GherkinDocumentParser {
         List<ScenarioDefinition> scenarioDefinitions = feature.getChildren();
         for (ScenarioDefinition scenarioDefinition : scenarioDefinitions) {
             String scenarioName = scenarioDefinition.getName();
+            String scenarioDescription = scenarioDefinition.getDescription();
 
             if (scenarioDefinition instanceof Background) {
                 // Save background steps in order to add them to every scenario inside the same feature
@@ -89,10 +91,22 @@ public class GherkinDocumentParser {
                 Scenario scenario = (Scenario) scenarioDefinition;
                 if (scenarioLineNumber == null || scenario.getLocation().getLine() == scenarioLineNumber) {
                     SingleScenario singleScenario =
-                            new SingleScenario(featureName, scenarioName, featureTags, backgroundSteps);
+                            new SingleScenario(
+                                    featureName,
+                                    featureDescription,
+                                    scenarioName,
+                                    scenarioDescription,
+                                    featureTags,
+                                    backgroundSteps
+                            );
                     addGherkinScenarioInformationToSingleScenario(scenario, singleScenario);
 
-                    if (scenarioShouldBeIncluded(singleScenario.getScenarioTags(), singleScenario.getFeatureTags(), includeScenarioTags, excludeScenarioTags)) {
+                    if (scenarioShouldBeIncluded(
+                            singleScenario.getScenarioTags(),
+                            singleScenario.getFeatureTags(),
+                            includeScenarioTags,
+                            excludeScenarioTags
+                    )) {
                         singleScenarioFeatures.add(singleScenario);
                     }
                 }
@@ -106,6 +120,7 @@ public class GherkinDocumentParser {
                             getSingleScenariosFromOutline(
                                     scenarioOutline,
                                     featureName,
+                                    featureDescription,
                                     featureTags,
                                     backgroundSteps,
                                     includeScenarioTags,
@@ -131,12 +146,14 @@ public class GherkinDocumentParser {
     private List<SingleScenario> getSingleScenariosFromOutline(
             final ScenarioOutline scenarioOutline,
             final String featureName,
+            final String featureDescription,
             final List<String> featureTags,
             final List<Step> backgroundSteps,
             final List<String> includeScenarioTags,
             final List<String> excludeScenarioTags) throws CucablePluginException {
 
         String scenarioName = scenarioOutline.getName();
+        String scenarioDescription = scenarioOutline.getDescription();
         List<String> scenarioTags =
                 gherkinToCucableConverter.convertGherkinTagsToCucableTags(scenarioOutline.getTags());
 
@@ -162,7 +179,14 @@ public class GherkinDocumentParser {
         // for each example row, create a new single scenario
         for (int i = 0; i < rowCount; i++) {
             SingleScenario singleScenario =
-                    new SingleScenario(featureName, scenarioName, featureTags, backgroundSteps);
+                    new SingleScenario(
+                            featureName,
+                            featureDescription,
+                            scenarioName,
+                            scenarioDescription,
+                            featureTags,
+                            backgroundSteps
+                    );
 
             List<Step> substitutedSteps = substituteStepExamplePlaceholders(steps, exampleMap, i);
             singleScenario.setSteps(substitutedSteps);
@@ -208,7 +232,11 @@ public class GherkinDocumentParser {
      * @param columnValue The current value to replace.
      * @return The resulting {@link DataTable}.
      */
-    private DataTable replaceDataTableExamplePlaceholder(final DataTable dataTable, final String columnName, final String columnValue) {
+    private DataTable replaceDataTableExamplePlaceholder(
+            final DataTable dataTable,
+            final String columnName,
+            final String columnValue
+    ) {
         if (dataTable == null) {
             return null;
         }
@@ -278,7 +306,11 @@ public class GherkinDocumentParser {
      * @return true if an include tag  and no exclude tags are included in the source tag list.
      */
     private boolean scenarioShouldBeIncluded(
-            final List<String> featureTags, final List<String> scenarioTags, final List<String> includeScenarioTags, final List<String> excludeScenarioTags) {
+            final List<String> featureTags,
+            final List<String> scenarioTags,
+            final List<String> includeScenarioTags,
+            final List<String> excludeScenarioTags
+    ) {
 
         // Combine scenario and feature tags to check against both.
         List<String> combinedSourceTags = new ArrayList<>();
