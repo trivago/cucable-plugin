@@ -22,22 +22,27 @@ import java.util.List;
  * Holds a complete single scenario with all information.
  */
 public final class SingleScenario {
-    private static final String DATA_TABLE_SEPARATOR = "|";
 
     private String featureName;
     private List<String> featureTags;
+    private final String featureDescription;
     private String scenarioName;
+    private final String scenarioDescription;
     private List<String> scenarioTags;
     private List<Step> backgroundSteps;
     private List<Step> steps;
 
     public SingleScenario(
             final String featureName,
+            final String featureDescription,
             final String scenarioName,
+            final String scenarioDescription,
             final List<String> featureTags,
             final List<Step> backgroundSteps) {
         this.featureName = featureName;
+        this.featureDescription = featureDescription;
         this.scenarioName = scenarioName;
+        this.scenarioDescription = scenarioDescription;
         this.featureTags = featureTags;
         this.backgroundSteps = backgroundSteps;
     }
@@ -50,6 +55,10 @@ public final class SingleScenario {
         return featureName;
     }
 
+    public String getFeatureDescription() {
+        return featureDescription;
+    }
+
     public List<String> getScenarioTags() {
         return scenarioTags;
     }
@@ -60,6 +69,10 @@ public final class SingleScenario {
 
     public String getScenarioName() {
         return scenarioName;
+    }
+
+    public String getScenarioDescription() {
+        return scenarioDescription;
     }
 
     public List<Step> getSteps() {
@@ -79,7 +92,9 @@ public final class SingleScenario {
         return "SingleScenario{" +
                 "featureName='" + featureName + '\'' +
                 ", featureTags=" + featureTags +
+                ", featureDescription='" + featureDescription + '\'' +
                 ", scenarioName='" + scenarioName + '\'' +
+                ", scenarioDescription='" + scenarioDescription + '\'' +
                 ", scenarioTags=" + scenarioTags +
                 ", backgroundSteps=" + backgroundSteps +
                 ", steps=" + steps +
