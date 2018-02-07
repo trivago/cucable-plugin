@@ -16,14 +16,15 @@
 
 package com.trivago.rta.vo;
 
-
 public class Step {
-    private String name;
     private final DataTable dataTable;
+    private final String docString;
+    private String name;
 
-    public Step(final String name, final DataTable dataTable) {
+    public Step(final String name, final DataTable dataTable, final String docString) {
         this.name = name;
         this.dataTable = dataTable;
+        this.docString = docString;
     }
 
     public String getName() {
@@ -38,11 +39,16 @@ public class Step {
         return dataTable;
     }
 
+    public String getDocString() {
+        return docString;
+    }
+
     @Override
     public String toString() {
         return "Step{" +
                 "name='" + name + '\'' +
-                ", dataTableString='" + dataTable + '\'' +
+                ", dataTable=" + dataTable +
+                ", docString='" + docString + '\'' +
                 '}';
     }
 }

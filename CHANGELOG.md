@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [0.1.5] - 2018-02-07
+
+### Added
+
+- Docstring support in steps
+- Possibility to specify multiple line numbers to process specific scenarios (like in Cucumber), e.g. ```myFeature.feature:12:42:111```. 
+
 ## [0.1.4] - 2018-02-05
 
 ### Fixed
@@ -88,6 +95,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[0.1.5]: https://github.com/trivago/cucable-plugin/compare/0.1.4...0.1.5
 [0.1.4]: https://github.com/trivago/cucable-plugin/compare/0.1.3...0.1.4
 [0.1.3]: https://github.com/trivago/cucable-plugin/compare/0.1.2...0.1.3
 [0.1.2]: https://github.com/trivago/cucable-plugin/compare/0.1.1...0.1.2

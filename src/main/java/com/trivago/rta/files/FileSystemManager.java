@@ -35,7 +35,7 @@ import java.util.stream.Collectors;
 @Singleton
 public class FileSystemManager {
 
-    public static final String FEATURE_SUFFIX = ".feature";
+    private static final String FEATURE_SUFFIX = ".feature";
     private final PropertyManager propertyManager;
 
     @Inject

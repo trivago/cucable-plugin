@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 public class FileDeletionExceptionTest {
 
     @Test
-    public void testErrorMessage(){
+    public void testErrorMessage() {
         FileDeletionException exception = new FileDeletionException("Filename");
         assertThat(exception.getMessage(), is("File 'Filename' could not be deleted."));
     }

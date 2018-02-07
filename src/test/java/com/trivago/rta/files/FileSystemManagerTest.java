@@ -11,22 +11,20 @@ import org.junit.rules.TemporaryFolder;
 import java.nio.file.Path;
 import java.util.List;
 
+import static org.hamcrest.core.Is.is;
 import static org.hamcrest.core.IsNull.notNullValue;
+import static org.junit.Assert.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
-import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
-
 public class FileSystemManagerTest {
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder();
     private PropertyManager propertyManager;
     private FileSystemManager fileSystemManager;
 
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
-
     @Before
-    public void setup(){
+    public void setup() {
         propertyManager = mock(PropertyManager.class);
         fileSystemManager = new FileSystemManager(propertyManager);
     }

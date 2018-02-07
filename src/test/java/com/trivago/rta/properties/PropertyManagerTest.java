@@ -10,7 +10,7 @@ import org.junit.rules.ExpectedException;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.hamcrest.CoreMatchers.nullValue;
+import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.anyString;
@@ -19,11 +19,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class PropertyManagerTest {
-    private PropertyManager propertyManager;
-    private CucableLogger logger;
-
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+    private PropertyManager propertyManager;
+    private CucableLogger logger;
 
     @Before
     public void setup() {
@@ -35,21 +34,24 @@ public class PropertyManagerTest {
     public void featureWithoutScenarioLineNumberTest() {
         propertyManager.setSourceFeatures("my.feature");
         assertThat(propertyManager.getSourceFeatures(), is("my.feature"));
-        assertThat(propertyManager.getScenarioLineNumber(), is(nullValue()));
+        assertThat(propertyManager.getScenarioLineNumbers(), is(notNullValue()));
+        assertThat(propertyManager.getScenarioLineNumbers().size(), is(0));
     }
 
     @Test
     public void featureWithScenarioLineNumberTest() {
         propertyManager.setSourceFeatures("my.feature:123");
         assertThat(propertyManager.getSourceFeatures(), is("my.feature"));
-        assertThat(propertyManager.getScenarioLineNumber(), is(123));
+        assertThat(propertyManager.getScenarioLineNumbers().size(), is(1));
+        assertThat(propertyManager.getScenarioLineNumbers().get(0), is(123));
     }
 
     @Test
     public void featureWithInvalidScenarioLineNumberTest() {
         propertyManager.setSourceFeatures("my.feature:abc");
         assertThat(propertyManager.getSourceFeatures(), is("my.feature:abc"));
-        assertThat(propertyManager.getScenarioLineNumber(), is(nullValue()));
+        assertThat(propertyManager.getScenarioLineNumbers(), is(notNullValue()));
+        assertThat(propertyManager.getScenarioLineNumbers().size(), is(0));
     }
 
     @Test

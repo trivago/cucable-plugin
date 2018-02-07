@@ -146,9 +146,7 @@ public class <b>[FEATURE_FILE_NAME]</b> {
 This can specify
 * the root path of your __existing__ Cucumber _.feature_ files (e.g. ```src/test/resources/features```)
 * the path to a specific __existing__ Cucumber _.feature_ file (e.g. ```src/test/resources/features/MyFeature.feature```)
-* the path to a specific __existing__ Cucumber _.feature_ file including the line number of a specific scenario/scenario outline inside this file (e.g. ```src/test/resources/features/MyFeature.feature:12``` would only convert the scenario starting at line _12_ inside _MyFeature.feature_)
-
-__Note:__ This used to be called _sourceFeatureDirectory_ in older versions of Cucable. Since its capabilities changed so it now also supports single features, this was renamed!
+* the path to a specific __existing__ Cucumber _.feature_ file including line numbers of specific scenarios/scenario outlines inside this file (e.g. ```src/test/resources/features/MyFeature.feature:12:19``` would only convert the scenarios starting at line _12_ and _19_ inside _MyFeature.feature_)
 
 #### generatedFeatureDirectory (required)
 
