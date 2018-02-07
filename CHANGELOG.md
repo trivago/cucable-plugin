@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [0.1.5] - 2018-02-07
+
+### Fixed
+
+- Docstring support in steps
+
 ## [0.1.4] - 2018-02-05
 
 ### Fixed
