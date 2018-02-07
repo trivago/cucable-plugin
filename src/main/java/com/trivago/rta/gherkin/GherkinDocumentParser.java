@@ -218,7 +218,7 @@ public class GherkinDocumentParser {
                 stepName = stepName.replace(columnName, columnValue);
                 dataTable = replaceDataTableExamplePlaceholder(dataTable, columnName, columnValue);
             }
-            substitutedSteps.add(new Step(stepName, dataTable));
+            substitutedSteps.add(new Step(stepName, dataTable, step.getDocString()));
         }
 
         return substitutedSteps;

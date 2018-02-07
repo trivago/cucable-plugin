@@ -94,6 +94,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[0.1.5]: https://github.com/trivago/cucable-plugin/compare/0.1.4...0.1.5
 [0.1.4]: https://github.com/trivago/cucable-plugin/compare/0.1.3...0.1.4
 [0.1.3]: https://github.com/trivago/cucable-plugin/compare/0.1.2...0.1.3
 [0.1.2]: https://github.com/trivago/cucable-plugin/compare/0.1.1...0.1.2

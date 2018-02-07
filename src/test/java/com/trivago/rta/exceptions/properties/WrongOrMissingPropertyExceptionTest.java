@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 public class WrongOrMissingPropertyExceptionTest {
 
     @Test
-    public void testErrorMessage(){
+    public void testErrorMessage() {
         WrongOrMissingPropertyException exception = new WrongOrMissingPropertyException("PropertyName");
         assertThat(exception.getMessage(), is("Property 'PropertyName' is not specified in the configuration section of your pom file or contains an invalid value."));
     }

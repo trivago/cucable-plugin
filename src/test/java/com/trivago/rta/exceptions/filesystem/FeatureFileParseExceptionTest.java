@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 public class FeatureFileParseExceptionTest {
 
     @Test
-    public void testErrorMessage(){
+    public void testErrorMessage() {
         FeatureFileParseException exception = new FeatureFileParseException("Filename");
         assertThat(exception.getMessage(), is("Could not parse feature file 'Filename'."));
     }

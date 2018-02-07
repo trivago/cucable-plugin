@@ -164,7 +164,8 @@ public class FeatureFileConverter {
                         new SingleScenarioRunner(
                                 propertyManager.getSourceRunnerTemplateFile(), generatedFileName);
 
-                String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(singleScenarioRunner);
+                String renderedRunnerFileContent =
+                        runnerFileContentRenderer.getRenderedRunnerFileContent(singleScenarioRunner);
 
                 String generatedRunnerFilePath =
                         propertyManager.getGeneratedRunnerDirectory()

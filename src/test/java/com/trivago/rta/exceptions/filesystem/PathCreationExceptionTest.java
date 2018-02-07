@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 public class PathCreationExceptionTest {
 
     @Test
-    public void testErrorMessage(){
+    public void testErrorMessage() {
         PathCreationException exception = new PathCreationException("PathName");
         assertThat(exception.getMessage(), is("Path 'PathName' could not be created."));
     }

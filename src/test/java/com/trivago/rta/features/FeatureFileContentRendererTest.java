@@ -46,8 +46,8 @@ public class FeatureFileContentRendererTest {
         String scenarioName = "scenarioName";
         String scenarioDescription = "scenarioDescription";
         List<Step> backgroundSteps = Arrays.asList(
-                new Step("Step 1", null),
-                new Step("Step 2", null)
+                new Step("Step 1", null, null),
+                new Step("Step 2", null, null)
         );
         List<String> scenarioTags = Arrays.asList("@scenarioTag1", "@scenarioTag2");
 
@@ -82,7 +82,7 @@ public class FeatureFileContentRendererTest {
         dataTable.addRow(Arrays.asList("cell11", "cell12", "cell13"));
         dataTable.addRow(Arrays.asList("cell21", "cell22", "cell23"));
 
-        List<Step> steps = Collections.singletonList(new Step("Step 1", dataTable));
+        List<Step> steps = Collections.singletonList(new Step("Step 1", dataTable, null));
 
         SingleScenario singleScenario = new SingleScenario(featureName, featureDescription, scenarioName, scenarioDescription, new ArrayList<>(), new ArrayList<>());
         singleScenario.setSteps(steps);

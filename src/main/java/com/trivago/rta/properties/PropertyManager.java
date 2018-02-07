@@ -74,14 +74,6 @@ public class PropertyManager {
         return sourceFeatures;
     }
 
-    public Integer getScenarioLineNumber() {
-        return scenarioLineNumber;
-    }
-
-    public boolean hasValidScenarioLineNumber() {
-        return scenarioLineNumber != null;
-    }
-
     public void setSourceFeatures(final String sourceFeatures) {
         String sourceFeaturesWithoutLineNumber = sourceFeatures;
         final int lastColonPosition = sourceFeatures.lastIndexOf(':');
@@ -95,6 +87,14 @@ public class PropertyManager {
             }
         }
         this.sourceFeatures = sourceFeaturesWithoutLineNumber;
+    }
+
+    public Integer getScenarioLineNumber() {
+        return scenarioLineNumber;
+    }
+
+    public boolean hasValidScenarioLineNumber() {
+        return scenarioLineNumber != null;
     }
 
     public String getGeneratedFeatureDirectory() {

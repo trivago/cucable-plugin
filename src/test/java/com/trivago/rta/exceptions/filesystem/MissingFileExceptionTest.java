@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 public class MissingFileExceptionTest {
 
     @Test
-    public void testErrorMessage(){
+    public void testErrorMessage() {
         MissingFileException exception = new MissingFileException("Filename");
         assertThat(exception.getMessage(), is("File 'Filename' could not be found."));
     }

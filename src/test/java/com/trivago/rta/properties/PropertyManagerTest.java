@@ -19,11 +19,10 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class PropertyManagerTest {
-    private PropertyManager propertyManager;
-    private CucableLogger logger;
-
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+    private PropertyManager propertyManager;
+    private CucableLogger logger;
 
     @Before
     public void setup() {

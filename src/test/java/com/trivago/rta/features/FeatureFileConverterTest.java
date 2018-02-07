@@ -26,15 +26,14 @@ import static org.mockito.Mockito.when;
 
 public class FeatureFileConverterTest {
 
+    @Rule
+    public TemporaryFolder testFolder = new TemporaryFolder();
     private FeatureFileConverter featureFileConverter;
     private FileIO fileIO;
     private PropertyManager propertyManager;
     private GherkinDocumentParser gherkinDocumentParser;
     private FeatureFileContentRenderer featureFileContentRenderer;
     private RunnerFileContentRenderer runnerFileContentRenderer;
-
-    @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
 
     @Before
     public void setup() {

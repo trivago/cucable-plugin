@@ -24,7 +24,7 @@ import static org.junit.Assert.assertThat;
 public class FileCreationExceptionTest {
 
     @Test
-    public void testErrorMessage(){
+    public void testErrorMessage() {
         FileCreationException exception = new FileCreationException("Filename");
         assertThat(exception.getMessage(), is("File 'Filename' could not be created."));
     }

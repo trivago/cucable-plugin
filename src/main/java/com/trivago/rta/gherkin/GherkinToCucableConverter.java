@@ -17,6 +17,7 @@
 package com.trivago.rta.gherkin;
 
 import gherkin.ast.DataTable;
+import gherkin.ast.DocString;
 import gherkin.ast.Examples;
 import gherkin.ast.Node;
 import gherkin.ast.Step;
@@ -45,14 +46,17 @@ public class GherkinToCucableConverter {
         for (Step gherkinStep : gherkinSteps) {
             com.trivago.rta.vo.Step step;
             com.trivago.rta.vo.DataTable dataTable = null;
+            String docString = null;
 
             Node argument = gherkinStep.getArgument();
             if (argument instanceof DataTable) {
                 dataTable = convertGherkinDataTableToCucumberDataTable((DataTable) argument);
+            } else if (argument instanceof DocString) {
+                docString = ((DocString) argument).getContent();
             }
 
             String keywordAndName = gherkinStep.getKeyword().concat(gherkinStep.getText());
-            step = new com.trivago.rta.vo.Step(keywordAndName, dataTable);
+            step = new com.trivago.rta.vo.Step(keywordAndName, dataTable, docString);
             steps.add(step);
         }
         return steps;
