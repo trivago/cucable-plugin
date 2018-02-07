@@ -187,7 +187,7 @@ public class FeatureFileConverter {
     private void logCompleteMessage(String featureFileName) {
         String logPostfix = ".";
         if (propertyManager.hasValidScenarioLineNumbers()) {
-            logPostfix = String.format(" with line number %s.", propertyManager.getScenarioLineNumbers());
+            logPostfix = String.format(" with line number(s) %s.", propertyManager.getScenarioLineNumbers());
         }
         logger.info(String.format("- Processed '%s'%s", featureFileName, logPostfix));
     }
