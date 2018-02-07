@@ -74,6 +74,7 @@ public class FeatureFileContentRenderer {
         }
         for (Step step : steps) {
             stringBuilder.append(step.getName()).append(LINE_SEPARATOR);
+            stringBuilder.append(formatDocString(step.getDocString()));
             stringBuilder.append(formatDataTableString(step.getDataTable()));
         }
     }
@@ -153,5 +154,18 @@ public class FeatureFileContentRenderer {
             dataTableStringBuilder.append(LINE_SEPARATOR);
         }
         return dataTableStringBuilder.toString();
+    }
+
+    /**
+     * Turns a DocString into a printable {@link String} including quotes.
+     *
+     * @param docString the DocString {@link String}.
+     * @return the processed DocString {@link String}.
+     */
+    private String formatDocString(final String docString) {
+        if (docString == null || docString.isEmpty()) {
+            return "";
+        }
+        return "\"\"\"" + LINE_SEPARATOR + docString + LINE_SEPARATOR + "\"\"\"" + LINE_SEPARATOR;
     }
 }
