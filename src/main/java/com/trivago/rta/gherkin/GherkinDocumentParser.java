@@ -89,7 +89,9 @@ public class GherkinDocumentParser {
 
             if (scenarioDefinition instanceof Scenario) {
                 Scenario scenario = (Scenario) scenarioDefinition;
-                if (scenarioLineNumbers == null || scenarioLineNumbers.contains(scenario.getLocation().getLine())) {
+                if (scenarioLineNumbers == null
+                        || scenarioLineNumbers.isEmpty()
+                        || scenarioLineNumbers.contains(scenario.getLocation().getLine())) {
                     SingleScenario singleScenario =
                             new SingleScenario(
                                     featureName,
@@ -115,7 +117,9 @@ public class GherkinDocumentParser {
 
             if (scenarioDefinition instanceof ScenarioOutline) {
                 ScenarioOutline scenarioOutline = (ScenarioOutline) scenarioDefinition;
-                if (scenarioLineNumbers == null || scenarioLineNumbers.contains(scenarioOutline.getLocation().getLine())) {
+                if (scenarioLineNumbers == null
+                        || scenarioLineNumbers.isEmpty()
+                        || scenarioLineNumbers.contains(scenarioOutline.getLocation().getLine())) {
                     List<SingleScenario> outlineScenarios =
                             getSingleScenariosFromOutline(
                                     scenarioOutline,
