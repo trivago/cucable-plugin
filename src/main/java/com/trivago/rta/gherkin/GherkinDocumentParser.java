@@ -52,7 +52,7 @@ public class GherkinDocumentParser {
      * Returns a {@link com.trivago.rta.vo.SingleScenario} list from a given feature file.
      *
      * @param featureContent      a feature string.
-     * @param scenarioLineNumber  an optional line number of a scenario inside a feature file.
+     * @param scenarioLineNumbers an optional line number of a scenario inside a feature file.
      * @param includeScenarioTags optional scenario tags to include into scenario generation.
      * @param excludeScenarioTags optional scenario tags to exclude from scenario generation.
      * @return a {@link com.trivago.rta.vo.SingleScenario} list.
@@ -60,7 +60,7 @@ public class GherkinDocumentParser {
      */
     public List<SingleScenario> getSingleScenariosFromFeature(
             final String featureContent,
-            final Integer scenarioLineNumber,
+            final List<Integer> scenarioLineNumbers,
             final List<String> includeScenarioTags,
             final List<String> excludeScenarioTags) throws CucablePluginException {
 
@@ -89,7 +89,7 @@ public class GherkinDocumentParser {
 
             if (scenarioDefinition instanceof Scenario) {
                 Scenario scenario = (Scenario) scenarioDefinition;
-                if (scenarioLineNumber == null || scenario.getLocation().getLine() == scenarioLineNumber) {
+                if (scenarioLineNumbers == null || scenarioLineNumbers.contains(scenario.getLocation().getLine())) {
                     SingleScenario singleScenario =
                             new SingleScenario(
                                     featureName,
@@ -115,7 +115,7 @@ public class GherkinDocumentParser {
 
             if (scenarioDefinition instanceof ScenarioOutline) {
                 ScenarioOutline scenarioOutline = (ScenarioOutline) scenarioDefinition;
-                if (scenarioLineNumber == null || scenarioOutline.getLocation().getLine() == scenarioLineNumber) {
+                if (scenarioLineNumbers == null || scenarioLineNumbers.contains(scenarioOutline.getLocation().getLine())) {
                     List<SingleScenario> outlineScenarios =
                             getSingleScenariosFromOutline(
                                     scenarioOutline,

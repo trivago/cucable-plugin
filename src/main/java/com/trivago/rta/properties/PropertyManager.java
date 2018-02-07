@@ -22,7 +22,10 @@ import com.trivago.rta.logging.CucableLogger;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Singleton
 public class PropertyManager {
@@ -45,6 +48,7 @@ public class PropertyManager {
     private String sourceFeatures;
     private String generatedFeatureDirectory;
     private Integer scenarioLineNumber;
+    private List<Integer> scenarioLineNumbers;
     private int numberOfTestRuns;
     private List<String> includeScenarioTags;
     private List<String> excludeScenarioTags;
@@ -75,26 +79,28 @@ public class PropertyManager {
     }
 
     public void setSourceFeatures(final String sourceFeatures) {
-        String sourceFeaturesWithoutLineNumber = sourceFeatures;
-        final int lastColonPosition = sourceFeatures.lastIndexOf(':');
-        if (lastColonPosition > -1) {
-            String scenarioLineNumber = sourceFeatures.substring(lastColonPosition + 1).trim();
+        StringBuffer resultBuffer = new StringBuffer();
+        Matcher matcher = Pattern.compile(":(\\d*)").matcher(sourceFeatures);
+        List<Integer> scenarioLineNumbers = new ArrayList<>();
+        while (matcher.find()) {
             try {
-                this.scenarioLineNumber = Integer.parseInt(scenarioLineNumber);
-                sourceFeaturesWithoutLineNumber = sourceFeatures.substring(0, lastColonPosition).trim();
-            } catch (NumberFormatException e) {
-                // Line number could not be parsed so keeping original sourceFeatures
+                scenarioLineNumbers.add(Integer.parseInt(matcher.group(1)));
+                matcher.appendReplacement(resultBuffer, "");
+            } catch (NumberFormatException ignored) {
+                // Ignore unparsable line numbers
             }
         }
-        this.sourceFeatures = sourceFeaturesWithoutLineNumber;
+        matcher.appendTail(resultBuffer);
+        this.scenarioLineNumbers = scenarioLineNumbers;
+        this.sourceFeatures = resultBuffer.toString();
     }
 
-    public Integer getScenarioLineNumber() {
-        return scenarioLineNumber;
+    public List<Integer> getScenarioLineNumbers() {
+        return scenarioLineNumbers;
     }
 
-    public boolean hasValidScenarioLineNumber() {
-        return scenarioLineNumber != null;
+    public boolean hasValidScenarioLineNumbers() {
+        return scenarioLineNumbers != null && !scenarioLineNumbers.isEmpty();
     }
 
     public String getGeneratedFeatureDirectory() {
@@ -173,9 +179,9 @@ public class PropertyManager {
         logger.info(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile));
         logger.info(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory));
 
-        logger.info(String.format("- sourceFeatures            : %s", sourceFeatures));
-        if (hasValidScenarioLineNumber()) {
-            logger.info(String.format("%30swith line number %d", " ", scenarioLineNumber));
+        logger.info(String.format("- sourceFeature(s)          : %s", sourceFeatures));
+        if (hasValidScenarioLineNumbers()) {
+            logger.info(String.format("%30swith line number(s) %s", " ", scenarioLineNumbers));
         }
 
         if (includeScenarioTags != null) {

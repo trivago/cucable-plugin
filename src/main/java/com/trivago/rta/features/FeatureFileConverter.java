@@ -109,7 +109,7 @@ public class FeatureFileConverter {
             throw new MissingFileException(featureFilePathString);
         }
 
-        Integer lineNumber = propertyManager.getScenarioLineNumber();
+        List<Integer> lineNumbers = propertyManager.getScenarioLineNumbers();
         List<String> includeScenarioTags = propertyManager.getIncludeScenarioTags();
         List<String> excludeScenarioTags = propertyManager.getExcludeScenarioTags();
         String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
@@ -118,7 +118,7 @@ public class FeatureFileConverter {
         try {
             singleScenarios =
                     gherkinDocumentParser.getSingleScenariosFromFeature(
-                            featureFileContent, lineNumber, includeScenarioTags, excludeScenarioTags
+                            featureFileContent, lineNumbers, includeScenarioTags, excludeScenarioTags
                     );
         } catch (CucablePluginException e) {
             throw new FeatureFileParseException(featureFilePathString);
@@ -126,8 +126,8 @@ public class FeatureFileConverter {
 
         // In case of a provided line number: if there are no scenarios created
         // that means that the provided line number is wrong.
-        if (propertyManager.hasValidScenarioLineNumber() && singleScenarios.size() == 0) {
-            throw new CucablePluginException("There is no parseable scenario or scenario outline at line " + lineNumber);
+        if (propertyManager.hasValidScenarioLineNumbers() && singleScenarios.size() == 0) {
+            throw new CucablePluginException("There is no parseable scenario or scenario outline at line " + lineNumbers);
         }
 
         for (SingleScenario singleScenario : singleScenarios) {
@@ -186,8 +186,8 @@ public class FeatureFileConverter {
      */
     private void logCompleteMessage(String featureFileName) {
         String logPostfix = ".";
-        if (propertyManager.hasValidScenarioLineNumber()) {
-            logPostfix = String.format(" with line number %d.", propertyManager.getScenarioLineNumber());
+        if (propertyManager.hasValidScenarioLineNumbers()) {
+            logPostfix = String.format(" with line number %s.", propertyManager.getScenarioLineNumbers());
         }
         logger.info(String.format("- Processed '%s'%s", featureFileName, logPostfix));
     }

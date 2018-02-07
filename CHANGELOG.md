@@ -8,9 +8,10 @@ Back to [Readme](README.md).
 
 ## [0.1.5] - 2018-02-07
 
-### Fixed
+### Added
 
 - Docstring support in steps
+- Possibility to specify multiple line numbers to process specific scenarios (like in Cucumber), e.g. ```myFeature.feature:12:42:111```. 
 
 ## [0.1.4] - 2018-02-05
 
