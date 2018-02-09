@@ -8,6 +8,8 @@ Back to [Readme](README.md).
 
 ## [0.1.6] - 2018-02-09
 
+### Added
+
 - Ability to use example placeholders in scenario outline names (contributed by [@daczczcz1](https://github.com/daczczcz1))
 
 ## [0.1.5] - 2018-02-07
