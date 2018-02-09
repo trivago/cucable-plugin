@@ -37,6 +37,8 @@ import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Singleton
 public class GherkinDocumentParser {
@@ -186,7 +188,7 @@ public class GherkinDocumentParser {
                     new SingleScenario(
                             featureName,
                             featureDescription,
-                            scenarioName,
+                            substituteScenarioNameExamplePlaceholders(scenarioName, exampleMap, i),
                             scenarioDescription,
                             featureTags,
                             backgroundSteps
@@ -352,6 +354,32 @@ public class GherkinDocumentParser {
             }
             return result;
         }
+    }
+
+    /**
+     * Replaces the example value placeholders in ScenarioOutline name by the actual example table values.
+     *
+     * @param scenarioOutlineName      The ScenarioOutline generic name.
+     * @param exampleMap The generated example map from an example table.
+     * @param rowIndex   The row index of the example table to consider.
+     * @return a {@link String} name with placeholders substituted for actual values from example table.
+     */
+
+    private String substituteScenarioNameExamplePlaceholders(
+            final String scenarioOutlineName,
+            final  Map<String, List<String>> exampleMap,
+            final int rowIndex) {
+        String result = scenarioOutlineName;
+        String placeholderPattern = "<.+?>";
+        Pattern p = Pattern.compile(placeholderPattern);
+        Matcher m = p.matcher(scenarioOutlineName);
+
+        while (m.find()) {
+            String currentPlaceholder = m.group(0);
+            result = result.replace(currentPlaceholder, exampleMap.get(currentPlaceholder).get(rowIndex));
+        }
+
+        return result;
     }
 }
 

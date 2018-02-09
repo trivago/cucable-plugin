@@ -237,6 +237,32 @@ public class GherkinDocumentParserTest {
     }
 
     @Test
+    public void validScenarioNamesWithScenarioOutlineTest() throws Exception {
+        String featureContent = "Feature: test feature 3\n" +
+                "\n" +
+                "  Scenario Outline: This is a scenario outline, key = <key>, value = <value>\n" +
+                "    This is a step\n" +
+                "    How about another step\n" +
+                "\n" +
+                "    Examples:\n" +
+                "      | key | value |\n" +
+                "      | 1   | one   |\n" +
+                "      | 2   | two   |";
+
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null, null);
+        assertThat(singleScenariosFromFeature.size(), is(2));
+
+        SingleScenario scenario = singleScenariosFromFeature.get(0);
+
+        assertThat(scenario.getScenarioName(), is("This is a scenario outline, key = 1, value = one"));
+
+        scenario = singleScenariosFromFeature.get(1);
+
+        assertThat(scenario.getScenarioName(), is("This is a scenario outline, key = 2, value = two"));
+    }
+
+
+    @Test
     public void replaceDataTableExamplePlaceholderTest() throws Exception {
         String featureContent = "Feature: test feature 3\n" +
                 "\n" +
