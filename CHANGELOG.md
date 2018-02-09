@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [0.1.6] - 2018-02-09
+
+### Added
+
+- Ability to use example placeholders in scenario outline names (contributed by [@daczczcz1](https://github.com/daczczcz1))
+
 ## [0.1.5] - 2018-02-07
 
 ### Added
@@ -95,6 +101,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[0.1.6]: https://github.com/trivago/cucable-plugin/compare/0.1.5...0.1.6
 [0.1.5]: https://github.com/trivago/cucable-plugin/compare/0.1.4...0.1.5
 [0.1.4]: https://github.com/trivago/cucable-plugin/compare/0.1.3...0.1.4
 [0.1.3]: https://github.com/trivago/cucable-plugin/compare/0.1.2...0.1.3
