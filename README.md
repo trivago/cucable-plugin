@@ -21,7 +21,7 @@
       - [sourceRunnerTemplateFile](#sourcerunnertemplatefile)
       - [sourceFeatures](#sourcefeatures)
       - [generatedFeatureDirectory](#generatedfeaturedirectory)
-      - [generatedRunnerDirectory (required)](#generatedrunnerdirectory-required)
+      - [generatedRunnerDirectory](#generatedrunnerdirectory)
     - [Optional Parameters](#optional-parameters)
       - [numberOfTestRuns](#numberoftestruns)
       - [includeScenarioTags](#includescenariotags)
