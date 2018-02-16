@@ -155,7 +155,7 @@ If you want to use a directory inside Maven's target folder, [check this example
 
 **Caution:** This directory will be wiped prior to the feature file generation!
 
-#### generatedRunnerDirectory (required)
+#### generatedRunnerDirectory
 
 The path where the __generated__ runner classes should be located (e.g. _src/test/java/parallel/runners_).
 
