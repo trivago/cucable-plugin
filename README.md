@@ -123,7 +123,7 @@ Example:
 <pre>
 package com.example;
 
-import cucumber.api.Cucumber;
+import cucumber.api.junit.Cucumber;
 import cucumber.api.CucumberOptions;
 import org.junit.runner.RunWith;
 
@@ -295,7 +295,7 @@ The placeholder **[FEATURE_FILE_NAME]** will be replaced with generated feature 
 <pre>
 package parallel.runners;
 
-import cucumber.api.Cucumber;
+import cucumber.api.junit.Cucumber;
 import cucumber.api.CucumberOptions;
 import org.junit.runner.RunWith;
 
@@ -363,7 +363,7 @@ This is an example for one of the generated runners - note how the placeholders 
 <pre>
 package parallel.runners;
 
-import cucumber.api.Cucumber;
+import cucumber.api.junit.Cucumber;
 import cucumber.api.CucumberOptions;
 import org.junit.runner.RunWith;
 
@@ -447,7 +447,7 @@ We use the [Cluecumber](https://github.com/trivago/cluecumber-report-plugin) plu
 
 # Example project
 
-You can test the complete flow and POM configuration by checking out the [Cucable example project]https://github.com/laxersaz/cucable-test-project.
+You can test the complete flow and POM configuration by checking out the [Cucable example project](https://github.com/laxersaz/cucable-test-project).
 
 # Additional Information
 
