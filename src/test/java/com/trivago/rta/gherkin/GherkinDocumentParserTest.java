@@ -20,7 +20,8 @@ public class GherkinDocumentParserTest {
     @Before
     public void setup() {
         GherkinToCucableConverter gherkinToCucableConverter = new GherkinToCucableConverter();
-        gherkinDocumentParser = new GherkinDocumentParser(gherkinToCucableConverter);
+        GherkinTranslations gherkinTranslations = new GherkinTranslations();
+        gherkinDocumentParser = new GherkinDocumentParser(gherkinToCucableConverter,gherkinTranslations);
     }
 
     @Test(expected = CucablePluginException.class)
@@ -44,7 +45,7 @@ public class GherkinDocumentParserTest {
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
 
-        assertThat(scenario.getScenarioName(), is("This is a scenario with two steps"));
+        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario with two steps"));
         assertThat(scenario.getSteps().size(), is(2));
         assertThat(scenario.getBackgroundSteps().size(), is(0));
     }
@@ -167,7 +168,7 @@ public class GherkinDocumentParserTest {
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
 
-        assertThat(scenario.getScenarioName(), is("This is a scenario with two steps"));
+        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario with two steps"));
         assertThat(scenario.getSteps().size(), is(2));
         assertThat(scenario.getBackgroundSteps().size(), is(0));
         assertThat(scenario.getSteps().get(0).getDataTable(), is(notNullValue()));
@@ -193,7 +194,7 @@ public class GherkinDocumentParserTest {
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
 
-        assertThat(scenario.getScenarioName(), is("This is a scenario with background"));
+        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario with background"));
         assertThat(scenario.getSteps().size(), is(1));
         assertThat(scenario.getBackgroundSteps().size(), is(2));
         assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
@@ -217,7 +218,7 @@ public class GherkinDocumentParserTest {
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
 
-        assertThat(scenario.getScenarioName(), is("This is a scenario outline"));
+        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline"));
         assertThat(scenario.getSteps().size(), is(2));
         assertThat(scenario.getBackgroundSteps().size(), is(0));
         assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
@@ -227,7 +228,7 @@ public class GherkinDocumentParserTest {
 
         scenario = singleScenariosFromFeature.get(1);
 
-        assertThat(scenario.getScenarioName(), is("This is a scenario outline"));
+        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline"));
         assertThat(scenario.getSteps().size(), is(2));
         assertThat(scenario.getBackgroundSteps().size(), is(0));
         assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
@@ -254,11 +255,11 @@ public class GherkinDocumentParserTest {
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
 
-        assertThat(scenario.getScenarioName(), is("This is a scenario outline, key = 1, value = one"));
+        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline, key = 1, value = one"));
 
         scenario = singleScenariosFromFeature.get(1);
 
-        assertThat(scenario.getScenarioName(), is("This is a scenario outline, key = 2, value = two"));
+        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline, key = 2, value = two"));
     }
 
 

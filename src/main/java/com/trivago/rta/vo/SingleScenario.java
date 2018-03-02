@@ -26,6 +26,7 @@ public final class SingleScenario {
     private final String featureDescription;
     private final String scenarioDescription;
     private String featureName;
+    private String featureLanguage;
     private List<String> featureTags;
     private String scenarioName;
     private List<String> scenarioTags;
@@ -34,12 +35,14 @@ public final class SingleScenario {
 
     public SingleScenario(
             final String featureName,
+            final String featureLanguage,
             final String featureDescription,
             final String scenarioName,
             final String scenarioDescription,
             final List<String> featureTags,
             final List<Step> backgroundSteps) {
         this.featureName = featureName;
+        this.featureLanguage = featureLanguage;
         this.featureDescription = featureDescription;
         this.scenarioName = scenarioName;
         this.scenarioDescription = scenarioDescription;
@@ -53,6 +56,14 @@ public final class SingleScenario {
 
     public String getFeatureName() {
         return featureName;
+    }
+
+    public String getFeatureLanguage() {
+        return featureLanguage;
+    }
+
+    public void setFeatureLanguage(final String featureLanguage) {
+        this.featureLanguage = featureLanguage;
     }
 
     public String getFeatureDescription() {
@@ -90,11 +101,12 @@ public final class SingleScenario {
     @Override
     public String toString() {
         return "SingleScenario{" +
-                "featureName='" + featureName + '\'' +
-                ", featureTags=" + featureTags +
-                ", featureDescription='" + featureDescription + '\'' +
-                ", scenarioName='" + scenarioName + '\'' +
+                "featureDescription='" + featureDescription + '\'' +
                 ", scenarioDescription='" + scenarioDescription + '\'' +
+                ", featureName='" + featureName + '\'' +
+                ", featureLanguage='" + featureLanguage + '\'' +
+                ", featureTags=" + featureTags +
+                ", scenarioName='" + scenarioName + '\'' +
                 ", scenarioTags=" + scenarioTags +
                 ", backgroundSteps=" + backgroundSteps +
                 ", steps=" + steps +

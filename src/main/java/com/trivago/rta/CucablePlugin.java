@@ -115,9 +115,9 @@ final class CucablePlugin extends AbstractMojo {
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
         propertyManager.validateSettings();
 
-        logger.info("=====================================");
+        logger.info("-------------------------------------");
         logger.info(String.format(" Cucable Maven Plugin, version %s", getClass().getPackage().getImplementationVersion()));
-        logger.info("=====================================");
+        logger.info("-------------------------------------");
         propertyManager.logProperties();
 
         fileManager.prepareGeneratedFeatureAndRunnerDirs();

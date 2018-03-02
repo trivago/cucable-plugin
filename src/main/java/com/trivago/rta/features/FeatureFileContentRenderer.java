@@ -34,6 +34,7 @@ public class FeatureFileContentRenderer {
     String getRenderedFeatureFileContent(SingleScenario singleScenario) {
         StringBuilder renderedContent = new StringBuilder();
 
+        addLanguage(renderedContent, singleScenario.getFeatureLanguage());
         addTags(renderedContent, singleScenario.getFeatureTags());
         addFeatureNameAndDescription(
                 renderedContent, singleScenario.getFeatureName(), singleScenario.getFeatureDescription()
@@ -49,6 +50,22 @@ public class FeatureFileContentRenderer {
         addGeneratedByCucumberMessage(renderedContent);
 
         return renderedContent.toString();
+    }
+
+    /**
+     * Adds the feature language to the generated feature file content.
+     *
+     * @param stringBuilder   The current feature {@link StringBuilder} instance.
+     * @param featureLanguage The feature language.
+     */
+    private void addLanguage(final StringBuilder stringBuilder, final String featureLanguage) {
+        if (featureLanguage == null || featureLanguage.isEmpty()) {
+            return;
+        }
+        stringBuilder.append("# language: ")
+                .append(featureLanguage)
+                .append(LINE_SEPARATOR)
+                .append(LINE_SEPARATOR);
     }
 
     /**
@@ -91,7 +108,7 @@ public class FeatureFileContentRenderer {
             final String scenarioName,
             final String scenarioDescription
     ) {
-        stringBuilder.append("Scenario: ").append(scenarioName);
+        stringBuilder.append(scenarioName);
         if (scenarioDescription != null && !scenarioDescription.isEmpty()) {
             stringBuilder.append(LINE_SEPARATOR).append(scenarioDescription);
         }
@@ -110,8 +127,7 @@ public class FeatureFileContentRenderer {
             final String featureName,
             final String featureDescription
     ) {
-        stringBuilder
-                .append("Feature: ").append(featureName);
+        stringBuilder.append(featureName);
         if (featureDescription != null && !featureDescription.isEmpty()) {
             stringBuilder.append(LINE_SEPARATOR).append(featureDescription);
         }
