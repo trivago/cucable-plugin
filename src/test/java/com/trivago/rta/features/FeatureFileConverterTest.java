@@ -78,7 +78,7 @@ public class FeatureFileConverterTest {
         when(fileIO.readContentFromFile("TEST_PATH")).thenReturn("TEST_CONTENT");
 
         List<SingleScenario> scenarioList = new ArrayList<>();
-        SingleScenario singleScenario = new SingleScenario("feature", "featureDescription", "name", "scenarioDescription", new ArrayList<>(), new ArrayList<>());
+        SingleScenario singleScenario = new SingleScenario("feature", "","featureDescription", "name", "scenarioDescription", new ArrayList<>(), new ArrayList<>());
         scenarioList.add(singleScenario);
         when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", null, null, null)).thenReturn(scenarioList);
 

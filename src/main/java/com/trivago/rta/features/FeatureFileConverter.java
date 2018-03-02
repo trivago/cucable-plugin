@@ -142,7 +142,7 @@ public class FeatureFileConverter {
                 String testRunsCounterFilenamePart = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
 
                 // Append the scenario and test run counters to the filename.
-                // Also add the "_IT" postfix so Failsafe considers it an integration test automatically.
+                // Also add the "_IT" postfix so Maven Failsafe considers it an integration test automatically.
                 String generatedFileName =
                         featureFileName
                                 .concat(scenarioCounterFilenamePart)

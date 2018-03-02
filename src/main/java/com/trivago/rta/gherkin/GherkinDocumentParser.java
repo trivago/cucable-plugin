@@ -44,10 +44,15 @@ import java.util.regex.Pattern;
 public class GherkinDocumentParser {
 
     private final GherkinToCucableConverter gherkinToCucableConverter;
+    private final GherkinTranslations gherkinTranslations;
 
     @Inject
-    public GherkinDocumentParser(final GherkinToCucableConverter gherkinToCucableConverter) {
+    public GherkinDocumentParser(
+            final GherkinToCucableConverter gherkinToCucableConverter,
+            final GherkinTranslations gherkinTranslations
+    ) {
         this.gherkinToCucableConverter = gherkinToCucableConverter;
+        this.gherkinTranslations = gherkinTranslations;
     }
 
     /**
@@ -69,7 +74,8 @@ public class GherkinDocumentParser {
         GherkinDocument gherkinDocument = getGherkinDocumentFromFeatureFileContent(featureContent);
 
         Feature feature = gherkinDocument.getFeature();
-        String featureName = feature.getName();
+        String featureName = feature.getKeyword() + ": " + feature.getName();
+        String featureLanguage = feature.getLanguage();
         String featureDescription = feature.getDescription();
         List<String> featureTags =
                 gherkinToCucableConverter.convertGherkinTagsToCucableTags(feature.getTags());
@@ -79,7 +85,7 @@ public class GherkinDocumentParser {
 
         List<ScenarioDefinition> scenarioDefinitions = feature.getChildren();
         for (ScenarioDefinition scenarioDefinition : scenarioDefinitions) {
-            String scenarioName = scenarioDefinition.getName();
+            String scenarioName = scenarioDefinition.getKeyword() + ": " + scenarioDefinition.getName();
             String scenarioDescription = scenarioDefinition.getDescription();
 
             if (scenarioDefinition instanceof Background) {
@@ -97,6 +103,7 @@ public class GherkinDocumentParser {
                     SingleScenario singleScenario =
                             new SingleScenario(
                                     featureName,
+                                    featureLanguage,
                                     featureDescription,
                                     scenarioName,
                                     scenarioDescription,
@@ -126,6 +133,7 @@ public class GherkinDocumentParser {
                             getSingleScenariosFromOutline(
                                     scenarioOutline,
                                     featureName,
+                                    featureLanguage,
                                     featureDescription,
                                     featureTags,
                                     backgroundSteps,
@@ -143,6 +151,7 @@ public class GherkinDocumentParser {
      *
      * @param scenarioOutline     a Gherkin {@link ScenarioOutline}.
      * @param featureName         The name of the feature this scenario outline belongs to.
+     * @param featureLanguage     The feature language this scenario outline belongs to.
      * @param featureTags         The feature tags of the parent feature.
      * @param backgroundSteps     return a Cucable {@link SingleScenario} list.
      * @param includeScenarioTags optional scenario tags to include in scenario generation.
@@ -152,13 +161,17 @@ public class GherkinDocumentParser {
     private List<SingleScenario> getSingleScenariosFromOutline(
             final ScenarioOutline scenarioOutline,
             final String featureName,
+            final String featureLanguage,
             final String featureDescription,
             final List<String> featureTags,
             final List<Step> backgroundSteps,
             final List<String> includeScenarioTags,
             final List<String> excludeScenarioTags) throws CucablePluginException {
 
-        String scenarioName = scenarioOutline.getName();
+        // Retrieve the translation of "Scenario" in the target language and add it to the scenario
+        String translatedScenarioKeyword = gherkinTranslations.getScenarioKeyword(featureLanguage);
+        String scenarioName = translatedScenarioKeyword + ": " + scenarioOutline.getName();
+
         String scenarioDescription = scenarioOutline.getDescription();
         List<String> scenarioTags =
                 gherkinToCucableConverter.convertGherkinTagsToCucableTags(scenarioOutline.getTags());
@@ -187,6 +200,7 @@ public class GherkinDocumentParser {
             SingleScenario singleScenario =
                     new SingleScenario(
                             featureName,
+                            featureLanguage,
                             featureDescription,
                             substituteScenarioNameExamplePlaceholders(scenarioName, exampleMap, i),
                             scenarioDescription,
@@ -359,15 +373,15 @@ public class GherkinDocumentParser {
     /**
      * Replaces the example value placeholders in ScenarioOutline name by the actual example table values.
      *
-     * @param scenarioOutlineName      The ScenarioOutline generic name.
-     * @param exampleMap The generated example map from an example table.
-     * @param rowIndex   The row index of the example table to consider.
+     * @param scenarioOutlineName The ScenarioOutline generic name.
+     * @param exampleMap          The generated example map from an example table.
+     * @param rowIndex            The row index of the example table to consider.
      * @return a {@link String} name with placeholders substituted for actual values from example table.
      */
 
     private String substituteScenarioNameExamplePlaceholders(
             final String scenarioOutlineName,
-            final  Map<String, List<String>> exampleMap,
+            final Map<String, List<String>> exampleMap,
             final int rowIndex) {
         String result = scenarioOutlineName;
         String placeholderPattern = "<.+?>";

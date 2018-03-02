@@ -8,9 +8,13 @@ Back to [Readme](README.md).
 
 ## [0.1.7] - 2018-03-02
 
+### Changed
+
+- Updated to Gherkin 5.0.0
+
 ### Added
 
-- Comments are now preserved in the generated features.
+- All Gherkin languages are now supported
 
 ## [0.1.6] - 2018-02-09
 
