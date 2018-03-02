@@ -48,12 +48,15 @@
 
 Cucable is a Maven plugin for [Cucumber](https://cucumber.io) scenarios that simplifies fine-grained and efficient parallel test runs.
 
-This plugin has two purposes:
+This plugin does the following:
 
-- Generating single Cucumber features from all scenarios and scenario outlines inside specified .feature files
+- Generate single Cucumber features containing one single scenario each
+- Convert scenario outlines into separate scenarios
 - Generating Cucumber runners for every generated "single scenario" feature file
 
 Those generated runners and features can then be used with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/) in order to parallelize test runs.
+
+**Note:** From version 0.1.7 on this also works for non-english feature files!
 
 ## Changelog
 
