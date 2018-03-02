@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [0.1.7] - 2018-03-02
+
+### Added
+
+- Comments are now preserved in the generated features.
+
 ## [0.1.6] - 2018-02-09
 
 ### Added
@@ -101,6 +107,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[0.1.7]: https://github.com/trivago/cucable-plugin/compare/0.1.5...0.1.7
 [0.1.6]: https://github.com/trivago/cucable-plugin/compare/0.1.5...0.1.6
 [0.1.5]: https://github.com/trivago/cucable-plugin/compare/0.1.4...0.1.5
 [0.1.4]: https://github.com/trivago/cucable-plugin/compare/0.1.3...0.1.4
