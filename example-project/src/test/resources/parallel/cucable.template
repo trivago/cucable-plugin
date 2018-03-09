@@ -1,0 +1,10 @@
+package parallel;
+
+import cucumber.api.CucumberOptions;
+
+@CucumberOptions(
+    features = {"target/parallel/features/[FEATURE_FILE_NAME].feature"},
+    plugin = {"json:target/cucumber-report/[FEATURE_FILE_NAME].json"}
+)
+public class [FEATURE_FILE_NAME] {
+}

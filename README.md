@@ -15,6 +15,7 @@
 
 
 - [Cucable Maven Plugin](#cucable-maven-plugin)
+  - [Repository Structure](#repository-structure)
   - [Changelog](#changelog)
   - [Maven dependency](#maven-dependency)
 - [Typical workflow](#typical-workflow)
@@ -57,6 +58,11 @@ This plugin does the following:
 Those generated runners and features can then be used with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/) in order to parallelize test runs.
 
 **Note:** From version 0.1.7 on this also works for non-english feature files!
+
+## Repository Structure
+
+* [plugin-code](plugin-code) contains the full plugin source code.
+* [example-project](example-project) contains an example Maven project to see the plugin in action.
 
 ## Changelog
 
@@ -452,7 +458,7 @@ We use the [Cluecumber](https://github.com/trivago/cluecumber-report-plugin) plu
 
 # Example project
 
-You can test the complete flow and POM configuration by checking out the [Cucable example project](https://github.com/laxersaz/cucable-test-project).
+You can test the complete flow and POM configuration by checking out the [Cucable example project](example-project).
 
 # Additional Information
 
