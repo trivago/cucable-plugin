@@ -480,3 +480,7 @@ Unless required by applicable law or agreed to in writing, software distributed 
 ## Credits
 
 This plugin was inspired by the [Cucumber Slices Maven Plugin](https://github.com/DisneyStudios/cucumber-slices-maven-plugin).
+
+This project is being tested on
+
+[![Browserstack](documentation/img/browserstack.png)](http://browserstack.com)
