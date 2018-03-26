@@ -83,6 +83,9 @@ final class CucablePlugin extends AbstractMojo {
     @Parameter(property = "parallel.excludeScenarioTags")
     private List<String> excludeScenarioTags;
 
+    @Parameter(property = "parallel.logLevel", defaultValue = "default")
+    private String logLevel;
+
     @Inject
     public CucablePlugin(
             PropertyManager propertyManager,
@@ -113,6 +116,7 @@ final class CucablePlugin extends AbstractMojo {
         propertyManager.setNumberOfTestRuns(numberOfTestRuns);
         propertyManager.setExcludeScenarioTags(excludeScenarioTags);
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
+        propertyManager.setLogLevel(logLevel);
         propertyManager.validateSettings();
 
         logger.info("-------------------------------------");

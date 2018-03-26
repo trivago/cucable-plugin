@@ -47,11 +47,11 @@ public class PropertyManager {
     private String generatedRunnerDirectory;
     private String sourceFeatures;
     private String generatedFeatureDirectory;
-    private Integer scenarioLineNumber;
     private List<Integer> scenarioLineNumbers;
     private int numberOfTestRuns;
     private List<String> includeScenarioTags;
     private List<String> excludeScenarioTags;
+    private String logLevel;
 
     @Inject
     public PropertyManager(CucableLogger logger) {
@@ -133,6 +133,14 @@ public class PropertyManager {
 
     public void setIncludeScenarioTags(final List<String> includeScenarioTags) {
         this.includeScenarioTags = includeScenarioTags;
+    }
+
+    public void setLogLevel(final String logLevel) {
+        this.logLevel = logLevel;
+    }
+
+    public String getLogLevel() {
+        return logLevel;
     }
 
     /**
