@@ -1,5 +1,6 @@
 package com.trivago.rta.logging;
 
+import com.trivago.rta.properties.PropertyManager;
 import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
 import org.junit.Test;
@@ -16,13 +17,14 @@ public class CucableLoggerTest {
     @Before
     public void setup() {
         mockedLogger = mock(Log.class);
+        PropertyManager propertyManager = mock(PropertyManager.class);
         logger = new CucableLogger();
-        logger.setMojoLogger(mockedLogger);
+        logger.initialize(mockedLogger, "default");
     }
 
     @Test
     public void infoTest() {
-        logger.info("Test");
+        logger.log("Test");
         verify(mockedLogger, times(1))
                 .info("Test");
     }

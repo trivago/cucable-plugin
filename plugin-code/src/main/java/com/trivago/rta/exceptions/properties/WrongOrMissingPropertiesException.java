@@ -18,19 +18,20 @@ package com.trivago.rta.exceptions.properties;
 
 import com.trivago.rta.exceptions.CucablePluginException;
 
+import java.util.List;
+
 /**
  * Thrown when an expected plugin property is not found or wrong
  * (typically set inside a configuration block within the pom file).
  */
-public class WrongOrMissingPropertyException extends CucablePluginException {
+public class WrongOrMissingPropertiesException extends CucablePluginException {
     /**
      * Constructor.
      *
-     * @param property The name of the missing property.
+     * @param properties The name of the missing property.
      */
-    public WrongOrMissingPropertyException(final String property) {
-        super("Property '" + property
-                + "' is not specified in the configuration section "
-                + "of your pom file or contains an invalid value.");
+    public WrongOrMissingPropertiesException(final List<String> properties) {
+        super((properties.size() == 1 ? "Property" : "Properties") +
+                " not specified correctly in the configuration section of your pom file: " + properties);
     }
 }

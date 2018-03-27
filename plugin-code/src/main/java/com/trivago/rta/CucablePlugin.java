@@ -83,8 +83,12 @@ final class CucablePlugin extends AbstractMojo {
     @Parameter(property = "parallel.excludeScenarioTags")
     private List<String> excludeScenarioTags;
 
-    @Parameter(property = "parallel.logLevel", defaultValue = "default")
-    private String logLevel;
+    /**
+     * Optional log level to control what information is logged in the console.
+     * Allowed values: default, compact, minimal, off
+     */
+    @Parameter(property = "parallel.logLevel")
+    private String logLevel = "default";
 
     @Inject
     public CucablePlugin(
@@ -106,7 +110,11 @@ final class CucablePlugin extends AbstractMojo {
      */
     public void execute() throws CucablePluginException {
         // Initialize logger to be available outside the AbstractMojo class
-        logger.setMojoLogger(getLog());
+
+        System.out.println("PropMan " + propertyManager);
+
+        propertyManager.setLogLevel(logLevel);
+        logger.initialize(getLog(), propertyManager.getLogLevel());
 
         // Initialize and validate passed pom properties
         propertyManager.setSourceRunnerTemplateFile(sourceRunnerTemplateFile);
@@ -116,12 +124,11 @@ final class CucablePlugin extends AbstractMojo {
         propertyManager.setNumberOfTestRuns(numberOfTestRuns);
         propertyManager.setExcludeScenarioTags(excludeScenarioTags);
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
-        propertyManager.setLogLevel(logLevel);
         propertyManager.validateSettings();
 
-        logger.info("-------------------------------------");
-        logger.info(String.format(" Cucable Maven Plugin, version %s", getClass().getPackage().getImplementationVersion()));
-        logger.info("-------------------------------------");
+        logger.log("-------------------------------------");
+        logger.log(String.format(" Cucable Maven Plugin, version %s", getClass().getPackage().getImplementationVersion()));
+        logger.log("-------------------------------------");
         propertyManager.logProperties();
 
         fileManager.prepareGeneratedFeatureAndRunnerDirs();

@@ -18,14 +18,30 @@ package com.trivago.rta.exceptions.properties;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.junit.Assert.assertThat;
 
 public class WrongOrMissingPropertyExceptionTest {
 
     @Test
-    public void testErrorMessage() {
-        WrongOrMissingPropertyException exception = new WrongOrMissingPropertyException("PropertyName");
-        assertThat(exception.getMessage(), is("Property 'PropertyName' is not specified in the configuration section of your pom file or contains an invalid value."));
+    public void testErrorOnePropertyMessage() {
+        List<String> properties = new ArrayList<>();
+        properties.add("OneProperty");
+        WrongOrMissingPropertiesException exception = new WrongOrMissingPropertiesException(properties);
+        assertThat(exception.getMessage(),
+                is("Property not specified correctly in the configuration section of your pom file: [OneProperty]"));
+    }
+
+    @Test
+    public void testErrorMultiplePropertiesMessage() {
+        List<String> properties = new ArrayList<>();
+        properties.add("OneProperty");
+        properties.add("AnotherProperty");
+        WrongOrMissingPropertiesException exception = new WrongOrMissingPropertiesException(properties);
+        assertThat(exception.getMessage(),
+                is("Properties not specified correctly in the configuration section of your pom file: [OneProperty, AnotherProperty]"));
     }
 }

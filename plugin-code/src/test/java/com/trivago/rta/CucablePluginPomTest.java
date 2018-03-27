@@ -16,7 +16,7 @@
 
 package com.trivago.rta;
 
-import com.trivago.rta.exceptions.properties.WrongOrMissingPropertyException;
+import com.trivago.rta.exceptions.properties.WrongOrMissingPropertiesException;
 import org.apache.maven.plugin.testing.MojoRule;
 import org.junit.Rule;
 import org.junit.Test;
@@ -97,28 +97,28 @@ public class CucablePluginPomTest {
 
     @Test
     public void missingGeneratedFeatureDirectoryTest() throws Exception {
-        expectedException.expect(WrongOrMissingPropertyException.class);
+        expectedException.expect(WrongOrMissingPropertiesException.class);
         CucablePlugin mojo = createMojoFromPomFile(MISSING_GENERATED_FEATURE_DIRECTORY_POM);
         mojo.execute();
     }
 
     @Test
     public void missingGeneratedRunnerDirectoryTest() throws Exception {
-        expectedException.expect(WrongOrMissingPropertyException.class);
+        expectedException.expect(WrongOrMissingPropertiesException.class);
         CucablePlugin mojo = createMojoFromPomFile(MISSING_GENERATED_RUNNER_DIRECTORY_POM);
         mojo.execute();
     }
 
     @Test
     public void missingSourceFeaturesTest() throws Exception {
-        expectedException.expect(WrongOrMissingPropertyException.class);
+        expectedException.expect(WrongOrMissingPropertiesException.class);
         CucablePlugin mojo = createMojoFromPomFile(MISSING_SOURCE_FEATURE_DIRECTORY_POM);
         mojo.execute();
     }
 
     @Test
     public void missingSourceRunnerTemplateFileTest() throws Exception {
-        expectedException.expect(WrongOrMissingPropertyException.class);
+        expectedException.expect(WrongOrMissingPropertiesException.class);
         CucablePlugin mojo = createMojoFromPomFile(MISSING_SOURCE_RUNNER_TEMPLATE_POM);
         mojo.execute();
     }

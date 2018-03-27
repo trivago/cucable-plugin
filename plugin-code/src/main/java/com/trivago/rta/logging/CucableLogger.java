@@ -19,27 +19,49 @@ package com.trivago.rta.logging;
 import org.apache.maven.plugin.logging.Log;
 
 import javax.inject.Singleton;
+import java.util.Arrays;
 
 @Singleton
 public class CucableLogger {
 
     private Log mojoLogger;
+    private CucableLogLevel currentLogLevel;
+
+    public enum CucableLogLevel {
+        DEFAULT, COMPACT, MINIMAL, OFF
+    }
 
     /**
      * Set the mojo logger so it can be used in any class that injects a CucableLogger.
      *
      * @param mojoLogger The current {@link Log}.
+     * @param logLevel   the log level that the logger should react to.
      */
-    public void setMojoLogger(final Log mojoLogger) {
+    public void initialize(final Log mojoLogger, final String logLevel) {
         this.mojoLogger = mojoLogger;
+        if (logLevel == null) {
+            currentLogLevel = CucableLogger.CucableLogLevel.DEFAULT;
+            return;
+        }
+
+        try {
+            currentLogLevel = CucableLogger.CucableLogLevel.valueOf(logLevel.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            currentLogLevel = CucableLogger.CucableLogLevel.DEFAULT;
+            log("Log level " + logLevel + " is unknown. Cucable will use 'default' logging.");
+        }
     }
 
     /**
-     * Info logging.
+     * Logs a message based on the provided log levels.
      *
-     * @param logString The {@link String} to be logged.
+     * @param logString        The {@link String} to be logged.
+     * @param cucableLogLevels The log levels ({@link CucableLogLevel} list) in which the message should be displayed.
      */
-    public void info(final CharSequence logString) {
-        mojoLogger.info(logString);
+    public void log(final CharSequence logString, CucableLogLevel... cucableLogLevels) {
+        if (currentLogLevel == null || cucableLogLevels == null || cucableLogLevels.length == 0 ||
+                Arrays.stream(cucableLogLevels).anyMatch(cucableLogLevel -> cucableLogLevel == currentLogLevel)) {
+            mojoLogger.info(logString);
+        }
     }
 }
