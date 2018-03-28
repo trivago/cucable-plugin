@@ -8,6 +8,7 @@ import org.apache.maven.plugin.logging.Log;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
@@ -39,6 +40,6 @@ public class CucablePluginTest {
     public void logInvocationTest() throws Exception {
         cucablePlugin.execute();
         verify(logger, times(1)).initialize(mojoLogger, "default");
-        verify(logger, times(3)).log(anyString());
+        verify(logger, times(3)).info(anyString(), any(CucableLogger.CucableLogLevel.class));
     }
 }

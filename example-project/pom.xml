@@ -59,7 +59,7 @@
                             <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
                             <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
                             <numberOfTestRuns>1</numberOfTestRuns>
-                            <logLevel>as</logLevel>
+                            <logLevel>jiawen</logLevel>
                         </configuration>
                     </execution>
                 </executions>

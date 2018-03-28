@@ -236,7 +236,7 @@ This can be configured by passing the `logLevel` property:
 
 * _default_ will log all the mentioned information
 * _compact_ will only log the plugin name, version, properties and one line of summary
-* _minimal_ will only a summary line
+* _minimal_ will only log a summary line
 * _off_ will prevent any logging
 
 ### Generating runners and features inside target directory

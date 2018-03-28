@@ -24,7 +24,7 @@ public class CucableLoggerTest {
 
     @Test
     public void infoTest() {
-        logger.log("Test");
+        logger.info("Test");
         verify(mockedLogger, times(1))
                 .info("Test");
     }

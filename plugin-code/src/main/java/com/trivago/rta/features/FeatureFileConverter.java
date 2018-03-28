@@ -85,7 +85,7 @@ public class FeatureFileConverter {
      */
     public void convertToSingleScenariosAndRunners(
             final List<Path> featureFilePaths) throws CucablePluginException {
-        logger.log("");
+        logger.info("");
         for (Path featureFilePath : featureFilePaths) {
             convertToSingleScenariosAndRunners(featureFilePath);
         }
@@ -189,7 +189,7 @@ public class FeatureFileConverter {
         if (propertyManager.hasValidScenarioLineNumbers()) {
             logPostfix = String.format(" with line number(s) %s.", propertyManager.getScenarioLineNumbers());
         }
-        logger.log(String.format("- Processed '%s'%s", featureFileName, logPostfix));
+        logger.info(String.format("- Processed '%s'%s", featureFileName, logPostfix));
     }
 
     /**

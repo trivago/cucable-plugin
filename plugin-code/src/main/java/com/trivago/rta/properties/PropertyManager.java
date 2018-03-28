@@ -51,7 +51,6 @@ public class PropertyManager {
     private int numberOfTestRuns;
     private List<String> includeScenarioTags;
     private List<String> excludeScenarioTags;
-    private String logLevel;
 
     @Inject
     public PropertyManager(CucableLogger logger) {
@@ -135,14 +134,6 @@ public class PropertyManager {
         this.includeScenarioTags = includeScenarioTags;
     }
 
-    public void setLogLevel(final String logLevel) throws CucablePluginException {
-        this.logLevel = logLevel;
-    }
-
-    public String getLogLevel() {
-        return logLevel;
-    }
-
     /**
      * Checks the pom settings for the plugin.
      *
@@ -186,22 +177,22 @@ public class PropertyManager {
      * Logs all passed property values.
      */
     public void logProperties() {
-        logger.log(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile));
-        logger.log(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory));
+        logger.info(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile));
+        logger.info(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory));
 
-        logger.log(String.format("- sourceFeature(s)          : %s", sourceFeatures));
+        logger.info(String.format("- sourceFeature(s)          : %s", sourceFeatures));
         if (hasValidScenarioLineNumbers()) {
-            logger.log(String.format("%30swith line number(s) %s", " ", scenarioLineNumbers));
+            logger.info(String.format("%30swith line number(s) %s", " ", scenarioLineNumbers));
         }
 
         if (includeScenarioTags != null) {
-            logger.log(String.format("- include scenario tag(s)   : %s", String.join(", ", includeScenarioTags)));
+            logger.info(String.format("- include scenario tag(s)   : %s", String.join(", ", includeScenarioTags)));
         }
         if (excludeScenarioTags != null) {
-            logger.log(String.format("- exclude scenario tag(s)   : %s", String.join(", ", excludeScenarioTags)));
+            logger.info(String.format("- exclude scenario tag(s)   : %s", String.join(", ", excludeScenarioTags)));
         }
 
-        logger.log(String.format("- generatedFeatureDirectory : %s", generatedFeatureDirectory));
-        logger.log(String.format("- numberOfTestRuns          : %d", numberOfTestRuns));
+        logger.info(String.format("- generatedFeatureDirectory : %s", generatedFeatureDirectory));
+        logger.info(String.format("- numberOfTestRuns          : %d", numberOfTestRuns));
     }
 }

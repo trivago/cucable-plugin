@@ -87,7 +87,7 @@ public class PropertyManagerTest {
     @Test
     public void logMandatoryPropertiesTest() {
         propertyManager.logProperties();
-        verify(logger, times(5)).log(anyString());
+        verify(logger, times(5)).info(anyString());
     }
 
     @Test
@@ -105,6 +105,6 @@ public class PropertyManagerTest {
         propertyManager.setSourceFeatures("test.feature:3");
 
         propertyManager.logProperties();
-        verify(logger, times(8)).log(anyString());
+        verify(logger, times(8)).info(anyString());
     }
 }

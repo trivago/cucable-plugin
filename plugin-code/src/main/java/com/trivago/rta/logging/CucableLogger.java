@@ -27,6 +27,10 @@ public class CucableLogger {
     private Log mojoLogger;
     private CucableLogLevel currentLogLevel;
 
+    private enum LogLevel {
+        INFO, WARN
+    }
+
     public enum CucableLogLevel {
         DEFAULT, COMPACT, MINIMAL, OFF
     }
@@ -48,8 +52,28 @@ public class CucableLogger {
             currentLogLevel = CucableLogger.CucableLogLevel.valueOf(logLevel.toUpperCase());
         } catch (IllegalArgumentException e) {
             currentLogLevel = CucableLogger.CucableLogLevel.DEFAULT;
-            log("Log level " + logLevel + " is unknown. Cucable will use 'default' logging.");
+            warn("Log level " + logLevel + " is unknown. Cucable will use 'default' logging.");
         }
+    }
+
+    /**
+     * Info logging based on the provided Cucable log levels.
+     *
+     * @param logString        The {@link String} to be logged.
+     * @param cucableLogLevels The log levels ({@link CucableLogLevel} list) in which the message should be displayed.
+     */
+    public void info(final CharSequence logString, CucableLogLevel... cucableLogLevels) {
+        log(LogLevel.INFO, logString, cucableLogLevels);
+    }
+
+    /**
+     * Warn logging based on the provided Cucable log levels.
+     *
+     * @param logString        The {@link String} to be logged.
+     * @param cucableLogLevels The log levels ({@link CucableLogLevel} list) in which the message should be displayed.
+     */
+    private void warn(final CharSequence logString, CucableLogLevel... cucableLogLevels) {
+        log(LogLevel.WARN, logString, cucableLogLevels);
     }
 
     /**
@@ -58,10 +82,20 @@ public class CucableLogger {
      * @param logString        The {@link String} to be logged.
      * @param cucableLogLevels The log levels ({@link CucableLogLevel} list) in which the message should be displayed.
      */
-    public void log(final CharSequence logString, CucableLogLevel... cucableLogLevels) {
-        if (currentLogLevel == null || cucableLogLevels == null || cucableLogLevels.length == 0 ||
-                Arrays.stream(cucableLogLevels).anyMatch(cucableLogLevel -> cucableLogLevel == currentLogLevel)) {
-            mojoLogger.info(logString);
+    private void log(final LogLevel logLevel, final CharSequence logString, CucableLogLevel... cucableLogLevels) {
+        if (currentLogLevel != null
+                && cucableLogLevels != null
+                && cucableLogLevels.length > 0
+                && Arrays.stream(cucableLogLevels).noneMatch(cucableLogLevel -> cucableLogLevel == currentLogLevel)) {
+            return;
+        }
+        switch (logLevel) {
+            case INFO:
+                mojoLogger.info(logString);
+                break;
+            case WARN:
+                mojoLogger.warn(logString);
+                break;
         }
     }
 }

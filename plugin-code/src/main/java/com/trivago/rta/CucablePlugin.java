@@ -110,11 +110,7 @@ final class CucablePlugin extends AbstractMojo {
      */
     public void execute() throws CucablePluginException {
         // Initialize logger to be available outside the AbstractMojo class
-
-        System.out.println("PropMan " + propertyManager);
-
-        propertyManager.setLogLevel(logLevel);
-        logger.initialize(getLog(), propertyManager.getLogLevel());
+        logger.initialize(getLog(), logLevel);
 
         // Initialize and validate passed pom properties
         propertyManager.setSourceRunnerTemplateFile(sourceRunnerTemplateFile);
@@ -126,13 +122,19 @@ final class CucablePlugin extends AbstractMojo {
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
         propertyManager.validateSettings();
 
-        logger.log("-------------------------------------");
-        logger.log(String.format(" Cucable Maven Plugin, version %s", getClass().getPackage().getImplementationVersion()));
-        logger.log("-------------------------------------");
+        logHeader();
         propertyManager.logProperties();
 
         fileManager.prepareGeneratedFeatureAndRunnerDirs();
         featureFileConverter.convertToSingleScenariosAndRunners(fileManager.getFeatureFilePaths());
+    }
+
+    private void logHeader() {
+        CucableLogger.CucableLogLevel[] cucableLogLevels =
+                new CucableLogger.CucableLogLevel[]{CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT};
+        logger.info("-------------------------------------", cucableLogLevels);
+        logger.info(String.format(" Cucable Maven Plugin, version %s", getClass().getPackage().getImplementationVersion()), cucableLogLevels);
+        logger.info("-------------------------------------", cucableLogLevels);
     }
 }
 
