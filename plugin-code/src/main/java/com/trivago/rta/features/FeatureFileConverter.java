@@ -85,7 +85,8 @@ public class FeatureFileConverter {
      */
     public void convertToSingleScenariosAndRunners(
             final List<Path> featureFilePaths) throws CucablePluginException {
-        logger.info("");
+
+        logger.info("", CucableLogger.CucableLogLevel.DEFAULT);
         for (Path featureFilePath : featureFilePaths) {
             convertToSingleScenariosAndRunners(featureFilePath);
         }
@@ -118,7 +119,11 @@ public class FeatureFileConverter {
         try {
             singleScenarios =
                     gherkinDocumentParser.getSingleScenariosFromFeature(
-                            featureFileContent, lineNumbers, includeScenarioTags, excludeScenarioTags
+                            featureFileContent,
+                            featureFilePathString,
+                            lineNumbers,
+                            includeScenarioTags,
+                            excludeScenarioTags
                     );
         } catch (CucablePluginException e) {
             throw new FeatureFileParseException(featureFilePathString);
@@ -132,7 +137,6 @@ public class FeatureFileConverter {
 
         for (SingleScenario singleScenario : singleScenarios) {
             String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
-
             String featureFileName = getFeatureFileNameFromPath(featureFilePath);
             Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
             featureCounter++;
@@ -165,7 +169,7 @@ public class FeatureFileConverter {
                                 propertyManager.getSourceRunnerTemplateFile(), generatedFileName);
 
                 String renderedRunnerFileContent =
-                        runnerFileContentRenderer.getRenderedRunnerFileContent(singleScenarioRunner);
+                        runnerFileContentRenderer.getRenderedRunnerFileContent(singleScenarioRunner, singleScenario);
 
                 String generatedRunnerFilePath =
                         propertyManager.getGeneratedRunnerDirectory()
@@ -189,7 +193,7 @@ public class FeatureFileConverter {
         if (propertyManager.hasValidScenarioLineNumbers()) {
             logPostfix = String.format(" with line number(s) %s.", propertyManager.getScenarioLineNumbers());
         }
-        logger.info(String.format("- Processed '%s'%s", featureFileName, logPostfix));
+        logger.info(String.format("- Processed '%s'%s", featureFileName, logPostfix), CucableLogger.CucableLogLevel.DEFAULT);
     }
 
     /**

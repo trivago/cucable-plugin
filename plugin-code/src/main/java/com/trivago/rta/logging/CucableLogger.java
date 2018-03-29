@@ -38,21 +38,21 @@ public class CucableLogger {
     /**
      * Set the mojo logger so it can be used in any class that injects a CucableLogger.
      *
-     * @param mojoLogger The current {@link Log}.
-     * @param logLevel   the log level that the logger should react to.
+     * @param mojoLogger      The current {@link Log}.
+     * @param currentLogLevel the log level that the logger should react to.
      */
-    public void initialize(final Log mojoLogger, final String logLevel) {
+    public void initialize(final Log mojoLogger, final String currentLogLevel) {
         this.mojoLogger = mojoLogger;
-        if (logLevel == null) {
-            currentLogLevel = CucableLogger.CucableLogLevel.DEFAULT;
+        if (currentLogLevel == null) {
+            this.currentLogLevel = CucableLogger.CucableLogLevel.DEFAULT;
             return;
         }
 
         try {
-            currentLogLevel = CucableLogger.CucableLogLevel.valueOf(logLevel.toUpperCase());
+            this.currentLogLevel = CucableLogger.CucableLogLevel.valueOf(currentLogLevel.toUpperCase());
         } catch (IllegalArgumentException e) {
-            currentLogLevel = CucableLogger.CucableLogLevel.DEFAULT;
-            warn("Log level " + logLevel + " is unknown. Cucable will use 'default' logging.");
+            this.currentLogLevel = CucableLogger.CucableLogLevel.DEFAULT;
+            warn("Log level " + currentLogLevel + " is unknown. Cucable will use 'default' logging.");
         }
     }
 
@@ -67,13 +67,14 @@ public class CucableLogger {
     }
 
     /**
-     * Warn logging based on the provided Cucable log levels.
+     * Warn logging. This is always displayed unless logging is off.
      *
-     * @param logString        The {@link String} to be logged.
-     * @param cucableLogLevels The log levels ({@link CucableLogLevel} list) in which the message should be displayed.
+     * @param logString The {@link String} to be logged.
      */
-    private void warn(final CharSequence logString, CucableLogLevel... cucableLogLevels) {
-        log(LogLevel.WARN, logString, cucableLogLevels);
+    private void warn(final CharSequence logString) {
+        CucableLogLevel[] logLevels =
+                new CucableLogLevel[]{CucableLogLevel.DEFAULT, CucableLogLevel.COMPACT, CucableLogLevel.MINIMAL};
+        log(LogLevel.WARN, logString, logLevels);
     }
 
     /**

@@ -177,22 +177,27 @@ public class PropertyManager {
      * Logs all passed property values.
      */
     public void logProperties() {
-        logger.info(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile));
-        logger.info(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory));
+        CucableLogger.CucableLogLevel logLevels[] = new CucableLogger.CucableLogLevel[]{
+                CucableLogger.CucableLogLevel.DEFAULT,
+                CucableLogger.CucableLogLevel.COMPACT
+        };
 
-        logger.info(String.format("- sourceFeature(s)          : %s", sourceFeatures));
+        logger.info(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile), logLevels);
+        logger.info(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory), logLevels);
+
+        logger.info(String.format("- sourceFeature(s)          : %s", sourceFeatures), logLevels);
         if (hasValidScenarioLineNumbers()) {
-            logger.info(String.format("%30swith line number(s) %s", " ", scenarioLineNumbers));
+            logger.info(String.format("%30swith line number(s) %s", " ", scenarioLineNumbers), logLevels);
         }
 
         if (includeScenarioTags != null) {
-            logger.info(String.format("- include scenario tag(s)   : %s", String.join(", ", includeScenarioTags)));
+            logger.info(String.format("- include scenario tag(s)   : %s", String.join(", ", includeScenarioTags)), logLevels);
         }
         if (excludeScenarioTags != null) {
-            logger.info(String.format("- exclude scenario tag(s)   : %s", String.join(", ", excludeScenarioTags)));
+            logger.info(String.format("- exclude scenario tag(s)   : %s", String.join(", ", excludeScenarioTags)), logLevels);
         }
 
-        logger.info(String.format("- generatedFeatureDirectory : %s", generatedFeatureDirectory));
-        logger.info(String.format("- numberOfTestRuns          : %d", numberOfTestRuns));
+        logger.info(String.format("- generatedFeatureDirectory : %s", generatedFeatureDirectory), logLevels);
+        logger.info(String.format("- numberOfTestRuns          : %d", numberOfTestRuns), logLevels);
     }
 }

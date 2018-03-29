@@ -23,25 +23,29 @@ import java.util.List;
  */
 public final class SingleScenario {
 
-    private final String featureDescription;
-    private final String scenarioDescription;
     private String featureName;
+    private String featureFilePath;
     private String featureLanguage;
-    private List<String> featureTags;
+    private final String featureDescription;
     private String scenarioName;
+    private final String scenarioDescription;
+    private List<String> featureTags;
     private List<String> scenarioTags;
     private List<Step> backgroundSteps;
     private List<Step> steps;
 
     public SingleScenario(
             final String featureName,
+            final String featureFilePath,
             final String featureLanguage,
             final String featureDescription,
             final String scenarioName,
             final String scenarioDescription,
             final List<String> featureTags,
-            final List<Step> backgroundSteps) {
+            final List<Step> backgroundSteps
+    ) {
         this.featureName = featureName;
+        this.featureFilePath = featureFilePath;
         this.featureLanguage = featureLanguage;
         this.featureDescription = featureDescription;
         this.scenarioName = scenarioName;
@@ -58,12 +62,12 @@ public final class SingleScenario {
         return featureName;
     }
 
-    public String getFeatureLanguage() {
-        return featureLanguage;
+    public String getFeatureFilePath() {
+        return featureFilePath;
     }
 
-    public void setFeatureLanguage(final String featureLanguage) {
-        this.featureLanguage = featureLanguage;
+    public String getFeatureLanguage() {
+        return featureLanguage;
     }
 
     public String getFeatureDescription() {
@@ -101,12 +105,13 @@ public final class SingleScenario {
     @Override
     public String toString() {
         return "SingleScenario{" +
-                "featureDescription='" + featureDescription + '\'' +
-                ", scenarioDescription='" + scenarioDescription + '\'' +
-                ", featureName='" + featureName + '\'' +
+                "featureName='" + featureName + '\'' +
+                ", featureFilePath=" + featureFilePath +
                 ", featureLanguage='" + featureLanguage + '\'' +
-                ", featureTags=" + featureTags +
+                ", featureDescription='" + featureDescription + '\'' +
                 ", scenarioName='" + scenarioName + '\'' +
+                ", scenarioDescription='" + scenarioDescription + '\'' +
+                ", featureTags=" + featureTags +
                 ", scenarioTags=" + scenarioTags +
                 ", backgroundSteps=" + backgroundSteps +
                 ", steps=" + steps +

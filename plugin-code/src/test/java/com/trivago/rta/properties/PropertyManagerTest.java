@@ -13,7 +13,6 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -87,7 +86,11 @@ public class PropertyManagerTest {
     @Test
     public void logMandatoryPropertiesTest() {
         propertyManager.logProperties();
-        verify(logger, times(5)).info(anyString());
+        verify(logger, times(1)).info("- sourceRunnerTemplateFile  : null", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
+        verify(logger, times(1)).info("- generatedRunnerDirectory  : null", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
+        verify(logger, times(1)).info("- sourceFeature(s)          : null", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
+        verify(logger, times(1)).info("- generatedFeatureDirectory : null", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
+        verify(logger, times(1)).info("- numberOfTestRuns          : 0", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
     }
 
     @Test
@@ -105,6 +108,9 @@ public class PropertyManagerTest {
         propertyManager.setSourceFeatures("test.feature:3");
 
         propertyManager.logProperties();
-        verify(logger, times(8)).info(anyString());
+        verify(logger, times(1)).info("- sourceFeature(s)          : test.feature", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
+        verify(logger, times(1)).info("                              with line number(s) [3]", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
+        verify(logger, times(1)).info("- include scenario tag(s)   : include1, include2", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
+        verify(logger, times(1)).info("- exclude scenario tag(s)   : exclude1, exclude2", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
     }
 }
