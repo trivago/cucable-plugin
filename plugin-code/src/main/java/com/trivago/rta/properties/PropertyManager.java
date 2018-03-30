@@ -19,6 +19,7 @@ package com.trivago.rta.properties;
 import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.exceptions.properties.WrongOrMissingPropertiesException;
 import com.trivago.rta.logging.CucableLogger;
+import com.trivago.rta.logging.CucableLogger.CucableLogLevel;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -26,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.COMPACT;
+import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.DEFAULT;
 
 @Singleton
 public class PropertyManager {
@@ -177,10 +181,7 @@ public class PropertyManager {
      * Logs all passed property values.
      */
     public void logProperties() {
-        CucableLogger.CucableLogLevel logLevels[] = new CucableLogger.CucableLogLevel[]{
-                CucableLogger.CucableLogLevel.DEFAULT,
-                CucableLogger.CucableLogLevel.COMPACT
-        };
+        CucableLogLevel logLevels[] = new CucableLogLevel[]{DEFAULT, COMPACT};
 
         logger.info(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile), logLevels);
         logger.info(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory), logLevels);
@@ -199,5 +200,7 @@ public class PropertyManager {
 
         logger.info(String.format("- generatedFeatureDirectory : %s", generatedFeatureDirectory), logLevels);
         logger.info(String.format("- numberOfTestRuns          : %d", numberOfTestRuns), logLevels);
+        logger.info("-------------------------------------", logLevels);
+
     }
 }

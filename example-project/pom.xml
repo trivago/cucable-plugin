@@ -59,7 +59,12 @@
                             <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
                             <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
                             <numberOfTestRuns>1</numberOfTestRuns>
-                            <logLevel>compact</logLevel>
+
+                            <!-- Logging -->
+                            <logLevel>default</logLevel>
+                            <!--<logLevel>compact</logLevel>-->
+                            <!--<logLevel>minimal</logLevel>-->
+                            <!--<logLevel>off</logLevel>-->
                         </configuration>
                     </execution>
                 </executions>
