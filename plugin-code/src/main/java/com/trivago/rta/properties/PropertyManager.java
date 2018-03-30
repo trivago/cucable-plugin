@@ -17,8 +17,9 @@
 package com.trivago.rta.properties;
 
 import com.trivago.rta.exceptions.CucablePluginException;
-import com.trivago.rta.exceptions.properties.WrongOrMissingPropertyException;
+import com.trivago.rta.exceptions.properties.WrongOrMissingPropertiesException;
 import com.trivago.rta.logging.CucableLogger;
+import com.trivago.rta.logging.CucableLogger.CucableLogLevel;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -26,6 +27,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+
+import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.COMPACT;
+import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.DEFAULT;
 
 @Singleton
 public class PropertyManager {
@@ -47,7 +51,6 @@ public class PropertyManager {
     private String generatedRunnerDirectory;
     private String sourceFeatures;
     private String generatedFeatureDirectory;
-    private Integer scenarioLineNumber;
     private List<Integer> scenarioLineNumbers;
     private int numberOfTestRuns;
     private List<String> includeScenarioTags;
@@ -142,28 +145,22 @@ public class PropertyManager {
      *                                is not specified in the pom.
      */
     public void validateSettings() throws CucablePluginException {
-        String missingProperty = null;
-        if (sourceRunnerTemplateFile == null || sourceRunnerTemplateFile.equals("")) {
-            missingProperty = SOURCE_RUNNER_TEMPLATE_FILE;
-        } else if (generatedRunnerDirectory == null || generatedRunnerDirectory.equals("")) {
-            missingProperty = GENERATED_RUNNER_DIRECTORY;
-        } else if (sourceFeatures == null || sourceFeatures.equals("")) {
-            missingProperty = SOURCE_FEATURES;
-        } else if (generatedFeatureDirectory == null || generatedFeatureDirectory.equals("")) {
-            missingProperty = GENERATED_FEATURE_DIRECTORY;
+        List<String> missingProperties = new ArrayList<>();
+        saveMissingProperty(sourceRunnerTemplateFile, SOURCE_RUNNER_TEMPLATE_FILE, missingProperties);
+        saveMissingProperty(generatedRunnerDirectory, GENERATED_RUNNER_DIRECTORY, missingProperties);
+        saveMissingProperty(sourceFeatures, SOURCE_FEATURES, missingProperties);
+        saveMissingProperty(generatedFeatureDirectory, GENERATED_FEATURE_DIRECTORY, missingProperties);
+        if (!missingProperties.isEmpty()) {
+            throw new WrongOrMissingPropertiesException(missingProperties);
         }
-
-        if (missingProperty != null) {
-            throw new WrongOrMissingPropertyException(missingProperty);
-        }
-
         if (includeScenarioTags != null) {
             for (String includeTag : includeScenarioTags) {
                 if (!includeTag.startsWith("@")) {
                     throw new CucablePluginException("Include tag '" + includeTag + "' does not start with '@'.");
                 }
             }
-        } else if (excludeScenarioTags != null) {
+        }
+        if (excludeScenarioTags != null) {
             for (String excludeTag : excludeScenarioTags) {
                 if (!excludeTag.startsWith("@")) {
                     throw new CucablePluginException("Exclude tag '" + excludeTag + "' does not start with '@'.");
@@ -173,25 +170,42 @@ public class PropertyManager {
     }
 
     /**
+     * Checks if a property is null or empty and adds it to the missingProperties list.
+     *
+     * @param propertyValue  The value of the property to check.
+     * @param propertyName The name of the property to check.
+     * @param missingProperties         The list of missing properties.
+     */
+    private void saveMissingProperty(final String propertyValue, final String propertyName, final List<String> missingProperties) {
+        if (propertyValue == null || propertyValue.isEmpty()){
+            missingProperties.add(propertyName);
+        }
+    }
+
+    /**
      * Logs all passed property values.
      */
     public void logProperties() {
-        logger.info(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile));
-        logger.info(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory));
+        CucableLogLevel logLevels[] = new CucableLogLevel[]{DEFAULT, COMPACT};
 
-        logger.info(String.format("- sourceFeature(s)          : %s", sourceFeatures));
+        logger.info(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile), logLevels);
+        logger.info(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory), logLevels);
+
+        logger.info(String.format("- sourceFeature(s)          : %s", sourceFeatures), logLevels);
         if (hasValidScenarioLineNumbers()) {
-            logger.info(String.format("%30swith line number(s) %s", " ", scenarioLineNumbers));
+            logger.info(String.format("%30swith line number(s) %s", " ", scenarioLineNumbers), logLevels);
         }
 
         if (includeScenarioTags != null) {
-            logger.info(String.format("- include scenario tag(s)   : %s", String.join(", ", includeScenarioTags)));
+            logger.info(String.format("- include scenario tag(s)   : %s", String.join(", ", includeScenarioTags)), logLevels);
         }
         if (excludeScenarioTags != null) {
-            logger.info(String.format("- exclude scenario tag(s)   : %s", String.join(", ", excludeScenarioTags)));
+            logger.info(String.format("- exclude scenario tag(s)   : %s", String.join(", ", excludeScenarioTags)), logLevels);
         }
 
-        logger.info(String.format("- generatedFeatureDirectory : %s", generatedFeatureDirectory));
-        logger.info(String.format("- numberOfTestRuns          : %d", numberOfTestRuns));
+        logger.info(String.format("- generatedFeatureDirectory : %s", generatedFeatureDirectory), logLevels);
+        logger.info(String.format("- numberOfTestRuns          : %d", numberOfTestRuns), logLevels);
+        logger.info("-------------------------------------", logLevels);
+
     }
 }

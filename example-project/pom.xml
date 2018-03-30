@@ -6,7 +6,7 @@
 
     <groupId>de.benjamin-bischoff</groupId>
     <artifactId>cucable-test-project</artifactId>
-    <version>0.1.7</version>
+    <version>0.1.8</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -47,18 +47,25 @@
                             <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>-->
 
                             <!-- include scenarios with certain tags -->
-                            <includeScenarioTags>
+                            <!--<includeScenarioTags>-->
                                 <!--<param>@scenarioTag1</param>-->
-                            </includeScenarioTags>
+                                <!--<param>@scenarioTag2</param>-->
+                            <!--</includeScenarioTags>-->
 
                             <!-- exclude scenarios with certain tags -->
-                            <excludeScenarioTags>
-                                <param>@skipme</param>
-                            </excludeScenarioTags>
+                            <!--<excludeScenarioTags>-->
+                                <!--<param>@skipme</param>-->
+                            <!--</excludeScenarioTags>-->
 
                             <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
                             <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
                             <numberOfTestRuns>1</numberOfTestRuns>
+
+                            <!-- Logging -->
+                            <logLevel>default</logLevel>
+                            <!--<logLevel>compact</logLevel>-->
+                            <!--<logLevel>minimal</logLevel>-->
+                            <!--<logLevel>off</logLevel>-->
                         </configuration>
                     </execution>
                 </executions>

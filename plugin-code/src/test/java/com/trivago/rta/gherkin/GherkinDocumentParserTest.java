@@ -21,12 +21,12 @@ public class GherkinDocumentParserTest {
     public void setup() {
         GherkinToCucableConverter gherkinToCucableConverter = new GherkinToCucableConverter();
         GherkinTranslations gherkinTranslations = new GherkinTranslations();
-        gherkinDocumentParser = new GherkinDocumentParser(gherkinToCucableConverter,gherkinTranslations);
+        gherkinDocumentParser = new GherkinDocumentParser(gherkinToCucableConverter, gherkinTranslations);
     }
 
     @Test(expected = CucablePluginException.class)
     public void invalidFeatureTest() throws Exception {
-        gherkinDocumentParser.getSingleScenariosFromFeature("", null, null, null);
+        gherkinDocumentParser.getSingleScenariosFromFeature("", "", null, null, null);
     }
 
     @Test
@@ -40,7 +40,7 @@ public class GherkinDocumentParserTest {
                 "Given this is step 1\n" +
                 "Then this is step 2\n";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null, null);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
         assertThat(singleScenariosFromFeature.size(), is(1));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -56,7 +56,7 @@ public class GherkinDocumentParserTest {
 
         List<String> includeScenarioTags = new ArrayList<>();
         includeScenarioTags.add("@tag1");
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, includeScenarioTags, null);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, includeScenarioTags, null);
         assertThat(singleScenariosFromFeature.size(), is(1));
     }
 
@@ -67,7 +67,7 @@ public class GherkinDocumentParserTest {
         List<String> includeScenarioTags = new ArrayList<>();
         includeScenarioTags.add("@tag1");
         includeScenarioTags.add("@tag3");
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, includeScenarioTags, null);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, includeScenarioTags, null);
         assertThat(singleScenariosFromFeature.size(), is(2));
     }
 
@@ -80,7 +80,7 @@ public class GherkinDocumentParserTest {
 
         List<String> excludeScenarioTags = new ArrayList<>();
         excludeScenarioTags.add("@tag1");
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null, excludeScenarioTags);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, excludeScenarioTags);
         assertThat(singleScenariosFromFeature.size(), is(1));
     }
 
@@ -93,7 +93,7 @@ public class GherkinDocumentParserTest {
 
         List<String> includeScenarioTags = new ArrayList<>();
         includeScenarioTags.add("@tag1");
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, includeScenarioTags, null);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, includeScenarioTags, null);
         assertThat(singleScenariosFromFeature.size(), is(0));
     }
 
@@ -103,7 +103,7 @@ public class GherkinDocumentParserTest {
 
         List<String> excludeScenarioTags = new ArrayList<>();
         excludeScenarioTags.add("@tag1");
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null, excludeScenarioTags);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, excludeScenarioTags);
         assertThat(singleScenariosFromFeature.size(), is(1));
     }
 
@@ -115,7 +115,7 @@ public class GherkinDocumentParserTest {
         excludeScenarioTags.add("@tag1");
         List<String> includeScenarioTags = new ArrayList<>();
         includeScenarioTags.add("@tag3");
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, includeScenarioTags, excludeScenarioTags);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, includeScenarioTags, excludeScenarioTags);
         assertThat(singleScenariosFromFeature.size(), is(1));
     }
 
@@ -127,7 +127,7 @@ public class GherkinDocumentParserTest {
         excludeScenarioTags.add("@tag1");
         List<String> includeScenarioTags = new ArrayList<>();
         includeScenarioTags.add("@tag1");
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, includeScenarioTags, excludeScenarioTags);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, includeScenarioTags, excludeScenarioTags);
         assertThat(singleScenariosFromFeature.size(), is(0));
     }
 
@@ -137,7 +137,7 @@ public class GherkinDocumentParserTest {
 
         List<String> includeScenarioTags = new ArrayList<>();
         includeScenarioTags.add("@featureTag");
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, includeScenarioTags, null);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, includeScenarioTags, null);
         assertThat(singleScenariosFromFeature.size(), is(2));
     }
 
@@ -147,7 +147,7 @@ public class GherkinDocumentParserTest {
 
         List<String> excludeScenarioTags = new ArrayList<>();
         excludeScenarioTags.add("@featureTag");
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null, excludeScenarioTags);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, excludeScenarioTags);
         assertThat(singleScenariosFromFeature.size(), is(0));
     }
 
@@ -163,7 +163,7 @@ public class GherkinDocumentParserTest {
                 "|value1|value2|\n" +
                 "Then this is step 2\n";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null, null);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
         assertThat(singleScenariosFromFeature.size(), is(1));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -189,7 +189,7 @@ public class GherkinDocumentParserTest {
                 "  Scenario: This is a scenario with background\n" +
                 "    Then ThenStep";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null, null);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
         assertThat(singleScenariosFromFeature.size(), is(1));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -213,7 +213,7 @@ public class GherkinDocumentParserTest {
                 "      | 1   | one   |\n" +
                 "      | 2   | two   |";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null, null);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
         assertThat(singleScenariosFromFeature.size(), is(2));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -250,7 +250,7 @@ public class GherkinDocumentParserTest {
                 "      | 1   | one   |\n" +
                 "      | 2   | two   |";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null, null);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
         assertThat(singleScenariosFromFeature.size(), is(2));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -274,7 +274,7 @@ public class GherkinDocumentParserTest {
                 "    Examples:\n" +
                 "      | key | value |\n" +
                 "      | 1   | one   |\n";
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, null, null, null);
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
         assertThat(singleScenariosFromFeature.size(), is(1));
         assertThat(singleScenariosFromFeature.get(0).getSteps().size(), is(1));
         assertThat(singleScenariosFromFeature.get(0).getSteps().get(0).getDataTable().toString(), is("DataTable{rows=[[test, 1, one]]}"));

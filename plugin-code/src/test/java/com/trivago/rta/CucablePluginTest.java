@@ -15,20 +15,18 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 public class CucablePluginTest {
-
-    private PropertyManager propertyManager;
-    private FileSystemManager fileSystemManager;
-    private FeatureFileConverter featureFileConverter;
     private CucableLogger logger;
-
+    private Log mojoLogger;
     private CucablePlugin cucablePlugin;
 
     @Before
     public void setup() {
         logger = mock(CucableLogger.class);
-        propertyManager = mock(PropertyManager.class);
-        fileSystemManager = mock(FileSystemManager.class);
-        featureFileConverter = mock(FeatureFileConverter.class);
+        mojoLogger = mock(Log.class);
+        logger.initialize(mojoLogger, "default");
+        PropertyManager propertyManager = mock(PropertyManager.class);
+        FileSystemManager fileSystemManager = mock(FileSystemManager.class);
+        FeatureFileConverter featureFileConverter = mock(FeatureFileConverter.class);
 
         cucablePlugin = new CucablePlugin(
                 propertyManager,
@@ -41,7 +39,7 @@ public class CucablePluginTest {
     @Test
     public void logInvocationTest() throws Exception {
         cucablePlugin.execute();
-        verify(logger, times(1)).setMojoLogger(any(Log.class));
-        verify(logger, times(3)).info(anyString());
+        verify(logger, times(1)).initialize(mojoLogger, "default");
+        verify(logger, times(3)).info(anyString(), any(CucableLogger.CucableLogLevel.class));
     }
 }

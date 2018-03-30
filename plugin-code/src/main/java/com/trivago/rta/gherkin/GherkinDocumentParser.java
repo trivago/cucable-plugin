@@ -58,21 +58,22 @@ public class GherkinDocumentParser {
     /**
      * Returns a {@link com.trivago.rta.vo.SingleScenario} list from a given feature file.
      *
-     * @param featureContent      a feature string.
-     * @param scenarioLineNumbers an optional line number of a scenario inside a feature file.
-     * @param includeScenarioTags optional scenario tags to include into scenario generation.
-     * @param excludeScenarioTags optional scenario tags to exclude from scenario generation.
-     * @return a {@link com.trivago.rta.vo.SingleScenario} list.
+     * @param featureContent      A feature string.
+     * @param featureFilePath     The path to the source feature file.
+     * @param scenarioLineNumbers An optional line number of a scenario inside a feature file.
+     * @param includeScenarioTags Optional scenario tags to include into scenario generation.
+     * @param excludeScenarioTags Optional scenario tags to exclude from scenario generation.
+     * @return A {@link com.trivago.rta.vo.SingleScenario} list.
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
     public List<SingleScenario> getSingleScenariosFromFeature(
             final String featureContent,
+            final String featureFilePath,
             final List<Integer> scenarioLineNumbers,
             final List<String> includeScenarioTags,
             final List<String> excludeScenarioTags) throws CucablePluginException {
 
         GherkinDocument gherkinDocument = getGherkinDocumentFromFeatureFileContent(featureContent);
-
         Feature feature = gherkinDocument.getFeature();
         String featureName = feature.getKeyword() + ": " + feature.getName();
         String featureLanguage = feature.getLanguage();
@@ -103,6 +104,7 @@ public class GherkinDocumentParser {
                     SingleScenario singleScenario =
                             new SingleScenario(
                                     featureName,
+                                    featureFilePath,
                                     featureLanguage,
                                     featureDescription,
                                     scenarioName,
@@ -133,12 +135,14 @@ public class GherkinDocumentParser {
                             getSingleScenariosFromOutline(
                                     scenarioOutline,
                                     featureName,
+                                    featureFilePath,
                                     featureLanguage,
                                     featureDescription,
                                     featureTags,
                                     backgroundSteps,
                                     includeScenarioTags,
-                                    excludeScenarioTags);
+                                    excludeScenarioTags
+                            );
                     singleScenarioFeatures.addAll(outlineScenarios);
                 }
             }
@@ -149,24 +153,26 @@ public class GherkinDocumentParser {
     /**
      * Returns a list of Cucable single scenarios from a Gherkin scenario outline.
      *
-     * @param scenarioOutline     a Gherkin {@link ScenarioOutline}.
+     * @param scenarioOutline     A Gherkin {@link ScenarioOutline}.
      * @param featureName         The name of the feature this scenario outline belongs to.
+     * @param featureFilePath     The source path of the feature file.
      * @param featureLanguage     The feature language this scenario outline belongs to.
      * @param featureTags         The feature tags of the parent feature.
-     * @param backgroundSteps     return a Cucable {@link SingleScenario} list.
-     * @param includeScenarioTags optional scenario tags to include in scenario generation.
-     * @param excludeScenarioTags optional scenario tags to exclude from scenario generation.
-     * @throws CucablePluginException thrown when the scenario outline does not contain an example table.
+     * @param backgroundSteps     Return a Cucable {@link SingleScenario} list.
+     * @param includeScenarioTags Optional scenario tags to include in scenario generation.
+     * @throws CucablePluginException Thrown when the scenario outline does not contain an example table.
      */
     private List<SingleScenario> getSingleScenariosFromOutline(
             final ScenarioOutline scenarioOutline,
             final String featureName,
+            final String featureFilePath,
             final String featureLanguage,
             final String featureDescription,
             final List<String> featureTags,
             final List<Step> backgroundSteps,
             final List<String> includeScenarioTags,
-            final List<String> excludeScenarioTags) throws CucablePluginException {
+            final List<String> excludeScenarioTags
+    ) throws CucablePluginException {
 
         // Retrieve the translation of "Scenario" in the target language and add it to the scenario
         String translatedScenarioKeyword = gherkinTranslations.getScenarioKeyword(featureLanguage);
@@ -195,20 +201,21 @@ public class GherkinDocumentParser {
         String firstColumnHeader = (String) exampleMap.keySet().toArray()[0];
         int rowCount = exampleMap.get(firstColumnHeader).size();
 
-        // for each example row, create a new single scenario
-        for (int i = 0; i < rowCount; i++) {
+        // For each example row, create a new single scenario
+        for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
             SingleScenario singleScenario =
                     new SingleScenario(
                             featureName,
+                            featureFilePath,
                             featureLanguage,
                             featureDescription,
-                            substituteScenarioNameExamplePlaceholders(scenarioName, exampleMap, i),
+                            substituteScenarioNameExamplePlaceholders(scenarioName, exampleMap, rowIndex),
                             scenarioDescription,
                             featureTags,
                             backgroundSteps
                     );
 
-            List<Step> substitutedSteps = substituteStepExamplePlaceholders(steps, exampleMap, i);
+            List<Step> substitutedSteps = substituteStepExamplePlaceholders(steps, exampleMap, rowIndex);
             singleScenario.setSteps(substitutedSteps);
             singleScenario.setScenarioTags(scenarioTags);
             outlineScenarios.add(singleScenario);
@@ -223,7 +230,7 @@ public class GherkinDocumentParser {
      * @param steps      The Cucable {@link Step} list.
      * @param exampleMap The generated example map from an example table.
      * @param rowIndex   The row index of the example table to consider.
-     * @return a {@link Step} list with substituted names.
+     * @return A {@link Step} list with substituted names.
      */
     private List<Step> substituteStepExamplePlaceholders(
             final List<Step> steps, final Map<String, List<String>> exampleMap, final int rowIndex) {

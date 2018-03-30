@@ -83,6 +83,13 @@ final class CucablePlugin extends AbstractMojo {
     @Parameter(property = "parallel.excludeScenarioTags")
     private List<String> excludeScenarioTags;
 
+    /**
+     * Optional log level to control what information is logged in the console.
+     * Allowed values: default, compact, minimal, off
+     */
+    @Parameter(property = "parallel.logLevel")
+    private String logLevel = "default";
+
     @Inject
     public CucablePlugin(
             PropertyManager propertyManager,
@@ -103,7 +110,7 @@ final class CucablePlugin extends AbstractMojo {
      */
     public void execute() throws CucablePluginException {
         // Initialize logger to be available outside the AbstractMojo class
-        logger.setMojoLogger(getLog());
+        logger.initialize(getLog(), logLevel);
 
         // Initialize and validate passed pom properties
         propertyManager.setSourceRunnerTemplateFile(sourceRunnerTemplateFile);
@@ -115,13 +122,19 @@ final class CucablePlugin extends AbstractMojo {
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
         propertyManager.validateSettings();
 
-        logger.info("-------------------------------------");
-        logger.info(String.format(" Cucable Maven Plugin, version %s", getClass().getPackage().getImplementationVersion()));
-        logger.info("-------------------------------------");
+        logHeader();
         propertyManager.logProperties();
 
         fileManager.prepareGeneratedFeatureAndRunnerDirs();
         featureFileConverter.convertToSingleScenariosAndRunners(fileManager.getFeatureFilePaths());
+    }
+
+    private void logHeader() {
+        CucableLogger.CucableLogLevel[] cucableLogLevels =
+                new CucableLogger.CucableLogLevel[]{CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT};
+        logger.info("-------------------------------------", cucableLogLevels);
+        logger.info(String.format(" Cucable Maven Plugin, version %s", getClass().getPackage().getImplementationVersion()), cucableLogLevels);
+        logger.info("-------------------------------------", cucableLogLevels);
     }
 }
 

@@ -29,6 +29,7 @@
       - [numberOfTestRuns](#numberoftestruns)
       - [includeScenarioTags](#includescenariotags)
       - [excludeScenarioTags](#excludescenariotags)
+      - [logLevel](#loglevel)
     - [Generating runners and features inside target directory](#generating-runners-and-features-inside-target-directory)
     - [Complete Example](#complete-example)
       - [Source feature file](#source-feature-file)
@@ -115,7 +116,8 @@ The following sections break down the above steps.
                 </includeScenarioTags>                                
                 <excludeScenarioTags>
                     <param>@skip</param>
-                </excludeScenarioTags>                                
+                </excludeScenarioTags>
+                <logLevel>compact</logLevel>                                
             </configuration>
         </execution>
     </executions>
@@ -218,6 +220,25 @@ To include multiple tags, just add each one into as its own ```<param>```:
 
 __Note:__ When using _includeScenarioTags_ and _excludeScenarioTags_ together, the _excludeScenarioTags_ will override the _includeScenarioTags_.
 This means that a scenario containing an included tag __and__ an excluded tag will be __excluded__!
+
+#### logLevel
+
+By default, Cucable logs all information including
+
+* its own name and version
+* all passed property values
+* a list of processed feature paths
+
+This can be configured by passing the `logLevel` property:
+
+```
+<logLevel>default|compact|minimal|off</logLevel>
+```
+
+* _default_ will log all the mentioned information
+* _compact_ will only log the plugin name, version, properties and one line of summary
+* _minimal_ will only log a summary line
+* _off_ will prevent any logging
 
 ### Generating runners and features inside target directory
 
