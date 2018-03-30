@@ -36,13 +36,17 @@ public class FeatureFileContentRenderer {
 
         addLanguage(renderedContent, singleScenario.getFeatureLanguage());
         addTags(renderedContent, singleScenario.getFeatureTags());
-        addFeatureNameAndDescription(
-                renderedContent, singleScenario.getFeatureName(), singleScenario.getFeatureDescription()
+        addNameAndDescription(
+                renderedContent,
+                singleScenario.getFeatureName(),
+                singleScenario.getFeatureDescription()
         );
 
         addTags(renderedContent, singleScenario.getScenarioTags());
-        addScenarioNameAndDescription(
-                renderedContent, singleScenario.getScenarioName(), singleScenario.getScenarioDescription());
+        addNameAndDescription(
+                renderedContent,
+                singleScenario.getScenarioName(),
+                singleScenario.getScenarioDescription());
 
         addSteps(renderedContent, singleScenario.getBackgroundSteps());
         addSteps(renderedContent, singleScenario.getSteps());
@@ -101,39 +105,20 @@ public class FeatureFileContentRenderer {
     }
 
     /**
-     * Adds the scenario name to the generated feature file content.
+     * Adds the feature or scenario name and description to the generated feature file content.
      *
-     * @param stringBuilder       The current feature {@link StringBuilder} instance.
-     * @param scenarioName        The scenario name.
-     * @param scenarioDescription The scenario description.
+     * @param stringBuilder The current feature {@link StringBuilder} instance.
+     * @param name          The feature or scenario name.
+     * @param description   The feature or scenario description.
      */
-    private void addScenarioNameAndDescription(
+    private void addNameAndDescription(
             final StringBuilder stringBuilder,
-            final String scenarioName,
-            final String scenarioDescription
+            final String name,
+            final String description
     ) {
-        stringBuilder.append(scenarioName);
-        if (scenarioDescription != null && !scenarioDescription.isEmpty()) {
-            stringBuilder.append(LINE_SEPARATOR).append(scenarioDescription);
-        }
-        stringBuilder.append(LINE_SEPARATOR).append(LINE_SEPARATOR);
-    }
-
-    /**
-     * Adds the feature name to the generated feature file content.
-     *
-     * @param stringBuilder      The current feature {@link StringBuilder} instance.
-     * @param featureName        The feature name.
-     * @param featureDescription The feature description.
-     */
-    private void addFeatureNameAndDescription(
-            final StringBuilder stringBuilder,
-            final String featureName,
-            final String featureDescription
-    ) {
-        stringBuilder.append(featureName);
-        if (featureDescription != null && !featureDescription.isEmpty()) {
-            stringBuilder.append(LINE_SEPARATOR).append(featureDescription);
+        stringBuilder.append(name);
+        if (description != null && !description.isEmpty()) {
+            stringBuilder.append(LINE_SEPARATOR).append(description);
         }
         stringBuilder.append(LINE_SEPARATOR).append(LINE_SEPARATOR);
 

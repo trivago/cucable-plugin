@@ -146,18 +146,10 @@ public class PropertyManager {
      */
     public void validateSettings() throws CucablePluginException {
         List<String> missingProperties = new ArrayList<>();
-        if (sourceRunnerTemplateFile == null || sourceRunnerTemplateFile.equals("")) {
-            missingProperties.add(SOURCE_RUNNER_TEMPLATE_FILE);
-        }
-        if (generatedRunnerDirectory == null || generatedRunnerDirectory.equals("")) {
-            missingProperties.add(GENERATED_RUNNER_DIRECTORY);
-        }
-        if (sourceFeatures == null || sourceFeatures.equals("")) {
-            missingProperties.add(SOURCE_FEATURES);
-        }
-        if (generatedFeatureDirectory == null || generatedFeatureDirectory.equals("")) {
-            missingProperties.add(GENERATED_FEATURE_DIRECTORY);
-        }
+        saveMissingProperty(sourceRunnerTemplateFile, SOURCE_RUNNER_TEMPLATE_FILE, missingProperties);
+        saveMissingProperty(generatedRunnerDirectory, GENERATED_RUNNER_DIRECTORY, missingProperties);
+        saveMissingProperty(sourceFeatures, SOURCE_FEATURES, missingProperties);
+        saveMissingProperty(generatedFeatureDirectory, GENERATED_FEATURE_DIRECTORY, missingProperties);
         if (!missingProperties.isEmpty()) {
             throw new WrongOrMissingPropertiesException(missingProperties);
         }
@@ -174,6 +166,19 @@ public class PropertyManager {
                     throw new CucablePluginException("Exclude tag '" + excludeTag + "' does not start with '@'.");
                 }
             }
+        }
+    }
+
+    /**
+     * Checks if a property is null or empty and adds it to the missingProperties list.
+     *
+     * @param propertyValue  The value of the property to check.
+     * @param propertyName The name of the property to check.
+     * @param missingProperties         The list of missing properties.
+     */
+    private void saveMissingProperty(final String propertyValue, final String propertyName, final List<String> missingProperties) {
+        if (propertyValue == null || propertyValue.isEmpty()){
+            missingProperties.add(propertyName);
         }
     }
 
