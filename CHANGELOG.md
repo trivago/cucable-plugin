@@ -11,7 +11,9 @@ Back to [Readme](README.md).
 ### Added
 
 - Source feature path is now included as a comment in generated features and runners
-- Configurable logging with 4 levels: default, compact, minimal, off
+- Configurable logging with 4 levels: _default_, _compact_, _minimal_, _off_
+- The number of generated scenarios per feature is shown in the default logs
+- The total number of generated features is shown in a summary line in all log levels except _off_
 
 ### Changed
 
