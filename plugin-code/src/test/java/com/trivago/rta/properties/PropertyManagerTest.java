@@ -1,6 +1,7 @@
 package com.trivago.rta.properties;
 
 import com.trivago.rta.exceptions.CucablePluginException;
+import com.trivago.rta.exceptions.properties.WrongOrMissingPropertiesException;
 import com.trivago.rta.logging.CucableLogger;
 import org.junit.Before;
 import org.junit.Rule;
@@ -10,6 +11,8 @@ import org.junit.rules.ExpectedException;
 import java.util.ArrayList;
 import java.util.List;
 
+import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.COMPACT;
+import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.DEFAULT;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
@@ -86,11 +89,11 @@ public class PropertyManagerTest {
     @Test
     public void logMandatoryPropertiesTest() {
         propertyManager.logProperties();
-        verify(logger, times(1)).info("- sourceRunnerTemplateFile  : null", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
-        verify(logger, times(1)).info("- generatedRunnerDirectory  : null", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
-        verify(logger, times(1)).info("- sourceFeature(s)          : null", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
-        verify(logger, times(1)).info("- generatedFeatureDirectory : null", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
-        verify(logger, times(1)).info("- numberOfTestRuns          : 0", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
+        verify(logger, times(1)).info("- sourceRunnerTemplateFile  : null", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("- generatedRunnerDirectory  : null", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("- sourceFeature(s)          : null", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("- generatedFeatureDirectory : null", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("- numberOfTestRuns          : 0", DEFAULT, COMPACT);
     }
 
     @Test
@@ -108,9 +111,17 @@ public class PropertyManagerTest {
         propertyManager.setSourceFeatures("test.feature:3");
 
         propertyManager.logProperties();
-        verify(logger, times(1)).info("- sourceFeature(s)          : test.feature", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
-        verify(logger, times(1)).info("                              with line number(s) [3]", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
-        verify(logger, times(1)).info("- include scenario tag(s)   : include1, include2", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
-        verify(logger, times(1)).info("- exclude scenario tag(s)   : exclude1, exclude2", CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT);
+        verify(logger, times(1)).info("- sourceFeature(s)          : test.feature", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("                              with line number(s) [3]", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("- include scenario tag(s)   : include1, include2", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("- exclude scenario tag(s)   : exclude1, exclude2", DEFAULT, COMPACT);
+    }
+
+    @Test
+    public void logMissingPropertiesTest() throws CucablePluginException {
+        expectedException.expect(WrongOrMissingPropertiesException.class);
+        expectedException.expectMessage("Properties not specified correctly in the configuration section of your pom file: [<sourceRunnerTemplateFile>, <generatedRunnerDirectory>, <sourceFeatures>, <generatedFeatureDirectory>]");
+        propertyManager.validateSettings();
+
     }
 }

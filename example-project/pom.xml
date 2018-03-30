@@ -47,14 +47,15 @@
                             <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>-->
 
                             <!-- include scenarios with certain tags -->
-                            <includeScenarioTags>
+                            <!--<includeScenarioTags>-->
                                 <!--<param>@scenarioTag1</param>-->
-                            </includeScenarioTags>
+                                <!--<param>@scenarioTag2</param>-->
+                            <!--</includeScenarioTags>-->
 
                             <!-- exclude scenarios with certain tags -->
-                            <excludeScenarioTags>
-                                <param>@skipme</param>
-                            </excludeScenarioTags>
+                            <!--<excludeScenarioTags>-->
+                                <!--<param>@skipme</param>-->
+                            <!--</excludeScenarioTags>-->
 
                             <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
                             <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
