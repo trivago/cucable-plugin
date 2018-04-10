@@ -468,12 +468,12 @@ We use the [Cluecumber](https://github.com/trivago/cluecumber-report-plugin) plu
             <goals>
                 <goal>reporting</goal>
             </goals>
-            <configuration>
-                <sourceJsonReportDirectory>${project.build.directory}/cucumber-report</sourceJsonReportDirectory>
-                <generatedHtmlReportDirectory>${project.build.directory}/test-report</generatedHtmlReportDirectory>
-            </configuration>
         </execution>
     </executions>
+    <configuration>
+        <sourceJsonReportDirectory>${project.build.directory}/cucumber-report</sourceJsonReportDirectory>
+        <generatedHtmlReportDirectory>${project.build.directory}/test-report</generatedHtmlReportDirectory>
+    </configuration>    
 </plugin>
 ```
 

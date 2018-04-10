@@ -33,42 +33,42 @@
                         <goals>
                             <goal>parallel</goal>
                         </goals>
-                        <configuration>
-                            <sourceRunnerTemplateFile>src/test/resources/parallel/cucable.template
-                            </sourceRunnerTemplateFile>
-
-                            <!-- process all features in the given directory -->
-                            <sourceFeatures>src/test/resources/features</sourceFeatures>
-
-                            <!-- process a specific file in the given directory -->
-                            <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature</sourceFeatures>-->
-
-                            <!-- process a specific file and specific line numbers in the given directory -->
-                            <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>-->
-
-                            <!-- include scenarios with certain tags -->
-                            <!--<includeScenarioTags>-->
-                                <!--<param>@scenarioTag1</param>-->
-                                <!--<param>@scenarioTag2</param>-->
-                            <!--</includeScenarioTags>-->
-
-                            <!-- exclude scenarios with certain tags -->
-                            <!--<excludeScenarioTags>-->
-                                <!--<param>@skipme</param>-->
-                            <!--</excludeScenarioTags>-->
-
-                            <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
-                            <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
-                            <numberOfTestRuns>1</numberOfTestRuns>
-
-                            <!-- Logging -->
-                            <logLevel>default</logLevel>
-                            <!--<logLevel>compact</logLevel>-->
-                            <!--<logLevel>minimal</logLevel>-->
-                            <!--<logLevel>off</logLevel>-->
-                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <sourceRunnerTemplateFile>src/test/resources/parallel/cucable.template
+                    </sourceRunnerTemplateFile>
+
+                    <!-- process all features in the given directory -->
+                    <sourceFeatures>src/test/resources/features</sourceFeatures>
+
+                    <!-- process a specific file in the given directory -->
+                    <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature</sourceFeatures>-->
+
+                    <!-- process a specific file and specific line numbers in the given directory -->
+                    <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>-->
+
+                    <!-- include scenarios with certain tags -->
+                    <!--<includeScenarioTags>-->
+                    <!--<param>@scenarioTag1</param>-->
+                    <!--<param>@scenarioTag2</param>-->
+                    <!--</includeScenarioTags>-->
+
+                    <!-- exclude scenarios with certain tags -->
+                    <!--<excludeScenarioTags>-->
+                    <!--<param>@skipme</param>-->
+                    <!--</excludeScenarioTags>-->
+
+                    <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
+                    <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
+                    <numberOfTestRuns>1</numberOfTestRuns>
+
+                    <!-- Logging -->
+                    <logLevel>default</logLevel>
+                    <!--<logLevel>compact</logLevel>-->
+                    <!--<logLevel>minimal</logLevel>-->
+                    <!--<logLevel>off</logLevel>-->
+                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
