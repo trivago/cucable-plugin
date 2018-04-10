@@ -101,26 +101,26 @@ The following sections break down the above steps.
             <goals>
                 <goal>parallel</goal>
             </goals>
-            <configuration>
-                <!-- Required properties -->
-                <sourceRunnerTemplateFile>src/test/resources/parallel/cucable.template</sourceRunnerTemplateFile>
-                <sourceFeatures>src/test/resources/features</sourceFeatures>
-                <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
-                <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
-                
-                <!-- Optional properties -->
-                <numberOfTestRuns>1</numberOfTestRuns>
-                <includeScenarioTags>
-                    <param>@includeMe</param>
-                    <param>@includeMeAsWell</param>
-                </includeScenarioTags>                                
-                <excludeScenarioTags>
-                    <param>@skip</param>
-                </excludeScenarioTags>
-                <logLevel>compact</logLevel>                                
-            </configuration>
         </execution>
     </executions>
+    <configuration>
+        <!-- Required properties -->
+        <sourceRunnerTemplateFile>src/test/resources/parallel/cucable.template</sourceRunnerTemplateFile>
+        <sourceFeatures>src/test/resources/features</sourceFeatures>
+        <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
+        <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
+        
+        <!-- Optional properties -->
+        <numberOfTestRuns>1</numberOfTestRuns>
+        <includeScenarioTags>
+            <param>@includeMe</param>
+            <param>@includeMeAsWell</param>
+        </includeScenarioTags>                                
+        <excludeScenarioTags>
+            <param>@skip</param>
+        </excludeScenarioTags>
+        <logLevel>compact</logLevel>                                
+    </configuration>    
 </plugin>
 ```
 
@@ -261,14 +261,14 @@ After this step, use the *build-helper-maven-plugin* in your POM file in order t
             <goals>
                 <goal>parallel</goal>
             </goals>
-            <configuration>
-                <sourceRunnerTemplateFile>path_to_template_file</sourceRunnerTemplateFile>
-                <sourceFeatures>path_to_features</sourceFeatures>
-                <generatedFeatureDirectory>${project.build.directory}/parallel/features</generatedFeatureDirectory>
-                <generatedRunnerDirectory>${project.build.directory}/parallel/runners</generatedRunnerDirectory>
-            </configuration>
         </execution>
     </executions>
+    <configuration>
+        <sourceRunnerTemplateFile>path_to_template_file</sourceRunnerTemplateFile>
+        <sourceFeatures>path_to_features</sourceFeatures>
+        <generatedFeatureDirectory>${project.build.directory}/parallel/features</generatedFeatureDirectory>
+        <generatedRunnerDirectory>${project.build.directory}/parallel/runners</generatedRunnerDirectory>
+    </configuration>    
 </plugin>
 <plugin>
     <groupId>org.codehaus.mojo</groupId>
@@ -281,13 +281,13 @@ After this step, use the *build-helper-maven-plugin* in your POM file in order t
             <goals>
                 <goal>add-test-source</goal>
             </goals>
-            <configuration>
-                <sources>
-                    <source>${project.build.directory}/parallel/runners</source>
-                </sources>
-            </configuration>
         </execution>
     </executions>
+    <configuration>
+        <sources>
+            <source>${project.build.directory}/parallel/runners</source>
+        </sources>
+    </configuration>    
 </plugin>
 ```
 
