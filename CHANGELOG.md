@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [0.1.9] - 2018-04-20
+
+### Added
+
+- It is now possible to use an existing Java runner class as a template for generated runners
+- Source runner template is now included as a comment in generated runners
+
 ## [0.1.8] - 2018-03-30
 
 ### Added
@@ -124,6 +131,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[0.1.9]: https://github.com/trivago/cucable-plugin/compare/0.1.8...0.1.9
 [0.1.8]: https://github.com/trivago/cucable-plugin/compare/0.1.7...0.1.8
 [0.1.7]: https://github.com/trivago/cucable-plugin/compare/0.1.6...0.1.7
 [0.1.6]: https://github.com/trivago/cucable-plugin/compare/0.1.5...0.1.6

@@ -22,6 +22,8 @@
   - [1. Generation of runners and features](#1-generation-of-runners-and-features)
     - [Required Parameters](#required-parameters)
       - [sourceRunnerTemplateFile](#sourcerunnertemplatefile)
+        - [Using a java file as a runner template](#using-a-java-file-as-a-runner-template)
+        - [Using a text file as a runner template](#using-a-text-file-as-a-runner-template)
       - [sourceFeatures](#sourcefeatures)
       - [generatedFeatureDirectory](#generatedfeaturedirectory)
       - [generatedRunnerDirectory](#generatedrunnerdirectory)
@@ -128,29 +130,73 @@ The following sections break down the above steps.
 
 #### sourceRunnerTemplateFile
 
-The path to a text file (e.g. _src/test/resources/parallel/cucable.template_) with **[FEATURE_FILE_NAME]** placeholders for the generated feature file name.
-This file will be used to generate runners for every generated feature file.
+The specified file will be used to generate runners for every generated feature file.
 
-Example:
+This can be either a text file or a Java class. The difference is outlined below:
+
+##### Using a java file as a runner template
+
+If you use a java file (e.g. _src/test/java/some/template/CucableJavaTemplate.java_), all **[FEATURE_FILE_NAME]** placeholders as well as the **class name** will be substituted for the generated feature file name.
+Also, the **package declaration** will be stripped.
+
+_Example:_
 
 <pre>
-package com.example;
+<b>package some.template;</b>
 
-import cucumber.api.junit.Cucumber;
 import cucumber.api.CucumberOptions;
-import org.junit.runner.RunWith;
 
-@RunWith(Cucumber.class)
 @CucumberOptions(
-    features = {"classpath:parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
-    plugin = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"},
-    glue = {"com.example.glue"}
+        features = {"target/parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
+        plugin = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"}
+)
+public class <b>CucableJavaTemplate</b> {
+}
+</pre>
+
+will turn into
+
+<pre>
+import cucumber.api.CucumberOptions;
+
+@CucumberOptions(
+        features = {"target/parallel/features/<b>MyFeature_scenario001_run001_IT</b>.feature"},
+        plugin = {"json:target/cucumber-report/<b>MyFeature_scenario001_run001_IT</b>.json"}
+)
+public class <b>MyFeature_scenario001_run001_IT</b> {
+}
+</pre>
+
+
+##### Using a text file as a runner template
+
+If you use a text file (e.g. _src/test/resources/cucable.template_), all **[FEATURE_FILE_NAME]** placeholders will be substituted for the generated feature file name.
+
+_Example:_
+
+<pre>
+import cucumber.api.CucumberOptions;
+
+@CucumberOptions(
+        features = {"target/parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
+        plugin = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"}
 )
 public class <b>[FEATURE_FILE_NAME]</b> {
 }
 </pre>
 
-The placeholder **[FEATURE_FILE_NAME]** will be replaced with generated feature names by Cucable.
+will turn into
+
+<pre>
+import cucumber.api.CucumberOptions;
+
+@CucumberOptions(
+        features = {"target/parallel/features/<b>MyFeature_scenario001_run001_IT</b>.feature"},
+        plugin = {"json:target/cucumber-report/<b>MyFeature_scenario001_run001_IT</b>.json"}
+)
+public class <b>MyFeature_scenario001_run001_IT</b> {
+}
+</pre>
 
 #### sourceFeatures
 
@@ -250,45 +296,48 @@ In order to achieve this, you can specify subdirectories under target (`${projec
 After this step, use the *build-helper-maven-plugin* in your POM file in order to consider the generated runner classes test sources:
 
 ```xml
-<plugin>
-    <groupId>com.trivago.rta</groupId>
-    <artifactId>cucable-plugin</artifactId>
-    <version>${cucable.plugin.version}</version>
-    <executions>
-        <execution>
-            <id>generate-test-resources</id>
-            <phase>generate-test-resources</phase>
-            <goals>
-                <goal>parallel</goal>
-            </goals>
-        </execution>
-    </executions>
-    <configuration>
-        <sourceRunnerTemplateFile>path_to_template_file</sourceRunnerTemplateFile>
-        <sourceFeatures>path_to_features</sourceFeatures>
-        <generatedFeatureDirectory>${project.build.directory}/parallel/features</generatedFeatureDirectory>
-        <generatedRunnerDirectory>${project.build.directory}/parallel/runners</generatedRunnerDirectory>
-    </configuration>    
-</plugin>
-<plugin>
-    <groupId>org.codehaus.mojo</groupId>
-    <artifactId>build-helper-maven-plugin</artifactId>
-    <version>${build.helper.plugin.version}</version>
-    <executions>
-        <execution>
-            <id>add-test-source</id>
-            <phase>generate-test-sources</phase>
-            <goals>
-                <goal>add-test-source</goal>
-            </goals>
-        </execution>
-    </executions>
-    <configuration>
-        <sources>
-            <source>${project.build.directory}/parallel/runners</source>
-        </sources>
-    </configuration>    
-</plugin>
+<plugins>
+    <plugin>
+        <groupId>com.trivago.rta</groupId>
+        <artifactId>cucable-plugin</artifactId>
+        <version>${cucable.plugin.version}</version>
+        <executions>
+            <execution>
+                <id>generate-test-resources</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                    <goal>parallel</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <sourceRunnerTemplateFile>path_to_template_file</sourceRunnerTemplateFile>
+            <sourceFeatures>path_to_features</sourceFeatures>
+            <generatedFeatureDirectory>${project.build.directory}/parallel/features</generatedFeatureDirectory>
+            <generatedRunnerDirectory>${project.build.directory}/parallel/runners</generatedRunnerDirectory>
+        </configuration>    
+    </plugin>
+    <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${build.helper.plugin.version}</version>
+        <executions>
+            <execution>
+                <id>add-test-source</id>
+                <phase>generate-test-sources</phase>
+                <goals>
+                    <goal>add-test-source</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <sources>
+                <source>${project.build.directory}/parallel/runners</source>
+            </sources>
+        </configuration>    
+    </plugin>
+</plugins>
+
 ```
 
 ### Complete Example
@@ -325,17 +374,11 @@ This is the runner template file that is used to generate single scenario runner
 The placeholder **[FEATURE_FILE_NAME]** will be replaced with generated feature names by Cucable.
 
 <pre>
-package parallel.runners;
-
-import cucumber.api.junit.Cucumber;
 import cucumber.api.CucumberOptions;
-import org.junit.runner.RunWith;
 
-@RunWith(Cucumber.class)
 @CucumberOptions(
-    features = {"classpath:parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
-    plugin = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"},
-    glue = {"com.trivago.glue"}
+        features = {"target/parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
+        plugin = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"}
 )
 public class <b>[FEATURE_FILE_NAME]</b> {
 }
@@ -393,18 +436,11 @@ This is an example for one of the generated runners - note how the placeholders 
 *MyFeature_scenario001_run001_IT.java*
 
 <pre>
-package parallel.runners;
-
-import cucumber.api.junit.Cucumber;
 import cucumber.api.CucumberOptions;
-import org.junit.runner.RunWith;
 
-@RunWith(Cucumber.class)
 @CucumberOptions(
-    monochrome = false,
-    features = {"classpath:parallel/features/<b>MyFeature_scenario001_run001_IT</b>.feature"},
-    plugin = {"json:target/cucumber-report/<b>MyFeature_scenario001_run001_IT</b>.json"},
-    glue = {"com.trivago.glue"}
+        features = {"target/parallel/features/<b>MyFeature_scenario001_run001_IT</b>.feature"},
+        plugin = {"json:target/cucumber-report/<b>MyFeature_scenario001_run001_IT</b>.json"}
 )
 public class <b>MyFeature_scenario001_run001_IT</b> {
 }
@@ -457,24 +493,26 @@ To circumvent that, it is possible to specify a custom [rule](https://maven.apac
 We use the [Cluecumber](https://github.com/trivago/cluecumber-report-plugin) plugin to aggregate all generated __.json__ report files into one overall test report.
 
 ```xml
-<plugin>
-    <groupId>com.trivago.rta</groupId>
-    <artifactId>cluecumber-report-plugin</artifactId>
-    <version>${cluecumber.report.version}</version>
-    <executions>
-        <execution>
-            <id>report</id>
-            <phase>post-integration-test</phase>
-            <goals>
-                <goal>reporting</goal>
-            </goals>
-        </execution>
-    </executions>
-    <configuration>
-        <sourceJsonReportDirectory>${project.build.directory}/cucumber-report</sourceJsonReportDirectory>
-        <generatedHtmlReportDirectory>${project.build.directory}/test-report</generatedHtmlReportDirectory>
-    </configuration>    
-</plugin>
+<plugins>
+    <plugin>
+        <groupId>com.trivago.rta</groupId>
+        <artifactId>cluecumber-report-plugin</artifactId>
+        <version>${cluecumber.report.version}</version>
+        <executions>
+            <execution>
+                <id>report</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                    <goal>reporting</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <sourceJsonReportDirectory>${project.build.directory}/cucumber-report</sourceJsonReportDirectory>
+            <generatedHtmlReportDirectory>${project.build.directory}/test-report</generatedHtmlReportDirectory>
+        </configuration>    
+    </plugin>
+</plugins>
 ```
 
 # Example project
