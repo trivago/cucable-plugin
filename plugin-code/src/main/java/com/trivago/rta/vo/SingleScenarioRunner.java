@@ -36,6 +36,7 @@ public final class SingleScenarioRunner {
     public SingleScenarioRunner(
             final String runnerTemplatePath,
             final String featureFileName) {
+
         this.runnerTemplatePath = runnerTemplatePath;
         this.featureFileName = featureFileName;
     }

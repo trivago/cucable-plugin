@@ -6,7 +6,7 @@
 
     <groupId>de.benjamin-bischoff</groupId>
     <artifactId>cucable-test-project</artifactId>
-    <version>0.1.8</version>
+    <version>0.1.9</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -36,8 +36,9 @@
                     </execution>
                 </executions>
                 <configuration>
-                    <sourceRunnerTemplateFile>src/test/resources/parallel/cucable.template
-                    </sourceRunnerTemplateFile>
+                    <!-- This can be either a Java class file or a text based template -->
+                    <sourceRunnerTemplateFile>src/test/java/some/template/CucableJavaTemplate.java</sourceRunnerTemplateFile>
+                    <!--<sourceRunnerTemplateFile>src/test/resources/cucable.template</sourceRunnerTemplateFile>-->
 
                     <!-- process all features in the given directory -->
                     <sourceFeatures>src/test/resources/features</sourceFeatures>
