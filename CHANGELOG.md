@@ -6,6 +6,50 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [0.1.11] - 2018-05-08
+
+- Fix for wrong unicode detection of source feature path in runner comments
+
+## [0.1.10] - 2018-05-08
+
+- Runner comments containing "\u" were wrongly considered unicode
+
+## [0.1.9] - 2018-04-20
+
+### Added
+
+- It is now possible to use an existing Java runner class as a template for generated runners
+- Source runner template is now included as a comment in generated runners
+
+## [0.1.8] - 2018-03-30
+
+### Added
+
+- Source feature path is now included as a comment in generated features and runners
+- Configurable logging with 4 levels: _default_, _compact_, _minimal_, _off_
+- The number of generated scenarios per feature is shown in the default logs
+- The total number of generated features is shown in a summary line in all log levels except _off_
+
+### Changed
+
+- All dependencies are updated to their latest version
+
+## [0.1.7] - 2018-03-02
+
+### Changed
+
+- Updated to Gherkin 5.0.0
+
+### Added
+
+- All Gherkin languages are now supported
+
+## [0.1.6] - 2018-02-09
+
+### Added
+
+- Ability to use example placeholders in scenario outline names (contributed by [@daczczcz1](https://github.com/daczczcz1))
+
 ## [0.1.5] - 2018-02-07
 
 ### Added
@@ -95,6 +139,12 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[0.1.11]: https://github.com/trivago/cucable-plugin/compare/0.1.10...0.1.11
+[0.1.10]: https://github.com/trivago/cucable-plugin/compare/0.1.9...0.1.10
+[0.1.9]: https://github.com/trivago/cucable-plugin/compare/0.1.8...0.1.9
+[0.1.8]: https://github.com/trivago/cucable-plugin/compare/0.1.7...0.1.8
+[0.1.7]: https://github.com/trivago/cucable-plugin/compare/0.1.6...0.1.7
+[0.1.6]: https://github.com/trivago/cucable-plugin/compare/0.1.5...0.1.6
 [0.1.5]: https://github.com/trivago/cucable-plugin/compare/0.1.4...0.1.5
 [0.1.4]: https://github.com/trivago/cucable-plugin/compare/0.1.3...0.1.4
 [0.1.3]: https://github.com/trivago/cucable-plugin/compare/0.1.2...0.1.3

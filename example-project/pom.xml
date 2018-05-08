@@ -1,0 +1,117 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0"
+         xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+    <modelVersion>4.0.0</modelVersion>
+
+    <groupId>de.benjamin-bischoff</groupId>
+    <artifactId>cucable-test-project</artifactId>
+    <version>0.1.11</version>
+
+    <properties>
+        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+        <maven.failsafe.plugin.version>2.20.1</maven.failsafe.plugin.version>
+        <maven.build.helper.plugin.version>3.0.0</maven.build.helper.plugin.version>
+        <junit.version>4.12</junit.version>
+        <cucumber.version>2.3.1</cucumber.version>
+
+        <generated.runner.directory>${project.build.directory}/parallel/runners</generated.runner.directory>
+        <generated.feature.directory>${project.build.directory}/parallel/features</generated.feature.directory>
+    </properties>
+
+    <build>
+        <plugins>
+            <plugin>
+                <groupId>com.trivago.rta</groupId>
+                <artifactId>cucable-plugin</artifactId>
+                <version>${project.version}</version>
+                <executions>
+                    <execution>
+                        <id>generate-test-resources</id>
+                        <phase>generate-test-resources</phase>
+                        <goals>
+                            <goal>parallel</goal>
+                        </goals>
+                    </execution>
+                </executions>
+                <configuration>
+                    <!-- This can be either a Java class file or a text based template -->
+                    <sourceRunnerTemplateFile>src/test/java/some/template/CucableJavaTemplate.java</sourceRunnerTemplateFile>
+                    <!--<sourceRunnerTemplateFile>src/test/resources/cucable.template</sourceRunnerTemplateFile>-->
+
+                    <!-- process all features in the given directory -->
+                    <sourceFeatures>src/test/resources/features</sourceFeatures>
+
+                    <!-- process a specific file in the given directory -->
+                    <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature</sourceFeatures>-->
+
+                    <!-- process a specific file and specific line numbers in the given directory -->
+                    <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>-->
+
+                    <!-- include scenarios with certain tags -->
+                    <!--<includeScenarioTags>-->
+                    <!--<param>@scenarioTag1</param>-->
+                    <!--<param>@scenarioTag2</param>-->
+                    <!--</includeScenarioTags>-->
+
+                    <!-- exclude scenarios with certain tags -->
+                    <!--<excludeScenarioTags>-->
+                    <!--<param>@skipme</param>-->
+                    <!--</excludeScenarioTags>-->
+
+                    <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
+                    <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
+                    <numberOfTestRuns>1</numberOfTestRuns>
+
+                    <!-- Logging -->
+                    <logLevel>default</logLevel>
+                    <!--<logLevel>compact</logLevel>-->
+                    <!--<logLevel>minimal</logLevel>-->
+                    <!--<logLevel>off</logLevel>-->
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.codehaus.mojo</groupId>
+                <artifactId>build-helper-maven-plugin</artifactId>
+                <version>${maven.build.helper.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <id>add-test-source</id>
+                        <phase>generate-test-sources</phase>
+                        <goals>
+                            <goal>add-test-source</goal>
+                        </goals>
+                        <configuration>
+                            <sources>
+                                <source>${generated.runner.directory}</source>
+                            </sources>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-failsafe-plugin</artifactId>
+                <version>${maven.failsafe.plugin.version}</version>
+                <executions>
+                    <execution>
+                        <goals>
+                            <goal>integration-test</goal>
+                        </goals>
+                        <configuration>
+                            <forkCount>2</forkCount>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
+        </plugins>
+    </build>
+    <dependencies>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+    </dependencies>
+</project>

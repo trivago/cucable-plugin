@@ -1,62 +1,77 @@
 ![cucable logo](documentation/img/cucable.png)
 
+### Run Cucumber Scenarios in Parallel with Maven
+
 [![Apache V2 License](http://img.shields.io/badge/license-Apache%20V2-blue.svg)](http://www.apache.org/licenses/LICENSE-2.0)
 [![Maven Central](https://img.shields.io/maven-central/v/com.trivago.rta/cucable-plugin.svg)](http://repo1.maven.org/maven2/com/trivago/rta/cucable-plugin/)
 [![Build Status](https://travis-ci.org/trivago/cucable-plugin.svg?branch=master)](https://travis-ci.org/trivago/cucable-plugin)
 [![codecov](https://codecov.io/gh/trivago/cucable-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/trivago/cucable-plugin)
 [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/bischoffdev)
 
+![Cucumber compatible](documentation/img/cucumber-compatible-black-64.png)
+
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
-- [What is Cucable](#what-is-cucable)
+- [Cucable Maven Plugin](#cucable-maven-plugin)
+  - [Repository Structure](#repository-structure)
   - [Changelog](#changelog)
-- [Maven dependency](#maven-dependency)
-- [Data flow](#data-flow)
+  - [Maven dependency](#maven-dependency)
+- [Typical workflow](#typical-workflow)
   - [1. Generation of runners and features](#1-generation-of-runners-and-features)
-    - [Parameters](#parameters)
-      - [sourceRunnerTemplateFile (required)](#sourcerunnertemplatefile-required)
-      - [sourceFeatures (required)](#sourcefeatures-required)
-      - [generatedFeatureDirectory (required)](#generatedfeaturedirectory-required)
-      - [generatedRunnerDirectory (required)](#generatedrunnerdirectory-required)
-      - [numberOfTestRuns (optional)](#numberoftestruns-optional)
-      - [includeScenarioTags (optional)](#includescenariotags-optional)
-      - [excludeScenarioTags (optional)](#excludescenariotags-optional)
-    - [Example](#example)
+    - [Required Parameters](#required-parameters)
+      - [sourceRunnerTemplateFile](#sourcerunnertemplatefile)
+        - [Using a java file as a runner template](#using-a-java-file-as-a-runner-template)
+        - [Using a text file as a runner template](#using-a-text-file-as-a-runner-template)
+      - [sourceFeatures](#sourcefeatures)
+      - [generatedFeatureDirectory](#generatedfeaturedirectory)
+      - [generatedRunnerDirectory](#generatedrunnerdirectory)
+    - [Optional Parameters](#optional-parameters)
+      - [numberOfTestRuns](#numberoftestruns)
+      - [includeScenarioTags](#includescenariotags)
+      - [excludeScenarioTags](#excludescenariotags)
+      - [logLevel](#loglevel)
+    - [Generating runners and features inside target directory](#generating-runners-and-features-inside-target-directory)
+    - [Complete Example](#complete-example)
       - [Source feature file](#source-feature-file)
       - [Runner template file](#runner-template-file)
       - [Generated Scenarios](#generated-scenarios)
       - [Generated runners](#generated-runners)
   - [2. Running the generated tests with Maven failsafe](#2-running-the-generated-tests-with-maven-failsafe)
   - [3. Aggregation of a single test report after all test runs](#3-aggregation-of-a-single-test-report-after-all-test-runs)
-  - [4. Passing or failing of the build according to the test results](#4-passing-or-failing-of-the-build-according-to-the-test-results)
-  - [Example POM](#example-pom)
 - [Example project](#example-project)
-- [Building](#building)
-- [Future improvements](#future-improvements)
-- [License](#license)
+- [Additional Information](#additional-information)
+  - [Building](#building)
+  - [License](#license)
+  - [Credits](#credits)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
 
-# What is Cucable
+# Cucable Maven Plugin
 
-Cucable is a Maven plugin for [Cucumber](https://cucumber.io) scenarios that simplifies parallel test runs.
+Cucable is a Maven plugin for [Cucumber](https://cucumber.io) scenarios that simplifies fine-grained and efficient parallel test runs.
 
-This plugin has two purposes:
+This plugin does the following:
 
-- Generating single Cucumber features from all scenarios inside specified .feature files
+- Generate single Cucumber features containing one single scenario each
+- Convert scenario outlines into separate scenarios
 - Generating Cucumber runners for every generated "single scenario" feature file
 
 Those generated runners and features can then be used with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/) in order to parallelize test runs.
 
-This plugin was inspired by the [Cucumber Slices Maven Plugin](https://github.com/DisneyStudios/cucumber-slices-maven-plugin).
+**Note:** From version 0.1.7 on this also works for non-english feature files!
+
+## Repository Structure
+
+* [plugin-code](plugin-code) contains the full plugin source code.
+* [example-project](example-project) contains an example Maven project to see the plugin in action.
 
 ## Changelog
 
 All changes are documented in the [full changelog](CHANGELOG.md).
 
-# Maven dependency
+## Maven dependency
 
 ```xml
 <dependency>
@@ -66,14 +81,11 @@ All changes are documented in the [full changelog](CHANGELOG.md).
 </dependency>
 ```
 
-# Data flow
-
-The typical flow is
+# Typical workflow
 
 1. Generation of runners and features
 2. Running the generated tests with Maven failsafe
 3. Aggregation of a single test report after all test runs
-4. *Optional* passing or failing of the build according to the test results
 
 The following sections break down the above steps.
 
@@ -91,80 +103,129 @@ The following sections break down the above steps.
             <goals>
                 <goal>parallel</goal>
             </goals>
-            <configuration>
-                <sourceRunnerTemplateFile>src/test/resources/parallel/cucable.template</sourceRunnerTemplateFile>
-                <sourceFeatures>src/test/resources/features</sourceFeatures>
-                <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
-                <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
-                <numberOfTestRuns>1</numberOfTestRuns>
-                <includeScenarioTags>
-                    <param>@includeMe</param>
-                    <param>@includeMeAsWell</param>
-                </includeScenarioTags>                                
-                <excludeScenarioTags>
-                    <param>@skip</param>
-                </excludeScenarioTags>                                
-            </configuration>
         </execution>
     </executions>
+    <configuration>
+        <!-- Required properties -->
+        <sourceRunnerTemplateFile>src/test/resources/parallel/cucable.template</sourceRunnerTemplateFile>
+        <sourceFeatures>src/test/resources/features</sourceFeatures>
+        <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
+        <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
+        
+        <!-- Optional properties -->
+        <numberOfTestRuns>1</numberOfTestRuns>
+        <includeScenarioTags>
+            <param>@includeMe</param>
+            <param>@includeMeAsWell</param>
+        </includeScenarioTags>                                
+        <excludeScenarioTags>
+            <param>@skip</param>
+        </excludeScenarioTags>
+        <logLevel>compact</logLevel>                                
+    </configuration>    
 </plugin>
 ```
 
-### Parameters
+### Required Parameters
 
-#### sourceRunnerTemplateFile (required)
+#### sourceRunnerTemplateFile
 
-The path to a text file (e.g. _src/test/resources/parallel/cucable.template_) with **[FEATURE_FILE_NAME]** placeholders for the generated feature file name.
-This file will be used to generate runners for every generated feature file.
+The specified file will be used to generate runners for every generated feature file.
 
-Example:
+This can be either a text file or a Java class. The difference is outlined below:
+
+##### Using a java file as a runner template
+
+If you use a java file (e.g. _src/test/java/some/template/CucableJavaTemplate.java_), all **[FEATURE_FILE_NAME]** placeholders as well as the **class name** will be substituted for the generated feature file name.
+Also, the **package declaration** will be stripped.
+
+_Example:_
 
 <pre>
-package com.example;
+<b>package some.template;</b>
 
-import com.example.YourTestRunner;
 import cucumber.api.CucumberOptions;
-import org.junit.runner.RunWith;
 
-@RunWith(YourTestRunner.class)
 @CucumberOptions(
-    monochrome = false,
-    features = {"classpath:parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
-    format = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"},
-    strict = false,
-    dryRun = false,
-    glue = {"com.example.glue"},
-    tags = {"~@ignore"}
+        features = {"target/parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
+        plugin = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"}
+)
+public class <b>CucableJavaTemplate</b> {
+}
+</pre>
+
+will turn into
+
+<pre>
+import cucumber.api.CucumberOptions;
+
+@CucumberOptions(
+        features = {"target/parallel/features/<b>MyFeature_scenario001_run001_IT</b>.feature"},
+        plugin = {"json:target/cucumber-report/<b>MyFeature_scenario001_run001_IT</b>.json"}
+)
+public class <b>MyFeature_scenario001_run001_IT</b> {
+}
+</pre>
+
+
+##### Using a text file as a runner template
+
+If you use a text file (e.g. _src/test/resources/cucable.template_), all **[FEATURE_FILE_NAME]** placeholders will be substituted for the generated feature file name.
+
+_Example:_
+
+<pre>
+import cucumber.api.CucumberOptions;
+
+@CucumberOptions(
+        features = {"target/parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
+        plugin = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"}
 )
 public class <b>[FEATURE_FILE_NAME]</b> {
 }
-
 </pre>
 
-#### sourceFeatures (required)
+will turn into
+
+<pre>
+import cucumber.api.CucumberOptions;
+
+@CucumberOptions(
+        features = {"target/parallel/features/<b>MyFeature_scenario001_run001_IT</b>.feature"},
+        plugin = {"json:target/cucumber-report/<b>MyFeature_scenario001_run001_IT</b>.json"}
+)
+public class <b>MyFeature_scenario001_run001_IT</b> {
+}
+</pre>
+
+#### sourceFeatures
 
 This can specify
 * the root path of your __existing__ Cucumber _.feature_ files (e.g. ```src/test/resources/features```)
 * the path to a specific __existing__ Cucumber _.feature_ file (e.g. ```src/test/resources/features/MyFeature.feature```)
 * the path to a specific __existing__ Cucumber _.feature_ file including line numbers of specific scenarios/scenario outlines inside this file (e.g. ```src/test/resources/features/MyFeature.feature:12:19``` would only convert the scenarios starting at line _12_ and _19_ inside _MyFeature.feature_)
 
-#### generatedFeatureDirectory (required)
+#### generatedFeatureDirectory
 
 The path where the __generated__ Cucumber .feature files should be located (e.g. _src/test/resources/parallel_).
 
-**Hint:** This directory should be located under a valid resource folder to be included as a test source by Maven.
+**Note:** This directory should be located under a valid resource folder to be included as a test source by Maven.
+If you want to use a directory inside Maven's target folder, [check this example](#generating-runners-and-features-inside-target-directory).
 
 **Caution:** This directory will be wiped prior to the feature file generation!
 
-#### generatedRunnerDirectory (required)
+#### generatedRunnerDirectory
 
 The path where the __generated__ runner classes should be located (e.g. _src/test/java/parallel/runners_).
 
-**Hint:** This directory should be located under a valid source folder to be included as a test source by Maven.
+**Note:** This directory should be located under a valid source folder to be included as a test source by Maven.
+If you want to use a directory inside Maven's target folder, [check this example](#generating-runners-and-features-inside-target-directory).
 
 **Caution:** This directory will be wiped prior to the runner file generation!
 
-#### numberOfTestRuns (optional)
+### Optional Parameters
+
+#### numberOfTestRuns
 
 Optional number of test runs. If it is not set, its default value is __1__.
 For each test run, the whole set of features and runners is generated like this:
@@ -176,7 +237,7 @@ For each test run, the whole set of features and runners is generated like this:
 
 **Note:** Characters other than letters from A to Z, numbers and underscores will be stripped out of the feature file name.
 
-#### includeScenarioTags (optional)
+#### includeScenarioTags
 
 Optional scenario tags that __should be included__ in the feature and runner generation.
 To include multiple tags, just add each one into as its own ```<param>```:
@@ -191,7 +252,7 @@ To include multiple tags, just add each one into as its own ```<param>```:
 __Note:__ When using _includeScenarioTags_ and _excludeScenarioTags_ together, the _excludeScenarioTags_ will override the _includeScenarioTags_.
 This means that a scenario containing an included tag __and__ an excluded tag will be __excluded__!
 
-#### excludeScenarioTags (optional)
+#### excludeScenarioTags
 
 Optional scenario tags that __should not be included__ in the feature and runner generation.
 To include multiple tags, just add each one into as its own ```<param>```:
@@ -206,7 +267,80 @@ To include multiple tags, just add each one into as its own ```<param>```:
 __Note:__ When using _includeScenarioTags_ and _excludeScenarioTags_ together, the _excludeScenarioTags_ will override the _includeScenarioTags_.
 This means that a scenario containing an included tag __and__ an excluded tag will be __excluded__!
 
-### Example
+#### logLevel
+
+By default, Cucable logs all information including
+
+* its own name and version
+* all passed property values
+* a list of processed feature paths
+
+This can be configured by passing the `logLevel` property:
+
+```
+<logLevel>default|compact|minimal|off</logLevel>
+```
+
+* _default_ will log all the mentioned information
+* _compact_ will only log the plugin name, version, properties and one line of summary
+* _minimal_ will only log a summary line
+* _off_ will prevent any logging
+
+### Generating runners and features inside target directory
+
+It may be desirable for you to generate the Cucable features and runners in Maven's `target` directory.
+The advantage of this is that this directory is wiped by the `mvn clean` command and older generated files do not reside in your `src` directory.
+
+In order to achieve this, you can specify subdirectories under target (`${project.build.directory}`) for Cucable, e.g. `${project.build.directory}/parallel/runners` and `${project.build.directory}/parallel/features`
+
+After this step, use the *build-helper-maven-plugin* in your POM file in order to consider the generated runner classes test sources:
+
+```xml
+<plugins>
+    <plugin>
+        <groupId>com.trivago.rta</groupId>
+        <artifactId>cucable-plugin</artifactId>
+        <version>${cucable.plugin.version}</version>
+        <executions>
+            <execution>
+                <id>generate-test-resources</id>
+                <phase>generate-test-resources</phase>
+                <goals>
+                    <goal>parallel</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <sourceRunnerTemplateFile>path_to_template_file</sourceRunnerTemplateFile>
+            <sourceFeatures>path_to_features</sourceFeatures>
+            <generatedFeatureDirectory>${project.build.directory}/parallel/features</generatedFeatureDirectory>
+            <generatedRunnerDirectory>${project.build.directory}/parallel/runners</generatedRunnerDirectory>
+        </configuration>    
+    </plugin>
+    <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>${build.helper.plugin.version}</version>
+        <executions>
+            <execution>
+                <id>add-test-source</id>
+                <phase>generate-test-sources</phase>
+                <goals>
+                    <goal>add-test-source</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <sources>
+                <source>${project.build.directory}/parallel/runners</source>
+            </sources>
+        </configuration>    
+    </plugin>
+</plugins>
+
+```
+
+### Complete Example
 
 Below, you can see a full example of what Cucable does.
 
@@ -223,7 +357,7 @@ Feature: This is the feature name
         And I click the login button
         Then I see an error message
 
-    Scenario Outline: Second scenario
+    Scenario Outline: Second scenario with an amount of <amount>
         Given I am on the start page
         And I add <amount> items
         And I navigate to the shopping basket
@@ -237,34 +371,20 @@ Feature: This is the feature name
 #### Runner template file
 
 This is the runner template file that is used to generate single scenario runners.
-The **[FEATURE_FILE_NAME]** placeholder will be automatically replaced with the name of each generated scenario.
-
-It is possible to specify a custom runner using ```@RunWith(MyCustomCucumberRunner.class)```!
-
-By specifying _tags_, we can also split the tests even further if needed. In this case we just ignore all tests that are annotated with ```ignore```.
-
-The _format_ option tells Cucumber where to put the json report files for the aggregated test report.
+The placeholder **[FEATURE_FILE_NAME]** will be replaced with generated feature names by Cucable.
 
 <pre>
-package parallel.runners;
-
-import com.trivago.trupi.runner.MyCustomCucumberRunner;
 import cucumber.api.CucumberOptions;
-import org.junit.runner.RunWith;
 
-@RunWith(MyCustomCucumberRunner.class)
 @CucumberOptions(
-    monochrome = false,
-    features = {"classpath:parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
-    format = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"},
-    strict = false,
-    dryRun = false,
-    glue = {"com.trivago.glue"},
-    tags = {"~@ignore"}
+        features = {"target/parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
+        plugin = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"}
 )
 public class <b>[FEATURE_FILE_NAME]</b> {
 }
 </pre>
+
+**Note:** The specified _plugin_ generates Cucumber JSON files which are needed for custom aggregated test reports.
 
 #### Generated Scenarios
 
@@ -288,7 +408,7 @@ Note that for the scenario outlines, each example is converted to its own scenar
 <pre>
 Feature: This is the feature name
 
-Scenario: Second scenario
+Scenario: Second scenario with an amount of <b>12</b>
 Given I am on the start page
 And I add <b>12</b> items
 And I navigate to the shopping basket
@@ -300,7 +420,7 @@ Then I see <b>12</b> items
 <pre>
 Feature: This is the feature name
 
-Scenario: Second scenario
+Scenario: Second scenario with an amount of <b>85</b>
 Given I am on the start page
 And I add <b>85</b> items
 And I navigate to the shopping basket
@@ -316,21 +436,11 @@ This is an example for one of the generated runners - note how the placeholders 
 *MyFeature_scenario001_run001_IT.java*
 
 <pre>
-package parallel.runners;
-
-import com.trivago.trupi.runner.MyCustomCucumberRunner;
 import cucumber.api.CucumberOptions;
-import org.junit.runner.RunWith;
 
-@RunWith(TrupiCucumberRunner.class)
 @CucumberOptions(
-    monochrome = false,
-    features = {"classpath:parallel/features/<b>MyFeature_scenario001_run001_IT</b>.feature"},
-    format = {"json:target/cucumber-report/<b>MyFeature_scenario001_run001_IT</b>.json"},
-    strict = false,
-    dryRun = false,
-    glue = {"com.trivago.glue"},
-    tags = {"~@ignore"}
+        features = {"target/parallel/features/<b>MyFeature_scenario001_run001_IT</b>.feature"},
+        plugin = {"json:target/cucumber-report/<b>MyFeature_scenario001_run001_IT</b>.json"}
 )
 public class <b>MyFeature_scenario001_run001_IT</b> {
 }
@@ -341,8 +451,10 @@ public class <b>MyFeature_scenario001_run001_IT</b> {
 This will skip the unit tests (if any) and run the generated runner classes with Failsafe.
 Since all generated runner classes from the step before end with ___IT__, they are automatically considered integration tests and run with failsafe.
 
-If all tests should be run regardless of their result, it is important to set ```<testFailureIgnore>true</testFailureIgnore>``` for Failsafe - otherwise the plugin execution will stop on failing tests.
-However, if this is specified, the build will not fail in case of failing tests! To circumvent that, it is possible to specify a custom Maven fail rule.
+**Note:** If all tests should be run regardless of their result, it is important to set ```<testFailureIgnore>true</testFailureIgnore>``` for Failsafe - otherwise the plugin execution will stop on failing tests.
+However, if this is specified, the build will not fail in case of failing tests!
+
+To circumvent that, it is possible to specify a custom [rule](https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html) for [Maven enforcer](https://maven.apache.org/enforcer/maven-enforcer-plugin/) that passes or fails the build depending on custom conditions.
 
 ```xml
 <plugins>
@@ -381,204 +493,40 @@ However, if this is specified, the build will not fail in case of failing tests!
 We use the [Cluecumber](https://github.com/trivago/cluecumber-report-plugin) plugin to aggregate all generated __.json__ report files into one overall test report.
 
 ```xml
-<plugin>
-    <groupId>com.trivago.rta</groupId>
-    <artifactId>cluecumber-report-plugin</artifactId>
-    <version>${cluecumber.report.version}</version>
-    <executions>
-        <execution>
-            <id>report</id>
-            <phase>post-integration-test</phase>
-            <goals>
-                <goal>reporting</goal>
-            </goals>
-            <configuration>
-                <sourceJsonReportDirectory>${project.build.directory}/cucumber-report</sourceJsonReportDirectory>
-                <generatedHtmlReportDirectory>${project.build.directory}/test-report</generatedHtmlReportDirectory>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
-```
-
-## 4. Passing or failing of the build according to the test results
-
-You can use a custom Maven fail rule that passes or fails the complete build based on test failures. It could check the Failsafe summary report that is generated for each test run.
-Without this rule we would have a successful build every time in case we specify.
-
-```xml
-<plugin>
-    <groupId>org.apache.maven.plugins</groupId>
-    <artifactId>maven-enforcer-plugin</artifactId>
-    <dependencies>
-        <dependency>
-            <groupId>com.trivago.rta</groupId>
-            <artifactId>your-custom-maven-fail-rule</artifactId>
-            <version>${fail.rule.version}</version>
-        </dependency>
-    </dependencies>
-    <executions>
-        <execution>
-            <phase>verify</phase>
-            <goals>
-                <goal>enforce</goal>
-            </goals>
-            <configuration>
-                <rules>
-                    <yourRule implementation="com.example.YourFailRule"/>
-                </rules>
-                <fail>true</fail>
-            </configuration>
-        </execution>
-    </executions>
-</plugin>
-```
-
-## Example POM
-
-This is the complete Maven profile that is used when invoking
-
-```mvn clean verify -Pparallel```
-
-So all specified plugins will execute one after the other.
-
-```xml
-<profiles>
-    <profile>
-        <id>parallel</id>
-        <build>
-            <plugins>
-            
-                <!-- Slicing scenarios with Cucable -->
-                <plugin>
-                    <groupId>com.trivago.rta</groupId>
-                    <artifactId>cucable-plugin</artifactId>
-                    <version>${cucable-plugin.version}</version>
-                    <executions>
-                        <execution>
-                            <id>generate-test-resources</id>
-                            <phase>generate-test-resources</phase>
-                            <goals>
-                                <goal>parallel</goal>
-                            </goals>
-                            <configuration>
-                                <sourceRunnerTemplateFile>src/test/resources/parallel/cucable.template</sourceRunnerTemplateFile>
-                                <sourceFeatures>src/test/resources/features</sourceFeatures>
-                                <generatedFeatureDirectory>src/test/resources/parallel/features</generatedFeatureDirectory>
-                                <generatedRunnerDirectory>src/test/java/parallel/runners</generatedRunnerDirectory>
-                                <numberOfTestRuns>1</numberOfTestRuns>
-                                <includeScenarioTags>
-                                    <param>@includeMe</param>
-                                    <param>@includeMeAsWell</param>
-                                </includeScenarioTags>                                
-                                <excludeScenarioTags>
-                                    <param>@skip</param>
-                                </excludeScenarioTags>                                
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                
-                <!-- Optional skipping of unit tests if needed -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-surefire-plugin</artifactId>
-                    <configuration>
-                        <skipTests>true</skipTests>
-                    </configuration>
-                </plugin>
-                
-                <!-- Running the sliced scenarios -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-failsafe-plugin</artifactId>
-                    <executions>
-                        <execution>
-                            <id>Run parallel tests</id>
-                                <phase>integration-test</phase>
-                                <goals>
-                                    <goal>integration-test</goal>
-                                </goals>
-                        </execution>
-                    </executions>
-                    <configuration>
-                        <forkCount>${maven.fork.count}</forkCount>
-                        <testFailureIgnore>true</testFailureIgnore>
-                        <reuseForks>false</reuseForks>
-                        <argLine>-Dfile.encoding=UTF-8</argLine>
-                        <disableXmlReport>true</disableXmlReport>
-                    </configuration>
-                </plugin>
-                
-                <!-- Report test results -->
-                <plugin>
-                    <groupId>com.trivago.rta</groupId>
-                    <artifactId>cluecumber-report-plugin</artifactId>
-                    <version>${cluecumber.report.version}</version>
-                    <executions>
-                        <execution>
-                            <id>report</id>
-                            <phase>post-integration-test</phase>
-                            <goals>
-                                <goal>reporting</goal>
-                            </goals>
-                            <configuration>
-                                <sourceJsonReportDirectory>${project.build.directory}/cucumber-report</sourceJsonReportDirectory>
-                                <generatedHtmlReportDirectory>${project.build.directory}/test-report</generatedHtmlReportDirectory>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-                
-                <!-- Optional maven fail rule to pass or fail the build. -->
-                <plugin>
-                    <groupId>org.apache.maven.plugins</groupId>
-                    <artifactId>maven-enforcer-plugin</artifactId>
-                    <dependencies>
-                        <dependency>
-                            <groupId>com.trivago.rta</groupId>
-                            <artifactId>your-custom-maven-fail-rule</artifactId>
-                            <version>${fail.rule.version}</version>
-                        </dependency>
-                    </dependencies>
-                    <executions>
-                        <execution>
-                            <phase>verify</phase>
-                            <goals>
-                                <goal>enforce</goal>
-                            </goals>
-                            <configuration>
-                                <rules>
-                                    <yourRule implementation="com.example.YourFailRule"/>
-                                </rules>
-                                <fail>true</fail>
-                            </configuration>
-                        </execution>
-                    </executions>
-                </plugin>
-            </plugins>
-        </build>
-    </profile>
-</profiles>
+<plugins>
+    <plugin>
+        <groupId>com.trivago.rta</groupId>
+        <artifactId>cluecumber-report-plugin</artifactId>
+        <version>${cluecumber.report.version}</version>
+        <executions>
+            <execution>
+                <id>report</id>
+                <phase>post-integration-test</phase>
+                <goals>
+                    <goal>reporting</goal>
+                </goals>
+            </execution>
+        </executions>
+        <configuration>
+            <sourceJsonReportDirectory>${project.build.directory}/cucumber-report</sourceJsonReportDirectory>
+            <generatedHtmlReportDirectory>${project.build.directory}/test-report</generatedHtmlReportDirectory>
+        </configuration>    
+    </plugin>
+</plugins>
 ```
 
 # Example project
 
-An example project to test Cucable's behavior can be found here:
+You can test the complete flow and POM configuration by checking out the [Cucable example project](example-project).
 
-https://github.com/laxersaz/cucable-test-project
+# Additional Information
 
-# Building
+## Building
 
-Cucable requires Java 8 and Maven 3.3.9.
+Cucable requires Java >= 8 and Maven >= 3.3.9.
 It is available in [Maven central](https://search.maven.org/#search%7Cgav%7C1%7Cg%3A%22com.trivago.rta%22%20AND%20a%3A%22cucable-plugin%22).
 
-# Future improvements
-
-* Offer the possibility to generate runners and features directly in the target folder
-* Use a real Java file for the runner template
-
-# License
+## License
 
 Copyright 2017 trivago N.V.
 
@@ -587,3 +535,11 @@ Licensed under the Apache License, Version 2.0 (the "License"); you may not use 
 http://www.apache.org/licenses/LICENSE-2.0
 
 Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the specific language governing permissions and limitations under the License.
+
+## Credits
+
+This plugin was inspired by the [Cucumber Slices Maven Plugin](https://github.com/DisneyStudios/cucumber-slices-maven-plugin).
+
+This project is being tested on
+
+[![Browserstack](documentation/img/browserstack.png)](http://browserstack.com)
