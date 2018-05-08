@@ -61,7 +61,7 @@ public class FeatureFileConverter {
 
     // Holds the current number of single features per feature key
     // (in a scenario outline, each example yields a single feature with the same key).
-    private Map<String, Integer> singleFeatureCounters = new HashMap<>();
+    private final Map<String, Integer> singleFeatureCounters = new HashMap<>();
 
     @Inject
     public FeatureFileConverter(
@@ -138,7 +138,7 @@ public class FeatureFileConverter {
         // In case of a provided line number: if there are no scenarios created
         // that means that the provided line number is wrong.
         if (propertyManager.hasValidScenarioLineNumbers() && singleScenarios.size() == 0) {
-            throw new CucablePluginException("There is no parseable scenario or scenario outline at line " + lineNumbers);
+            throw new CucablePluginException("There is no parsable scenario or scenario outline at line " + lineNumbers);
         }
 
         for (SingleScenario singleScenario : singleScenarios) {

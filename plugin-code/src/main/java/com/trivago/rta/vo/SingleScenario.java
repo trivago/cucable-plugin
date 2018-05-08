@@ -23,15 +23,15 @@ import java.util.List;
  */
 public final class SingleScenario {
 
-    private String featureName;
-    private String featureFilePath;
-    private String featureLanguage;
+    private final String featureName;
+    private final String featureFilePath;
+    private final String featureLanguage;
     private final String featureDescription;
-    private String scenarioName;
+    private final String scenarioName;
     private final String scenarioDescription;
-    private List<String> featureTags;
+    private final List<String> featureTags;
+    private final List<Step> backgroundSteps;
     private List<String> scenarioTags;
-    private List<Step> backgroundSteps;
     private List<Step> steps;
 
     public SingleScenario(

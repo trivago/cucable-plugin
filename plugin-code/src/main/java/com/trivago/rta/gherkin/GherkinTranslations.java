@@ -10,14 +10,14 @@ import javax.inject.Singleton;
 public class GherkinTranslations {
 
     private static final String SCENARIO = "Scenario";
-    private GherkinDialectProvider gherkinDialectProvider;
+    private final GherkinDialectProvider gherkinDialectProvider;
 
     @Inject
     public GherkinTranslations() {
         gherkinDialectProvider = new GherkinDialectProvider();
     }
 
-    public String getScenarioKeyword(final String language) {
+    String getScenarioKeyword(final String language) {
         GherkinDialect dialect;
         try {
             dialect = gherkinDialectProvider.getDialect(language, null);

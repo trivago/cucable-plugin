@@ -21,7 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class DataTable {
-    private List<List<String>> rows = new ArrayList<>();
+    private final List<List<String>> rows = new ArrayList<>();
 
     public void addRow(List<String> rowValues) {
         this.rows.add(rowValues);

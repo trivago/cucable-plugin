@@ -11,8 +11,8 @@ import static org.junit.Assert.assertThat;
 
 public class FileIOTest {
     @Rule
-    public TemporaryFolder testFolder = new TemporaryFolder();
-    private FileIO fileIO = new FileIO();
+    public final TemporaryFolder testFolder = new TemporaryFolder();
+    private final FileIO fileIO = new FileIO();
 
     @Test(expected = FileCreationException.class)
     public void writeToInvalidFileTest() throws Exception {
