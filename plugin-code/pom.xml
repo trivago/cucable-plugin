@@ -6,7 +6,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-plugin</artifactId>
-    <version>0.1.10</version>
+    <version>0.1.11</version>
     <url>https://github.com/trivago/cucable-plugin</url>
 
     <name>Cucable Maven Plugin</name>
