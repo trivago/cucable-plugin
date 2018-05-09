@@ -46,6 +46,8 @@ public class GherkinDocumentParser {
     private final GherkinToCucableConverter gherkinToCucableConverter;
     private final GherkinTranslations gherkinTranslations;
 
+    private final Pattern SCENARIO_OUTLINE_PLACEHOLDER_PATTERN = Pattern.compile("<.+?>");
+
     @Inject
     public GherkinDocumentParser(
             final GherkinToCucableConverter gherkinToCucableConverter,
@@ -209,7 +211,7 @@ public class GherkinDocumentParser {
                             featureFilePath,
                             featureLanguage,
                             featureDescription,
-                            substituteScenarioNameExamplePlaceholders(scenarioName, exampleMap, rowIndex),
+                            replacePlaceholderInString(scenarioName, exampleMap, rowIndex),
                             scenarioDescription,
                             featureTags,
                             backgroundSteps
@@ -240,12 +242,11 @@ public class GherkinDocumentParser {
             String stepName = step.getName();
             // substitute values in the step
             DataTable dataTable = step.getDataTable();
-            for (String columnName : exampleMap.keySet()) {
-                String columnValue = exampleMap.get(columnName).get(rowIndex);
-                stepName = stepName.replace(columnName, columnValue);
-                dataTable = replaceDataTableExamplePlaceholder(dataTable, columnName, columnValue);
-            }
-            substitutedSteps.add(new Step(stepName, dataTable, step.getDocString()));
+
+            String substitutedStepName = replacePlaceholderInString(stepName, exampleMap, rowIndex);
+            DataTable substitutedDataTable = replaceDataTableExamplePlaceholder(dataTable, exampleMap, rowIndex);
+
+            substitutedSteps.add(new Step(substitutedStepName, substitutedDataTable, step.getDocString()));
         }
 
         return substitutedSteps;
@@ -254,15 +255,15 @@ public class GherkinDocumentParser {
     /**
      * Replaces the example value placeholders in step data tables by the actual example table values.
      *
-     * @param dataTable   The source {@link DataTable}.
-     * @param columnName  The current placeholder to replace with a value.
-     * @param columnValue The current value to replace.
+     * @param dataTable  The source {@link DataTable}.
+     * @param exampleMap The generated example map from an example table.
+     * @param rowIndex   The row index of the example table to consider.
      * @return The resulting {@link DataTable}.
      */
     private DataTable replaceDataTableExamplePlaceholder(
             final DataTable dataTable,
-            final String columnName,
-            final String columnValue
+            final Map<String, List<String>> exampleMap,
+            final int rowIndex
     ) {
         if (dataTable == null) {
             return null;
@@ -273,7 +274,7 @@ public class GherkinDocumentParser {
         for (List<String> dataTableRow : dataTableRows) {
             List<String> replacedDataTableRow = new ArrayList<>();
             for (String dataTableCell : dataTableRow) {
-                replacedDataTableRow.add(dataTableCell.replace(columnName, columnValue));
+                replacedDataTableRow.add(replacePlaceholderInString(dataTableCell, exampleMap, rowIndex));
             }
             replacedDataTable.addRow(replacedDataTableRow);
         }
@@ -378,26 +379,29 @@ public class GherkinDocumentParser {
     }
 
     /**
-     * Replaces the example value placeholders in ScenarioOutline name by the actual example table values.
+     * Replaces the example value placeholders in a String by the actual example table values.
      *
-     * @param scenarioOutlineName The ScenarioOutline generic name.
-     * @param exampleMap          The generated example map from an example table.
-     * @param rowIndex            The row index of the example table to consider.
+     * @param string     The ScenarioOutline generic name.
+     * @param exampleMap The generated example map from an example table.
+     * @param rowIndex   The row index of the example table to consider.
      * @return a {@link String} name with placeholders substituted for actual values from example table.
      */
 
-    private String substituteScenarioNameExamplePlaceholders(
-            final String scenarioOutlineName,
+    private String replacePlaceholderInString(
+            final String string,
             final Map<String, List<String>> exampleMap,
             final int rowIndex) {
-        String result = scenarioOutlineName;
-        String placeholderPattern = "<.+?>";
-        Pattern p = Pattern.compile(placeholderPattern);
-        Matcher m = p.matcher(scenarioOutlineName);
+        String result = string;
+
+        Matcher m = SCENARIO_OUTLINE_PLACEHOLDER_PATTERN.matcher(string);
 
         while (m.find()) {
             String currentPlaceholder = m.group(0);
-            result = result.replace(currentPlaceholder, exampleMap.get(currentPlaceholder).get(rowIndex));
+            List<String> placeholderColumn = exampleMap.get(currentPlaceholder);
+            if (placeholderColumn == null) {
+                throw new IllegalStateException(String.format("In scenario outline placeholder \"%s\" is not listed in the \"Examples\" table.", currentPlaceholder));
+            }
+            result = result.replace(currentPlaceholder, placeholderColumn.get(rowIndex));
         }
 
         return result;
