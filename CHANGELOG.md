@@ -6,6 +6,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [0.2.0] - 2018-??
+
+- Support a fixed number of runners running multiple scenarios in sequence
+
 ## [0.1.11] - 2018-05-08
 
 - Fix for wrong unicode detection of source feature path in runner comments
@@ -139,6 +143,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[0.2.0]: https://github.com/trivago/cucable-plugin/compare/0.1.11...0.2.0
 [0.1.11]: https://github.com/trivago/cucable-plugin/compare/0.1.10...0.1.11
 [0.1.10]: https://github.com/trivago/cucable-plugin/compare/0.1.9...0.1.10
 [0.1.9]: https://github.com/trivago/cucable-plugin/compare/0.1.8...0.1.9

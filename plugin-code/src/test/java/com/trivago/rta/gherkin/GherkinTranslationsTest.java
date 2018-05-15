@@ -10,12 +10,12 @@ public class GherkinTranslationsTest {
     private GherkinTranslations gherkinTranslations;
 
     @Before
-    public void setup(){
+    public void setup() {
         gherkinTranslations = new GherkinTranslations();
     }
 
     @Test
-    public void getScenarioKeywordTesnt(){
+    public void getScenarioKeywordTesnt() {
         assertThat(gherkinTranslations.getScenarioKeyword("en"), is("Scenario"));
         assertThat(gherkinTranslations.getScenarioKeyword("de"), is("Szenario"));
         assertThat(gherkinTranslations.getScenarioKeyword("no"), is("Scenario"));

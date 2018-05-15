@@ -33,17 +33,6 @@ import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.DEFAULT;
 
 @Singleton
 public class PropertyManager {
-    // Generated source runner template file placeholder for logging.
-    private static final String SOURCE_RUNNER_TEMPLATE_FILE = "<sourceRunnerTemplateFile>";
-
-    // Generated runner directory placeholder for logging.
-    private static final String GENERATED_RUNNER_DIRECTORY = "<generatedRunnerDirectory>";
-
-    // Source features placeholder for logging.
-    private static final String SOURCE_FEATURES = "<sourceFeatures>";
-
-    // Generated feature directory placeholder for logging.
-    private static final String GENERATED_FEATURE_DIRECTORY = "<generatedFeatureDirectory>";
 
     private final CucableLogger logger;
 
@@ -55,6 +44,7 @@ public class PropertyManager {
     private int numberOfTestRuns;
     private List<String> includeScenarioTags;
     private List<String> excludeScenarioTags;
+    private int fixedNumberOfRunners;
 
     @Inject
     public PropertyManager(CucableLogger logger) {
@@ -138,6 +128,14 @@ public class PropertyManager {
         this.includeScenarioTags = includeScenarioTags;
     }
 
+    public int getFixedNumberOfRunners() {
+        return fixedNumberOfRunners;
+    }
+
+    public void setFixedNumberOfRunners(final int fixedNumberOfRunners) {
+        this.fixedNumberOfRunners = fixedNumberOfRunners;
+    }
+
     /**
      * Checks the pom settings for the plugin.
      *
@@ -146,40 +144,15 @@ public class PropertyManager {
      */
     public void validateSettings() throws CucablePluginException {
         List<String> missingProperties = new ArrayList<>();
-        saveMissingProperty(sourceRunnerTemplateFile, SOURCE_RUNNER_TEMPLATE_FILE, missingProperties);
-        saveMissingProperty(generatedRunnerDirectory, GENERATED_RUNNER_DIRECTORY, missingProperties);
-        saveMissingProperty(sourceFeatures, SOURCE_FEATURES, missingProperties);
-        saveMissingProperty(generatedFeatureDirectory, GENERATED_FEATURE_DIRECTORY, missingProperties);
+        saveMissingProperty(sourceRunnerTemplateFile, "<sourceRunnerTemplateFile>", missingProperties);
+        saveMissingProperty(generatedRunnerDirectory, "<generatedRunnerDirectory>", missingProperties);
+        saveMissingProperty(sourceFeatures, "<sourceFeatures>", missingProperties);
+        saveMissingProperty(generatedFeatureDirectory, "<generatedFeatureDirectory>", missingProperties);
         if (!missingProperties.isEmpty()) {
             throw new WrongOrMissingPropertiesException(missingProperties);
         }
-        if (includeScenarioTags != null) {
-            for (String includeTag : includeScenarioTags) {
-                if (!includeTag.startsWith("@")) {
-                    throw new CucablePluginException("Include tag '" + includeTag + "' does not start with '@'.");
-                }
-            }
-        }
-        if (excludeScenarioTags != null) {
-            for (String excludeTag : excludeScenarioTags) {
-                if (!excludeTag.startsWith("@")) {
-                    throw new CucablePluginException("Exclude tag '" + excludeTag + "' does not start with '@'.");
-                }
-            }
-        }
-    }
-
-    /**
-     * Checks if a property is null or empty and adds it to the missingProperties list.
-     *
-     * @param propertyValue  The value of the property to check.
-     * @param propertyName The name of the property to check.
-     * @param missingProperties         The list of missing properties.
-     */
-    private void saveMissingProperty(final String propertyValue, final String propertyName, final List<String> missingProperties) {
-        if (propertyValue == null || propertyValue.isEmpty()){
-            missingProperties.add(propertyName);
-        }
+        validateTags(includeScenarioTags, "include");
+        validateTags(excludeScenarioTags, "exclude");
     }
 
     /**
@@ -205,7 +178,39 @@ public class PropertyManager {
 
         logger.info(String.format("- generatedFeatureDirectory : %s", generatedFeatureDirectory), logLevels);
         logger.info(String.format("- numberOfTestRuns          : %d", numberOfTestRuns), logLevels);
+        logger.info(String.format("- fixedNumberOfRunners      : %d", fixedNumberOfRunners), logLevels);
         logger.info("-------------------------------------", logLevels);
 
+    }
+
+
+    /**
+     * Checks a list of tags for missing '@' prefixes
+     *
+     * @param tags    A list of tags.
+     * @param tagType The type of the passed tags.
+     * @throws CucablePluginException Thrown when a tag does not start with '@'.
+     */
+    private void validateTags(final List<String> tags, final String tagType) throws CucablePluginException {
+        if (tags != null) {
+            for (String tag : tags) {
+                if (!tag.startsWith("@")) {
+                    throw new CucablePluginException("Tag '" + tag + "' of type '" + tagType + "' does not start with '@'.");
+                }
+            }
+        }
+    }
+
+    /**
+     * Checks if a property is null or empty and adds it to the missingProperties list.
+     *
+     * @param propertyValue     The value of the property to check.
+     * @param propertyName      The name of the property to check.
+     * @param missingProperties The list of missing properties.
+     */
+    private void saveMissingProperty(final String propertyValue, final String propertyName, final List<String> missingProperties) {
+        if (propertyValue == null || propertyValue.isEmpty()) {
+            missingProperties.add(propertyName);
+        }
     }
 }

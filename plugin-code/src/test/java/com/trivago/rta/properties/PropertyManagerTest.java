@@ -59,7 +59,7 @@ public class PropertyManagerTest {
     @Test
     public void wrongIncludeTagFormatTest() throws Exception {
         expectedException.expect(CucablePluginException.class);
-        expectedException.expectMessage("Include tag 'noAtInFront' does not start with '@'.");
+        expectedException.expectMessage("Tag 'noAtInFront' of type 'include' does not start with '@'.");
 
         propertyManager.setSourceFeatures("-");
         propertyManager.setSourceRunnerTemplateFile("-");
@@ -74,7 +74,7 @@ public class PropertyManagerTest {
     @Test
     public void wrongExcludeTagFormatTest() throws Exception {
         expectedException.expect(CucablePluginException.class);
-        expectedException.expectMessage("Exclude tag 'noAtInFront' does not start with '@'.");
+        expectedException.expectMessage("Tag 'noAtInFront' of type 'exclude' does not start with '@'.");
 
         propertyManager.setSourceFeatures("-");
         propertyManager.setSourceRunnerTemplateFile("-");
@@ -94,6 +94,7 @@ public class PropertyManagerTest {
         verify(logger, times(1)).info("- sourceFeature(s)          : null", DEFAULT, COMPACT);
         verify(logger, times(1)).info("- generatedFeatureDirectory : null", DEFAULT, COMPACT);
         verify(logger, times(1)).info("- numberOfTestRuns          : 0", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("- fixedNumberOfRunners      : 0", DEFAULT, COMPACT);
     }
 
     @Test

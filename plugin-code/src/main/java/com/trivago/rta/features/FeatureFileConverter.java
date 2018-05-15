@@ -30,6 +30,7 @@ import com.trivago.rta.vo.SingleScenarioRunner;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.nio.file.Path;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -103,14 +104,14 @@ public class FeatureFileConverter {
      * Converts all scenarios in the given feature file to single
      * scenario feature files and their respective runners.
      *
-     * @param featureFilePath feature file to process.
+     * @param sourceFeatureFilePath feature file to process.
      * @return Number of created scenarios.
      * @throws CucablePluginException see {@link CucablePluginException}
      */
-    private int convertToSingleScenariosAndRunners(final Path featureFilePath)
+    private int convertToSingleScenariosAndRunners(final Path sourceFeatureFilePath)
             throws CucablePluginException {
 
-        String featureFilePathString = featureFilePath.toString();
+        String featureFilePathString = sourceFeatureFilePath.toString();
 
         if (featureFilePathString == null || featureFilePathString.equals("")) {
             throw new MissingFileException(featureFilePathString);
@@ -141,9 +142,12 @@ public class FeatureFileConverter {
             throw new CucablePluginException("There is no parsable scenario or scenario outline at line " + lineNumbers);
         }
 
+        // Stores all generated feature file names for later runner creation
+        List<String> generatedFeatureFileNames = new ArrayList<>();
+
         for (SingleScenario singleScenario : singleScenarios) {
             String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
-            String featureFileName = getFeatureFileNameFromPath(featureFilePath);
+            String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
             Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
             featureCounter++;
             String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
@@ -169,26 +173,40 @@ public class FeatureFileConverter {
                 // Save scenario information to new feature file
                 fileIO.writeContentToFile(renderedFeatureFileContent, generatedFeatureFilePath);
 
-                // Generate runner for the newly generated single scenario feature file
-                SingleScenarioRunner singleScenarioRunner =
-                        new SingleScenarioRunner(
-                                propertyManager.getSourceRunnerTemplateFile(), generatedFileName);
-
-                String renderedRunnerFileContent =
-                        runnerFileContentRenderer.getRenderedRunnerFileContent(singleScenarioRunner, singleScenario);
-
-                String generatedRunnerFilePath =
-                        propertyManager.getGeneratedRunnerDirectory()
-                                .concat(PATH_SEPARATOR)
-                                .concat(generatedFileName)
-                                .concat(RUNNER_FILE_EXTENSION);
-
-                fileIO.writeContentToFile(renderedRunnerFileContent, generatedRunnerFilePath);
+                generateRunnerFile(generatedFileName, singleScenario.getFeatureFilePath());
             }
         }
         int createdScenarios = singleScenarios.size();
         logProcessCompleteMessage(featureFilePathString, createdScenarios);
         return createdScenarios;
+    }
+
+    /**
+     * Generate a runner file.
+     *
+     * @param generatedFeatureFileName The name of the generated feature file.
+     * @param sourceFeatureFilePath    The path to the source feature file.
+     * @throws CucablePluginException see {@link CucablePluginException}.
+     */
+    private void generateRunnerFile(final String generatedFeatureFileName, final String sourceFeatureFilePath) throws CucablePluginException {
+        // Generate runner for the newly generated single scenario feature file
+        SingleScenarioRunner singleScenarioRunner =
+                new SingleScenarioRunner(
+                        propertyManager.getSourceRunnerTemplateFile(), generatedFeatureFileName);
+
+        String renderedRunnerFileContent =
+                runnerFileContentRenderer.getRenderedRunnerFileContent(
+                        singleScenarioRunner,
+                        sourceFeatureFilePath
+                );
+
+        String generatedRunnerFilePath =
+                propertyManager.getGeneratedRunnerDirectory()
+                        .concat(PATH_SEPARATOR)
+                        .concat(generatedFeatureFileName)
+                        .concat(RUNNER_FILE_EXTENSION);
+
+        fileIO.writeContentToFile(renderedRunnerFileContent, generatedRunnerFilePath);
     }
 
     /**

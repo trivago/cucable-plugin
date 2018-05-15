@@ -1,7 +1,6 @@
 package com.trivago.rta.runners;
 
 import com.trivago.rta.files.FileIO;
-import com.trivago.rta.vo.SingleScenario;
 import com.trivago.rta.vo.SingleScenarioRunner;
 import org.junit.Before;
 import org.junit.Test;
@@ -97,8 +96,7 @@ public class RunnerFileContentRendererTest {
                 "featureFileName"
         );
 
-        SingleScenario singleScenario = new SingleScenario("", "c:\\unknown\\path2", "", "", "", "", null, null);
-        String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(singleScenarioRunner, singleScenario);
+        String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(singleScenarioRunner, "c:\\unknown\\path2");
 
         assertThat(renderedRunnerFileContent, is(expectedOutput));
     }
@@ -144,8 +142,7 @@ public class RunnerFileContentRendererTest {
                 "featureFileName"
         );
 
-        SingleScenario singleScenario = new SingleScenario("", "", "", "", "", "", null, null);
-        String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(singleScenarioRunner, singleScenario);
+        String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(singleScenarioRunner, "");
 
         assertThat(renderedRunnerFileContent, is(expectedOutput));
     }

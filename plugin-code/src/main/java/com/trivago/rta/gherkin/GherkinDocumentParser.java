@@ -43,10 +43,10 @@ import java.util.regex.Pattern;
 @Singleton
 public class GherkinDocumentParser {
 
+    private static final Pattern SCENARIO_OUTLINE_PLACEHOLDER_PATTERN = Pattern.compile("<.+?>");
+
     private final GherkinToCucableConverter gherkinToCucableConverter;
     private final GherkinTranslations gherkinTranslations;
-
-    private final Pattern SCENARIO_OUTLINE_PLACEHOLDER_PATTERN = Pattern.compile("<.+?>");
 
     @Inject
     public GherkinDocumentParser(
@@ -381,20 +381,19 @@ public class GherkinDocumentParser {
     /**
      * Replaces the example value placeholders in a String by the actual example table values.
      *
-     * @param string     The ScenarioOutline generic name.
-     * @param exampleMap The generated example map from an example table.
-     * @param rowIndex   The row index of the example table to consider.
-     * @return a {@link String} name with placeholders substituted for actual values from example table.
+     * @param sourceString The source string.
+     * @param exampleMap   The generated example map from an example table.
+     * @param rowIndex     The row index of the example table to consider.
+     * @return a {@link String} with placeholders substituted for actual values from the example table.
      */
 
     private String replacePlaceholderInString(
-            final String string,
+            final String sourceString,
             final Map<String, List<String>> exampleMap,
             final int rowIndex) {
-        String result = string;
 
-        Matcher m = SCENARIO_OUTLINE_PLACEHOLDER_PATTERN.matcher(string);
-
+        String result = sourceString;
+        Matcher m = SCENARIO_OUTLINE_PLACEHOLDER_PATTERN.matcher(sourceString);
         while (m.find()) {
             String currentPlaceholder = m.group(0);
             List<String> placeholderColumn = exampleMap.get(currentPlaceholder);
