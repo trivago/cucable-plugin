@@ -63,7 +63,7 @@
                     <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
                     <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
                     <numberOfTestRuns>1</numberOfTestRuns>
-                    <fixedNumberOfRunners>2</fixedNumberOfRunners>
+                    <desiredNumberOfRunners>2</desiredNumberOfRunners>
 
                     <!-- Logging -->
                     <logLevel>default</logLevel>

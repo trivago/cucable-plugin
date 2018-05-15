@@ -17,43 +17,43 @@
 package com.trivago.rta.vo;
 
 /**
- * Represents a test runner for a single scenario.
+ * Represents a test runner for a single or multiple features.
  */
-public final class SingleScenarioRunner {
+public final class FeatureRunner {
 
     // The path to the runner file template.
     private final String runnerTemplatePath;
 
     // The name of the feature file this runner belongs to.
-    private final String featureFileName;
+    private final String featureFileNameString;
 
     /**
-     * Constructor for a single scenario runner.
+     * Constructor for a single or multiple feature runner.
      *
-     * @param runnerTemplatePath The path to the runner template.
-     * @param featureFileName    The name of the feature file for this runner.
+     * @param runnerTemplatePath    The path to the runner template.
+     * @param featureFileNameString The name string of the feature file(s) for this runner.
      */
-    public SingleScenarioRunner(
+    public FeatureRunner(
             final String runnerTemplatePath,
-            final String featureFileName) {
+            final String featureFileNameString) {
 
         this.runnerTemplatePath = runnerTemplatePath;
-        this.featureFileName = featureFileName;
+        this.featureFileNameString = featureFileNameString;
     }
 
     public String getRunnerTemplatePath() {
         return runnerTemplatePath;
     }
 
-    public String getFeatureFileName() {
-        return featureFileName;
+    public String getFeatureFileNameString() {
+        return featureFileNameString;
     }
 
     @Override
     public String toString() {
-        return "SingleScenarioRunner{" +
+        return "FeatureRunner{" +
                 "runnerTemplatePath='" + runnerTemplatePath + '\'' +
-                ", featureFileName='" + featureFileName + '\'' +
+                ", featureFileNameString='" + featureFileNameString + '\'' +
                 '}';
     }
 }

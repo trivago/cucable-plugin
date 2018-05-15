@@ -7,7 +7,7 @@ import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.properties.PropertyManager;
 import com.trivago.rta.runners.RunnerFileContentRenderer;
 import com.trivago.rta.vo.SingleScenario;
-import com.trivago.rta.vo.SingleScenarioRunner;
+import com.trivago.rta.vo.FeatureRunner;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -63,7 +63,7 @@ public class FeatureFileConverterTest {
         when(mockPath.getFileName()).thenReturn(mockFilePath);
         when(mockPath.toString()).thenReturn("");
         pathList.add(mockPath);
-        featureFileConverter.convertToSingleScenariosAndRunners(pathList);
+        featureFileConverter.generateSingleScenarioFeatures(pathList);
     }
 
     @Test
@@ -85,7 +85,7 @@ public class FeatureFileConverterTest {
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
 
-        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(SingleScenarioRunner.class), any(String.class))).thenReturn("RUNNER_CONTENT");
+        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class))).thenReturn("RUNNER_CONTENT");
 
         List<Path> pathList = new ArrayList<>();
         Path mockPath = mock(Path.class);
@@ -94,7 +94,7 @@ public class FeatureFileConverterTest {
         when(mockPath.getFileName()).thenReturn(mockFilePath);
         when(mockPath.toString()).thenReturn("TEST_PATH");
         pathList.add(mockPath);
-        featureFileConverter.convertToSingleScenariosAndRunners(pathList);
+        featureFileConverter.generateSingleScenarioFeatures(pathList);
 
         verify(fileIO, times(2)).writeContentToFile(anyString(), anyString());
     }

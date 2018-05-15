@@ -44,7 +44,7 @@ public class PropertyManager {
     private int numberOfTestRuns;
     private List<String> includeScenarioTags;
     private List<String> excludeScenarioTags;
-    private int fixedNumberOfRunners;
+    private int desiredNumberOfRunners;
 
     @Inject
     public PropertyManager(CucableLogger logger) {
@@ -128,12 +128,12 @@ public class PropertyManager {
         this.includeScenarioTags = includeScenarioTags;
     }
 
-    public int getFixedNumberOfRunners() {
-        return fixedNumberOfRunners;
+    public int getDesiredNumberOfRunners() {
+        return desiredNumberOfRunners;
     }
 
-    public void setFixedNumberOfRunners(final int fixedNumberOfRunners) {
-        this.fixedNumberOfRunners = fixedNumberOfRunners;
+    public void setDesiredNumberOfRunners(final int desiredNumberOfRunners) {
+        this.desiredNumberOfRunners = desiredNumberOfRunners;
     }
 
     /**
@@ -169,16 +169,22 @@ public class PropertyManager {
             logger.info(String.format("%30swith line number(s) %s", " ", scenarioLineNumbers), logLevels);
         }
 
-        if (includeScenarioTags != null) {
-            logger.info(String.format("- include scenario tag(s)   : %s", String.join(", ", includeScenarioTags)), logLevels);
+        if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
+            logger.info(String.format("- include scenario tag(s)   : %s",
+                    String.join(", ", includeScenarioTags)), logLevels);
         }
-        if (excludeScenarioTags != null) {
-            logger.info(String.format("- exclude scenario tag(s)   : %s", String.join(", ", excludeScenarioTags)), logLevels);
+        if (excludeScenarioTags != null && !includeScenarioTags.isEmpty()) {
+            logger.info(String.format("- exclude scenario tag(s)   : %s",
+                    String.join(", ", excludeScenarioTags)), logLevels);
         }
 
         logger.info(String.format("- generatedFeatureDirectory : %s", generatedFeatureDirectory), logLevels);
         logger.info(String.format("- numberOfTestRuns          : %d", numberOfTestRuns), logLevels);
-        logger.info(String.format("- fixedNumberOfRunners      : %d", fixedNumberOfRunners), logLevels);
+
+        if (desiredNumberOfRunners > 0) {
+            logger.info(String.format("- desiredNumberOfRunners    : %d", desiredNumberOfRunners), logLevels);
+        }
+
         logger.info("-------------------------------------", logLevels);
 
     }
@@ -195,7 +201,8 @@ public class PropertyManager {
         if (tags != null) {
             for (String tag : tags) {
                 if (!tag.startsWith("@")) {
-                    throw new CucablePluginException("Tag '" + tag + "' of type '" + tagType + "' does not start with '@'.");
+                    throw new CucablePluginException(
+                            "Tag '" + tag + "' of type '" + tagType + "' does not start with '@'.");
                 }
             }
         }
@@ -208,7 +215,11 @@ public class PropertyManager {
      * @param propertyName      The name of the property to check.
      * @param missingProperties The list of missing properties.
      */
-    private void saveMissingProperty(final String propertyValue, final String propertyName, final List<String> missingProperties) {
+    private void saveMissingProperty(
+            final String propertyValue,
+            final String propertyName,
+            final List<String> missingProperties
+    ) {
         if (propertyValue == null || propertyValue.isEmpty()) {
             missingProperties.add(propertyName);
         }

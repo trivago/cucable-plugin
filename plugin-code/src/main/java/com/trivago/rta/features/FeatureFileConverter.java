@@ -24,8 +24,8 @@ import com.trivago.rta.gherkin.GherkinDocumentParser;
 import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.properties.PropertyManager;
 import com.trivago.rta.runners.RunnerFileContentRenderer;
+import com.trivago.rta.vo.FeatureRunner;
 import com.trivago.rta.vo.SingleScenario;
-import com.trivago.rta.vo.SingleScenarioRunner;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -34,6 +34,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.UUID;
 
 import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.COMPACT;
 import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.DEFAULT;
@@ -87,16 +88,20 @@ public class FeatureFileConverter {
      * @param featureFilePaths feature files to process
      * @throws CucablePluginException see {@link CucablePluginException}
      */
-    public void convertToSingleScenariosAndRunners(
+    public void generateSingleScenarioFeatures(
             final List<Path> featureFilePaths) throws CucablePluginException {
-        int scenarioCounter = 0;
+        int featureFileCounter = 0;
+        List<String> allGeneratedFeaturePaths = new ArrayList<>();
         for (Path featureFilePath : featureFilePaths) {
-            scenarioCounter += convertToSingleScenariosAndRunners(featureFilePath);
+            List<String> generatedFeatureFilePaths = generateSingleScenarioFeatures(featureFilePath);
+            allGeneratedFeaturePaths.addAll(generatedFeatureFilePaths);
+            featureFileCounter += generatedFeatureFilePaths.size();
         }
+        int runnerFileCounter = generateRunnerClasses(allGeneratedFeaturePaths, propertyManager.getDesiredNumberOfRunners());
         logger.info("-------------------------------------", DEFAULT);
         logger.info(
-                String.format("Cucable created %d separate scenario(s) from the provided feature(s).", scenarioCounter),
-                DEFAULT, COMPACT, MINIMAL
+                String.format("Cucable created %d separate feature file(s) and %d runner(s) from the provided feature(s).",
+                        featureFileCounter, runnerFileCounter), DEFAULT, COMPACT, MINIMAL
         );
     }
 
@@ -108,7 +113,7 @@ public class FeatureFileConverter {
      * @return Number of created scenarios.
      * @throws CucablePluginException see {@link CucablePluginException}
      */
-    private int convertToSingleScenariosAndRunners(final Path sourceFeatureFilePath)
+    private List<String> generateSingleScenarioFeatures(final Path sourceFeatureFilePath)
             throws CucablePluginException {
 
         String featureFilePathString = sourceFeatureFilePath.toString();
@@ -142,8 +147,8 @@ public class FeatureFileConverter {
             throw new CucablePluginException("There is no parsable scenario or scenario outline at line " + lineNumbers);
         }
 
-        // Stores all generated feature file names for later runner creation
-        List<String> generatedFeatureFileNames = new ArrayList<>();
+        // Stores all generated feature file names and associated source feature paths for later runner creation
+        List<String> generatedFeaturePaths = new ArrayList<>();
 
         for (SingleScenario singleScenario : singleScenarios) {
             String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
@@ -173,40 +178,74 @@ public class FeatureFileConverter {
                 // Save scenario information to new feature file
                 fileIO.writeContentToFile(renderedFeatureFileContent, generatedFeatureFilePath);
 
-                generateRunnerFile(generatedFileName, singleScenario.getFeatureFilePath());
+                generatedFeaturePaths.add(generatedFileName);
             }
         }
-        int createdScenarios = singleScenarios.size();
-        logProcessCompleteMessage(featureFilePathString, createdScenarios);
-        return createdScenarios;
+        logFeatureFileConversionMessage(featureFilePathString, singleScenarios.size());
+        return generatedFeaturePaths;
     }
 
     /**
-     * Generate a runner file.
+     * Generate runner classes for a list of feature file paths.
      *
-     * @param generatedFeatureFileName The name of the generated feature file.
-     * @param sourceFeatureFilePath    The path to the source feature file.
+     * @param generatedFeatureNames  The list of generated feature file names.
+     * @param numberOfDesiredRunners The number of desired runners (if set to 0, a runner is generated for each feature file path).
+     * @return The number of generated runners.
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
-    private void generateRunnerFile(final String generatedFeatureFileName, final String sourceFeatureFilePath) throws CucablePluginException {
+    private int generateRunnerClasses(final List<String> generatedFeatureNames, final int numberOfDesiredRunners) throws CucablePluginException {
+
+        if (numberOfDesiredRunners > 0) {
+            return 0;
+        }
+
+        int runnerFileCounter = 0;
+        for (String generatedFeatureName : generatedFeatureNames) {
+            generateRunnerClass(generatedFeatureName);
+            runnerFileCounter++;
+        }
+        return runnerFileCounter;
+    }
+
+    private void generateRunnerClass(final String generatedFeatureFileName) throws CucablePluginException {
+        ArrayList<String> generatedFeatureFileNames = new ArrayList<>();
+        generatedFeatureFileNames.add(generatedFeatureFileName);
+        generateRunnerClass(generatedFeatureFileNames);
+    }
+
+
+    /**
+     * Generate a single runner class from a list of feature files.
+     *
+     * @param generatedFeatureFileNames The list of generated generated feature file names.
+     * @throws CucablePluginException see {@link CucablePluginException}.
+     */
+    private void generateRunnerClass(final List<String> generatedFeatureFileNames) throws CucablePluginException {
+
+        String runnerFileName;
+        if (generatedFeatureFileNames.size() == 1) {
+            runnerFileName = generatedFeatureFileNames.get(0);
+        } else {
+            runnerFileName = "CucableMultiRunner_" + UUID.randomUUID() + "_IT";
+        }
+
+        String joinedFeatureFileNames = String.join(",", generatedFeatureFileNames);
+
         // Generate runner for the newly generated single scenario feature file
-        SingleScenarioRunner singleScenarioRunner =
-                new SingleScenarioRunner(
-                        propertyManager.getSourceRunnerTemplateFile(), generatedFeatureFileName);
+        FeatureRunner featureRunner =
+                new FeatureRunner(
+                        propertyManager.getSourceRunnerTemplateFile(), joinedFeatureFileNames);
 
-        String renderedRunnerFileContent =
-                runnerFileContentRenderer.getRenderedRunnerFileContent(
-                        singleScenarioRunner,
-                        sourceFeatureFilePath
-                );
+        String renderedRunnerClassContent =
+                runnerFileContentRenderer.getRenderedRunnerFileContent(featureRunner);
 
-        String generatedRunnerFilePath =
+        String generatedRunnerClassFilePath =
                 propertyManager.getGeneratedRunnerDirectory()
                         .concat(PATH_SEPARATOR)
-                        .concat(generatedFeatureFileName)
+                        .concat(runnerFileName)
                         .concat(RUNNER_FILE_EXTENSION);
 
-        fileIO.writeContentToFile(renderedRunnerFileContent, generatedRunnerFilePath);
+        fileIO.writeContentToFile(renderedRunnerClassContent, generatedRunnerClassFilePath);
     }
 
     /**
@@ -215,12 +254,12 @@ public class FeatureFileConverter {
      * @param featureFileName  The name of the processed feature file.
      * @param createdScenarios The number of created scenarios for the feature file.
      */
-    private void logProcessCompleteMessage(String featureFileName, final int createdScenarios) {
+    private void logFeatureFileConversionMessage(String featureFileName, final int createdScenarios) {
         String logPostfix = ".";
         if (propertyManager.hasValidScenarioLineNumbers()) {
             logPostfix = String.format(" with line number(s) %s.", propertyManager.getScenarioLineNumbers());
         }
-        logger.info(String.format("- %3d scenario(s) from %s%s", createdScenarios, featureFileName, logPostfix),
+        logger.info(String.format("- %3d feature(s) <= %s%s", createdScenarios, featureFileName, logPostfix),
                 DEFAULT);
     }
 

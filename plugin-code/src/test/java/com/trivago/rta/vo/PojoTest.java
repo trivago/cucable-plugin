@@ -6,6 +6,7 @@ import com.openpojo.reflection.impl.PojoClassFactory;
 import com.openpojo.validation.Validator;
 import com.openpojo.validation.ValidatorBuilder;
 import com.openpojo.validation.affirm.Affirm;
+import com.openpojo.validation.rule.impl.NoPublicFieldsExceptStaticFinalRule;
 import com.openpojo.validation.test.impl.GetterTester;
 import com.openpojo.validation.test.impl.SetterTester;
 import org.junit.Test;
@@ -28,6 +29,7 @@ public class PojoTest {
         Validator validator = ValidatorBuilder.create()
                 .with(new SetterTester())
                 .with(new GetterTester())
+                .with(new NoPublicFieldsExceptStaticFinalRule())
                 .build();
 
         validator.validate(POJO_PACKAGE, new FilterPackageInfo());

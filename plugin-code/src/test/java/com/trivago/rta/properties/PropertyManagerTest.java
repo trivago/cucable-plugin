@@ -94,7 +94,6 @@ public class PropertyManagerTest {
         verify(logger, times(1)).info("- sourceFeature(s)          : null", DEFAULT, COMPACT);
         verify(logger, times(1)).info("- generatedFeatureDirectory : null", DEFAULT, COMPACT);
         verify(logger, times(1)).info("- numberOfTestRuns          : 0", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("- fixedNumberOfRunners      : 0", DEFAULT, COMPACT);
     }
 
     @Test
@@ -110,12 +109,14 @@ public class PropertyManagerTest {
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
 
         propertyManager.setSourceFeatures("test.feature:3");
+        propertyManager.setDesiredNumberOfRunners(2);
 
         propertyManager.logProperties();
         verify(logger, times(1)).info("- sourceFeature(s)          : test.feature", DEFAULT, COMPACT);
         verify(logger, times(1)).info("                              with line number(s) [3]", DEFAULT, COMPACT);
         verify(logger, times(1)).info("- include scenario tag(s)   : include1, include2", DEFAULT, COMPACT);
         verify(logger, times(1)).info("- exclude scenario tag(s)   : exclude1, exclude2", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("- desiredNumberOfRunners    : 2", DEFAULT, COMPACT);
     }
 
     @Test

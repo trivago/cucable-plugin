@@ -84,10 +84,10 @@ final class CucablePlugin extends AbstractMojo {
     private List<String> excludeScenarioTags;
 
     /**
-     * Optional fixed number of test runners that each run multiple scenarios in sequence.
+     * Optional desired number of test runners that each run multiple features in sequence.
      */
-    @Parameter(property = "parallel.fixedNumberOfRunners", defaultValue = "0")
-    private int fixedNumberOfRunners = 0;
+    @Parameter(property = "parallel.desiredNumberOfRunners", defaultValue = "0")
+    private int desiredNumberOfRunners = 0;
 
     /**
      * Optional log level to control what information is logged in the console.
@@ -127,7 +127,7 @@ final class CucablePlugin extends AbstractMojo {
         propertyManager.setNumberOfTestRuns(numberOfTestRuns);
         propertyManager.setExcludeScenarioTags(excludeScenarioTags);
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
-        propertyManager.setFixedNumberOfRunners(fixedNumberOfRunners);
+        propertyManager.setDesiredNumberOfRunners(desiredNumberOfRunners);
         propertyManager.validateSettings();
 
         // Logging
@@ -138,7 +138,7 @@ final class CucablePlugin extends AbstractMojo {
         fileManager.prepareGeneratedFeatureAndRunnerDirs();
 
         // Conversion of scenarios into single scenarios and runners.
-        featureFileConverter.convertToSingleScenariosAndRunners(fileManager.getFeatureFilePaths());
+        featureFileConverter.generateSingleScenarioFeatures(fileManager.getFeatureFilePaths());
     }
 
     /**
