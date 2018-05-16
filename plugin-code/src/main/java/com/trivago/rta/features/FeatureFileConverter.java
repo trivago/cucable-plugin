@@ -195,24 +195,35 @@ public class FeatureFileConverter {
      */
     private int generateRunnerClasses(final List<String> generatedFeatureNames, final int numberOfDesiredRunners) throws CucablePluginException {
 
-        if (numberOfDesiredRunners > 0) {
-            return 0;
+        int targetRunnerNumber = numberOfDesiredRunners;
+        if (targetRunnerNumber == 0){
+             targetRunnerNumber = generatedFeatureNames.size();
+        }
+
+        List<List<String>> generatedFeatureNamesPerRunner = new ArrayList<>(targetRunnerNumber);
+        for (int i = 0; i < targetRunnerNumber; i++) {
+            generatedFeatureNamesPerRunner.add(new ArrayList<>());
+        }
+
+        int currentRunnerIndex = 0;
+        for (String generatedFeatureName : generatedFeatureNames) {
+            generatedFeatureNamesPerRunner.get(currentRunnerIndex).add(generatedFeatureName);
+            currentRunnerIndex++;
+            if (currentRunnerIndex >= targetRunnerNumber) {
+                currentRunnerIndex = 0;
+            }
         }
 
         int runnerFileCounter = 0;
-        for (String generatedFeatureName : generatedFeatureNames) {
-            generateRunnerClass(generatedFeatureName);
-            runnerFileCounter++;
+        for (List<String> generatedFeatureNamesForSingleRunner : generatedFeatureNamesPerRunner) {
+            if (generatedFeatureNamesForSingleRunner.size() > 0) {
+                generateRunnerClass(generatedFeatureNamesForSingleRunner);
+                runnerFileCounter++;
+            }
         }
+
         return runnerFileCounter;
     }
-
-    private void generateRunnerClass(final String generatedFeatureFileName) throws CucablePluginException {
-        ArrayList<String> generatedFeatureFileNames = new ArrayList<>();
-        generatedFeatureFileNames.add(generatedFeatureFileName);
-        generateRunnerClass(generatedFeatureFileNames);
-    }
-
 
     /**
      * Generate a single runner class from a list of feature files.
@@ -228,7 +239,9 @@ public class FeatureFileConverter {
         if (generatedFeatureFileNames.size() == 1) {
             runnerClassName = generatedFeatureFileNames.get(0);
         } else {
-            runnerClassName = "CucableMultiRunner_" + UUID.randomUUID() + "_IT";
+            runnerClassName = "CucableMultiRunner_"
+                    .concat(UUID.randomUUID().toString().replace("-", "_"))
+                    .concat(INTEGRATION_TEST_POSTFIX);
         }
 
         // Generate runner for the newly generated single scenario feature file

@@ -29,7 +29,8 @@ import java.util.regex.Pattern;
 
 @Singleton
 public class RunnerFileContentRenderer {
-    private final static String CUCABLE_FEATURE_PLACEHOLDER = "[CUCABLE:FEATURE]";
+    private static final String CUCABLE_FEATURE_PLACEHOLDER = "[CUCABLE:FEATURE]";
+    private static final String CUCABLE_RUNNER_PLACEHOLDER = "[CUCABLE:RUNNER]";
 
     private final FileIO fileIO;
 
@@ -49,16 +50,15 @@ public class RunnerFileContentRenderer {
             FeatureRunner featureRunner
     ) throws CucablePluginException {
 
-        String runnerTemplatePath = featureRunner.getRunnerTemplatePath();
-        String runnerClassName = featureRunner.getRunnerClassName();
-        String fileString = fileIO.readContentFromFile(runnerTemplatePath);
+        final String runnerTemplatePath = featureRunner.getRunnerTemplatePath();
+        final String runnerClassName = featureRunner.getRunnerClassName();
 
+        String fileString = fileIO.readContentFromFile(runnerTemplatePath);
         if (runnerTemplatePath.endsWith(".java")) {
             fileString = replaceJavaTemplatePlaceholders(runnerTemplatePath, runnerClassName, fileString);
         }
-
         fileString = replaceFeatureFilePlaceholder(fileString, featureRunner.getFeatureFileNames());
-        fileString = fileString.replace("[CUCABLE:RUNNER]", runnerClassName);
+        fileString = fileString.replace(CUCABLE_RUNNER_PLACEHOLDER, runnerClassName);
         fileString = addCucableInfo(fileString, runnerTemplatePath);
         return fileString;
     }
@@ -129,8 +129,8 @@ public class RunnerFileContentRenderer {
             final String runnerClassName,
             final String fileString
     ) {
-        String javaFileName = Paths.get(runnerTemplatePath).getFileName().toString();
-        String javaFileNameWithoutExtension = javaFileName.substring(0, javaFileName.lastIndexOf('.'));
+        final String javaFileName = Paths.get(runnerTemplatePath).getFileName().toString();
+        final String javaFileNameWithoutExtension = javaFileName.substring(0, javaFileName.lastIndexOf('.'));
         String replacedFileString = fileString.replace(javaFileNameWithoutExtension, runnerClassName);
         replacedFileString = replacedFileString.replaceAll("package .*;", "");
         return replacedFileString;
