@@ -179,7 +179,8 @@ public class RunnerFileContentRendererTest {
                 "\n" +
                 "@CucumberOptions(\n" +
                 "    monochrome = false,\n" +
-                "    features = {\"classpath:parallel/features/featureFileName.feature\",\"classpath:parallel/features/featureFileName2.feature\"},\n" +
+                "    features = {\"classpath:parallel/features/featureFileName.feature\",\n" +
+                "\"classpath:parallel/features/featureFileName2.feature\"},\n" +
                 "    plugin = {\"json:target/cucumber-report/RunnerClass.json\"}\n" +
                 ")\n" +
                 "public class RunnerClass {\n" +

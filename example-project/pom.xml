@@ -37,7 +37,8 @@
                 </executions>
                 <configuration>
                     <!-- This can be either a Java class file or a text based template -->
-                    <sourceRunnerTemplateFile>src/test/java/some/template/CucableJavaTemplate.java</sourceRunnerTemplateFile>
+                    <sourceRunnerTemplateFile>src/test/java/some/template/CucableJavaTemplate.java
+                    </sourceRunnerTemplateFile>
                     <!--<sourceRunnerTemplateFile>src/test/resources/cucable.template</sourceRunnerTemplateFile>-->
 
                     <!-- process all features in the given directory -->
@@ -63,7 +64,10 @@
                     <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
                     <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
                     <numberOfTestRuns>1</numberOfTestRuns>
-                    <!--<desiredNumberOfRunners>2</desiredNumberOfRunners>-->
+
+                    <!-- if this is set, a fixed number of runners is generated and
+                     all features will be distributed round-robin to the generated runners. -->
+                    <desiredNumberOfRunners>2</desiredNumberOfRunners>
 
                     <!-- Logging -->
                     <logLevel>default</logLevel>

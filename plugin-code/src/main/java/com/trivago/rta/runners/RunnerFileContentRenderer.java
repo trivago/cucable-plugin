@@ -16,7 +16,7 @@
 
 package com.trivago.rta.runners;
 
-import com.trivago.rta.exceptions.filesystem.MissingFileException;
+import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.files.FileIO;
 import com.trivago.rta.vo.FeatureRunner;
 
@@ -24,9 +24,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.nio.file.Paths;
 import java.util.List;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 @Singleton
 public class RunnerFileContentRenderer {
+    private final static String CUCABLE_FEATURE_PLACEHOLDER = "[CUCABLE:FEATURE]";
+
     private final FileIO fileIO;
 
     @Inject
@@ -39,11 +43,11 @@ public class RunnerFileContentRenderer {
      *
      * @param featureRunner The instance of the {@link FeatureRunner}.
      * @return The file content for the runner file.
-     * @throws MissingFileException Thrown if the runner file is missing.
+     * @throws CucablePluginException see {@link CucablePluginException}.
      */
     public String getRenderedRunnerFileContent(
             FeatureRunner featureRunner
-    ) throws MissingFileException {
+    ) throws CucablePluginException {
 
         String runnerTemplatePath = featureRunner.getRunnerTemplatePath();
         String runnerClassName = featureRunner.getRunnerClassName();
@@ -65,10 +69,32 @@ public class RunnerFileContentRenderer {
      * @param runnerFileContentString The source string.
      * @param featureFileNames        The lost of feature file names.
      * @return The new string with the replaced feature placeholder.
+     * @throws CucablePluginException see {@link CucablePluginException}.
      */
-    private String replaceFeatureFilePlaceholder(final String runnerFileContentString, final List<String> featureFileNames) {
-        String replacedContent = runnerFileContentString.replace("[CUCABLE:FEATURE]", featureFileNames.get(0));
-        return replacedContent;
+    private String replaceFeatureFilePlaceholder(
+            final String runnerFileContentString,
+            final List<String> featureFileNames) throws CucablePluginException {
+
+        final String regex = "(\".*\\" + CUCABLE_FEATURE_PLACEHOLDER + ").*\"";
+        final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+        final Matcher matcher = pattern.matcher(runnerFileContentString);
+        if (!matcher.find()) {
+            throw new CucablePluginException("" + CUCABLE_FEATURE_PLACEHOLDER);
+        }
+
+        String fullCucableFeaturePlaceholder = matcher.group(0);
+        StringBuilder completeFeatureStringBuilder = new StringBuilder();
+        for (int i = 0; i < featureFileNames.size(); i++) {
+            String featureFileName = featureFileNames.get(i);
+            completeFeatureStringBuilder.append(
+                    fullCucableFeaturePlaceholder.replace(CUCABLE_FEATURE_PLACEHOLDER, featureFileName)
+            );
+            if (i < featureFileNames.size() - 1) {
+                completeFeatureStringBuilder.append(",\n");
+            }
+        }
+
+        return runnerFileContentString.replace(fullCucableFeaturePlaceholder, completeFeatureStringBuilder);
     }
 
     /**
