@@ -222,19 +222,17 @@ public class FeatureFileConverter {
      */
     private void generateRunnerClass(final List<String> generatedFeatureFileNames) throws CucablePluginException {
 
-        String runnerFileName;
+        String runnerClassName;
         if (generatedFeatureFileNames.size() == 1) {
-            runnerFileName = generatedFeatureFileNames.get(0);
+            runnerClassName = generatedFeatureFileNames.get(0);
         } else {
-            runnerFileName = "CucableMultiRunner_" + UUID.randomUUID() + "_IT";
+            runnerClassName = "CucableMultiRunner_" + UUID.randomUUID() + "_IT";
         }
-
-        String joinedFeatureFileNames = String.join(",", generatedFeatureFileNames);
 
         // Generate runner for the newly generated single scenario feature file
         FeatureRunner featureRunner =
                 new FeatureRunner(
-                        propertyManager.getSourceRunnerTemplateFile(), joinedFeatureFileNames);
+                        propertyManager.getSourceRunnerTemplateFile(), runnerClassName, generatedFeatureFileNames);
 
         String renderedRunnerClassContent =
                 runnerFileContentRenderer.getRenderedRunnerFileContent(featureRunner);
@@ -242,7 +240,7 @@ public class FeatureFileConverter {
         String generatedRunnerClassFilePath =
                 propertyManager.getGeneratedRunnerDirectory()
                         .concat(PATH_SEPARATOR)
-                        .concat(runnerFileName)
+                        .concat(runnerClassName)
                         .concat(RUNNER_FILE_EXTENSION);
 
         fileIO.writeContentToFile(renderedRunnerClassContent, generatedRunnerClassFilePath);

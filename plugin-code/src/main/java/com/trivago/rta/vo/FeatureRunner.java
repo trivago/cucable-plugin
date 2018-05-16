@@ -16,6 +16,8 @@
 
 package com.trivago.rta.vo;
 
+import java.util.List;
+
 /**
  * Represents a test runner for a single or multiple features.
  */
@@ -24,36 +26,46 @@ public final class FeatureRunner {
     // The path to the runner file template.
     private final String runnerTemplatePath;
 
+    // The name of the generated runner class.
+    private final String runnerClassName;
+
     // The name of the feature file this runner belongs to.
-    private final String featureFileNameString;
+    private final List<String> featureFileNames;
 
     /**
      * Constructor for a single or multiple feature runner.
      *
-     * @param runnerTemplatePath    The path to the runner template.
-     * @param featureFileNameString The name string of the feature file(s) for this runner.
+     * @param runnerTemplatePath The path to the runner template.
+     * @param runnerClassName    The name of the generated runner class.
+     * @param featureFileNames   The name string of the feature file(s) for this runner.
      */
     public FeatureRunner(
             final String runnerTemplatePath,
-            final String featureFileNameString) {
+            final String runnerClassName, final List<String> featureFileNames) {
 
         this.runnerTemplatePath = runnerTemplatePath;
-        this.featureFileNameString = featureFileNameString;
+        this.runnerClassName = runnerClassName;
+        this.featureFileNames = featureFileNames;
     }
 
     public String getRunnerTemplatePath() {
         return runnerTemplatePath;
     }
 
-    public String getFeatureFileNameString() {
-        return featureFileNameString;
+    public List<String> getFeatureFileNames() {
+        return featureFileNames;
+    }
+
+    public String getRunnerClassName() {
+        return runnerClassName;
     }
 
     @Override
     public String toString() {
         return "FeatureRunner{" +
                 "runnerTemplatePath='" + runnerTemplatePath + '\'' +
-                ", featureFileNameString='" + featureFileNameString + '\'' +
+                ", runnerClassName='" + runnerClassName + '\'' +
+                ", featureFileNames=" + featureFileNames +
                 '}';
     }
 }
