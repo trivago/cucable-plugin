@@ -44,11 +44,14 @@
                     <!-- process all features in the given directory -->
                     <sourceFeatures>src/test/resources/features</sourceFeatures>
 
-                    <!-- process a specific file in the given directory -->
+                    <!-- process a specific feature file in the given directory -->
                     <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature</sourceFeatures>-->
 
-                    <!-- process a specific file and specific line numbers in the given directory -->
+                    <!-- process a specific feature file and specific line numbers in the given directory -->
                     <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>-->
+
+                    <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
+                    <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
 
                     <!-- include scenarios with certain tags -->
                     <!--<includeScenarioTags>-->
@@ -61,16 +64,16 @@
                     <!--<param>@skipme</param>-->
                     <!--</excludeScenarioTags>-->
 
-                    <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
-                    <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
-                    <numberOfTestRuns>1</numberOfTestRuns>
+                    <!-- this optional number of test runs will create runners and features multiple times
+                         if set to a number greater than 1 -->
+                    <!--<numberOfTestRuns>1</numberOfTestRuns>-->
 
                     <!-- if this is set, a fixed number of runners is generated and
-                     all features will be distributed round-robin to the generated runners. -->
+                         all features will be distributed round-robin to the generated runners. -->
                     <!--<desiredNumberOfRunners>2</desiredNumberOfRunners>-->
 
-                    <!-- Logging -->
-                    <logLevel>default</logLevel>
+                    <!-- optional log level -->
+                    <!--<logLevel>default</logLevel>-->
                     <!--<logLevel>compact</logLevel>-->
                     <!--<logLevel>minimal</logLevel>-->
                     <!--<logLevel>off</logLevel>-->
