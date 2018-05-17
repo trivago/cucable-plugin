@@ -291,7 +291,7 @@ public class GherkinDocumentParserTest {
                 "    Examples:\n" +
                 "      | key | value |\n" +
                 "      | 1   | one   |\n";
-       gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
+        gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -305,7 +305,7 @@ public class GherkinDocumentParserTest {
                 "    Examples:\n" +
                 "      | key | value |\n" +
                 "      | 1   | one   |\n";
-        System.out.print(gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null));
+        gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -319,7 +319,7 @@ public class GherkinDocumentParserTest {
                 "    Examples:\n" +
                 "      | key | value |\n" +
                 "      | 1   | one   |\n";
-        System.out.print(gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null));
+        gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
     }
 
     private String getTwoScenariosWithTags() {

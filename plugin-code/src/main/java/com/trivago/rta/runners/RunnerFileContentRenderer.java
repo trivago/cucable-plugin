@@ -29,6 +29,7 @@ import java.util.regex.Pattern;
 
 @Singleton
 public class RunnerFileContentRenderer {
+    private static final String FEATURE_FILE_NAME_PLACEHOLDERs = "[FEATURE_FILE_NAME]";
     private static final String CUCABLE_FEATURE_PLACEHOLDER = "[CUCABLE:FEATURE]";
     private static final String CUCABLE_RUNNER_PLACEHOLDER = "[CUCABLE:RUNNER]";
 
@@ -57,6 +58,13 @@ public class RunnerFileContentRenderer {
         if (runnerTemplatePath.endsWith(".java")) {
             fileString = replaceJavaTemplatePlaceholders(runnerTemplatePath, runnerClassName, fileString);
         }
+
+        if (fileString.contains(FEATURE_FILE_NAME_PLACEHOLDERs)) {
+            throw new CucablePluginException("The " + FEATURE_FILE_NAME_PLACEHOLDERs +
+                    " placeholder is deprecated. Please use " + CUCABLE_FEATURE_PLACEHOLDER +
+                    " or " + CUCABLE_RUNNER_PLACEHOLDER + " accordingly.");
+        }
+
         fileString = replaceFeatureFilePlaceholder(fileString, featureRunner.getFeatureFileNames());
         fileString = fileString.replace(CUCABLE_RUNNER_PLACEHOLDER, runnerClassName);
         fileString = addCucableInfo(fileString, runnerTemplatePath);
