@@ -79,7 +79,7 @@ public class RunnerFileContentRenderer {
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
         final Matcher matcher = pattern.matcher(runnerFileContentString);
         if (!matcher.find()) {
-            throw new CucablePluginException("" + CUCABLE_FEATURE_PLACEHOLDER);
+            throw new CucablePluginException("At least one " + CUCABLE_FEATURE_PLACEHOLDER + " placeholder is needed in your template.");
         }
 
         String fullCucableFeaturePlaceholder = matcher.group(0);
