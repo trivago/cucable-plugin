@@ -1,5 +1,6 @@
 package com.trivago.rta.runners;
 
+import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.files.FileIO;
 import com.trivago.rta.vo.FeatureRunner;
 import org.junit.Before;
@@ -201,5 +202,45 @@ public class RunnerFileContentRendererTest {
         String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(featureRunner);
 
         assertThat(renderedRunnerFileContent, is(expectedOutput));
+    }
+
+    @Test(expected = CucablePluginException.class)
+    public void deprecatedPlaceholderTest() throws Exception {
+        String template = "package parallel;\n" +
+                "\n" +
+                "import cucumber.api.CucumberOptions;\n" +
+                "\n" +
+                "@CucumberOptions(\n" +
+                "    monochrome = false,\n" +
+                "    features = {\"classpath:parallel/features/[CUCABLE:FEATURE].feature\"},\n" +
+                "    plugin = {\"json:target/cucumber-report/[CUCABLE:RUNNER].json\"}\n" +
+                ")\n" +
+                "public class [FEATURE_FILE_NAME] {\n" +
+                "}\n";
+
+        when(fileIO.readContentFromFile(anyString())).thenReturn(template);
+
+        ArrayList<String> featureFileNames = new ArrayList<>();
+        featureFileNames.add("featureFileName");
+
+        FeatureRunner featureRunner = new FeatureRunner(
+                "MyClass.java", "RunnerClass", featureFileNames
+        );
+        runnerFileContentRenderer.getRenderedRunnerFileContent(featureRunner);
+    }
+
+    @Test(expected = CucablePluginException.class)
+    public void missingRequiredPlaceholderTest() throws Exception {
+        String template = "No Placeholder included";
+
+        when(fileIO.readContentFromFile(anyString())).thenReturn(template);
+
+        ArrayList<String> featureFileNames = new ArrayList<>();
+        featureFileNames.add("featureFileName");
+
+        FeatureRunner featureRunner = new FeatureRunner(
+                "MyClass.java", "RunnerClass", featureFileNames
+        );
+        runnerFileContentRenderer.getRenderedRunnerFileContent(featureRunner);
     }
 }
