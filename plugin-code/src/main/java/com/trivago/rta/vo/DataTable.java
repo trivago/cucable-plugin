@@ -30,11 +30,4 @@ public class DataTable {
     public List<List<String>> getRows() {
         return rows;
     }
-
-    @Override
-    public String toString() {
-        return "DataTable{" +
-                "rows=" + rows +
-                '}';
-    }
 }

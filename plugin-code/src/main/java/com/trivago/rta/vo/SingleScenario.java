@@ -101,20 +101,4 @@ public final class SingleScenario {
     public List<Step> getBackgroundSteps() {
         return backgroundSteps;
     }
-
-    @Override
-    public String toString() {
-        return "SingleScenario{" +
-                "featureName='" + featureName + '\'' +
-                ", featureFilePath=" + featureFilePath +
-                ", featureLanguage='" + featureLanguage + '\'' +
-                ", featureDescription='" + featureDescription + '\'' +
-                ", scenarioName='" + scenarioName + '\'' +
-                ", scenarioDescription='" + scenarioDescription + '\'' +
-                ", featureTags=" + featureTags +
-                ", scenarioTags=" + scenarioTags +
-                ", backgroundSteps=" + backgroundSteps +
-                ", steps=" + steps +
-                '}';
-    }
 }

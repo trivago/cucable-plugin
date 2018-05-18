@@ -59,13 +59,4 @@ public final class FeatureRunner {
     public String getRunnerClassName() {
         return runnerClassName;
     }
-
-    @Override
-    public String toString() {
-        return "FeatureRunner{" +
-                "runnerTemplatePath='" + runnerTemplatePath + '\'' +
-                ", runnerClassName='" + runnerClassName + '\'' +
-                ", featureFileNames=" + featureFileNames +
-                '}';
-    }
 }
