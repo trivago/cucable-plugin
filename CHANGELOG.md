@@ -6,7 +6,7 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
-## [1.0.0] - 2018-05-17
+## [1.0.0] - 2018-05-18
 
 ### Added
 
@@ -20,7 +20,7 @@ Back to [Readme](README.md).
 
 ### Fixed
 
-- Better logging for missing example table placeholders in scenario outlines 
+- Better logging for missing example table placeholders in scenario outlines  (contributed by [@daczczcz1](https://github.com/daczczcz1))
 
 ### Removed
 
