@@ -92,6 +92,7 @@ public class FeatureFileConverter {
             final List<Path> featureFilePaths) throws CucablePluginException {
         int featureFileCounter = 0;
         List<String> allGeneratedFeaturePaths = new ArrayList<>();
+
         for (Path featureFilePath : featureFilePaths) {
             List<String> generatedFeatureFilePaths = generateSingleScenarioFeatures(featureFilePath);
             allGeneratedFeaturePaths.addAll(generatedFeatureFilePaths);
@@ -115,7 +116,6 @@ public class FeatureFileConverter {
      */
     private List<String> generateSingleScenarioFeatures(final Path sourceFeatureFilePath)
             throws CucablePluginException {
-
         String featureFilePathString = sourceFeatureFilePath.toString();
 
         if (featureFilePathString == null || featureFilePathString.equals("")) {
@@ -196,8 +196,8 @@ public class FeatureFileConverter {
     private int generateRunnerClasses(final List<String> generatedFeatureNames, final int numberOfDesiredRunners) throws CucablePluginException {
 
         int targetRunnerNumber = numberOfDesiredRunners;
-        if (targetRunnerNumber == 0){
-             targetRunnerNumber = generatedFeatureNames.size();
+        if (targetRunnerNumber == 0) {
+            targetRunnerNumber = generatedFeatureNames.size();
         }
 
         List<List<String>> generatedFeatureNamesPerRunner = new ArrayList<>(targetRunnerNumber);

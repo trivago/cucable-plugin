@@ -6,8 +6,8 @@ import com.trivago.rta.gherkin.GherkinDocumentParser;
 import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.properties.PropertyManager;
 import com.trivago.rta.runners.RunnerFileContentRenderer;
-import com.trivago.rta.vo.SingleScenario;
 import com.trivago.rta.vo.FeatureRunner;
+import com.trivago.rta.vo.SingleScenario;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,6 +28,7 @@ public class FeatureFileConverterTest {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
+
     private FeatureFileConverter featureFileConverter;
     private FileIO fileIO;
     private PropertyManager propertyManager;
