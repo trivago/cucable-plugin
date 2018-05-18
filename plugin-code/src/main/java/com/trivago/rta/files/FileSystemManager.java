@@ -70,17 +70,7 @@ public class FileSystemManager {
         if (sourceFeaturesFile.isFile() && sourceFeatures.endsWith(FEATURE_SUFFIX)) {
             featureFilePaths.add(Paths.get(sourceFeatures));
         } else if (sourceFeaturesFile.isDirectory()) {
-            try {
-                featureFilePaths =
-                        Files.walk(Paths.get(sourceFeatures))
-                                .filter(Files::isRegularFile)
-                                .filter(p -> p.toString().endsWith(FEATURE_SUFFIX))
-                                .collect(Collectors.toList());
-
-            } catch (IOException e) {
-                throw new CucablePluginException(
-                        "Unable to traverse feature files in " + sourceFeatures);
-            }
+            featureFilePaths = getFilesWithFeatureExtension(sourceFeatures);
         } else {
             throw new CucablePluginException(
                     sourceFeatures + " is not a feature file or a directory."
@@ -88,6 +78,25 @@ public class FileSystemManager {
         }
 
         return featureFilePaths;
+    }
+
+    /**
+     * Returns a list of feature files in the given directory.
+     *
+     * @param sourceFeatureDirectory The source directory to scan for feature files.
+     * @return A list of feature files in the given directory.
+     * @throws CucablePluginException see {@link CucablePluginException}.
+     */
+    private List<Path> getFilesWithFeatureExtension(final String sourceFeatureDirectory) throws CucablePluginException {
+        try {
+            return Files.walk(Paths.get(sourceFeatureDirectory))
+                    .filter(Files::isRegularFile)
+                    .filter(p -> p.toString().endsWith(FEATURE_SUFFIX))
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new CucablePluginException(
+                    "Unable to traverse feature files in " + sourceFeatureDirectory + ": " + e.getMessage());
+        }
     }
 
     /**

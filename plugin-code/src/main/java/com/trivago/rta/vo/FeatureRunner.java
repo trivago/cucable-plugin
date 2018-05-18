@@ -16,44 +16,47 @@
 
 package com.trivago.rta.vo;
 
+import java.util.List;
+
 /**
- * Represents a test runner for a single scenario.
+ * Represents a test runner for a single or multiple features.
  */
-public final class SingleScenarioRunner {
+public final class FeatureRunner {
 
     // The path to the runner file template.
     private final String runnerTemplatePath;
 
+    // The name of the generated runner class.
+    private final String runnerClassName;
+
     // The name of the feature file this runner belongs to.
-    private final String featureFileName;
+    private final List<String> featureFileNames;
 
     /**
-     * Constructor for a single scenario runner.
+     * Constructor for a single or multiple feature runner.
      *
      * @param runnerTemplatePath The path to the runner template.
-     * @param featureFileName    The name of the feature file for this runner.
+     * @param runnerClassName    The name of the generated runner class.
+     * @param featureFileNames   The name string of the feature file(s) for this runner.
      */
-    public SingleScenarioRunner(
+    public FeatureRunner(
             final String runnerTemplatePath,
-            final String featureFileName) {
+            final String runnerClassName, final List<String> featureFileNames) {
 
         this.runnerTemplatePath = runnerTemplatePath;
-        this.featureFileName = featureFileName;
+        this.runnerClassName = runnerClassName;
+        this.featureFileNames = featureFileNames;
     }
 
     public String getRunnerTemplatePath() {
         return runnerTemplatePath;
     }
 
-    public String getFeatureFileName() {
-        return featureFileName;
+    public List<String> getFeatureFileNames() {
+        return featureFileNames;
     }
 
-    @Override
-    public String toString() {
-        return "SingleScenarioRunner{" +
-                "runnerTemplatePath='" + runnerTemplatePath + '\'' +
-                ", featureFileName='" + featureFileName + '\'' +
-                '}';
+    public String getRunnerClassName() {
+        return runnerClassName;
     }
 }

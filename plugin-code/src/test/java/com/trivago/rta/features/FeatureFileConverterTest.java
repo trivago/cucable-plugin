@@ -6,8 +6,8 @@ import com.trivago.rta.gherkin.GherkinDocumentParser;
 import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.properties.PropertyManager;
 import com.trivago.rta.runners.RunnerFileContentRenderer;
+import com.trivago.rta.vo.FeatureRunner;
 import com.trivago.rta.vo.SingleScenario;
-import com.trivago.rta.vo.SingleScenarioRunner;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -28,6 +28,7 @@ public class FeatureFileConverterTest {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
+
     private FeatureFileConverter featureFileConverter;
     private FileIO fileIO;
     private PropertyManager propertyManager;
@@ -63,7 +64,7 @@ public class FeatureFileConverterTest {
         when(mockPath.getFileName()).thenReturn(mockFilePath);
         when(mockPath.toString()).thenReturn("");
         pathList.add(mockPath);
-        featureFileConverter.convertToSingleScenariosAndRunners(pathList);
+        featureFileConverter.generateSingleScenarioFeatures(pathList);
     }
 
     @Test
@@ -78,14 +79,14 @@ public class FeatureFileConverterTest {
         when(fileIO.readContentFromFile("TEST_PATH")).thenReturn("TEST_CONTENT");
 
         List<SingleScenario> scenarioList = new ArrayList<>();
-        SingleScenario singleScenario = new SingleScenario("feature", "","","featureDescription", "name", "scenarioDescription", new ArrayList<>(), new ArrayList<>());
+        SingleScenario singleScenario = new SingleScenario("feature", "", "", "featureDescription", "name", "scenarioDescription", new ArrayList<>(), new ArrayList<>());
         scenarioList.add(singleScenario);
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH",null, null, null)).thenReturn(scenarioList);
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH", null, null, null)).thenReturn(scenarioList);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
 
-        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(SingleScenarioRunner.class), any(SingleScenario.class))).thenReturn("RUNNER_CONTENT");
+        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class))).thenReturn("RUNNER_CONTENT");
 
         List<Path> pathList = new ArrayList<>();
         Path mockPath = mock(Path.class);
@@ -94,7 +95,7 @@ public class FeatureFileConverterTest {
         when(mockPath.getFileName()).thenReturn(mockFilePath);
         when(mockPath.toString()).thenReturn("TEST_PATH");
         pathList.add(mockPath);
-        featureFileConverter.convertToSingleScenariosAndRunners(pathList);
+        featureFileConverter.generateSingleScenarioFeatures(pathList);
 
         verify(fileIO, times(2)).writeContentToFile(anyString(), anyString());
     }

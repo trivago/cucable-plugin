@@ -1,6 +1,7 @@
 package com.trivago.rta.gherkin;
 
 import com.trivago.rta.exceptions.CucablePluginException;
+import com.trivago.rta.vo.DataTable;
 import com.trivago.rta.vo.SingleScenario;
 import org.junit.Before;
 import org.junit.Test;
@@ -277,7 +278,14 @@ public class GherkinDocumentParserTest {
         List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
         assertThat(singleScenariosFromFeature.size(), is(1));
         assertThat(singleScenariosFromFeature.get(0).getSteps().size(), is(1));
-        assertThat(singleScenariosFromFeature.get(0).getSteps().get(0).getDataTable().toString(), is("DataTable{rows=[[test, 1, one]]}"));
+
+        DataTable dataTable = singleScenariosFromFeature.get(0).getSteps().get(0).getDataTable();
+
+        assertThat(dataTable.getRows().size(), is(1));
+        List<String> firstRow = dataTable.getRows().get(0);
+        assertThat(firstRow.get(0), is("test"));
+        assertThat(firstRow.get(1), is("1"));
+        assertThat(firstRow.get(2), is("one"));
     }
 
     @Test(expected = IllegalStateException.class)
@@ -291,7 +299,7 @@ public class GherkinDocumentParserTest {
                 "    Examples:\n" +
                 "      | key | value |\n" +
                 "      | 1   | one   |\n";
-       gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
+        gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -305,7 +313,7 @@ public class GherkinDocumentParserTest {
                 "    Examples:\n" +
                 "      | key | value |\n" +
                 "      | 1   | one   |\n";
-        System.out.print(gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null));
+        gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
     }
 
     @Test(expected = IllegalStateException.class)
@@ -319,7 +327,7 @@ public class GherkinDocumentParserTest {
                 "    Examples:\n" +
                 "      | key | value |\n" +
                 "      | 1   | one   |\n";
-        System.out.print(gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null));
+        gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
     }
 
     private String getTwoScenariosWithTags() {

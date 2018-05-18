@@ -17,14 +17,14 @@ public class PojoTest {
     private static final String POJO_PACKAGE = "com.trivago.rta.properties";
 
     @Test
-    public void ensureExpectedPojoCount() {
+    public void expectedPojoCountTest() {
         List<PojoClass> pojoClasses = PojoClassFactory.getPojoClasses(POJO_PACKAGE,
                 new FilterPackageInfo());
         Affirm.affirmEquals("Classes added / removed?", EXPECTED_CLASS_COUNT, pojoClasses.size());
     }
 
     @Test
-    public void testPojoStructureAndBehavior() {
+    public void pojoStructureAndBehaviorTest() {
         Validator validator = ValidatorBuilder.create()
                 .with(new SetterTester())
                 .with(new GetterTester())

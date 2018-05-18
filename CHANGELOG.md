@@ -6,6 +6,26 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.0.0] - 2018-05-18
+
+### Added
+
+- Support a fixed number of runners running multiple scenarios in sequence
+- New `[CUCABLE:RUNNER]` template placeholder that is substituted with the current runner name
+- New `[CUCABLE:FEATURE]` template placeholder that is substituted with the one or multiple features in the generated runner
+
+### Changed
+
+- Feature and runner generation is now separated in order to support more features in the future.
+
+### Fixed
+
+- Better logging for missing example table placeholders in scenario outlines  (contributed by [@daczczcz1](https://github.com/daczczcz1))
+
+### Removed
+
+- Template placeholder `[FEATURE_FILE_NAME]` is not supported anymore, please use `[CUCABLE:FEATURE]` and `[CUCABLE:RUNNER]` instead
+
 ## [0.1.11] - 2018-05-08
 
 - Fix for wrong unicode detection of source feature path in runner comments
@@ -139,6 +159,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[1.0.0]: https://github.com/trivago/cucable-plugin/compare/0.1.11...1.0.0
 [0.1.11]: https://github.com/trivago/cucable-plugin/compare/0.1.10...0.1.11
 [0.1.10]: https://github.com/trivago/cucable-plugin/compare/0.1.9...0.1.10
 [0.1.9]: https://github.com/trivago/cucable-plugin/compare/0.1.8...0.1.9

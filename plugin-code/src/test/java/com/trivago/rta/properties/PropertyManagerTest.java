@@ -59,7 +59,7 @@ public class PropertyManagerTest {
     @Test
     public void wrongIncludeTagFormatTest() throws Exception {
         expectedException.expect(CucablePluginException.class);
-        expectedException.expectMessage("Include tag 'noAtInFront' does not start with '@'.");
+        expectedException.expectMessage("Tag 'noAtInFront' of type 'include' does not start with '@'.");
 
         propertyManager.setSourceFeatures("-");
         propertyManager.setSourceRunnerTemplateFile("-");
@@ -74,7 +74,7 @@ public class PropertyManagerTest {
     @Test
     public void wrongExcludeTagFormatTest() throws Exception {
         expectedException.expect(CucablePluginException.class);
-        expectedException.expectMessage("Exclude tag 'noAtInFront' does not start with '@'.");
+        expectedException.expectMessage("Tag 'noAtInFront' of type 'exclude' does not start with '@'.");
 
         propertyManager.setSourceFeatures("-");
         propertyManager.setSourceRunnerTemplateFile("-");
@@ -109,12 +109,14 @@ public class PropertyManagerTest {
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
 
         propertyManager.setSourceFeatures("test.feature:3");
+        propertyManager.setDesiredNumberOfRunners(2);
 
         propertyManager.logProperties();
         verify(logger, times(1)).info("- sourceFeature(s)          : test.feature", DEFAULT, COMPACT);
         verify(logger, times(1)).info("                              with line number(s) [3]", DEFAULT, COMPACT);
         verify(logger, times(1)).info("- include scenario tag(s)   : include1, include2", DEFAULT, COMPACT);
         verify(logger, times(1)).info("- exclude scenario tag(s)   : exclude1, exclude2", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("- desiredNumberOfRunners    : 2", DEFAULT, COMPACT);
     }
 
     @Test

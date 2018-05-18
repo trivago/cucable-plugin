@@ -84,6 +84,12 @@ final class CucablePlugin extends AbstractMojo {
     private List<String> excludeScenarioTags;
 
     /**
+     * Optional desired number of test runners that each run multiple features in sequence.
+     */
+    @Parameter(property = "parallel.desiredNumberOfRunners", defaultValue = "0")
+    private int desiredNumberOfRunners = 0;
+
+    /**
      * Optional log level to control what information is logged in the console.
      * Allowed values: default, compact, minimal, off
      */
@@ -109,6 +115,7 @@ final class CucablePlugin extends AbstractMojo {
      * @throws CucablePluginException When thrown, the plugin execution is stopped.
      */
     public void execute() throws CucablePluginException {
+
         // Initialize logger to be available outside the AbstractMojo class
         logger.initialize(getLog(), logLevel);
 
@@ -120,15 +127,23 @@ final class CucablePlugin extends AbstractMojo {
         propertyManager.setNumberOfTestRuns(numberOfTestRuns);
         propertyManager.setExcludeScenarioTags(excludeScenarioTags);
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
+        propertyManager.setDesiredNumberOfRunners(desiredNumberOfRunners);
         propertyManager.validateSettings();
 
+        // Logging
         logHeader();
         propertyManager.logProperties();
 
+        // Create the necessary directories if missing.
         fileManager.prepareGeneratedFeatureAndRunnerDirs();
-        featureFileConverter.convertToSingleScenariosAndRunners(fileManager.getFeatureFilePaths());
+
+        // Conversion of scenarios into single scenarios and runners.
+        featureFileConverter.generateSingleScenarioFeatures(fileManager.getFeatureFilePaths());
     }
 
+    /**
+     * Log the plugin name and version.
+     */
     private void logHeader() {
         CucableLogger.CucableLogLevel[] cucableLogLevels =
                 new CucableLogger.CucableLogLevel[]{CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT};

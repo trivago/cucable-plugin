@@ -8,6 +8,7 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import java.io.PrintStream;
 import java.nio.file.Path;
 import java.util.List;
 
@@ -71,4 +72,20 @@ public class FileSystemManagerTest {
         assertThat(featureFilePaths, is(notNullValue()));
     }
 
+    @Test(expected = CucablePluginException.class)
+    public void notAFeatureFileOrDirectoryTest() throws Exception {
+        String sourceFeatures = testFolder.getRoot().getPath() + "notExisting";
+        when(propertyManager.getSourceFeatures()).thenReturn(sourceFeatures);
+        List<Path> featureFilePaths = fileSystemManager.getFeatureFilePaths();
+    }
+
+    @Test
+    public void singleFeatureTest() throws Exception {
+        String sourceFeature = testFolder.getRoot().getPath() + "/myFeature.feature";
+        PrintStream ps = new PrintStream(sourceFeature);
+        when(propertyManager.getSourceFeatures()).thenReturn(sourceFeature);
+        List<Path> featureFilePaths = fileSystemManager.getFeatureFilePaths();
+        assertThat(featureFilePaths.size(), is(1));
+        assertThat(featureFilePaths.get(0).toString(), is(sourceFeature));
+    }
 }

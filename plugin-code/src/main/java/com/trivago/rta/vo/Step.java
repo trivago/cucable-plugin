@@ -42,13 +42,4 @@ public class Step {
     public String getDocString() {
         return docString;
     }
-
-    @Override
-    public String toString() {
-        return "Step{" +
-                "name='" + name + '\'' +
-                ", dataTable=" + dataTable +
-                ", docString='" + docString + '\'' +
-                '}';
-    }
 }

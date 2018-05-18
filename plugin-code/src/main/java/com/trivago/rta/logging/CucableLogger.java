@@ -27,14 +27,6 @@ public class CucableLogger {
     private Log mojoLogger;
     private CucableLogLevel currentLogLevel;
 
-    private enum LogLevel {
-        INFO, WARN
-    }
-
-    public enum CucableLogLevel {
-        DEFAULT, COMPACT, MINIMAL, OFF
-    }
-
     /**
      * Set the mojo logger so it can be used in any class that injects a CucableLogger.
      *
@@ -98,5 +90,13 @@ public class CucableLogger {
                 mojoLogger.warn(logString);
                 break;
         }
+    }
+
+    private enum LogLevel {
+        INFO, WARN
+    }
+
+    public enum CucableLogLevel {
+        DEFAULT, COMPACT, MINIMAL, OFF
     }
 }

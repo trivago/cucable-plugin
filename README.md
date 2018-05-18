@@ -18,6 +18,12 @@
   - [Repository Structure](#repository-structure)
   - [Changelog](#changelog)
   - [Maven dependency](#maven-dependency)
+- [How it works](#how-it-works)
+  - [Template placeholders](#template-placeholders)
+    - [[CUCABLE:RUNNER]](#cucablerunner)
+    - [[CUCABLE:FEATURE]](#cucablefeature)
+  - [One runner per generated scenario](#one-runner-per-generated-scenario)
+  - [One runner per group of generated scenarios](#one-runner-per-group-of-generated-scenarios)
 - [Typical workflow](#typical-workflow)
   - [1. Generation of runners and features](#1-generation-of-runners-and-features)
     - [Required Parameters](#required-parameters)
@@ -32,6 +38,7 @@
       - [includeScenarioTags](#includescenariotags)
       - [excludeScenarioTags](#excludescenariotags)
       - [logLevel](#loglevel)
+      - [desiredNumberOfRunners](#desirednumberofrunners)
     - [Generating runners and features inside target directory](#generating-runners-and-features-inside-target-directory)
     - [Complete Example](#complete-example)
       - [Source feature file](#source-feature-file)
@@ -54,9 +61,11 @@ Cucable is a Maven plugin for [Cucumber](https://cucumber.io) scenarios that sim
 
 This plugin does the following:
 
-- Generate single Cucumber features containing one single scenario each
+- Generate single [Cucumber](https://cucumber.io) features containing one single scenario each
 - Convert scenario outlines into separate scenarios
-- Generating Cucumber runners for every generated "single scenario" feature file
+- Generating [Cucumber](https://cucumber.io) runners 
+  - for every generated "single scenario" feature file or
+  - for multiple generated "single scenario" feature files
 
 Those generated runners and features can then be used with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/) in order to parallelize test runs.
 
@@ -81,10 +90,55 @@ All changes are documented in the [full changelog](CHANGELOG.md).
 </dependency>
 ```
 
+# How it works
+
+* Cucable will cut up feature file into the smallest possible runnable scenarios
+* After this, the runner classes for those generated features are generated based on a provided template file, either
+  * one runner per generated scenario or
+  * one runner per group of generated scenarios
+
+## Template placeholders
+
+### [CUCABLE:RUNNER]
+
+The `[CUCABLE:RUNNER]` template placeholder is automatically replaced with the class name of the generated runner class.
+
+If the generated runner runs one single scenario, its name will be the same as the generated feature name (e.g. `MyFeature_scenario001_run001_IT`).
+
+In case the runner runs multiple scenarios, its name will be auto-generated (e.g. `CucableMultiRunner_1da810a2_c4c6_4edb_b078_d81329593950_IT`).
+
+### [CUCABLE:FEATURE]
+
+The `[CUCABLE:FEATURE]` can be placed in the `feature` value of the `@CucumberOptions` block in your template:
+
+<pre>
+@CucumberOptions(
+        features = {<b>"target/parallel/features/<b>[CUCABLE:FEATURE]</b>.feature"</b>}
+)
+</pre>
+
+Cucable will automatically detect the string containing the `[CUCABLE:FEATURE]` placeholder and use this to generate one line for each feature this runner should trigger.
+
+## One runner per generated scenario
+
+This is the default mode of Cucable. Having multiple runners that run one "single scenario" feature each is best for parallelization with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/).
+
+![Single feature runner generation](documentation/img/cucable_flow_single_runner.png)
+
+## One runner per group of generated scenarios
+
+If you set the `desiredNumberOfRunners` option to a number greater than 0, Cucable will automatically switch to the multi-feature runner mode.
+
+This means that it will only generate the specified number of runners and distribute the generated features equally to each one of them. This is helpful if a group of scenarios should be executed during each forked run of your test framework.
+
+**Note:** If a runner runs only one feature, it automatically has the same name as the feature. Otherwise it will have a unique auto-generated name.
+
+![Multi feature runner generation](documentation/img/cucable_flow_multi_runner.png)
+
 # Typical workflow
 
 1. Generation of runners and features
-2. Running the generated tests with Maven failsafe
+2. Running the generated tests with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/)
 3. Aggregation of a single test report after all test runs
 
 The following sections break down the above steps.
@@ -121,7 +175,8 @@ The following sections break down the above steps.
         <excludeScenarioTags>
             <param>@skip</param>
         </excludeScenarioTags>
-        <logLevel>compact</logLevel>                                
+        <logLevel>compact</logLevel>
+        <desiredNumberOfRunners>2</desiredNumberOfRunners>                                
     </configuration>    
 </plugin>
 ```
@@ -130,14 +185,16 @@ The following sections break down the above steps.
 
 #### sourceRunnerTemplateFile
 
-The specified file will be used to generate runners for every generated feature file.
+The specified file will be used to generate runner classes for the generated feature file that can be run using [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/).
 
-This can be either a text file or a Java class. The difference is outlined below:
+This can be either a text file or a Java class. The difference can be seen below:
 
 ##### Using a java file as a runner template
 
-If you use a java file (e.g. _src/test/java/some/template/CucableJavaTemplate.java_), all **[FEATURE_FILE_NAME]** placeholders as well as the **class name** will be substituted for the generated feature file name.
-Also, the **package declaration** will be stripped.
+If you use a java file (e.g. _src/test/java/some/template/CucableJavaTemplate.java_), the **[CUCABLE:FEATURE]** placeholder as well as the **class name** will be substituted for the generated feature file name(s).
+The **[CUCABLE:RUNNER]** placeholder will be replaced by the runner class name.
+
+Additionally, the **package declaration** will be stripped.
 
 _Example:_
 
@@ -147,10 +204,11 @@ _Example:_
 import cucumber.api.CucumberOptions;
 
 @CucumberOptions(
-        features = {"target/parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
-        plugin = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"}
+        features = {"target/parallel/features/<b>[CUCABLE:FEATURE]</b>.feature"},
+        plugin = {"json:target/cucumber-report/<b>[CUCABLE:RUNNER]</b>.json"}
 )
-public class <b>CucableJavaTemplate</b> {
+public class CucableJavaTemplate {
+
 }
 </pre>
 
@@ -160,54 +218,52 @@ will turn into
 import cucumber.api.CucumberOptions;
 
 @CucumberOptions(
-        features = {"target/parallel/features/<b>MyFeature_scenario001_run001_IT</b>.feature"},
+        features = {<b>"target/parallel/features/MyFeature_scenario001_run001_IT.feature"</b>},
         plugin = {"json:target/cucumber-report/<b>MyFeature_scenario001_run001_IT</b>.json"}
 )
 public class <b>MyFeature_scenario001_run001_IT</b> {
 }
+
+// Generated by Cucable from src/test/java/some/template/CucableJavaTemplate.java
 </pre>
 
+In case of a fixed number of runners that contain multiple scenarios (via `desiredNumberOfRunners` property), the runner name will be auto-generated:
+
+<pre>
+import cucumber.api.junit.Cucumber;
+import cucumber.api.CucumberOptions;
+import org.junit.runner.RunWith;
+
+@RunWith(Cucumber.class)
+@CucumberOptions(
+    features = {<b>"target/parallel/features/Bookmarks_scenario001_run001_IT.feature",
+"target/parallel/features/Bookmarks_scenario003_run001_IT.feature"</b>},
+    plugin = {
+        "json:target/cucumber-report/<b>CucableMultiRunner_1da810a2_c4c6_4edb_b078_d81329593950_IT</b>.json",
+        "com.trivago.trupi.plugin.TrupiCucumberPlugin"
+    },
+    glue = {"com.trivago.trupi.glue"}
+)
+public class <b>CucableMultiRunner_1da810a2_c4c6_4edb_b078_d81329593950_IT</b> {
+}
+
+// Generated by Cucable from src/test/java/some/template/CucableJavaTemplate.java
+</pre>
 
 ##### Using a text file as a runner template
 
-If you use a text file (e.g. _src/test/resources/cucable.template_), all **[FEATURE_FILE_NAME]** placeholders will be substituted for the generated feature file name.
-
-_Example:_
-
-<pre>
-import cucumber.api.CucumberOptions;
-
-@CucumberOptions(
-        features = {"target/parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
-        plugin = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"}
-)
-public class <b>[FEATURE_FILE_NAME]</b> {
-}
-</pre>
-
-will turn into
-
-<pre>
-import cucumber.api.CucumberOptions;
-
-@CucumberOptions(
-        features = {"target/parallel/features/<b>MyFeature_scenario001_run001_IT</b>.feature"},
-        plugin = {"json:target/cucumber-report/<b>MyFeature_scenario001_run001_IT</b>.json"}
-)
-public class <b>MyFeature_scenario001_run001_IT</b> {
-}
-</pre>
+If you use a text file (e.g. _src/test/resources/cucable.template_), all **[CUCABLE:FEATURE]** placeholder will be substituted for the generated feature file name(s). The **[CUCABLE:RUNNER]** placeholder will be replaced by the runner class name.
 
 #### sourceFeatures
 
 This can specify
-* the root path of your __existing__ Cucumber _.feature_ files (e.g. ```src/test/resources/features```)
-* the path to a specific __existing__ Cucumber _.feature_ file (e.g. ```src/test/resources/features/MyFeature.feature```)
-* the path to a specific __existing__ Cucumber _.feature_ file including line numbers of specific scenarios/scenario outlines inside this file (e.g. ```src/test/resources/features/MyFeature.feature:12:19``` would only convert the scenarios starting at line _12_ and _19_ inside _MyFeature.feature_)
+* the root path of your __existing__ [Cucumber](https://cucumber.io) _.feature_ files (e.g. ```src/test/resources/features```)
+* the path to a specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file (e.g. ```src/test/resources/features/MyFeature.feature```)
+* the path to a specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file including line numbers of specific scenarios/scenario outlines inside this file (e.g. ```src/test/resources/features/MyFeature.feature:12:19``` would only convert the scenarios starting at line _12_ and _19_ inside _MyFeature.feature_)
 
 #### generatedFeatureDirectory
 
-The path where the __generated__ Cucumber .feature files should be located (e.g. _src/test/resources/parallel_).
+The path where the __generated__ [Cucumber](https://cucumber.io) .feature files should be located (e.g. _src/test/resources/parallel_).
 
 **Note:** This directory should be located under a valid resource folder to be included as a test source by Maven.
 If you want to use a directory inside Maven's target folder, [check this example](#generating-runners-and-features-inside-target-directory).
@@ -227,7 +283,9 @@ If you want to use a directory inside Maven's target folder, [check this example
 
 #### numberOfTestRuns
 
-Optional number of test runs. If it is not set, its default value is __1__.
+Optional number of test runs. This can be used if specific scenarios should be run multiple times.
+If this options is not set, its default value is __1__.
+
 For each test run, the whole set of features and runners is generated like this:
 
 - MyFeature_scenario001_run001_IT.feature
@@ -285,6 +343,12 @@ This can be configured by passing the `logLevel` property:
 * _compact_ will only log the plugin name, version, properties and one line of summary
 * _minimal_ will only log a summary line
 * _off_ will prevent any logging
+
+#### desiredNumberOfRunners
+
+If you set this options, all generated features will be distributed to a fixed set of runner classes. This means that one runner can potentially run multiple features in sequence.
+
+If this option is not set, its default value is `0` which basically means "Generate a dedicated runner for every generated feature".
 
 ### Generating runners and features inside target directory
 
@@ -370,17 +434,19 @@ Feature: This is the feature name
 
 #### Runner template file
 
-This is the runner template file that is used to generate single scenario runners.
-The placeholder **[FEATURE_FILE_NAME]** will be replaced with generated feature names by Cucable.
+This is the runner template file (in this example we use a text file) that is used to generate single scenario runners.
+
+* The placeholder **[CUCABLE:FEATURE]** and its enclosing string will be replaced with the generated feature names by Cucable.
+* The placeholder **[CUCABLE:RUNNER]** will be replaced with the generated runner class name by Cucable.
 
 <pre>
 import cucumber.api.CucumberOptions;
 
 @CucumberOptions(
-        features = {"target/parallel/features/<b>[FEATURE_FILE_NAME]</b>.feature"},
-        plugin = {"json:target/cucumber-report/<b>[FEATURE_FILE_NAME]</b>.json"}
+        features = {"target/parallel/features/<b>[CUCABLE:FEATURE]</b>.feature"},
+        plugin = {"json:target/cucumber-report/<b>[CUCABLE:RUNNER]</b>.json"}
 )
-public class <b>[FEATURE_FILE_NAME]</b> {
+public class <b>[CUCABLE:RUNNER]</b> {
 }
 </pre>
 
@@ -401,7 +467,7 @@ And I click the login button
 Then I see an error message
 ```
 
-Note that for the scenario outlines, each example is converted to its own scenario and feature file:
+Note that for the scenario outlines, each example is converted _to its own scenario and feature file_:
 
 *MyFeature_scenario002_run001_IT.feature*
 
@@ -429,7 +495,7 @@ Then I see <b>85</b> items
 
 #### Generated runners
 
-The generated runners point to each one of the generated feature files.
+The generated runners point to each one of the generated feature files (unless you use the `desiredNumberOfRunners` option).
 
 This is an example for one of the generated runners - note how the placeholders are now replaced with the name of the feature to run:
 
@@ -448,10 +514,10 @@ public class <b>MyFeature_scenario001_run001_IT</b> {
 
 ## 2. Running the generated tests with Maven failsafe
 
-This will skip the unit tests (if any) and run the generated runner classes with Failsafe.
-Since all generated runner classes from the step before end with ___IT__, they are automatically considered integration tests and run with failsafe.
+This will skip the unit tests (if any) and run the generated runner classes with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/).
+Since all generated runner classes from the step before end with ___IT__, they are automatically considered integration tests and run with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/).
 
-**Note:** If all tests should be run regardless of their result, it is important to set ```<testFailureIgnore>true</testFailureIgnore>``` for Failsafe - otherwise the plugin execution will stop on failing tests.
+**Note:** If all tests should be run regardless of their result, it is important to set ```<testFailureIgnore>true</testFailureIgnore>``` for [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/) - otherwise the plugin execution will stop on failing tests.
 However, if this is specified, the build will not fail in case of failing tests!
 
 To circumvent that, it is possible to specify a custom [rule](https://maven.apache.org/enforcer/enforcer-api/writing-a-custom-rule.html) for [Maven enforcer](https://maven.apache.org/enforcer/maven-enforcer-plugin/) that passes or fails the build depending on custom conditions.
@@ -528,7 +594,7 @@ It is available in [Maven central](https://search.maven.org/#search%7Cgav%7C1%7C
 
 ## License
 
-Copyright 2017 trivago N.V.
+Copyright 2017 [trivago N.V.](https://www.trivago.de/impressum)
 
 Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. You may obtain a copy of the License at
 
