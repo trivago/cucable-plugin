@@ -38,6 +38,7 @@
       - [includeScenarioTags](#includescenariotags)
       - [excludeScenarioTags](#excludescenariotags)
       - [logLevel](#loglevel)
+      - [desiredNumberOfRunners](#desirednumberofrunners)
     - [Generating runners and features inside target directory](#generating-runners-and-features-inside-target-directory)
     - [Complete Example](#complete-example)
       - [Source feature file](#source-feature-file)
