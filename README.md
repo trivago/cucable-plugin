@@ -61,8 +61,7 @@ Cucable is a Maven plugin for [Cucumber](https://cucumber.io) scenarios that sim
 
 This plugin does the following:
 
-- Generate single [Cucumber](https://cucumber.io) features containing one single scenario each
-- Convert scenario outlines into separate scenarios
+- Generate single [Cucumber](https://cucumber.io) features containing one single scenario each (scenario outlines are also split up into separate scenarios)
 - Generating [Cucumber](https://cucumber.io) runners 
   - for every generated "single scenario" feature file or
   - for multiple generated "single scenario" feature files
@@ -93,9 +92,10 @@ All changes are documented in the [full changelog](CHANGELOG.md).
 # How it works
 
 * Cucable will cut up feature file into the smallest possible runnable scenarios
+* Each generated feature file includes a single scenario
 * After this, the runner classes for those generated features are generated based on a provided template file, either
-  * one runner per generated scenario or
-  * one runner per group of generated scenarios
+  * one runner per generated "single scenario" feature file or
+  * one runner per group of "single scenario" feature files
 
 ## Template placeholders
 
@@ -103,17 +103,17 @@ All changes are documented in the [full changelog](CHANGELOG.md).
 
 The `[CUCABLE:RUNNER]` template placeholder is automatically replaced with the class name of the generated runner class.
 
-If the generated runner runs one single scenario, its name will be the same as the generated feature name (e.g. `MyFeature_scenario001_run001_IT`).
+If the generated runner runs only one "single scenario" feature, its name will be the same as the generated feature (e.g. `MyFeature_scenario001_run001_IT`).
 
-In case the runner runs multiple scenarios, its name will be auto-generated (e.g. `CucableMultiRunner_1da810a2_c4c6_4edb_b078_d81329593950_IT`).
+In case the runner runs multiple "single scenario" features, its name will be auto-generated (e.g. `CucableMultiRunner_1da810a2_c4c6_4edb_b078_d81329593950_IT`).
 
 ### [CUCABLE:FEATURE]
 
-The `[CUCABLE:FEATURE]` can be placed in the `feature` value of the `@CucumberOptions` block in your template:
+The `[CUCABLE:FEATURE]` can be placed in the `feature` option of the `@CucumberOptions` block in your template:
 
 <pre>
 @CucumberOptions(
-        features = {<b>"target/parallel/features/<b>[CUCABLE:FEATURE]</b>.feature"</b>}
+  features = {<b>"target/parallel/features/<b>[CUCABLE:FEATURE]</b>.feature"</b>}
 )
 </pre>
 
