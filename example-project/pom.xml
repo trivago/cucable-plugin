@@ -53,31 +53,30 @@
                     <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
                     <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
 
-                    <!-- Custom data that is available in Cucable placeholders in a template -->
-                    <customPlaceholders>
-                        <comment>This should appear inside the template</comment>
-                    </customPlaceholders>
+                    <!-- optional: custom data that is available in Cucable placeholders in a template -->
+                    <!--<customPlaceholders>-->
+                        <!--<comment>This should appear inside the template</comment>-->
+                    <!--</customPlaceholders>-->
 
-                    <!-- include scenarios with certain tags -->
+                    <!-- optional: include scenarios with certain tags -->
                     <!--<includeScenarioTags>-->
                     <!--<param>@scenarioTag1</param>-->
                     <!--<param>@scenarioTag2</param>-->
                     <!--</includeScenarioTags>-->
 
-                    <!-- exclude scenarios with certain tags -->
+                    <!-- optional: exclude scenarios with certain tags -->
                     <!--<excludeScenarioTags>-->
                     <!--<param>@skipme</param>-->
                     <!--</excludeScenarioTags>-->
 
-                    <!-- this optional number of test runs will create runners and features multiple times
+                    <!-- optional: number of test runs to create runners and features multiple times
                          if set to a number greater than 1 -->
                     <!--<numberOfTestRuns>1</numberOfTestRuns>-->
 
-                    <!-- if this is set, a fixed number of runners is generated and
-                         all features will be distributed round-robin to the generated runners. -->
-                    <desiredNumberOfRunners>2</desiredNumberOfRunners>
+                    <!-- optional: generate fixed number of runners and distribute all features round-robin. -->
+                    <!--<desiredNumberOfRunners>2</desiredNumberOfRunners>-->
 
-                    <!-- optional log level -->
+                    <!-- optional: Cucable log level -->
                     <!--<logLevel>default</logLevel>-->
                     <!--<logLevel>compact</logLevel>-->
                     <!--<logLevel>minimal</logLevel>-->
