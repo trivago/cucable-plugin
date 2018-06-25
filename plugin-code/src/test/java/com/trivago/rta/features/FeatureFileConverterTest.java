@@ -1,5 +1,7 @@
 package com.trivago.rta.features;
 
+import com.trivago.rta.exceptions.CucablePluginException;
+import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
 import com.trivago.rta.exceptions.filesystem.MissingFileException;
 import com.trivago.rta.files.FileIO;
 import com.trivago.rta.gherkin.GherkinDocumentParser;
@@ -56,7 +58,7 @@ public class FeatureFileConverterTest {
     }
 
     @Test(expected = MissingFileException.class)
-    public void testConvertEmptyPathListToSingleScenariosAndRunners() throws Exception {
+    public void convertEmptyPathListToSingleScenariosAndRunnersTest() throws Exception {
         List<Path> pathList = new ArrayList<>();
         Path mockPath = mock(Path.class);
         Path mockFilePath = mock(Path.class);
@@ -67,8 +69,46 @@ public class FeatureFileConverterTest {
         featureFileConverter.generateSingleScenarioFeatures(pathList);
     }
 
+    @Test(expected = FeatureFileParseException.class)
+    public void convertWithInvalidFeatureTest() throws Exception {
+        String generatedFeatureDir = testFolder.getRoot().getPath().concat("/features/");
+        String generatedRunnerDir = testFolder.getRoot().getPath().concat("/runners/");
+
+        propertyManager.setNumberOfTestRuns(1);
+        propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
+        propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
+
+        when(fileIO.readContentFromFile("TEST_PATH")).thenReturn("TEST_CONTENT");
+
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH", null, null, null)).thenThrow(new CucablePluginException(""));
+
+        List<Path> pathList = new ArrayList<>();
+        Path mockPath = mock(Path.class);
+        Path mockFilePath = mock(Path.class);
+        when(mockFilePath.toString()).thenReturn("FEATURE_FILE.feature");
+        when(mockPath.getFileName()).thenReturn(mockFilePath);
+        when(mockPath.toString()).thenReturn("TEST_PATH");
+        pathList.add(mockPath);
+        featureFileConverter.generateSingleScenarioFeatures(pathList);
+    }
+
+    @Test(expected = CucablePluginException.class)
+    public void invalidLineNumberTest() throws Exception {
+        propertyManager.setSourceFeatures("testscenario:2");
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH", null, null, null)).thenReturn(new ArrayList<>());
+
+        List<Path> pathList = new ArrayList<>();
+        Path mockPath = mock(Path.class);
+        Path mockFilePath = mock(Path.class);
+        when(mockFilePath.toString()).thenReturn("FEATURE_FILE.feature");
+        when(mockPath.getFileName()).thenReturn(mockFilePath);
+        when(mockPath.toString()).thenReturn("TEST_PATH");
+        pathList.add(mockPath);
+        featureFileConverter.generateSingleScenarioFeatures(pathList);
+    }
+
     @Test
-    public void testConvertToSingleScenariosAndRunners() throws Exception {
+    public void convertToSingleScenariosAndRunnersTest() throws Exception {
         String generatedFeatureDir = testFolder.getRoot().getPath().concat("/features/");
         String generatedRunnerDir = testFolder.getRoot().getPath().concat("/runners/");
 
@@ -98,5 +138,40 @@ public class FeatureFileConverterTest {
         featureFileConverter.generateSingleScenarioFeatures(pathList);
 
         verify(fileIO, times(2)).writeContentToFile(anyString(), anyString());
+    }
+
+    @Test
+    public void convertToSingleScenariosAndMultiRunnersTest() throws Exception {
+        String generatedFeatureDir = testFolder.getRoot().getPath().concat("/features/");
+        String generatedRunnerDir = testFolder.getRoot().getPath().concat("/runners/");
+
+        propertyManager.setNumberOfTestRuns(1);
+        propertyManager.setDesiredNumberOfRunners(1);
+        propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
+        propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
+
+        when(fileIO.readContentFromFile("TEST_PATH")).thenReturn("TEST_CONTENT");
+
+        List<SingleScenario> scenarioList = new ArrayList<>();
+        SingleScenario singleScenario = new SingleScenario("feature", "", "", "featureDescription", "name", "scenarioDescription", new ArrayList<>(), new ArrayList<>());
+        scenarioList.add(singleScenario);
+        scenarioList.add(singleScenario);
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH", null, null, null)).thenReturn(scenarioList);
+
+        String featureFileContent = "test";
+        when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
+
+        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class))).thenReturn("RUNNER_CONTENT");
+
+        List<Path> pathList = new ArrayList<>();
+        Path mockPath = mock(Path.class);
+        Path mockFilePath = mock(Path.class);
+        when(mockFilePath.toString()).thenReturn("FEATURE_FILE.feature");
+        when(mockPath.getFileName()).thenReturn(mockFilePath);
+        when(mockPath.toString()).thenReturn("TEST_PATH");
+        pathList.add(mockPath);
+        featureFileConverter.generateSingleScenarioFeatures(pathList);
+
+        verify(fileIO, times(3)).writeContentToFile(anyString(), anyString());
     }
 }
