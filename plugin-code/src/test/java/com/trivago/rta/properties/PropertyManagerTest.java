@@ -9,7 +9,9 @@ import org.junit.Test;
 import org.junit.rules.ExpectedException;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.COMPACT;
 import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.DEFAULT;
@@ -108,6 +110,11 @@ public class PropertyManagerTest {
         includeScenarioTags.add("include2");
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
 
+        Map<String, String> customPlaceholders = new HashMap<>();
+        customPlaceholders.put("key1", "value1");
+        customPlaceholders.put("key2", "value2");
+        propertyManager.setCustomPlaceholders(customPlaceholders);
+
         propertyManager.setSourceFeatures("test.feature:3");
         propertyManager.setDesiredNumberOfRunners(2);
 
@@ -116,6 +123,11 @@ public class PropertyManagerTest {
         verify(logger, times(1)).info("                              with line number(s) [3]", DEFAULT, COMPACT);
         verify(logger, times(1)).info("- include scenario tag(s)   : include1, include2", DEFAULT, COMPACT);
         verify(logger, times(1)).info("- exclude scenario tag(s)   : exclude1, exclude2", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("- sourceRunnerTemplateFile  : null", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("- generatedRunnerDirectory  : null", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("- custom placeholder(s)     :", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("  key1 => value1", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("  key2 => value2", DEFAULT, COMPACT);
         verify(logger, times(1)).info("- desiredNumberOfRunners    : 2", DEFAULT, COMPACT);
     }
 

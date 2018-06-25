@@ -63,7 +63,7 @@ public class CucableLogger {
      *
      * @param logString The {@link String} to be logged.
      */
-    private void warn(final CharSequence logString) {
+    public void warn(final CharSequence logString) {
         CucableLogLevel[] logLevels =
                 new CucableLogLevel[]{CucableLogLevel.DEFAULT, CucableLogLevel.COMPACT, CucableLogLevel.MINIMAL};
         log(LogLevel.WARN, logString, logLevels);

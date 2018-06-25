@@ -5,4 +5,5 @@ import cucumber.api.CucumberOptions;
         plugin = {"json:target/cucumber-report/[CUCABLE:RUNNER].json"}
 )
 public class [CUCABLE:RUNNER] {
+    // [CUCABLE:CUSTOM:comment]
 }

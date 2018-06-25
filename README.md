@@ -119,6 +119,50 @@ The `[CUCABLE:FEATURE]` can be placed in the `feature` option of the `@CucumberO
 
 Cucable will automatically detect the string containing the `[CUCABLE:FEATURE]` placeholder and use this to generate one line for each feature this runner should trigger.
 
+### Custom template placeholders
+
+In some cases, you may need to set custom values that should be written to your template files.
+
+In this case, just add a block to your POM file:
+
+```
+<customPlaceholders>
+    <somename>Any value</somename>
+    <foo>bar</foo>
+</customPlaceholders>
+
+```
+
+These custom placeholders can be used anywhere in your template:
+
+<pre>
+import cucumber.api.CucumberOptions;
+
+@CucumberOptions(
+        features = {"target/parallel/features/[CUCABLE:FEATURE].feature"},
+        plugin = {"json:target/cucumber-report/<b>[CUCABLE:CUSTOM:foo]</b>.json"}
+)
+public class [CUCABLE:RUNNER] {
+    // <b>[CUCABLE:CUSTOM:somename]</b>
+}
+</pre>
+
+In this case the result would be
+
+<pre>
+import cucumber.api.CucumberOptions;
+
+@CucumberOptions(
+        features = {"target/parallel/features/[CUCABLE:FEATURE].feature"},
+        plugin = {"json:target/cucumber-report/<b>bar</b>.json"}
+)
+public class [CUCABLE:RUNNER] {
+    // <b>Any value</b>
+}
+</pre>
+
+**Note:** The custom placeholder names are case sensitive!
+
 ## One runner per generated scenario
 
 This is the default mode of Cucable. Having multiple runners that run one "single scenario" feature each is best for parallelization with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/).

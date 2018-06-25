@@ -6,7 +6,7 @@
 
     <groupId>de.benjamin-bischoff</groupId>
     <artifactId>cucable-test-project</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -53,6 +53,11 @@
                     <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
                     <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
 
+                    <!-- Custom data that is available in Cucable placeholders in a template -->
+                    <customPlaceholders>
+                        <comment>This should appear inside the template</comment>
+                    </customPlaceholders>
+
                     <!-- include scenarios with certain tags -->
                     <!--<includeScenarioTags>-->
                     <!--<param>@scenarioTag1</param>-->
@@ -70,7 +75,7 @@
 
                     <!-- if this is set, a fixed number of runners is generated and
                          all features will be distributed round-robin to the generated runners. -->
-                    <!--<desiredNumberOfRunners>2</desiredNumberOfRunners>-->
+                    <desiredNumberOfRunners>2</desiredNumberOfRunners>
 
                     <!-- optional log level -->
                     <!--<logLevel>default</logLevel>-->

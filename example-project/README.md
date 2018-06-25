@@ -1,3 +1,13 @@
+<!-- START doctoc generated TOC please keep comment here to allow auto update -->
+<!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
+**Table of Contents**  *generated with [DocToc](https://github.com/thlorenz/doctoc)*
+
+- [cucable-test-project](#cucable-test-project)
+  - [Change plugin configuration](#change-plugin-configuration)
+  - [Run the project](#run-the-project)
+
+<!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 # cucable-test-project
 
 Test project to simulate the behavior of Cucable - a Maven plugin for [Cucumber](https://cucumber.io) scenarios that simplifies parallel test runs.
