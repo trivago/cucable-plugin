@@ -6,11 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
-## [Unreleased]
+## [1.1.0] - 2018-06-25
 
 ### Added
 
-- Support for custom template placeholders
+- Support for custom template placeholders via `[CUCABLE:CUSTOM:xxx]`
 
 ## [1.0.0] - 2018-05-18
 
@@ -165,6 +165,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[1.1.0]: https://github.com/trivago/cucable-plugin/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/trivago/cucable-plugin/compare/0.1.11...1.0.0
 [0.1.11]: https://github.com/trivago/cucable-plugin/compare/0.1.10...0.1.11
 [0.1.10]: https://github.com/trivago/cucable-plugin/compare/0.1.9...0.1.10
