@@ -75,7 +75,7 @@
 
                     <!-- if this is set, a fixed number of runners is generated and
                          all features will be distributed round-robin to the generated runners. -->
-                    <!--<desiredNumberOfRunners>2</desiredNumberOfRunners>-->
+                    <desiredNumberOfRunners>2</desiredNumberOfRunners>
 
                     <!-- optional log level -->
                     <!--<logLevel>default</logLevel>-->
