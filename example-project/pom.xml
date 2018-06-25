@@ -6,7 +6,7 @@
 
     <groupId>de.benjamin-bischoff</groupId>
     <artifactId>cucable-test-project</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -52,6 +52,11 @@
 
                     <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
                     <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
+
+                    <!-- Custom data that is available in Cucable placeholders in a template -->
+                    <customPlaceholders>
+                        <comment>This should appear inside the template</comment>
+                    </customPlaceholders>
 
                     <!-- include scenarios with certain tags -->
                     <!--<includeScenarioTags>-->

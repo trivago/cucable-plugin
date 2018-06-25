@@ -27,6 +27,7 @@ import org.apache.maven.plugins.annotations.Parameter;
 
 import javax.inject.Inject;
 import java.util.List;
+import java.util.Map;
 
 /**
  * The main plugin class.
@@ -96,6 +97,13 @@ final class CucablePlugin extends AbstractMojo {
     @Parameter(property = "parallel.logLevel")
     private String logLevel = "default";
 
+    /**
+     * Optional custom parameters that are available inside the specified template file.
+     * For example, the custom parameter <test>1</test> will be available as [CUCABLE:CUSTOM:test].
+     */
+    @Parameter(property = "parallel.customPlaceholders")
+    private Map<String, String> customPlaceholders;
+
     @Inject
     public CucablePlugin(
             PropertyManager propertyManager,
@@ -127,6 +135,7 @@ final class CucablePlugin extends AbstractMojo {
         propertyManager.setNumberOfTestRuns(numberOfTestRuns);
         propertyManager.setExcludeScenarioTags(excludeScenarioTags);
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
+        propertyManager.setCustomPlaceholders(customPlaceholders);
         propertyManager.setDesiredNumberOfRunners(desiredNumberOfRunners);
         propertyManager.validateSettings();
 

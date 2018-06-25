@@ -6,11 +6,11 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-plugin</artifactId>
-    <version>1.0.0</version>
+    <version>1.1.0</version>
     <url>https://github.com/trivago/cucable-plugin</url>
 
     <name>Cucable Maven Plugin</name>
-    <description>Plugin for slicing Cucumber features into single scenario feature files for parallel test execution.
+    <description>Plugin for slicing Cucumber features into the smallest possible parts for parallel test execution.
     </description>
 
     <inceptionYear>2017</inceptionYear>

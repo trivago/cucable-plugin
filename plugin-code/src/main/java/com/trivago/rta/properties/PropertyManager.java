@@ -25,6 +25,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -44,6 +45,7 @@ public class PropertyManager {
     private int numberOfTestRuns;
     private List<String> includeScenarioTags;
     private List<String> excludeScenarioTags;
+    private Map<String, String> customPlaceholders;
     private int desiredNumberOfRunners;
 
     @Inject
@@ -128,6 +130,14 @@ public class PropertyManager {
         this.includeScenarioTags = includeScenarioTags;
     }
 
+    public void setCustomPlaceholders(final Map<String, String> customPlaceholders) {
+        this.customPlaceholders = customPlaceholders;
+    }
+
+    public Map<String, String> getCustomPlaceholders() {
+        return customPlaceholders;
+    }
+
     public int getDesiredNumberOfRunners() {
         return desiredNumberOfRunners;
     }
@@ -173,9 +183,19 @@ public class PropertyManager {
             logger.info(String.format("- include scenario tag(s)   : %s",
                     String.join(", ", includeScenarioTags)), logLevels);
         }
-        if (excludeScenarioTags != null && !includeScenarioTags.isEmpty()) {
+        if (excludeScenarioTags != null && !excludeScenarioTags.isEmpty()) {
             logger.info(String.format("- exclude scenario tag(s)   : %s",
                     String.join(", ", excludeScenarioTags)), logLevels);
+        }
+
+        if (customPlaceholders != null && !customPlaceholders.isEmpty()) {
+            logger.info("- custom placeholder(s)     :", logLevels);
+            for (Map.Entry<String, String> customPlaceholder : customPlaceholders.entrySet()) {
+                logger.info(
+                        String.format("  %s => %s", customPlaceholder.getKey(), customPlaceholder.getValue()),
+                        logLevels
+                );
+            }
         }
 
         logger.info(String.format("- generatedFeatureDirectory : %s", generatedFeatureDirectory), logLevels);
@@ -186,9 +206,7 @@ public class PropertyManager {
         }
 
         logger.info("-------------------------------------", logLevels);
-
     }
-
 
     /**
      * Checks a list of tags for missing '@' prefixes

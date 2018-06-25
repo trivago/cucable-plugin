@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [Unreleased]
+
+### Added
+
+- Support for custom template placeholders
+
 ## [1.0.0] - 2018-05-18
 
 ### Added
