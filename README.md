@@ -22,6 +22,7 @@
   - [Template placeholders](#template-placeholders)
     - [[CUCABLE:RUNNER]](#cucablerunner)
     - [[CUCABLE:FEATURE]](#cucablefeature)
+    - [Custom template placeholders](#custom-template-placeholders)
   - [One runner per generated scenario](#one-runner-per-generated-scenario)
   - [One runner per group of generated scenarios](#one-runner-per-group-of-generated-scenarios)
 - [Typical workflow](#typical-workflow)
