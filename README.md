@@ -22,7 +22,7 @@
   - [Template placeholders](#template-placeholders)
     - [[CUCABLE:RUNNER]](#cucablerunner)
     - [[CUCABLE:FEATURE]](#cucablefeature)
-    - [Custom template placeholders](#custom-template-placeholders)
+    - [Custom template placeholders - [CUCABLE:CUSTOM:xxx]](#custom-template-placeholders---cucablecustomxxx)
   - [One runner per generated scenario](#one-runner-per-generated-scenario)
   - [One runner per group of generated scenarios](#one-runner-per-group-of-generated-scenarios)
 - [Typical workflow](#typical-workflow)
@@ -120,7 +120,7 @@ The `[CUCABLE:FEATURE]` can be placed in the `feature` option of the `@CucumberO
 
 Cucable will automatically detect the string containing the `[CUCABLE:FEATURE]` placeholder and use this to generate one line for each feature this runner should trigger.
 
-### Custom template placeholders
+### Custom template placeholders - [CUCABLE:CUSTOM:xxx]
 
 In some cases, you may need to set custom values that should be written to your template files.
 
