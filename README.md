@@ -49,7 +49,7 @@
   - [2. Running the generated tests with Maven failsafe](#2-running-the-generated-tests-with-maven-failsafe)
   - [3. Aggregation of a single test report after all test runs](#3-aggregation-of-a-single-test-report-after-all-test-runs)
 - [Example project](#example-project)
-- [Additional Information](#additional-information)
+- [Appendix](#appendix)
   - [Building](#building)
   - [License](#license)
   - [Credits](#credits)
@@ -630,7 +630,7 @@ We use the [Cluecumber](https://github.com/trivago/cluecumber-report-plugin) plu
 
 You can test the complete flow and POM configuration by checking out the [Cucable example project](example-project).
 
-# Additional Information
+# Appendix
 
 ## Building
 
@@ -650,7 +650,3 @@ Unless required by applicable law or agreed to in writing, software distributed 
 ## Credits
 
 This plugin was inspired by the [Cucumber Slices Maven Plugin](https://github.com/DisneyStudios/cucumber-slices-maven-plugin).
-
-This project is being tested on
-
-[![Browserstack](documentation/img/browserstack.png)](http://browserstack.com)
