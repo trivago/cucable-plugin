@@ -74,7 +74,7 @@
                     <!--<numberOfTestRuns>1</numberOfTestRuns>-->
 
                     <!-- optional: generate fixed number of runners and distribute all features round-robin. -->
-                    <desiredNumberOfRunners>2</desiredNumberOfRunners>
+                    <!--<desiredNumberOfRunners>2</desiredNumberOfRunners>-->
 
                     <!-- optional: Cucable log level -->
                     <!--<logLevel>default</logLevel>-->

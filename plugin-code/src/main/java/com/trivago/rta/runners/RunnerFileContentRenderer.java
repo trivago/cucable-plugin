@@ -32,14 +32,14 @@ import java.util.regex.Pattern;
 
 @Singleton
 public class RunnerFileContentRenderer {
-    private static final String FEATURE_FILE_NAME_PLACEHOLDERs = "[FEATURE_FILE_NAME]";
+    private static final String FEATURE_FILE_NAME_PLACEHOLDER = "[FEATURE_FILE_NAME]";
     private static final String CUCABLE_FEATURE_PLACEHOLDER = "[CUCABLE:FEATURE]";
     private static final String CUCABLE_RUNNER_PLACEHOLDER = "[CUCABLE:RUNNER]";
     private static final String CUCABLE_CUSTOM_PLACEHOLDER = "[CUCABLE:CUSTOM:%s]";
 
     private final FileIO fileIO;
-    private PropertyManager propertyManager;
-    private CucableLogger logger;
+    private final PropertyManager propertyManager;
+    private final CucableLogger logger;
 
     @Inject
     public RunnerFileContentRenderer(
@@ -87,8 +87,8 @@ public class RunnerFileContentRenderer {
      */
     private void checkForPlaceholderErrors(final String runnerFileContentString) throws CucablePluginException {
         // Catch legacy placeholder usage
-        if (runnerFileContentString.contains(FEATURE_FILE_NAME_PLACEHOLDERs)) {
-            throw new CucablePluginException("The " + FEATURE_FILE_NAME_PLACEHOLDERs +
+        if (runnerFileContentString.contains(FEATURE_FILE_NAME_PLACEHOLDER)) {
+            throw new CucablePluginException("The " + FEATURE_FILE_NAME_PLACEHOLDER +
                     " placeholder is deprecated. Please use " + CUCABLE_FEATURE_PLACEHOLDER +
                     " or " + CUCABLE_RUNNER_PLACEHOLDER + " accordingly.");
         }
@@ -116,7 +116,6 @@ public class RunnerFileContentRenderer {
             for (Map.Entry<String, String> customPlaceholder : customPlaceholders.entrySet()) {
                 String placeholder = String.format(CUCABLE_CUSTOM_PLACEHOLDER, customPlaceholder.getKey().trim());
                 String newResultString = resultString.replace(placeholder, customPlaceholder.getValue());
-                ;
                 if (newResultString.equals(resultString)) {
                     logger.warn("Custom placeholder '" + placeholder + "' could not be found in your Cucable template.");
                 }
@@ -133,11 +132,9 @@ public class RunnerFileContentRenderer {
      * @param runnerFileContentString The source string.
      * @param featureFileNames        The list of feature file names.
      * @return The new string with the replaced feature placeholder.
-     * @throws CucablePluginException see {@link CucablePluginException}.
      */
     private String replaceFeatureFilePlaceholder(
-            final String runnerFileContentString,
-            final List<String> featureFileNames) throws CucablePluginException {
+            final String runnerFileContentString, final List<String> featureFileNames) {
 
         final String regex = "(\".*\\" + CUCABLE_FEATURE_PLACEHOLDER + ").*\"";
         final Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
