@@ -99,7 +99,7 @@ final class CucablePlugin extends AbstractMojo {
 
     /**
      * Optional custom parameters that are available inside the specified template file.
-     * For example, the custom parameter <test>1</test> will be available as [CUCABLE:CUSTOM:test].
+     * For example, the custom parameter &lt;test&gt;1&lt;/test&gt; will be available as [CUCABLE:CUSTOM:test].
      */
     @Parameter(property = "parallel.customPlaceholders")
     private Map<String, String> customPlaceholders;
