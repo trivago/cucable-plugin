@@ -99,6 +99,7 @@ public class FeatureFileConverter {
             allGeneratedFeaturePaths.addAll(generatedFeatureFilePaths);
             featureFileCounter += generatedFeatureFilePaths.size();
         }
+
         int runnerFileCounter = generateRunnerClasses(allGeneratedFeaturePaths, propertyManager.getDesiredNumberOfRunners());
         logger.info("-------------------------------------", DEFAULT);
         logger.info(
@@ -153,6 +154,7 @@ public class FeatureFileConverter {
 
         for (SingleScenario singleScenario : singleScenarios) {
             String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
+
             String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
             Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
             featureCounter++;
