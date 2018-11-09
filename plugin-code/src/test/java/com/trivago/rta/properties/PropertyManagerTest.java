@@ -63,14 +63,9 @@ public class PropertyManagerTest {
         expectedException.expect(CucablePluginException.class);
         expectedException.expectMessage("Tag 'noAtInFront' of type 'include' does not start with '@'.");
 
-        propertyManager.setSourceFeatures("-");
-        propertyManager.setSourceRunnerTemplateFile("-");
-        propertyManager.setGeneratedFeatureDirectory("-");
-        propertyManager.setGeneratedRunnerDirectory("-");
         List<String> tags = new ArrayList<>();
         tags.add("noAtInFront");
         propertyManager.setIncludeScenarioTags(tags);
-        propertyManager.validateSettings();
     }
 
     @Test
@@ -78,14 +73,9 @@ public class PropertyManagerTest {
         expectedException.expect(CucablePluginException.class);
         expectedException.expectMessage("Tag 'noAtInFront' of type 'exclude' does not start with '@'.");
 
-        propertyManager.setSourceFeatures("-");
-        propertyManager.setSourceRunnerTemplateFile("-");
-        propertyManager.setGeneratedFeatureDirectory("-");
-        propertyManager.setGeneratedRunnerDirectory("-");
         List<String> tags = new ArrayList<>();
         tags.add("noAtInFront");
         propertyManager.setExcludeScenarioTags(tags);
-        propertyManager.validateSettings();
     }
 
     @Test
@@ -99,15 +89,15 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void logExtendedPropertiesTest() {
+    public void logExtendedPropertiesTest() throws CucablePluginException {
         List<String> excludeScenarioTags = new ArrayList<>();
-        excludeScenarioTags.add("exclude1");
-        excludeScenarioTags.add("exclude2");
+        excludeScenarioTags.add("@exclude1");
+        excludeScenarioTags.add("@exclude2");
         propertyManager.setExcludeScenarioTags(excludeScenarioTags);
 
         List<String> includeScenarioTags = new ArrayList<>();
-        includeScenarioTags.add("include1");
-        includeScenarioTags.add("include2");
+        includeScenarioTags.add("@include1");
+        includeScenarioTags.add("@include2");
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
 
         Map<String, String> customPlaceholders = new HashMap<>();
@@ -120,9 +110,9 @@ public class PropertyManagerTest {
 
         propertyManager.logProperties();
         verify(logger, times(1)).info("- sourceFeature(s)          : test.feature", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("                              with line number(s) [3]", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("- include scenario tag(s)   : include1, include2", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("- exclude scenario tag(s)   : exclude1, exclude2", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("                              with line number(s) 3", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("- include scenario tag(s)   : @include1, @include2", DEFAULT, COMPACT);
+        verify(logger, times(1)).info("- exclude scenario tag(s)   : @exclude1, @exclude2", DEFAULT, COMPACT);
         verify(logger, times(1)).info("- sourceRunnerTemplateFile  : null", DEFAULT, COMPACT);
         verify(logger, times(1)).info("- generatedRunnerDirectory  : null", DEFAULT, COMPACT);
         verify(logger, times(1)).info("- custom placeholder(s)     :", DEFAULT, COMPACT);
@@ -135,7 +125,7 @@ public class PropertyManagerTest {
     public void logMissingPropertiesTest() throws CucablePluginException {
         expectedException.expect(WrongOrMissingPropertiesException.class);
         expectedException.expectMessage("Properties not specified correctly in the configuration section of your pom file: [<sourceRunnerTemplateFile>, <generatedRunnerDirectory>, <sourceFeatures>, <generatedFeatureDirectory>]");
-        propertyManager.validateSettings();
+        propertyManager.checkForMissingMandatoryProperties();
 
     }
 }

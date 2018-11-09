@@ -88,13 +88,14 @@ public class FeatureFileConverter {
      * @param featureFilePaths feature files to process
      * @throws CucablePluginException see {@link CucablePluginException}
      */
-    public void generateSingleScenarioFeatures(
+    public void generateParallelizableFeatures(
             final List<Path> featureFilePaths) throws CucablePluginException {
+
         int featureFileCounter = 0;
         List<String> allGeneratedFeaturePaths = new ArrayList<>();
 
         for (Path featureFilePath : featureFilePaths) {
-            List<String> generatedFeatureFilePaths = generateSingleScenarioFeatures(featureFilePath);
+            List<String> generatedFeatureFilePaths = generateParallelizableFeatures(featureFilePath);
             allGeneratedFeaturePaths.addAll(generatedFeatureFilePaths);
             featureFileCounter += generatedFeatureFilePaths.size();
         }
@@ -114,7 +115,7 @@ public class FeatureFileConverter {
      * @return Number of created scenarios.
      * @throws CucablePluginException see {@link CucablePluginException}
      */
-    private List<String> generateSingleScenarioFeatures(final Path sourceFeatureFilePath)
+    private List<String> generateParallelizableFeatures(final Path sourceFeatureFilePath)
             throws CucablePluginException {
         String featureFilePathString = sourceFeatureFilePath.toString();
 

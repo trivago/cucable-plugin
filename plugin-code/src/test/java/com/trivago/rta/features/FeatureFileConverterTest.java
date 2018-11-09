@@ -66,7 +66,7 @@ public class FeatureFileConverterTest {
         when(mockPath.getFileName()).thenReturn(mockFilePath);
         when(mockPath.toString()).thenReturn("");
         pathList.add(mockPath);
-        featureFileConverter.generateSingleScenarioFeatures(pathList);
+        featureFileConverter.generateParallelizableFeatures(pathList);
     }
 
     @Test(expected = FeatureFileParseException.class)
@@ -89,7 +89,7 @@ public class FeatureFileConverterTest {
         when(mockPath.getFileName()).thenReturn(mockFilePath);
         when(mockPath.toString()).thenReturn("TEST_PATH");
         pathList.add(mockPath);
-        featureFileConverter.generateSingleScenarioFeatures(pathList);
+        featureFileConverter.generateParallelizableFeatures(pathList);
     }
 
     @Test(expected = CucablePluginException.class)
@@ -104,7 +104,7 @@ public class FeatureFileConverterTest {
         when(mockPath.getFileName()).thenReturn(mockFilePath);
         when(mockPath.toString()).thenReturn("TEST_PATH");
         pathList.add(mockPath);
-        featureFileConverter.generateSingleScenarioFeatures(pathList);
+        featureFileConverter.generateParallelizableFeatures(pathList);
     }
 
     @Test
@@ -135,7 +135,7 @@ public class FeatureFileConverterTest {
         when(mockPath.getFileName()).thenReturn(mockFilePath);
         when(mockPath.toString()).thenReturn("TEST_PATH");
         pathList.add(mockPath);
-        featureFileConverter.generateSingleScenarioFeatures(pathList);
+        featureFileConverter.generateParallelizableFeatures(pathList);
 
         verify(fileIO, times(2)).writeContentToFile(anyString(), anyString());
     }
@@ -170,7 +170,7 @@ public class FeatureFileConverterTest {
         when(mockPath.getFileName()).thenReturn(mockFilePath);
         when(mockPath.toString()).thenReturn("TEST_PATH");
         pathList.add(mockPath);
-        featureFileConverter.generateSingleScenarioFeatures(pathList);
+        featureFileConverter.generateParallelizableFeatures(pathList);
 
         verify(fileIO, times(3)).writeContentToFile(anyString(), anyString());
     }
