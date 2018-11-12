@@ -35,6 +35,38 @@ public class PropertyManagerTest {
     }
 
     @Test
+    public void customPlaceholdersTest() {
+        Map<String, String> customPlaceholders = new HashMap<>();
+        customPlaceholders.put("one", "two");
+        customPlaceholders.put("three", "four");
+        propertyManager.setCustomPlaceholders(customPlaceholders);
+        assertThat(propertyManager.getCustomPlaceholders().size(), is(2));
+        assertThat(propertyManager.getCustomPlaceholders().get("one"), is("two"));
+        assertThat(propertyManager.getCustomPlaceholders().get("three"), is("four"));
+    }
+
+    @Test
+    public void sourceRunnerTemplateFileTest() {
+        propertyManager.setSourceRunnerTemplateFile("myTemplate");
+        assertThat(propertyManager.getSourceRunnerTemplateFile(), is("myTemplate"));
+    }
+
+    @Test
+    public void parallelizationModeTest() throws CucablePluginException {
+        propertyManager.setParallelizationMode("features");
+        assertThat(propertyManager.getParallelizationMode(), is(PropertyManager.ParallelizationMode.FEATURES));
+        propertyManager.setParallelizationMode("scenarios");
+        assertThat(propertyManager.getParallelizationMode(), is(PropertyManager.ParallelizationMode.SCENARIOS));
+    }
+
+    @Test
+    public void wrongParallelizationModeTest() throws CucablePluginException {
+        expectedException.expect(CucablePluginException.class);
+        expectedException.expectMessage("Unknown parallelizationMode 'unknown'. Please use 'scenarios' or 'features'.");
+        propertyManager.setParallelizationMode("unknown");
+    }
+
+    @Test
     public void featureWithoutScenarioLineNumberTest() {
         propertyManager.setSourceFeatures("my.feature");
         assertThat(propertyManager.getSourceFeatures(), is("my.feature"));

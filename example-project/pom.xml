@@ -71,7 +71,7 @@
 
                     <!-- optional: change parallelization mode of Cucable (default: "scenarios")-->
                     <!--<parallelizationMode>scenarios</parallelizationMode>-->
-                    <parallelizationMode>features</parallelizationMode>
+                    <!--<parallelizationMode>features</parallelizationMode>-->
 
                     <!-- optional: number of test runs to create runners and features multiple times
                          if set to a number greater than 1 -->
