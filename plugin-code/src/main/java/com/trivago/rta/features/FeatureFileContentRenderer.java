@@ -46,6 +46,7 @@ public class FeatureFileContentRenderer {
         );
 
         for (SingleScenario singleScenario : singleScenarios) {
+            renderedContent.append(LINE_SEPARATOR);
             addTags(renderedContent, singleScenario.getScenarioTags());
             addNameAndDescription(
                 renderedContent,
@@ -134,7 +135,7 @@ public class FeatureFileContentRenderer {
         if (description != null && !description.isEmpty()) {
             stringBuilder.append(LINE_SEPARATOR).append(description);
         }
-        stringBuilder.append(LINE_SEPARATOR).append(LINE_SEPARATOR);
+        stringBuilder.append(LINE_SEPARATOR);
 
     }
 

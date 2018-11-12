@@ -184,8 +184,6 @@ public class FeatureFileConverter {
         if (propertyManager.getParallelizationMode() == SCENARIOS) {
             // Default parallelization mode
             for (SingleScenario singleScenario : singleScenarios) {
-                String renderedFeatureFileContent =
-                        featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
                 String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
                 Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
                 featureCounter++;
@@ -197,18 +195,17 @@ public class FeatureFileConverter {
                                     .concat(scenarioCounterFilenamePart)
                                     .concat(testRunsCounterFilenamePart)
                                     .concat(INTEGRATION_TEST_POSTFIX);
-
-                    saveFeature(generatedFileName, renderedFeatureFileContent);
+                    saveFeature(
+                            generatedFileName,
+                            featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)
+                    );
                     generatedFeaturePaths.add(generatedFileName);
-
                     singleFeatureCounters.put(featureFileName, featureCounter);
                 }
             }
         } else {
             // Only parallelize complete features
             String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
-            String renderedFeatureFileContent =
-                    featureFileContentRenderer.getRenderedFeatureFileContent(singleScenarios);
             for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
                 String testRunsCounterFilenamePart = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
                 String generatedFileName =
@@ -216,8 +213,10 @@ public class FeatureFileConverter {
                                 .concat(FEATURE_FORMAT)
                                 .concat(testRunsCounterFilenamePart)
                                 .concat(INTEGRATION_TEST_POSTFIX);
-
-                saveFeature(generatedFileName, renderedFeatureFileContent);
+                saveFeature(
+                        generatedFileName,
+                        featureFileContentRenderer.getRenderedFeatureFileContent(singleScenarios)
+                );
                 generatedFeaturePaths.add(generatedFileName);
             }
         }
