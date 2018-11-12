@@ -78,7 +78,7 @@
         <maven.compiler.target>1.8</maven.compiler.target>
         <gherkin.version>5.1.0</gherkin.version>
 
-        <mockito.version>2.16.0</mockito.version>
+        <mockito.version>2.23.0</mockito.version>
         <junit.version>4.12</junit.version>
         <openpojo.version>0.8.10</openpojo.version>
     </properties>
