@@ -150,7 +150,7 @@ public class FeatureFileConverter {
             throw new CucablePluginException("There is no parsable scenario or scenario outline at line " + lineNumbers);
         }
 
-        if (propertyManager.getParallelizationMode() == PropertyManager.ParallelizationMode.SCENARIOS){
+        if (propertyManager.getParallelizationMode() == PropertyManager.ParallelizationMode.SCENARIOS) {
             return processParallelScenariosAndRunners(sourceFeatureFilePath, singleScenarios);
         }
 
@@ -159,10 +159,11 @@ public class FeatureFileConverter {
 
     /**
      * Write a single scenario feature to a new file and return a list of generated file paths for later runner creation.
+     *
      * @param sourceFeatureFilePath The complete path to the source feature.
-     * @param singleScenarios a list of single scenarios.
+     * @param singleScenarios       a list of single scenarios.
      * @return A list of generated feature file paths.
-     * @throws FileCreationException
+     * @throws FileCreationException Thrown if the feature file cannot be created.
      */
     private List<String> processParallelScenariosAndRunners(final Path sourceFeatureFilePath, final List<SingleScenario> singleScenarios) throws FileCreationException {
         // Stores all generated feature file names and associated source feature paths for later runner creation
