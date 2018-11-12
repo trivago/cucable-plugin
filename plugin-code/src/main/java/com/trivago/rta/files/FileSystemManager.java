@@ -46,7 +46,7 @@ public class FileSystemManager {
     /**
      * Create generated feature and runner dirs if they don't exist and clear their contents.
      */
-    public void prepareGeneratedFeatureAndRunnerDirs() throws CucablePluginException {
+    public void prepareGeneratedFeatureAndRunnerDirectories() throws CucablePluginException {
         createDirIfNotExists(propertyManager.getGeneratedFeatureDirectory());
         removeFilesFromPath(propertyManager.getGeneratedFeatureDirectory(), "feature");
 

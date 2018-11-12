@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.2.0] - 2018-11-12
+
+### Added
+
+- New property `parallelizationMode` so that Cucable can optionally parallelize complete features instead of individual scenarios
+
+### Changed
+
+- Logging tweaks and removed code duplication
+
 ## [1.1.0] - 2018-06-25
 
 ### Added
@@ -165,6 +175,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[1.2.0]: https://github.com/trivago/cucable-plugin/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/trivago/cucable-plugin/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/trivago/cucable-plugin/compare/0.1.11...1.0.0
 [0.1.11]: https://github.com/trivago/cucable-plugin/compare/0.1.10...0.1.11

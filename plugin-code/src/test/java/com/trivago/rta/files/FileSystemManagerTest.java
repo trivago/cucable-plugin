@@ -39,7 +39,7 @@ public class FileSystemManagerTest {
     @Test(expected = PathCreationException.class)
     public void prepareGeneratedFeatureAndRunnerDirsMissingFeatureDirTest() throws Exception {
         when(propertyManager.getGeneratedFeatureDirectory()).thenReturn("");
-        fileSystemManager.prepareGeneratedFeatureAndRunnerDirs();
+        fileSystemManager.prepareGeneratedFeatureAndRunnerDirectories();
     }
 
     @Test(expected = PathCreationException.class)
@@ -47,7 +47,7 @@ public class FileSystemManagerTest {
         String featurePath = testFolder.getRoot().getPath().concat("/featureDir");
         when(propertyManager.getGeneratedFeatureDirectory()).thenReturn(featurePath);
         when(propertyManager.getGeneratedRunnerDirectory()).thenReturn("");
-        fileSystemManager.prepareGeneratedFeatureAndRunnerDirs();
+        fileSystemManager.prepareGeneratedFeatureAndRunnerDirectories();
     }
 
     @Test
@@ -56,7 +56,7 @@ public class FileSystemManagerTest {
         String runnerPath = testFolder.getRoot().getPath().concat("/runnerDir");
         when(propertyManager.getGeneratedFeatureDirectory()).thenReturn(featurePath);
         when(propertyManager.getGeneratedRunnerDirectory()).thenReturn(runnerPath);
-        fileSystemManager.prepareGeneratedFeatureAndRunnerDirs();
+        fileSystemManager.prepareGeneratedFeatureAndRunnerDirectories();
     }
 
     @Test(expected = NullPointerException.class)

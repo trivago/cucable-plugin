@@ -32,6 +32,7 @@ import java.util.Map;
 /**
  * The main plugin class.
  */
+@SuppressWarnings("FieldCanBeLocal")
 @Mojo(name = "parallel")
 final class CucablePlugin extends AbstractMojo {
 
@@ -85,6 +86,14 @@ final class CucablePlugin extends AbstractMojo {
     private List<String> excludeScenarioTags;
 
     /**
+     * Optional parallelization mode. By default, Cucable generates single scenarios (mode "scenarios").
+     * When this property is set to "features", each generated feature file will be an exact copy of its source feature
+     * so included scenarios are not split up and run in the same order.
+     */
+    @Parameter(property = "parallel.parallelizationMode", defaultValue = "scenarios")
+    private String parallelizationMode;
+
+    /**
      * Optional desired number of test runners that each run multiple features in sequence.
      */
     @Parameter(property = "parallel.desiredNumberOfRunners", defaultValue = "0")
@@ -135,19 +144,20 @@ final class CucablePlugin extends AbstractMojo {
         propertyManager.setNumberOfTestRuns(numberOfTestRuns);
         propertyManager.setExcludeScenarioTags(excludeScenarioTags);
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
+        propertyManager.setParallelizationMode(parallelizationMode);
         propertyManager.setCustomPlaceholders(customPlaceholders);
         propertyManager.setDesiredNumberOfRunners(desiredNumberOfRunners);
-        propertyManager.validateSettings();
+        propertyManager.checkForMissingMandatoryProperties();
 
         // Logging
         logHeader();
         propertyManager.logProperties();
 
         // Create the necessary directories if missing.
-        fileManager.prepareGeneratedFeatureAndRunnerDirs();
+        fileManager.prepareGeneratedFeatureAndRunnerDirectories();
 
         // Conversion of scenarios into single scenarios and runners.
-        featureFileConverter.generateSingleScenarioFeatures(fileManager.getFeatureFilePaths());
+        featureFileConverter.generateParallelizableFeatures(fileManager.getFeatureFilePaths());
     }
 
     /**
@@ -156,9 +166,9 @@ final class CucablePlugin extends AbstractMojo {
     private void logHeader() {
         CucableLogger.CucableLogLevel[] cucableLogLevels =
                 new CucableLogger.CucableLogLevel[]{CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT};
-        logger.info("-------------------------------------", cucableLogLevels);
+        logger.logInfoSeparator(cucableLogLevels);
         logger.info(String.format(" Cucable Maven Plugin, version %s", getClass().getPackage().getImplementationVersion()), cucableLogLevels);
-        logger.info("-------------------------------------", cucableLogLevels);
+        logger.logInfoSeparator(cucableLogLevels);
     }
 }
 

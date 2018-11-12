@@ -13,6 +13,6 @@ Feature: test feature 3
 
     Examples:
       | key | value | candy                |
-      | 1   | one   ||
+      | 1   | one   |                      |
       | 2   | two   | a bag of gummy bears |
       | 3   | three | a lollypop           |

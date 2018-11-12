@@ -38,6 +38,7 @@
       - [numberOfTestRuns](#numberoftestruns)
       - [includeScenarioTags](#includescenariotags)
       - [excludeScenarioTags](#excludescenariotags)
+      - [parallelizationMode](#parallelizationmode)
       - [logLevel](#loglevel)
       - [desiredNumberOfRunners](#desirednumberofrunners)
     - [Generating runners and features inside target directory](#generating-runners-and-features-inside-target-directory)
@@ -345,7 +346,7 @@ For each test run, the whole set of features and runners is generated like this:
 Optional scenario tags that __should be included__ in the feature and runner generation.
 To include multiple tags, just add each one into as its own ```<param>```:
 
-```
+```xml
 <includeScenarioTags>
     <param>@scenario1Tag1</param>
     <param>@scenario1Tag2</param>
@@ -360,15 +361,25 @@ This means that a scenario containing an included tag __and__ an excluded tag wi
 Optional scenario tags that __should not be included__ in the feature and runner generation.
 To include multiple tags, just add each one into as its own ```<param>```:
 
-```
+```xml
 <excludeScenarioTags>
     <param>@tag1</param>
     <param>@tag2</param>
 </excludeScenarioTags>
 ```
 
-__Note:__ When using _includeScenarioTags_ and _excludeScenarioTags_ together, the _excludeScenarioTags_ will override the _includeScenarioTags_.
+__Note:__ When using `includeScenarioTags` and `excludeScenarioTags` together, the `excludeScenarioTags` will override the `includeScenarioTags`.
 This means that a scenario containing an included tag __and__ an excluded tag will be __excluded__!
+
+#### parallelizationMode
+
+By default, Cucable uses the `parallelizationMode = scenarios` meaning that feature files are split into individual scenarios that each have a dedicated runner.
+
+Sometimes it may be desirable, to parallelize complete features. When setting the `parallelizationMode = features`, only complete features containing all of their source scenarios are generated so __each runner runs a complete feature__.
+
+```xml
+<parallelizationMode>features</parallelizationMode>
+```
 
 #### logLevel
 

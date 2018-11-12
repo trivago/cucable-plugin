@@ -34,7 +34,6 @@ public class FeatureFileContentRendererTest {
                 "@scenarioTag2\n" +
                 "Scenario: scenarioName\n" +
                 "scenarioDescription\n" +
-                "\n" +
                 "Step 1\n" +
                 "Step 2\n" +
                 "\n# Source feature: TESTPATH\n" +
@@ -73,7 +72,6 @@ public class FeatureFileContentRendererTest {
                 "@scenarioTag2\n" +
                 "Scenario: scenarioName\n" +
                 "scenarioDescription\n" +
-                "\n" +
                 "Step 1\n" +
                 "Step 2\n" +
                 "\n# Source feature: TESTPATH\n" +
@@ -107,7 +105,6 @@ public class FeatureFileContentRendererTest {
                 "\n" +
                 "Scenario: scenarioName\n" +
                 "scenarioDescription\n" +
-                "\n" +
                 "Step 1\n" +
                 "|cell11|cell12|cell13|\n" +
                 "|cell21|cell22|cell23|\n" +
@@ -140,7 +137,6 @@ public class FeatureFileContentRendererTest {
         String expectedOutput = "Feature: featureName\n" +
                 "\n" +
                 "Scenario: scenarioName\n" +
-                "\n" +
                 "Step 1\n" +
                 "\"\"\"\n" +
                 "DOCSTRING LINE 1\n" +
@@ -175,7 +171,6 @@ public class FeatureFileContentRendererTest {
                 "@scenarioTag2\n" +
                 "Scenario: scenarioName\n" +
                 "scenarioDescription\n" +
-                "\n" +
                 "Step 1\n" +
                 "Step 2\n" +
                 "\n# Source feature: c:/unknown/path\n" +

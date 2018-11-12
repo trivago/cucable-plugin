@@ -20,6 +20,7 @@ import com.trivago.rta.vo.DataTable;
 import com.trivago.rta.vo.SingleScenario;
 import com.trivago.rta.vo.Step;
 
+import java.util.Collections;
 import java.util.List;
 
 public class FeatureFileContentRenderer {
@@ -27,33 +28,47 @@ public class FeatureFileContentRenderer {
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
     /**
-     * Get the complete content that can be written to a valid feature file.
+     * Get the complete content based on multiple features that can be written to a valid feature file.
+     *
+     * @return the feature file content.
+     */
+    String getRenderedFeatureFileContent(List<SingleScenario> singleScenarios) {
+        StringBuilder renderedContent = new StringBuilder();
+
+        SingleScenario firstScenario = singleScenarios.get(0);
+
+        addLanguage(renderedContent, firstScenario.getFeatureLanguage());
+        addTags(renderedContent, firstScenario.getFeatureTags());
+        addNameAndDescription(
+                renderedContent,
+                firstScenario.getFeatureName(),
+                firstScenario.getFeatureDescription()
+        );
+
+        for (SingleScenario singleScenario : singleScenarios) {
+            renderedContent.append(LINE_SEPARATOR);
+            addTags(renderedContent, singleScenario.getScenarioTags());
+            addNameAndDescription(
+                renderedContent,
+                singleScenario.getScenarioName(),
+                singleScenario.getScenarioDescription()
+            );
+            addSteps(renderedContent, singleScenario.getBackgroundSteps());
+            addSteps(renderedContent, singleScenario.getSteps());
+
+        }
+
+        addComments(renderedContent, firstScenario.getFeatureFilePath());
+        return renderedContent.toString();
+    }
+
+    /**
+     * Get the complete content based on a single feature that can be written to a valid feature file.
      *
      * @return the feature file content.
      */
     String getRenderedFeatureFileContent(SingleScenario singleScenario) {
-        StringBuilder renderedContent = new StringBuilder();
-
-        addLanguage(renderedContent, singleScenario.getFeatureLanguage());
-        addTags(renderedContent, singleScenario.getFeatureTags());
-        addNameAndDescription(
-                renderedContent,
-                singleScenario.getFeatureName(),
-                singleScenario.getFeatureDescription()
-        );
-
-        addTags(renderedContent, singleScenario.getScenarioTags());
-        addNameAndDescription(
-                renderedContent,
-                singleScenario.getScenarioName(),
-                singleScenario.getScenarioDescription());
-
-        addSteps(renderedContent, singleScenario.getBackgroundSteps());
-        addSteps(renderedContent, singleScenario.getSteps());
-
-        addComments(renderedContent, singleScenario.getFeatureFilePath());
-
-        return renderedContent.toString();
+        return getRenderedFeatureFileContent(Collections.singletonList(singleScenario));
     }
 
     /**
@@ -120,7 +135,7 @@ public class FeatureFileContentRenderer {
         if (description != null && !description.isEmpty()) {
             stringBuilder.append(LINE_SEPARATOR).append(description);
         }
-        stringBuilder.append(LINE_SEPARATOR).append(LINE_SEPARATOR);
+        stringBuilder.append(LINE_SEPARATOR);
 
     }
 
