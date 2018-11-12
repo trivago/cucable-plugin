@@ -18,6 +18,7 @@ package com.trivago.rta.features;
 
 import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.exceptions.filesystem.FeatureFileParseException;
+import com.trivago.rta.exceptions.filesystem.FileCreationException;
 import com.trivago.rta.exceptions.filesystem.MissingFileException;
 import com.trivago.rta.files.FileIO;
 import com.trivago.rta.gherkin.GherkinDocumentParser;
@@ -149,12 +150,26 @@ public class FeatureFileConverter {
             throw new CucablePluginException("There is no parsable scenario or scenario outline at line " + lineNumbers);
         }
 
+        if (propertyManager.getParallelizationMode() == PropertyManager.ParallelizationMode.SCENARIOS){
+            return processParallelScenariosAndRunners(sourceFeatureFilePath, singleScenarios);
+        }
+
+        return new ArrayList<>();
+    }
+
+    /**
+     * Write a single scenario feature to a new file and return a list of generated file paths for later runner creation.
+     * @param sourceFeatureFilePath The complete path to the source feature.
+     * @param singleScenarios a list of single scenarios.
+     * @return A list of generated feature file paths.
+     * @throws FileCreationException
+     */
+    private List<String> processParallelScenariosAndRunners(final Path sourceFeatureFilePath, final List<SingleScenario> singleScenarios) throws FileCreationException {
         // Stores all generated feature file names and associated source feature paths for later runner creation
         List<String> generatedFeaturePaths = new ArrayList<>();
 
         for (SingleScenario singleScenario : singleScenarios) {
             String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
-
             String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
             Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
             featureCounter++;
@@ -184,7 +199,7 @@ public class FeatureFileConverter {
                 generatedFeaturePaths.add(generatedFileName);
             }
         }
-        logFeatureFileConversionMessage(featureFilePathString, singleScenarios.size());
+        logFeatureFileConversionMessage(sourceFeatureFilePath.toString(), singleScenarios.size());
         return generatedFeaturePaths;
     }
 

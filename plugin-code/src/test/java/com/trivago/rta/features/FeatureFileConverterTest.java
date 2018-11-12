@@ -115,6 +115,7 @@ public class FeatureFileConverterTest {
         propertyManager.setNumberOfTestRuns(1);
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
+        propertyManager.setParallelizationMode("scenarios");
 
         when(fileIO.readContentFromFile("TEST_PATH")).thenReturn("TEST_CONTENT");
 
@@ -149,6 +150,7 @@ public class FeatureFileConverterTest {
         propertyManager.setDesiredNumberOfRunners(1);
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
+        propertyManager.setParallelizationMode("scenarios");
 
         when(fileIO.readContentFromFile("TEST_PATH")).thenReturn("TEST_CONTENT");
 
