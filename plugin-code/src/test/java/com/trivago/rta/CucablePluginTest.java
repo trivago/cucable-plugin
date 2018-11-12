@@ -40,6 +40,7 @@ public class CucablePluginTest {
     public void logInvocationTest() throws Exception {
         cucablePlugin.execute();
         verify(logger, times(1)).initialize(mojoLogger, "default");
-        verify(logger, times(3)).info(anyString(), any(CucableLogger.CucableLogLevel.class));
+        verify(logger, times(1)).info(anyString(), any(CucableLogger.CucableLogLevel.class));
+        verify(logger, times(2)).logInfoSeparator(any(CucableLogger.CucableLogLevel.class));
     }
 }

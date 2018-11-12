@@ -32,7 +32,7 @@ public class FeatureFileContentRenderer {
      *
      * @return the feature file content.
      */
-    private String getRenderedFeatureFileContent(List<SingleScenario> singleScenarios) {
+    String getRenderedFeatureFileContent(List<SingleScenario> singleScenarios) {
         StringBuilder renderedContent = new StringBuilder();
 
         SingleScenario firstScenario = singleScenarios.get(0);

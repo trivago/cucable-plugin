@@ -48,6 +48,10 @@ public class CucableLogger {
         }
     }
 
+    public void logInfoSeparator(final CucableLogLevel... cucableLogLevels) {
+        info("-------------------------------------", cucableLogLevels);
+    }
+
     /**
      * Info logging based on the provided Cucable log levels.
      *

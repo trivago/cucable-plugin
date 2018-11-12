@@ -229,7 +229,7 @@ public class PropertyManager {
             logger.info(String.format("- desiredNumberOfRunners    : %d", desiredNumberOfRunners), logLevels);
         }
 
-        logger.info("-------------------------------------", logLevels);
+        logger.logInfoSeparator(logLevels);
     }
 
     /**

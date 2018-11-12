@@ -166,9 +166,9 @@ final class CucablePlugin extends AbstractMojo {
     private void logHeader() {
         CucableLogger.CucableLogLevel[] cucableLogLevels =
                 new CucableLogger.CucableLogLevel[]{CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT};
-        logger.info("-------------------------------------", cucableLogLevels);
+        logger.logInfoSeparator(cucableLogLevels);
         logger.info(String.format(" Cucable Maven Plugin, version %s", getClass().getPackage().getImplementationVersion()), cucableLogLevels);
-        logger.info("-------------------------------------", cucableLogLevels);
+        logger.logInfoSeparator(cucableLogLevels);
     }
 }
 
