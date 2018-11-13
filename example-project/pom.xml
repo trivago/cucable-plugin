@@ -11,14 +11,28 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.failsafe.plugin.version>2.20.1</maven.failsafe.plugin.version>
+        <maven.failsafe.plugin.version>2.22.1</maven.failsafe.plugin.version>
         <maven.build.helper.plugin.version>3.0.0</maven.build.helper.plugin.version>
         <junit.version>4.12</junit.version>
         <cucumber.version>4.2.0</cucumber.version>
+        <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
 
         <generated.runner.directory>${project.build.directory}/parallel/runners</generated.runner.directory>
         <generated.feature.directory>${project.build.directory}/parallel/features</generated.feature.directory>
     </properties>
+
+    <dependencies>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-java</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+        <dependency>
+            <groupId>io.cucumber</groupId>
+            <artifactId>cucumber-junit</artifactId>
+            <version>${cucumber.version}</version>
+        </dependency>
+    </dependencies>
 
     <build>
         <plugins>
@@ -55,7 +69,7 @@
 
                     <!-- optional: custom data that is available in Cucable placeholders in a template -->
                     <!--<customPlaceholders>-->
-                        <!--<comment>This should appear inside the template</comment>-->
+                    <!--    <comment>This should appear inside the template</comment>-->
                     <!--</customPlaceholders>-->
 
                     <!-- optional: include scenarios with certain tags -->
@@ -112,22 +126,27 @@
                 <version>${maven.failsafe.plugin.version}</version>
                 <executions>
                     <execution>
+                        <id>Run parallel tests</id>
+                        <phase>integration-test</phase>
                         <goals>
                             <goal>integration-test</goal>
                         </goals>
-                        <configuration>
-                            <forkCount>2</forkCount>
-                        </configuration>
                     </execution>
                 </executions>
+                <configuration>
+                    <forkCount>2</forkCount>
+                    <testFailureIgnore>true</testFailureIgnore>
+                </configuration>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-compiler-plugin</artifactId>
+                <version>${maven.compiler.plugin.version}</version>
+                <configuration>
+                    <source>8</source>
+                    <target>8</target>
+                </configuration>
             </plugin>
         </plugins>
     </build>
-    <dependencies>
-        <dependency>
-            <groupId>io.cucumber</groupId>
-            <artifactId>cucumber-java</artifactId>
-            <version>${cucumber.version}</version>
-        </dependency>
-    </dependencies>
 </project>
