@@ -8,7 +8,7 @@ Funcţionalitate: Bună ziua
 
   Structura scenariu: Mulțumesc foarte mult 2
     Date fiind Bună dimineața
-    Cand Scuzați-mă <test>!
+    Cand Scuzați-mă <test>
     Atunci Vă doresc o zi plăcută!
 
     Exemple:

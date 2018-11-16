@@ -10,7 +10,7 @@ Feature: Scenario with docstring
     First line
     Second line
     """
-    Then Account is created with data
+    Then Account is created with data!
     """
    {
 "user": "user@test.com",

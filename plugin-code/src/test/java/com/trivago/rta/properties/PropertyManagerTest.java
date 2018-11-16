@@ -7,17 +7,17 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.mockito.ArgumentCaptor;
 
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.COMPACT;
-import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.DEFAULT;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
@@ -62,7 +62,7 @@ public class PropertyManagerTest {
     @Test
     public void wrongParallelizationModeTest() throws CucablePluginException {
         expectedException.expect(CucablePluginException.class);
-        expectedException.expectMessage("Unknown parallelizationMode 'unknown'. Please use 'scenarios' or 'features'.");
+        expectedException.expectMessage("Unknown <parallelizationMode> 'unknown'. Please use 'scenarios' or 'features'.");
         propertyManager.setParallelizationMode("unknown");
     }
 
@@ -112,16 +112,22 @@ public class PropertyManagerTest {
 
     @Test
     public void logMandatoryPropertiesTest() {
+        ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
         propertyManager.logProperties();
-        verify(logger, times(1)).info("- sourceRunnerTemplateFile  : null", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("- generatedRunnerDirectory  : null", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("- sourceFeature(s)          : null", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("- generatedFeatureDirectory : null", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("- numberOfTestRuns          : 0", DEFAULT, COMPACT);
+        verify(logger, times(6)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
+        List<String> capturedLogs = logCaptor.getAllValues();
+        assertThat(capturedLogs.get(0), is("- sourceRunnerTemplateFile  : null"));
+        assertThat(capturedLogs.get(1), is("- generatedRunnerDirectory  : null"));
+        assertThat(capturedLogs.get(2), is("- sourceFeatures            : null"));
+        assertThat(capturedLogs.get(3), is("- parallelizationMode       : null"));
+        assertThat(capturedLogs.get(4), is("- generatedFeatureDirectory : null"));
+        assertThat(capturedLogs.get(5), is("- numberOfTestRuns          : 0"));
     }
 
     @Test
     public void logExtendedPropertiesTest() throws CucablePluginException {
+        ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
+
         List<String> excludeScenarioTags = new ArrayList<>();
         excludeScenarioTags.add("@exclude1");
         excludeScenarioTags.add("@exclude2");
@@ -141,16 +147,22 @@ public class PropertyManagerTest {
         propertyManager.setDesiredNumberOfRunners(2);
 
         propertyManager.logProperties();
-        verify(logger, times(1)).info("- sourceFeature(s)          : test.feature", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("                              with line number(s) 3", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("- include scenario tag(s)   : @include1, @include2", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("- exclude scenario tag(s)   : @exclude1, @exclude2", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("- sourceRunnerTemplateFile  : null", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("- generatedRunnerDirectory  : null", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("- custom placeholder(s)     :", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("  key1 => value1", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("  key2 => value2", DEFAULT, COMPACT);
-        verify(logger, times(1)).info("- desiredNumberOfRunners    : 2", DEFAULT, COMPACT);
+
+        verify(logger, times(13)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
+        List<String> capturedLogs = logCaptor.getAllValues();
+        assertThat(capturedLogs.get(0), is("- sourceRunnerTemplateFile  : null"));
+        assertThat(capturedLogs.get(1), is("- generatedRunnerDirectory  : null"));
+        assertThat(capturedLogs.get(2), is("- sourceFeatures            : test.feature"));
+        assertThat(capturedLogs.get(3), is("                              with line number 3"));
+        assertThat(capturedLogs.get(4), is("- includeScenarioTags       : @include1, @include2"));
+        assertThat(capturedLogs.get(5), is("- excludeScenarioTags       : @exclude1, @exclude2"));
+        assertThat(capturedLogs.get(6), is("- parallelizationMode       : null"));
+        assertThat(capturedLogs.get(7), is("- customPlaceholders        :"));
+        assertThat(capturedLogs.get(8), is("  key1 => value1"));
+        assertThat(capturedLogs.get(9), is("  key2 => value2"));
+        assertThat(capturedLogs.get(10), is("- generatedFeatureDirectory : null"));
+        assertThat(capturedLogs.get(11), is("- numberOfTestRuns          : 0"));
+        assertThat(capturedLogs.get(12), is("- desiredNumberOfRunners    : 2"));
     }
 
     @Test

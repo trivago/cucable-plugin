@@ -5,14 +5,22 @@ Feature: test feature 3
   @scenarioOutlineTag1
   @scenarioOutlineTag2
   Scenario Outline: This is a scenario outline with <candy>
-    Given this is step 1
+    Given this is step 1 with a data table
       | givenTable1 | givenTable2 |
     When I search for key <key>
     Then I see the value '<value>'
     And I get <candy>
 
+  @exampleTag1
     Examples:
       | key | value | candy                |
       | 1   | one   |                      |
       | 2   | two   | a bag of gummy bears |
       | 3   | three | a lollypop           |
+
+  @examples2
+    Examples:
+      | key | value | candy                |
+      | 1   | uno   |                      |
+      | 2   | dos   | a bag of gummy bears |
+      | 3   | tres  | a lollypop           |

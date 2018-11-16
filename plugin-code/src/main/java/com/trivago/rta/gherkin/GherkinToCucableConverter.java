@@ -50,7 +50,7 @@ public class GherkinToCucableConverter {
 
             Node argument = gherkinStep.getArgument();
             if (argument instanceof DataTable) {
-                dataTable = convertGherkinDataTableToCucumberDataTable((DataTable) argument);
+                dataTable = convertGherkinDataTableToCucableDataTable((DataTable) argument);
             } else if (argument instanceof DocString) {
                 docString = ((DocString) argument).getContent();
             }
@@ -68,7 +68,9 @@ public class GherkinToCucableConverter {
      * @param gherkinDataTable a {@link DataTable}.
      * @return a {@link com.trivago.rta.vo.DataTable}.
      */
-    private com.trivago.rta.vo.DataTable convertGherkinDataTableToCucumberDataTable(final DataTable gherkinDataTable) {
+    private com.trivago.rta.vo.DataTable convertGherkinDataTableToCucableDataTable(
+            final DataTable gherkinDataTable) {
+
         com.trivago.rta.vo.DataTable dataTable = new com.trivago.rta.vo.DataTable();
         for (TableRow row : gherkinDataTable.getRows()) {
             List<TableCell> cells = row.getCells();
@@ -101,7 +103,11 @@ public class GherkinToCucableConverter {
      * @param exampleTable a Gherkin {@link Examples} instance.
      * @return a map where the keys are the column headers and the values are lists of strings.
      */
-    Map<String, List<String>> convertGherkinExampleTableToCucableExampleMap(Examples exampleTable) {
+    Map<String, List<String>> convertGherkinExampleTableToCucableExampleMap(
+            final Examples exampleTable,
+            final List<String> includeScenarioTags,
+            final List<String> excludeScenarioTags
+    ) {
         Map<String, List<String>> exampleMap = new LinkedHashMap<>();
 
         List<TableCell> headerCells = exampleTable.getTableHeader().getCells();

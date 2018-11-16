@@ -23,6 +23,7 @@ import com.trivago.rta.exceptions.filesystem.MissingFileException;
 import com.trivago.rta.files.FileIO;
 import com.trivago.rta.gherkin.GherkinDocumentParser;
 import com.trivago.rta.logging.CucableLogger;
+import com.trivago.rta.logging.Language;
 import com.trivago.rta.properties.PropertyManager;
 import com.trivago.rta.runners.RunnerFileContentRenderer;
 import com.trivago.rta.vo.FeatureRunner;
@@ -108,17 +109,13 @@ public class FeatureFileConverter {
         );
 
         logger.logInfoSeparator(DEFAULT);
-        String singularOrPluralFeatureFile = "feature files";
-        if (featureFileCounter == 1) {
-            singularOrPluralFeatureFile = "feature file";
-        }
-        String singularOrPluralRunner = "runners";
-        if (runnerFileCounter == 1) {
-            singularOrPluralRunner = "runner";
-        }
         logger.info(
-                String.format("Cucable created %d separate %s and %d %s.", featureFileCounter,
-                        singularOrPluralFeatureFile, runnerFileCounter, singularOrPluralRunner),
+                String.format("Cucable created %d separate %s and %d %s.",
+                        featureFileCounter,
+                        Language.singularPlural(featureFileCounter, "feature file", "feature files"),
+                        runnerFileCounter,
+                        Language.singularPlural(runnerFileCounter, "runner", "runners")
+                ),
                 DEFAULT, COMPACT, MINIMAL
         );
     }
@@ -332,14 +329,13 @@ public class FeatureFileConverter {
         if (propertyManager.hasValidScenarioLineNumbers()) {
             logPostfix = String.format(" with line number(s) %s.", propertyManager.getScenarioLineNumbers());
         }
-
-        String singularOrPluralScenarioFrom = "scenarios from";
-        if (createdScenarios == 1) {
-            singularOrPluralScenarioFrom = " scenario from";
-        }
-
-        logger.info(String.format("- %3d %s %s%s",
-                createdScenarios, singularOrPluralScenarioFrom, featureFileName, logPostfix), DEFAULT);
+        logger.info(
+                String.format("- %3d %s %s%s",
+                        createdScenarios,
+                        Language.singularPlural(createdScenarios, " scenario from", "scenarios from"),
+                        featureFileName,
+                        logPostfix
+                ), DEFAULT);
     }
 
     /**
