@@ -5,11 +5,11 @@ Feature: test feature 3
   @scenarioOutlineTag1
   @scenarioOutlineTag2
   Scenario Outline: This is a scenario outline with <candy>
-    Given this is step 1 with a data table
+    Given I do something with data
       | givenTable1 | givenTable2 |
-    When I search for key <key>
-    Then I see the value '<value>'
-    And I get <candy>
+    When I do something
+    Then I expect a result
+    And I expect a second result
 
   @exampleTag1
     Examples:

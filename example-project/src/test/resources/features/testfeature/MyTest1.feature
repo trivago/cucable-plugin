@@ -1,24 +1,24 @@
 @featureTag
-Feature: test feature
+Feature: MyTest1
 
-  Scenario: This is a scenario without steps
+  Scenario: Scenario 1 in MyTest1
 
   @scenario1Tag1
   @scenario1Tag2
-  Scenario: This is a scenario with one step
-    Given this is step 1
+  Scenario: Scenario 2 in MyTest1
+    Given I do something
 
   @scenario2Tag1
-  Scenario: This is another scenario with 3 steps
-    Given this is step 1
-    When I do step 2
-    Then I expect step 3
+  Scenario: Scenario 3 in MyTest1
+    Given this is a given step
+    When I do something
+    Then I expect a result
 
-  Scenario: This is another scenario without steps
+  Scenario: Scenario 4 in MyTest1
 
-  Scenario: this is a scenario with steps containing a data table
-    Given this is step 1
-    When I search for
+  Scenario: Scenario 5 in MyTest1
+    Given this is a given step
+    When I do something with data
       | country | Germany |
       | city    |         |
-    Then I get search results from Germany
+    Then I expect a result

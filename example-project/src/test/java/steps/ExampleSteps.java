@@ -9,89 +9,78 @@ import cucumber.api.java.no.Og;
 import cucumber.api.java.ro.Atunci;
 import cucumber.api.java.ro.Cand;
 import cucumber.api.java.ro.Datefiind;
+import io.cucumber.datatable.DataTable;
 
 public class ExampleSteps {
-    @Given("^this is step (\\d+)$")
-    public void thisIsStep(int arg0) throws Throwable {
+    @Given("^this is a given step$")
+    public void thisIsAGivenStep() {
     }
 
-    @When("^I do step (\\d+)$")
-    public void iDoStep(int arg0) throws Throwable {
-    }
-
-    @Then("^I expect step (\\d+)$")
-    public void iExpectStep(int arg0) throws Throwable {
-    }
-
-    @When("^I search for$")
-    public void iSearchFor() throws Throwable {
-    }
-
-    @Then("^I get search results from Germany$")
-    public void iGetSearchResultsFromGermany() throws Throwable {
-    }
-
-    @Given("^this is background step (\\d+)$")
-    public void thisIsBackgroundStep(int arg0) throws Throwable {
+    @When("^I do something$")
+    public void iDoSomething() {
     }
 
     @Then("^I expect a result$")
-    public void iExpectAResult() throws Throwable {
+    public void iExpectAResult() {
     }
 
-    @Given("^As a User \"([^\"]*)\" I'm authorized$")
-    public void asAUserIMAuthorized(String arg0) throws Throwable {
+    @And("^I expect a second result$")
+    public void iExpectASecondResult() {
     }
 
-    @Then("^Account is created with data:$")
-    public void accountIsCreatedWithData() throws Throwable {
+    @Given("^this is background given step$")
+    public void thisIsBackgroundGivenStep() {
     }
 
-    @Given("^this contains a docstring$")
-    public void thisContainsADocstring() throws Throwable {
+    @And("^this is another background step$")
+    public void thisIsAnotherBackgroundStep() {
     }
 
-    @Datefiind("^Bună dimineața$")
-    public void bunaDimineata() throws Throwable {
+    @When("^I do something with data$")
+    public void iDoSomethingWithData(DataTable dataTable) {
     }
 
-    @Cand("^Scuzați-mă!$")
-    public void scuzatiMa() throws Throwable {
+    @Given("^this is a background step with data$")
+    public void thisIsABackgroundStepWithData(DataTable dataTable) {
     }
 
-    @Atunci("^Vă doresc o zi plăcută!$")
-    public void vaDorescOZiPlacuta() throws Throwable {
+    @And("^this is a background step$")
+    public void thisIsABackgroundStep() {
     }
 
-    @Then("^Account is created with data!$")
-    public void accountIsCreatedWithData2() throws Throwable {
+    @Given("^this is a given step with a docstring$")
+    public void thisIsAGivenStepWithADocstring(DataTable docString) {
+    }
+
+    @Then("^I do something with a docstring$")
+    public void iDoSomethingWithADocstring(DataTable docString) {
     }
 
     @Gitt("^for å unngå at firmaet går konkurs$")
-    public void finnish1() throws Throwable {
+    public void norwegian1() {
     }
 
     @Og("^må regnskapsførerere bruke en regnemaskin for å legge sammen tall$")
-    public void finnish2() throws Throwable {
+    public void norwegian2() {
+    }
+
+    @Datefiind("^Bună dimineața$")
+    public void romanian1() {
+    }
+
+    @Cand("^Scuzați-mă!$")
+    public void romanian2() {
+    }
+
+    @Atunci("^Vă doresc o zi plăcută!$")
+    public void romanian3() {
     }
 
     @Cand("^Scuzați-mă <test>$")
-    public void scuzatiMaTest2() throws Throwable {
+    public void romanianDataTable(DataTable dataTable) {
     }
 
-    @Given("^this is step (\\d+) with a data table$")
-    public void thisIsStepWithADataTable(int arg0) throws Throwable {
-    }
-
-    @When("^I search for key <key>$")
-    public void iSearchForKeyKey() throws Throwable {
-    }
-
-    @Then("^I see the value '<value>'$")
-    public void iSeeTheValueValue() throws Throwable {
-    }
-
-    @And("^I get <candy>$")
-    public void iGetCandy() throws Throwable {
+    @Cand("^Scuzați-mă (\\d)$")
+    public void romanianValue(int value) {
     }
 }

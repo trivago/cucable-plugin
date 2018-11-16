@@ -1,16 +1,16 @@
-Feature: Scenario with docstring
+Feature: MyTest6
 
   @test
   Scenario: Docstring scenario
 
 #    This is a comment
 
-    Given this contains a docstring
+    Given this is a given step with a docstring
     """
     First line
     Second line
     """
-    Then Account is created with data!
+    Then I do something with a docstring
     """
    {
 "user": "user@test.com",

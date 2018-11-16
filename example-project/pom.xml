@@ -59,7 +59,7 @@
                     <sourceFeatures>src/test/resources/features</sourceFeatures>
 
                     <!-- process a specific feature file in the given directory -->
-                    <sourceFeatures>src/test/resources/features/testfeature/MyTest3.feature</sourceFeatures>
+                    <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest3.feature</sourceFeatures>-->
 
                     <!-- process a specific feature file and specific line numbers in the given directory -->
                     <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>-->

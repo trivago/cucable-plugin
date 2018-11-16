@@ -1,3 +1,3 @@
-Feature: feature file name contains dashes
+Feature: My-feature-dashes
 
-  Scenario: This is a scenario without steps
+  Scenario: Scenario 1 in My-feature-dashes
