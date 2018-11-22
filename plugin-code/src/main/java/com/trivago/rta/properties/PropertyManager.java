@@ -24,6 +24,7 @@ import com.trivago.rta.logging.Language;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -181,6 +182,30 @@ public class PropertyManager {
 
         if (!missingProperties.isEmpty()) {
             throw new WrongOrMissingPropertiesException(missingProperties);
+        }
+    }
+
+    /**
+     * Checks for properties that are not allowed in parallelizationMode = FEATURE.
+     *
+     * @throws CucablePluginException Thrown when a wrong property is used.
+     */
+    public void checkForDisallowedParallelizationModeProperties() throws CucablePluginException {
+        if (parallelizationMode == ParallelizationMode.SCENARIOS) {
+            return;
+        }
+        String errorMessage = "";
+        if (!new File(sourceFeatures).isDirectory()) {
+            errorMessage = "sourceFeatures should point to a directory!";
+        }
+        if (!excludeScenarioTags.isEmpty() || !includeScenarioTags.isEmpty()) {
+            errorMessage = "you cannot specify excludeScenarioTags or includeScenarioTags!";
+        }
+        if (!customPlaceholders.isEmpty()) {
+            errorMessage = "you cannot specify customPlaceholders!";
+        }
+        if (!errorMessage.isEmpty()) {
+            throw new CucablePluginException("In parallelizationMode = FEATURE, ".concat(errorMessage));
         }
     }
 

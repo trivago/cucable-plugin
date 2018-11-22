@@ -148,6 +148,7 @@ final class CucablePlugin extends AbstractMojo {
         propertyManager.setCustomPlaceholders(customPlaceholders);
         propertyManager.setDesiredNumberOfRunners(desiredNumberOfRunners);
         propertyManager.checkForMissingMandatoryProperties();
+        propertyManager.checkForDisallowedParallelizationModeProperties();
 
         // Logging
         logHeader();

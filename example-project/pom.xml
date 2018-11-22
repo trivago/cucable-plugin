@@ -69,7 +69,7 @@
 
                     <!-- optional: custom data that is available in Cucable placeholders in a template -->
                     <!--<customPlaceholders>-->
-                    <!--    <comment>This should appear inside the template</comment>-->
+                        <!--<comment>This should appear inside the template</comment>-->
                     <!--</customPlaceholders>-->
 
                     <!-- optional: include scenarios with certain tags -->
@@ -85,7 +85,7 @@
 
                     <!-- optional: change parallelization mode of Cucable (default: "scenarios")-->
                     <!--<parallelizationMode>scenarios</parallelizationMode>-->
-                    <!--<parallelizationMode>features</parallelizationMode>-->
+                    <parallelizationMode>features</parallelizationMode>
 
                     <!-- optional: number of test runs to create runners and features multiple times
                          if set to a number greater than 1 -->
