@@ -59,6 +59,7 @@ public class FeatureFileConverterTest {
 
     @Test(expected = MissingFileException.class)
     public void convertEmptyPathListToSingleScenariosAndRunnersTest() throws Exception {
+        propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.SCENARIOS.toString());
         List<Path> pathList = new ArrayList<>();
         Path mockPath = mock(Path.class);
         Path mockFilePath = mock(Path.class);
@@ -77,6 +78,7 @@ public class FeatureFileConverterTest {
         propertyManager.setNumberOfTestRuns(1);
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
+        propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.SCENARIOS.toString());
 
         when(fileIO.readContentFromFile("TEST_PATH")).thenReturn("TEST_CONTENT");
 
@@ -94,6 +96,7 @@ public class FeatureFileConverterTest {
 
     @Test(expected = CucablePluginException.class)
     public void invalidLineNumberTest() throws Exception {
+        propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.SCENARIOS.toString());
         propertyManager.setSourceFeatures("testscenario:2");
         when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH", null, null, null)).thenReturn(new ArrayList<>());
 
@@ -172,7 +175,7 @@ public class FeatureFileConverterTest {
         pathList.add(mockPath);
         featureFileConverter.generateParallelizableFeatures(pathList);
 
-        verify(fileIO, times(1)).writeContentToFile(anyString(), anyString());
+        verify(fileIO, times(2)).writeContentToFile(anyString(), anyString());
     }
 
     @Test
@@ -220,18 +223,9 @@ public class FeatureFileConverterTest {
         propertyManager.setDesiredNumberOfRunners(1);
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
-        propertyManager.setParallelizationMode("features");
+        propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
 
         when(fileIO.readContentFromFile("TEST_PATH")).thenReturn("TEST_CONTENT");
-
-        List<SingleScenario> scenarioList = new ArrayList<>();
-        SingleScenario singleScenario = new SingleScenario("feature", "", "", "featureDescription", "name", "scenarioDescription", new ArrayList<>(), new ArrayList<>());
-        scenarioList.add(singleScenario);
-        scenarioList.add(singleScenario);
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH", null, null, null)).thenReturn(scenarioList);
-
-        String featureFileContent = "test";
-        when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
 
         when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class))).thenReturn("RUNNER_CONTENT");
 
@@ -244,6 +238,6 @@ public class FeatureFileConverterTest {
         pathList.add(mockPath);
         featureFileConverter.generateParallelizableFeatures(pathList);
 
-        verify(fileIO, times(1)).writeContentToFile(anyString(), anyString());
+        verify(fileIO, times(2)).writeContentToFile(anyString(), anyString());
     }
 }

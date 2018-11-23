@@ -41,7 +41,6 @@ import java.util.UUID;
 import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.COMPACT;
 import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.DEFAULT;
 import static com.trivago.rta.logging.CucableLogger.CucableLogLevel.MINIMAL;
-import static com.trivago.rta.properties.PropertyManager.ParallelizationMode.SCENARIOS;
 
 /**
  * This class is responsible for converting feature files
@@ -55,8 +54,8 @@ public class FeatureFileConverter {
     private static final String INTEGRATION_TEST_POSTFIX = "_IT";
     private static final String PATH_SEPARATOR = "/";
     private static final String TEST_RUNS_COUNTER_FORMAT = "_run%03d";
+    private static final String FEATURE_COUNTER_FORMAT = "_feature%03d";
     private static final String SCENARIO_COUNTER_FORMAT = "_scenario%03d";
-    private static final String FEATURE_FORMAT = "_feature";
 
     private final PropertyManager propertyManager;
     private final GherkinDocumentParser gherkinDocumentParser;
@@ -130,16 +129,39 @@ public class FeatureFileConverter {
      */
     private List<String> generateParallelizableFeatures(final Path sourceFeatureFilePath)
             throws CucablePluginException {
-        String featureFilePathString = sourceFeatureFilePath.toString();
+        if (propertyManager.getParallelizationMode() == PropertyManager.ParallelizationMode.SCENARIOS) {
+            return generateFeaturesWithScenariosParallelizationMode(sourceFeatureFilePath);
+        }
+        return generateFeaturesWithFeaturesParallelizationMode(sourceFeatureFilePath);
+    }
 
+    /**
+     * @param sourceFeatureFilePath
+     * @return
+     * @throws CucablePluginException
+     */
+    private List<String> generateFeaturesWithFeaturesParallelizationMode(final Path sourceFeatureFilePath) throws CucablePluginException {
+        String featureFilePathString = sourceFeatureFilePath.toString();
+        String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
+        return generateFeatureFiles(sourceFeatureFilePath, featureFileContent);
+    }
+
+    /**
+     * @param sourceFeatureFilePath
+     * @return
+     * @throws CucablePluginException
+     */
+    private List<String> generateFeaturesWithScenariosParallelizationMode(final Path sourceFeatureFilePath) throws CucablePluginException {
+
+        String featureFilePathString = sourceFeatureFilePath.toString();
         if (featureFilePathString == null || featureFilePathString.equals("")) {
             throw new MissingFileException(featureFilePathString);
         }
 
+        String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
         List<Integer> lineNumbers = propertyManager.getScenarioLineNumbers();
         List<String> includeScenarioTags = propertyManager.getIncludeScenarioTags();
         List<String> excludeScenarioTags = propertyManager.getExcludeScenarioTags();
-        String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
 
         List<SingleScenario> singleScenarios;
         try {
@@ -161,7 +183,7 @@ public class FeatureFileConverter {
             throw new CucablePluginException("There is no parsable scenario or scenario outline at line " + lineNumbers);
         }
 
-        return processParallelScenariosAndRunners(sourceFeatureFilePath, singleScenarios);
+        return generateFeatureFiles(sourceFeatureFilePath, singleScenarios);
     }
 
     /**
@@ -172,53 +194,73 @@ public class FeatureFileConverter {
      * @return A list of generated feature file paths.
      * @throws FileCreationException Thrown if the feature file cannot be created.
      */
-    private List<String> processParallelScenariosAndRunners(
+    private List<String> generateFeatureFiles(
             final Path sourceFeatureFilePath, final List<SingleScenario> singleScenarios) throws FileCreationException {
 
         // Stores all generated feature file names and associated source feature paths for later runner creation
         List<String> generatedFeaturePaths = new ArrayList<>();
 
-        if (propertyManager.getParallelizationMode() == SCENARIOS) {
-            // Default parallelization mode
-            for (SingleScenario singleScenario : singleScenarios) {
-                String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
-                Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
-                featureCounter++;
-                String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
-                for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
-                    String testRunsCounterFilenamePart = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
-                    String generatedFileName =
-                            featureFileName
-                                    .concat(scenarioCounterFilenamePart)
-                                    .concat(testRunsCounterFilenamePart)
-                                    .concat(INTEGRATION_TEST_POSTFIX);
-                    saveFeature(
-                            generatedFileName,
-                            featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)
-                    );
-                    generatedFeaturePaths.add(generatedFileName);
-                    singleFeatureCounters.put(featureFileName, featureCounter);
-                }
-            }
-        } else {
-            // Only parallelize complete features
+        // Default parallelization mode
+        for (SingleScenario singleScenario : singleScenarios) {
             String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
+            Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
+            featureCounter++;
+            String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
             for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
                 String testRunsCounterFilenamePart = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
                 String generatedFileName =
                         featureFileName
-                                .concat(FEATURE_FORMAT)
+                                .concat(scenarioCounterFilenamePart)
                                 .concat(testRunsCounterFilenamePart)
                                 .concat(INTEGRATION_TEST_POSTFIX);
                 saveFeature(
                         generatedFileName,
-                        featureFileContentRenderer.getRenderedFeatureFileContent(singleScenarios)
+                        featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)
                 );
                 generatedFeaturePaths.add(generatedFileName);
+                singleFeatureCounters.put(featureFileName, featureCounter);
             }
         }
 
         logFeatureFileConversionMessage(sourceFeatureFilePath.toString(), singleScenarios.size());
+        return generatedFeaturePaths;
+    }
+
+    /**
+     * @param sourceFeatureFilePath
+     * @param featureFileContent
+     * @return
+     * @throws FileCreationException
+     */
+    private List<String> generateFeatureFiles(
+            final Path sourceFeatureFilePath, final String featureFileContent) throws FileCreationException {
+
+        // Stores all generated feature file names and associated source feature paths for later runner creation
+        List<String> generatedFeaturePaths = new ArrayList<>();
+
+        // Only parallelize complete features
+        String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
+        Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
+        featureCounter++;
+        String featureCounterFilenamePart = String.format(FEATURE_COUNTER_FORMAT, featureCounter);
+        for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
+            String testRunsCounterFilenamePart = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
+            String generatedFileName =
+                    featureFileName
+                            .concat(featureCounterFilenamePart)
+                            .concat(testRunsCounterFilenamePart)
+                            .concat(INTEGRATION_TEST_POSTFIX);
+            saveFeature(
+                    generatedFileName,
+                    featureFileContent
+            );
+            generatedFeaturePaths.add(generatedFileName);
+            singleFeatureCounters.put(featureFileName, featureCounter);
+        }
+
+        logger.info(
+                String.format("- processed %s.", featureFileName), DEFAULT);
+
         return generatedFeaturePaths;
     }
 

@@ -136,7 +136,7 @@ final class CucablePlugin extends AbstractMojo {
         // Initialize logger to be available outside the AbstractMojo class
         logger.initialize(getLog(), logLevel);
 
-        // Initialize and validate passed pom properties
+        // Initialize and validate passed POM properties
         propertyManager.setSourceRunnerTemplateFile(sourceRunnerTemplateFile);
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDirectory);
         propertyManager.setSourceFeatures(sourceFeatures);
@@ -151,7 +151,7 @@ final class CucablePlugin extends AbstractMojo {
         propertyManager.checkForDisallowedParallelizationModeProperties();
 
         // Logging
-        logHeader();
+        logPluginInformationHeader();
         propertyManager.logProperties();
 
         // Create the necessary directories if missing.
@@ -164,7 +164,7 @@ final class CucablePlugin extends AbstractMojo {
     /**
      * Log the plugin name and version.
      */
-    private void logHeader() {
+    private void logPluginInformationHeader() {
         CucableLogger.CucableLogLevel[] cucableLogLevels =
                 new CucableLogger.CucableLogLevel[]{CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT};
         logger.logInfoSeparator(cucableLogLevels);
