@@ -32,7 +32,7 @@ import java.util.List;
 import java.util.Map;
 
 @Singleton
-public class GherkinToCucableConverter {
+class GherkinToCucableConverter {
 
     /**
      * Converts a list of Gherkin steps to Cucable steps including data tables.

@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Singleton
-public class FeatureFileContentRenderer {
+class FeatureFileContentRenderer {
 
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
@@ -34,7 +34,7 @@ public class FeatureFileContentRenderer {
      *
      * @return the feature file content.
      */
-    String getRenderedFeatureFileContent(List<SingleScenario> singleScenarios) {
+    private String getRenderedFeatureFileContent(List<SingleScenario> singleScenarios) {
         StringBuilder renderedContent = new StringBuilder();
 
         SingleScenario firstScenario = singleScenarios.get(0);

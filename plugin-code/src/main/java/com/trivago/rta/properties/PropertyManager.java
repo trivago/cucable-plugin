@@ -213,7 +213,7 @@ public class PropertyManager {
      * Logs all passed property values.
      */
     public void logProperties() {
-        CucableLogLevel logLevels[] = new CucableLogLevel[]{DEFAULT, COMPACT};
+        CucableLogLevel[] logLevels = new CucableLogLevel[]{DEFAULT, COMPACT};
 
         logger.info(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile), logLevels);
         logger.info(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory), logLevels);

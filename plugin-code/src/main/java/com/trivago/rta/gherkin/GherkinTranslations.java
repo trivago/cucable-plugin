@@ -7,13 +7,13 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 @Singleton
-public class GherkinTranslations {
+class GherkinTranslations {
 
     private static final String SCENARIO = "Scenario";
     private final GherkinDialectProvider gherkinDialectProvider;
 
     @Inject
-    public GherkinTranslations() {
+    GherkinTranslations() {
         gherkinDialectProvider = new GherkinDialectProvider();
     }
 
