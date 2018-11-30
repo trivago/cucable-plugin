@@ -104,9 +104,7 @@ class GherkinToCucableConverter {
      * @return a map where the keys are the column headers and the values are lists of strings.
      */
     Map<String, List<String>> convertGherkinExampleTableToCucableExampleMap(
-            final Examples exampleTable,
-            final List<String> includeScenarioTags,
-            final List<String> excludeScenarioTags
+            final Examples exampleTable
     ) {
         Map<String, List<String>> exampleMap = new LinkedHashMap<>();
 

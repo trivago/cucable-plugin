@@ -56,9 +56,9 @@
                     <!--<sourceRunnerTemplateFile>src/test/resources/cucable.template</sourceRunnerTemplateFile>-->
 
                     <!-- process all features in the given directory -->
-                    <sourceFeatures>src/test/resources/features</sourceFeatures>
+                    <!--<sourceFeatures>src/test/resources/features</sourceFeatures>-->
                     <!-- process a specific feature file in the given directory -->
-                    <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest3.feature</sourceFeatures>-->
+                    <sourceFeatures>src/test/resources/features/testfeature/MyTest3.feature</sourceFeatures>
 
                     <!-- process a specific feature file and specific line numbers in the given directory -->
                     <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>-->
@@ -73,18 +73,18 @@
 
                     <!-- optional: include scenarios with certain tags -->
                     <!--<includeScenarioTags>-->
-                    <!--<param>@scenarioTag1</param>-->
-                    <!--<param>@scenarioTag2</param>-->
+                        <!--<param>@scenarioTag1</param>-->
+                        <!--<param>@scenarioTag2</param>-->
                     <!--</includeScenarioTags>-->
 
                     <!-- optional: exclude scenarios with certain tags -->
                     <!--<excludeScenarioTags>-->
-                    <!--<param>@skipme</param>-->
+                        <!--<param>@skipme</param>-->
                     <!--</excludeScenarioTags>-->
 
                     <!-- optional: change parallelization mode of Cucable (default: "scenarios")-->
                     <!--<parallelizationMode>scenarios</parallelizationMode>-->
-                    <parallelizationMode>features</parallelizationMode>
+                    <!--<parallelizationMode>features</parallelizationMode>-->
 
                     <!-- optional: number of test runs to create runners and features multiple times
                          if set to a number greater than 1 -->

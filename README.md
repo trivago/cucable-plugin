@@ -381,6 +381,8 @@ Sometimes it may be desirable, to parallelize complete features. When setting th
 <parallelizationMode>features</parallelizationMode>
 ```
 
+__Note:__ For this mode to work, `<sourceFeatures>` must specify a directory. Also, `includeScenarioTags` and `excludeScenarioTags` cannot be used. 
+
 #### logLevel
 
 By default, Cucable logs all information including

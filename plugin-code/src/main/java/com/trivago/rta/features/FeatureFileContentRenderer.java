@@ -50,6 +50,7 @@ class FeatureFileContentRenderer {
         for (SingleScenario singleScenario : singleScenarios) {
             renderedContent.append(LINE_SEPARATOR);
             addTags(renderedContent, singleScenario.getScenarioTags());
+            addTags(renderedContent, singleScenario.getExampleTags());
 
             addNameAndDescription(
                 renderedContent,

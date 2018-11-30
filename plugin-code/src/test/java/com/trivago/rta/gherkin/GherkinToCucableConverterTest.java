@@ -75,11 +75,7 @@ public class GherkinToCucableConverterTest {
         List<String> includeTags = new ArrayList<>();
         List<String> excludeTags = new ArrayList<>();
         Map<String, List<String>> table =
-                gherkinToCucableConverter.convertGherkinExampleTableToCucableExampleMap(
-                        examples,
-                        includeTags,
-                        excludeTags
-                );
+                gherkinToCucableConverter.convertGherkinExampleTableToCucableExampleMap(examples);
 
         assertThat(table.size(), is(3));
     }

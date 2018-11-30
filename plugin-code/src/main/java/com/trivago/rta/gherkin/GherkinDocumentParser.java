@@ -35,7 +35,6 @@ import gherkin.ast.ScenarioOutline;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -48,7 +47,6 @@ public class GherkinDocumentParser {
 
     private final GherkinToCucableConverter gherkinToCucableConverter;
     private final GherkinTranslations gherkinTranslations;
-    private final PropertyManager propertyManager;
 
     @Inject
     public GherkinDocumentParser(
@@ -58,7 +56,6 @@ public class GherkinDocumentParser {
     ) {
         this.gherkinToCucableConverter = gherkinToCucableConverter;
         this.gherkinTranslations = gherkinTranslations;
-        this.propertyManager = propertyManager;
     }
 
     /**
@@ -133,6 +130,7 @@ public class GherkinDocumentParser {
 
             if (scenarioDefinition instanceof ScenarioOutline) {
                 ScenarioOutline scenarioOutline = (ScenarioOutline) scenarioDefinition;
+
                 if (scenarioLineNumbers == null
                         || scenarioLineNumbers.isEmpty()
                         || scenarioLineNumbers.contains(scenarioOutline.getLocation().getLine())) {
@@ -144,16 +142,15 @@ public class GherkinDocumentParser {
                                     featureLanguage,
                                     featureDescription,
                                     featureTags,
-                                    backgroundSteps,
-                                    includeScenarioTags,
-                                    excludeScenarioTags
+                                    backgroundSteps
                             );
                     for (SingleScenario singleScenario : outlineScenarios) {
                         if (scenarioShouldBeIncluded(
                                 includeScenarioTags,
                                 excludeScenarioTags,
                                 singleScenario.getScenarioTags(),
-                                singleScenario.getFeatureTags()
+                                singleScenario.getFeatureTags(),
+                                singleScenario.getExampleTags()
                         )) {
                             singleScenarioFeatures.add(singleScenario);
                         }
@@ -167,13 +164,12 @@ public class GherkinDocumentParser {
     /**
      * Returns a list of Cucable single scenarios from a Gherkin scenario outline.
      *
-     * @param scenarioOutline     A Gherkin {@link ScenarioOutline}.
-     * @param featureName         The name of the feature this scenario outline belongs to.
-     * @param featureFilePath     The source path of the feature file.
-     * @param featureLanguage     The feature language this scenario outline belongs to.
-     * @param featureTags         The feature tags of the parent feature.
-     * @param backgroundSteps     Return a Cucable {@link SingleScenario} list.
-     * @param includeScenarioTags Optional scenario tags to include in scenario generation.
+     * @param scenarioOutline A Gherkin {@link ScenarioOutline}.
+     * @param featureName     The name of the feature this scenario outline belongs to.
+     * @param featureFilePath The source path of the feature file.
+     * @param featureLanguage The feature language this scenario outline belongs to.
+     * @param featureTags     The feature tags of the parent feature.
+     * @param backgroundSteps Return a Cucable {@link SingleScenario} list.
      * @throws CucablePluginException Thrown when the scenario outline does not contain an example table.
      */
     private List<SingleScenario> getSingleScenariosFromOutline(
@@ -183,9 +179,7 @@ public class GherkinDocumentParser {
             final String featureLanguage,
             final String featureDescription,
             final List<String> featureTags,
-            final List<Step> backgroundSteps,
-            final List<String> includeScenarioTags,
-            final List<String> excludeScenarioTags
+            final List<Step> backgroundSteps
     ) throws CucablePluginException {
 
         // Retrieve the translation of "Scenario" in the target language and add it to the scenario
@@ -196,10 +190,6 @@ public class GherkinDocumentParser {
         List<String> scenarioTags =
                 gherkinToCucableConverter.convertGherkinTagsToCucableTags(scenarioOutline.getTags());
 
-        if (!scenarioShouldBeIncluded(includeScenarioTags, excludeScenarioTags, featureTags, scenarioTags)) {
-            return Collections.emptyList();
-        }
-
         List<SingleScenario> outlineScenarios = new ArrayList<>();
         List<Step> steps = gherkinToCucableConverter.convertGherkinStepsToCucableSteps(scenarioOutline.getSteps());
 
@@ -209,11 +199,7 @@ public class GherkinDocumentParser {
 
         for (Examples exampleTable : scenarioOutline.getExamples()) {
             Map<String, List<String>> exampleMap =
-                    gherkinToCucableConverter.convertGherkinExampleTableToCucableExampleMap(
-                            exampleTable,
-                            propertyManager.getIncludeScenarioTags(),
-                            propertyManager.getExcludeScenarioTags()
-                    );
+                    gherkinToCucableConverter.convertGherkinExampleTableToCucableExampleMap(exampleTable);
 
             String firstColumnHeader = (String) exampleMap.keySet().toArray()[0];
             int rowCount = exampleMap.get(firstColumnHeader).size();
@@ -235,6 +221,9 @@ public class GherkinDocumentParser {
                 List<Step> substitutedSteps = substituteStepExamplePlaceholders(steps, exampleMap, rowIndex);
                 singleScenario.setSteps(substitutedSteps);
                 singleScenario.setScenarioTags(scenarioTags);
+                singleScenario.setExampleTags(
+                        gherkinToCucableConverter.convertGherkinTagsToCucableTags(exampleTable.getTags())
+                );
                 outlineScenarios.add(singleScenario);
             }
         }

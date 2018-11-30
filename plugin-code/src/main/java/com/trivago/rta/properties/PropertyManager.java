@@ -195,14 +195,13 @@ public class PropertyManager {
             return;
         }
         String errorMessage = "";
+
         if (!new File(sourceFeatures).isDirectory()) {
             errorMessage = "sourceFeatures should point to a directory!";
-        }
-        if (!excludeScenarioTags.isEmpty() || !includeScenarioTags.isEmpty()) {
-            errorMessage = "you cannot specify excludeScenarioTags or includeScenarioTags!";
-        }
-        if (!customPlaceholders.isEmpty()) {
-            errorMessage = "you cannot specify customPlaceholders!";
+        } else if (excludeScenarioTags != null && !excludeScenarioTags.isEmpty()) {
+            errorMessage = "you cannot specify excludeScenarioTags!";
+        } else if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
+            errorMessage = "you cannot specify includeScenarioTags!";
         }
         if (!errorMessage.isEmpty()) {
             throw new CucablePluginException("In parallelizationMode = FEATURE, ".concat(errorMessage));

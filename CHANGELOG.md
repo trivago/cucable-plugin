@@ -6,6 +6,16 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.3.0] - 2018-11-30
+
+### Added
+
+- Support for scenarios with multiple example tables
+
+### Changed
+
+- `parallelizationMode=features` now uses exact copies of the source features
+
 ## [1.2.0] - 2018-11-12
 
 ### Added
@@ -175,6 +185,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[1.3.0]: https://github.com/trivago/cucable-plugin/compare/1.2.0...1.3.0
 [1.2.0]: https://github.com/trivago/cucable-plugin/compare/1.1.0...1.2.0
 [1.1.0]: https://github.com/trivago/cucable-plugin/compare/1.0.0...1.1.0
 [1.0.0]: https://github.com/trivago/cucable-plugin/compare/0.1.11...1.0.0

@@ -136,9 +136,11 @@ public class FeatureFileConverter {
     }
 
     /**
-     * @param sourceFeatureFilePath
-     * @return
-     * @throws CucablePluginException
+     * Generate features with parallelization mode 'features'.
+     *
+     * @param sourceFeatureFilePath Path of the source feature(s).
+     * @return A list of generated feature paths.
+     * @throws CucablePluginException in case feature files cannot be created.
      */
     private List<String> generateFeaturesWithFeaturesParallelizationMode(final Path sourceFeatureFilePath) throws CucablePluginException {
         String featureFilePathString = sourceFeatureFilePath.toString();
@@ -147,9 +149,11 @@ public class FeatureFileConverter {
     }
 
     /**
-     * @param sourceFeatureFilePath
-     * @return
-     * @throws CucablePluginException
+     * Generate features with parallelization mode 'scenarios'.
+     *
+     * @param sourceFeatureFilePath Path of the source feature(s).
+     * @return A list of generated feature paths.
+     * @throws CucablePluginException in case feature files cannot be created.
      */
     private List<String> generateFeaturesWithScenariosParallelizationMode(final Path sourceFeatureFilePath) throws CucablePluginException {
 
@@ -187,7 +191,7 @@ public class FeatureFileConverter {
     }
 
     /**
-     * Write a single scenario feature to a new file and return a list of generated file paths for later runner creation.
+     * Write a single scenario feature to new files and return a list of generated file paths for later runner creation.
      *
      * @param sourceFeatureFilePath The complete path to the source feature.
      * @param singleScenarios       a list of single scenarios.
@@ -227,10 +231,12 @@ public class FeatureFileConverter {
     }
 
     /**
-     * @param sourceFeatureFilePath
-     * @param featureFileContent
-     * @return
-     * @throws FileCreationException
+     * Write a copy of the original feature file content to new files and return a list of generated file paths for later runner creation.
+     *
+     * @param sourceFeatureFilePath The complete path to the source feature.
+     * @param featureFileContent    the content to copy into the new feature file.
+     * @return A list of generated feature file paths.
+     * @throws FileCreationException Thrown if the feature file cannot be created.
      */
     private List<String> generateFeatureFiles(
             final Path sourceFeatureFilePath, final String featureFileContent) throws FileCreationException {
@@ -265,7 +271,7 @@ public class FeatureFileConverter {
     }
 
     /**
-     * Save feature file contents and return the file path.
+     * Save generated feature file contents and return the file path.
      *
      * @param featureFileName            The feature file name.
      * @param renderedFeatureFileContent The rendered file contents.

@@ -7,6 +7,7 @@ import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
+import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 
 import java.util.ArrayList;
@@ -25,6 +26,10 @@ import static org.mockito.Mockito.verify;
 public class PropertyManagerTest {
     @Rule
     public ExpectedException expectedException = ExpectedException.none();
+
+    @Rule
+    public final TemporaryFolder testFolder = new TemporaryFolder();
+
     private PropertyManager propertyManager;
     private CucableLogger logger;
 
@@ -108,6 +113,57 @@ public class PropertyManagerTest {
         List<String> tags = new ArrayList<>();
         tags.add("noAtInFront");
         propertyManager.setExcludeScenarioTags(tags);
+    }
+
+    @Test
+    public void checkForDisallowedParallelizationModePropertiesScenariosMode() throws CucablePluginException {
+        propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.SCENARIOS.toString());
+        propertyManager.checkForDisallowedParallelizationModeProperties();
+    }
+
+    @Test
+    public void checkForDisallowedParallelizationModePropertiesSourceFeaturesIsNotDirectoryTest() throws CucablePluginException {
+        expectedException.expect(CucablePluginException.class);
+        expectedException.expectMessage("In parallelizationMode = FEATURE, sourceFeatures should point to a directory!");
+
+        propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
+        propertyManager.setSourceFeatures("my.feature");
+        propertyManager.checkForDisallowedParallelizationModeProperties();
+    }
+
+    @Test
+    public void checkForDisallowedParallelizationModePropertiesExcludeTagsSpecified() throws CucablePluginException {
+        expectedException.expect(CucablePluginException.class);
+        expectedException.expectMessage("In parallelizationMode = FEATURE, you cannot specify excludeScenarioTags!");
+
+        propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
+        propertyManager.setSourceFeatures(testFolder.getRoot().getPath());
+        List<String> excludeTags = new ArrayList<>();
+        excludeTags.add("@someTag");
+        propertyManager.setExcludeScenarioTags(excludeTags);
+
+        propertyManager.checkForDisallowedParallelizationModeProperties();
+    }
+
+    @Test
+    public void checkForDisallowedParallelizationModePropertiesIncludeTagsSpecified() throws CucablePluginException {
+        expectedException.expect(CucablePluginException.class);
+        expectedException.expectMessage("In parallelizationMode = FEATURE, you cannot specify includeScenarioTags!");
+
+        propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
+        propertyManager.setSourceFeatures(testFolder.getRoot().getPath());
+        List<String> includeTags = new ArrayList<>();
+        includeTags.add("@someTag");
+        propertyManager.setIncludeScenarioTags(includeTags);
+
+        propertyManager.checkForDisallowedParallelizationModeProperties();
+    }
+
+    @Test
+    public void checkForDisallowedParallelizationModePropertiesValid() throws CucablePluginException {
+        propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
+        propertyManager.setSourceFeatures(testFolder.getRoot().getPath());
+        propertyManager.checkForDisallowedParallelizationModeProperties();
     }
 
     @Test
