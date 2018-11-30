@@ -1,5 +1,5 @@
 # language: no
-Egenskap: Scenario with language
+Egenskap: MyTest7
 
   Scenario: Norwegian scenario
     Gitt for å unngå at firmaet går konkurs

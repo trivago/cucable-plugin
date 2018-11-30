@@ -20,10 +20,12 @@ import com.trivago.rta.vo.DataTable;
 import com.trivago.rta.vo.SingleScenario;
 import com.trivago.rta.vo.Step;
 
+import javax.inject.Singleton;
 import java.util.Collections;
 import java.util.List;
 
-public class FeatureFileContentRenderer {
+@Singleton
+class FeatureFileContentRenderer {
 
     private static final String LINE_SEPARATOR = System.lineSeparator();
 
@@ -32,7 +34,7 @@ public class FeatureFileContentRenderer {
      *
      * @return the feature file content.
      */
-    String getRenderedFeatureFileContent(List<SingleScenario> singleScenarios) {
+    private String getRenderedFeatureFileContent(List<SingleScenario> singleScenarios) {
         StringBuilder renderedContent = new StringBuilder();
 
         SingleScenario firstScenario = singleScenarios.get(0);
@@ -48,6 +50,8 @@ public class FeatureFileContentRenderer {
         for (SingleScenario singleScenario : singleScenarios) {
             renderedContent.append(LINE_SEPARATOR);
             addTags(renderedContent, singleScenario.getScenarioTags());
+            addTags(renderedContent, singleScenario.getExampleTags());
+
             addNameAndDescription(
                 renderedContent,
                 singleScenario.getScenarioName(),
@@ -136,7 +140,6 @@ public class FeatureFileContentRenderer {
             stringBuilder.append(LINE_SEPARATOR).append(description);
         }
         stringBuilder.append(LINE_SEPARATOR);
-
     }
 
     /**

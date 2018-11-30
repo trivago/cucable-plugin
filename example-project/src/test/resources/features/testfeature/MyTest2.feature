@@ -1,18 +1,18 @@
-Feature: test feature 2
+Feature: MyTest2
 
-  Background: This is a background
-    Given this is background step 1
+  Background: Background 1 in MyTest2
+    Given this is a background step with data
       | bg1 | bg2 |
-    And this is background step 2
+    And this is a background step
 
-  Scenario: This is a scenario with 3 steps and background
-    Given this is step 1
-    When I do step 2
+  Scenario: Scenario 1 in MyTest2
+    Given this is a given step
+    When I do something with data
       | scenarioData1 | scenarioData2 |
       | scenarioData3 | scenarioData4 |
-    Then I expect step 3
-
-  Scenario: This is a scenario with 1 step and background
     Then I expect a result
 
-  Scenario: This is an empty scenario with background
+  Scenario: Scenario 2 in MyTest2
+    Then I expect a result
+
+  Scenario: Scenario 3 in MyTest2

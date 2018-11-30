@@ -1,7 +1,4 @@
 @featureTag
-Feature: Test feature with the same file name as another feature file
+Feature: MyTest1
 
-  Scenario: This is completely different scenario
-    Given this is step 1
-    When I do step 2
-    Then I expect step 3s
+  Scenario: Scenario 1 in duplicated MyTest1

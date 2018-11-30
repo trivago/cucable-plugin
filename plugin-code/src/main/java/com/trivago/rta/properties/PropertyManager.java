@@ -20,9 +20,11 @@ import com.trivago.rta.exceptions.CucablePluginException;
 import com.trivago.rta.exceptions.properties.WrongOrMissingPropertiesException;
 import com.trivago.rta.logging.CucableLogger;
 import com.trivago.rta.logging.CucableLogger.CucableLogLevel;
+import com.trivago.rta.logging.Language;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -112,7 +114,7 @@ public class PropertyManager {
         return numberOfTestRuns;
     }
 
-    public void setNumberOfTestRuns(final int numberOfTestRuns) throws CucablePluginException {
+    public void setNumberOfTestRuns(final int numberOfTestRuns) {
         this.numberOfTestRuns = numberOfTestRuns;
     }
 
@@ -132,7 +134,6 @@ public class PropertyManager {
     public void setIncludeScenarioTags(final List<String> includeScenarioTags) throws CucablePluginException {
         this.includeScenarioTags = includeScenarioTags;
         validateTags(includeScenarioTags, "include");
-
     }
 
     public ParallelizationMode getParallelizationMode() {
@@ -144,7 +145,7 @@ public class PropertyManager {
             this.parallelizationMode = ParallelizationMode.valueOf(parallelizationMode.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new CucablePluginException(
-                    "Unknown parallelizationMode '" + parallelizationMode + "'. Please use 'scenarios' or 'features'."
+                    "Unknown <parallelizationMode> '" + parallelizationMode + "'. Please use 'scenarios' or 'features'."
             );
         }
     }
@@ -185,35 +186,59 @@ public class PropertyManager {
     }
 
     /**
+     * Checks for properties that are not allowed in parallelizationMode = FEATURE.
+     *
+     * @throws CucablePluginException Thrown when a wrong property is used.
+     */
+    public void checkForDisallowedParallelizationModeProperties() throws CucablePluginException {
+        if (parallelizationMode == ParallelizationMode.SCENARIOS) {
+            return;
+        }
+        String errorMessage = "";
+
+        if (!new File(sourceFeatures).isDirectory()) {
+            errorMessage = "sourceFeatures should point to a directory!";
+        } else if (excludeScenarioTags != null && !excludeScenarioTags.isEmpty()) {
+            errorMessage = "you cannot specify excludeScenarioTags!";
+        } else if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
+            errorMessage = "you cannot specify includeScenarioTags!";
+        }
+        if (!errorMessage.isEmpty()) {
+            throw new CucablePluginException("In parallelizationMode = FEATURE, ".concat(errorMessage));
+        }
+    }
+
+    /**
      * Logs all passed property values.
      */
     public void logProperties() {
-        CucableLogLevel logLevels[] = new CucableLogLevel[]{DEFAULT, COMPACT};
+        CucableLogLevel[] logLevels = new CucableLogLevel[]{DEFAULT, COMPACT};
 
         logger.info(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile), logLevels);
         logger.info(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory), logLevels);
 
-        logger.info(String.format("- sourceFeature(s)          : %s", sourceFeatures), logLevels);
+        logger.info(String.format("- sourceFeatures            : %s", sourceFeatures), logLevels);
         if (hasValidScenarioLineNumbers()) {
-            logger.info(String.format("%30swith line number(s) %s", " ",
+            logger.info(String.format("%30swith %s %s", " ",
+                    Language.singularPlural(scenarioLineNumbers.size(), "line number", "line numbers"),
                     scenarioLineNumbers.stream().map(String::valueOf).collect(Collectors.joining(", "))),
                     logLevels
             );
         }
 
         if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
-            logger.info(String.format("- include scenario tag(s)   : %s",
+            logger.info(String.format("- includeScenarioTags       : %s",
                     String.join(", ", includeScenarioTags)), logLevels);
         }
         if (excludeScenarioTags != null && !excludeScenarioTags.isEmpty()) {
-            logger.info(String.format("- exclude scenario tag(s)   : %s",
+            logger.info(String.format("- excludeScenarioTags       : %s",
                     String.join(", ", excludeScenarioTags)), logLevels);
         }
 
-        logger.info(String.format("- parallelization mode      : %s", parallelizationMode), logLevels);
+        logger.info(String.format("- parallelizationMode       : %s", parallelizationMode), logLevels);
 
         if (customPlaceholders != null && !customPlaceholders.isEmpty()) {
-            logger.info("- custom placeholder(s)     :", logLevels);
+            logger.info("- customPlaceholders        :", logLevels);
             for (Map.Entry<String, String> customPlaceholder : customPlaceholders.entrySet()) {
                 logger.info(
                         String.format("  %s => %s", customPlaceholder.getKey(), customPlaceholder.getValue()),

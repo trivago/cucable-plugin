@@ -32,6 +32,7 @@ public final class SingleScenario {
     private final List<String> featureTags;
     private final List<Step> backgroundSteps;
     private List<String> scenarioTags;
+    private List<String> exampleTags;
     private List<Step> steps;
 
     public SingleScenario(
@@ -100,5 +101,30 @@ public final class SingleScenario {
 
     public List<Step> getBackgroundSteps() {
         return backgroundSteps;
+    }
+
+    public List<String> getExampleTags() {
+        return exampleTags;
+    }
+
+    public void setExampleTags(final List<String> exampleTags) {
+        this.exampleTags = exampleTags;
+    }
+
+    @Override
+    public String toString() {
+        return "SingleScenario{" +
+                "featureName='" + featureName + '\'' +
+                ", featureFilePath='" + featureFilePath + '\'' +
+                ", featureLanguage='" + featureLanguage + '\'' +
+                ", featureDescription='" + featureDescription + '\'' +
+                ", scenarioName='" + scenarioName + '\'' +
+                ", scenarioDescription='" + scenarioDescription + '\'' +
+                ", featureTags=" + featureTags +
+                ", backgroundSteps=" + backgroundSteps +
+                ", scenarioTags=" + scenarioTags +
+                ", exampleTags=" + exampleTags +
+                ", steps=" + steps +
+                '}';
     }
 }

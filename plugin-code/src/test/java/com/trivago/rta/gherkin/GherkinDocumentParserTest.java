@@ -1,6 +1,8 @@
 package com.trivago.rta.gherkin;
 
 import com.trivago.rta.exceptions.CucablePluginException;
+import com.trivago.rta.logging.CucableLogger;
+import com.trivago.rta.properties.PropertyManager;
 import com.trivago.rta.vo.DataTable;
 import com.trivago.rta.vo.SingleScenario;
 import org.junit.Before;
@@ -22,7 +24,9 @@ public class GherkinDocumentParserTest {
     public void setup() {
         GherkinToCucableConverter gherkinToCucableConverter = new GherkinToCucableConverter();
         GherkinTranslations gherkinTranslations = new GherkinTranslations();
-        gherkinDocumentParser = new GherkinDocumentParser(gherkinToCucableConverter, gherkinTranslations);
+        CucableLogger logger = new CucableLogger();
+        PropertyManager propertyManager = new PropertyManager(logger);
+        gherkinDocumentParser = new GherkinDocumentParser(gherkinToCucableConverter, gherkinTranslations, propertyManager);
     }
 
     @Test(expected = CucablePluginException.class)
@@ -236,6 +240,68 @@ public class GherkinDocumentParserTest {
 
         assertThat(scenario.getSteps().get(0).getName(), is("When I search for key 2"));
         assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value 'two'"));
+    }
+
+    @Test
+    public void validFeatureWithScenarioOutlineAndTwoExampleTablesTest() throws Exception {
+        String featureContent = "Feature: test feature 3\n" +
+                "\n" +
+                "  Scenario Outline: This is a scenario outline\n" +
+                "    When I search for key <key>\n" +
+                "    Then I see the value '<value>'\n" +
+                "\n" +
+                "    Examples:\n" +
+                "      | key | value |\n" +
+                "      | 1   | one   |\n" +
+                "      | 2   | two   |\n" +
+                "\n" +
+                "    Examples:\n" +
+                "      | key | value |\n" +
+                "      | 1   | uno   |\n" +
+                "      | 2   | dos   |";
+
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null, null, null);
+        assertThat(singleScenariosFromFeature.size(), is(4));
+
+        SingleScenario scenario = singleScenariosFromFeature.get(0);
+
+        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline"));
+        assertThat(scenario.getSteps().size(), is(2));
+        assertThat(scenario.getBackgroundSteps().size(), is(0));
+        assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
+
+        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key 1"));
+        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value 'one'"));
+
+        scenario = singleScenariosFromFeature.get(1);
+
+        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline"));
+        assertThat(scenario.getSteps().size(), is(2));
+        assertThat(scenario.getBackgroundSteps().size(), is(0));
+        assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
+
+        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key 2"));
+        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value 'two'"));
+
+        scenario = singleScenariosFromFeature.get(2);
+
+        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline"));
+        assertThat(scenario.getSteps().size(), is(2));
+        assertThat(scenario.getBackgroundSteps().size(), is(0));
+        assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
+
+        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key 1"));
+        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value 'uno'"));
+
+        scenario = singleScenariosFromFeature.get(3);
+
+        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline"));
+        assertThat(scenario.getSteps().size(), is(2));
+        assertThat(scenario.getBackgroundSteps().size(), is(0));
+        assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
+
+        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key 2"));
+        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value 'dos'"));
     }
 
     @Test

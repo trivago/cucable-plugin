@@ -34,7 +34,8 @@ import java.util.Map;
  */
 @SuppressWarnings("FieldCanBeLocal")
 @Mojo(name = "parallel")
-final class CucablePlugin extends AbstractMojo {
+final class
+CucablePlugin extends AbstractMojo {
 
     private final PropertyManager propertyManager;
     private final FileSystemManager fileManager;
@@ -136,7 +137,7 @@ final class CucablePlugin extends AbstractMojo {
         // Initialize logger to be available outside the AbstractMojo class
         logger.initialize(getLog(), logLevel);
 
-        // Initialize and validate passed pom properties
+        // Initialize passed POM properties
         propertyManager.setSourceRunnerTemplateFile(sourceRunnerTemplateFile);
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDirectory);
         propertyManager.setSourceFeatures(sourceFeatures);
@@ -147,10 +148,13 @@ final class CucablePlugin extends AbstractMojo {
         propertyManager.setParallelizationMode(parallelizationMode);
         propertyManager.setCustomPlaceholders(customPlaceholders);
         propertyManager.setDesiredNumberOfRunners(desiredNumberOfRunners);
+
+        // Validate passed POM properties
         propertyManager.checkForMissingMandatoryProperties();
+        propertyManager.checkForDisallowedParallelizationModeProperties();
 
         // Logging
-        logHeader();
+        logPluginInformationHeader();
         propertyManager.logProperties();
 
         // Create the necessary directories if missing.
@@ -163,7 +167,7 @@ final class CucablePlugin extends AbstractMojo {
     /**
      * Log the plugin name and version.
      */
-    private void logHeader() {
+    private void logPluginInformationHeader() {
         CucableLogger.CucableLogLevel[] cucableLogLevels =
                 new CucableLogger.CucableLogLevel[]{CucableLogger.CucableLogLevel.DEFAULT, CucableLogger.CucableLogLevel.COMPACT};
         logger.logInfoSeparator(cucableLogLevels);

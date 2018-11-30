@@ -22,13 +22,12 @@ public class RunnerFileContentRendererTest {
     private FileIO fileIO;
     private RunnerFileContentRenderer runnerFileContentRenderer;
     private PropertyManager propertyManager;
-    private CucableLogger logger;
 
     @Before
     public void setup() {
         fileIO = mock(FileIO.class);
         propertyManager = mock(PropertyManager.class);
-        logger = mock(CucableLogger.class);
+        CucableLogger logger = mock(CucableLogger.class);
         runnerFileContentRenderer = new RunnerFileContentRenderer(fileIO, propertyManager, logger);
     }
 

@@ -1,7 +1,7 @@
 @featureTag
-Feature: skip a scenario
+Feature: MyTest4
 
   @skipMe
   Scenario: This is a scenario that should not be generated
-    Given this is step 1
-    Then I expect step 2
+    Given this is a given step
+    Then I expect a result
