@@ -83,4 +83,8 @@ public class ExampleSteps {
     @Cand("^Scuzați-mă (\\d)$")
     public void romanianValue(int value) {
     }
+
+    @Given("^I am on a page with text '(.*)'$")
+    public void iAmOnAPageWithTextText(String text) {
+    }
 }

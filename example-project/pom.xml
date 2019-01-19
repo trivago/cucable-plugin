@@ -4,9 +4,9 @@
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
-    <groupId>de.benjamin-bischoff</groupId>
+    <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-test-project</artifactId>
-    <version>1.3.0</version>
+    <version>1.3.1</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -14,7 +14,7 @@
         <maven.failsafe.plugin.version>2.22.1</maven.failsafe.plugin.version>
         <maven.build.helper.plugin.version>3.0.0</maven.build.helper.plugin.version>
         <junit.version>4.12</junit.version>
-        <cucumber.version>4.2.0</cucumber.version>
+        <cucumber.version>4.2.1</cucumber.version>
         <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
 
         <generated.runner.directory>${project.build.directory}/parallel/runners</generated.runner.directory>
@@ -57,8 +57,9 @@
 
                     <!-- process all features in the given directory -->
                     <!--<sourceFeatures>src/test/resources/features</sourceFeatures>-->
+
                     <!-- process a specific feature file in the given directory -->
-                    <sourceFeatures>src/test/resources/features/testfeature/MyTest3.feature</sourceFeatures>
+                    <sourceFeatures>src/test/resources/features/testfeature/MyTest9.feature</sourceFeatures>
 
                     <!-- process a specific feature file and specific line numbers in the given directory -->
                     <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>-->
