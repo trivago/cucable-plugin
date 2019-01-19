@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.3.1] - 2019-01-19
+
+### Fixed
+
+- Fixed handling of data and example tables containing line breaks (`\n`)
+
 ## [1.3.0] - 2018-11-30
 
 ### Added
