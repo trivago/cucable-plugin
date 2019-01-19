@@ -1,7 +1,8 @@
 Feature: Line breaks in tables
 
-  Scenario: Line break in example table
+  Scenario Outline: Line break in example table
     Given I am on a page with text '<text>'
+    Examples:
       | text         |
       | one\ntwo     |
       | two\n\nthree |
