@@ -121,7 +121,6 @@ class GherkinToCucableConverter {
                 String columnKey = (String) columnKeys[i];
                 List<String> values = exampleMap.get(columnKey);
                 values.add(cells.get(i).getValue());
-                System.out.println("-> " + cells.get(i).getValue());
             }
         }
         return exampleMap;

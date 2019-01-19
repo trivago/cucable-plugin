@@ -55,4 +55,12 @@ public class CucableLoggerTest {
         verify(mockedLogger, times(1))
                 .info("Test2");
     }
+
+    @Test
+    public void logInfoSeparatorTest() {
+        logger.initialize(mockedLogger, "default");
+        logger.logInfoSeparator(CucableLogger.CucableLogLevel.DEFAULT);
+        verify(mockedLogger, times(1))
+                .info("-------------------------------------");
+    }
 }
