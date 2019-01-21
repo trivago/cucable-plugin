@@ -56,10 +56,10 @@
                     <!--<sourceRunnerTemplateFile>src/test/resources/cucable.template</sourceRunnerTemplateFile>-->
 
                     <!-- process all features in the given directory -->
-                    <!--<sourceFeatures>src/test/resources/features</sourceFeatures>-->
+                    <sourceFeatures>src/test/resources/features</sourceFeatures>
 
                     <!-- process a specific feature file in the given directory -->
-                    <sourceFeatures>src/test/resources/features/testfeature/MyTest9.feature</sourceFeatures>
+                    <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest9.feature</sourceFeatures>-->
 
                     <!-- process a specific feature file and specific line numbers in the given directory -->
                     <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>-->
