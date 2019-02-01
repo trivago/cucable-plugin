@@ -17,9 +17,9 @@
 package com.trivago.runners;
 
 import com.trivago.exceptions.CucablePluginException;
-import com.trivago.properties.PropertyManager;
 import com.trivago.files.FileIO;
 import com.trivago.logging.CucableLogger;
+import com.trivago.properties.PropertyManager;
 import com.trivago.vo.FeatureRunner;
 
 import javax.inject.Inject;

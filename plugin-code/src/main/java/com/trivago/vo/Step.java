@@ -16,8 +16,6 @@
 
 package com.trivago.vo;
 
-import java.util.List;
-
 public class Step {
     private final DataTable dataTable;
     private final String docString;

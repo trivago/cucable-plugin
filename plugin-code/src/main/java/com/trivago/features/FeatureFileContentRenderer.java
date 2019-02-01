@@ -53,9 +53,9 @@ class FeatureFileContentRenderer {
             addTags(renderedContent, singleScenario.getExampleTags());
 
             addNameAndDescription(
-                renderedContent,
-                singleScenario.getScenarioName(),
-                singleScenario.getScenarioDescription()
+                    renderedContent,
+                    singleScenario.getScenarioName(),
+                    singleScenario.getScenarioDescription()
             );
             addSteps(renderedContent, singleScenario.getBackgroundSteps());
             addSteps(renderedContent, singleScenario.getSteps());

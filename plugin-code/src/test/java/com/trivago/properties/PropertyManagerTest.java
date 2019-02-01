@@ -25,11 +25,9 @@ import static org.mockito.Mockito.verify;
 
 public class PropertyManagerTest {
     @Rule
-    public ExpectedException expectedException = ExpectedException.none();
-
-    @Rule
     public final TemporaryFolder testFolder = new TemporaryFolder();
-
+    @Rule
+    public ExpectedException expectedException = ExpectedException.none();
     private PropertyManager propertyManager;
     private CucableLogger logger;
 

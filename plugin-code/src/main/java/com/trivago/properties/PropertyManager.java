@@ -16,11 +16,11 @@
 
 package com.trivago.properties;
 
-import com.trivago.logging.Language;
 import com.trivago.exceptions.CucablePluginException;
 import com.trivago.exceptions.properties.WrongOrMissingPropertiesException;
 import com.trivago.logging.CucableLogger;
 import com.trivago.logging.CucableLogger.CucableLogLevel;
+import com.trivago.logging.Language;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -150,12 +150,12 @@ public class PropertyManager {
         }
     }
 
-    public void setCustomPlaceholders(final Map<String, String> customPlaceholders) {
-        this.customPlaceholders = customPlaceholders;
-    }
-
     public Map<String, String> getCustomPlaceholders() {
         return customPlaceholders;
+    }
+
+    public void setCustomPlaceholders(final Map<String, String> customPlaceholders) {
+        this.customPlaceholders = customPlaceholders;
     }
 
     public int getDesiredNumberOfRunners() {
