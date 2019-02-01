@@ -6,8 +6,8 @@ import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.TemporaryFolder;
 
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 
 public class FileIOTest {
     @Rule
@@ -24,7 +24,7 @@ public class FileIOTest {
         String testString = "This is a test!";
         String path = testFolder.getRoot().getPath().concat("/test.tmp");
         fileIO.writeContentToFile(testString, path);
-        assertThat(fileIO.readContentFromFile(path), is(testString + "\n"));
+        assertThat(fileIO.readContentFromFile(path), is(testString));
     }
 
     @Test(expected = MissingFileException.class)

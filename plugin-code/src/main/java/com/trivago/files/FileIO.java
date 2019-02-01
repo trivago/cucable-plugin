@@ -18,14 +18,10 @@ package com.trivago.files;
 
 import com.trivago.exceptions.filesystem.FileCreationException;
 import com.trivago.exceptions.filesystem.MissingFileException;
+import org.codehaus.plexus.util.FileUtils;
 
 import javax.inject.Singleton;
-import java.io.*;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Paths;
-import java.util.Scanner;
-
-import static java.nio.file.Files.readAllBytes;
+import java.io.IOException;
 
 /**
  * This class manages reading from and writing to files.
@@ -40,8 +36,8 @@ public class FileIO {
      * @throws FileCreationException a {@link FileCreationException} in case the file cannot be created.
      */
     public void writeContentToFile(String content, String filePath) throws FileCreationException {
-        try (PrintStream ps = new PrintStream(filePath)) {
-            ps.println(content);
+        try {
+            FileUtils.fileWrite(filePath, content);
         } catch (IOException e) {
             throw new FileCreationException(filePath);
         }
@@ -55,19 +51,10 @@ public class FileIO {
      * @throws MissingFileException a {@link MissingFileException} in case the file does not exist.
      */
     public String readContentFromFile(String filePath) throws MissingFileException {
-
-        Scanner scanner;
-        StringBuilder content = new StringBuilder();
         try {
-            scanner = new Scanner(new File(filePath));
-            scanner.useDelimiter("\r\n");
-            while (scanner.hasNext()) {
-                content.append(scanner.next());
-            }
-        } catch (FileNotFoundException e) {
+            return FileUtils.fileRead(filePath);
+        } catch (IOException e) {
             throw new MissingFileException(filePath);
         }
-
-        return content.toString();
     }
 }
