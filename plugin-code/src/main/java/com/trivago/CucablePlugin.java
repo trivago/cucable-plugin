@@ -26,6 +26,8 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import javax.inject.Inject;
+import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
@@ -45,32 +47,32 @@ CucablePlugin extends AbstractMojo {
     /**
      * The complete path to the runner template file.
      */
-    @Parameter(property = "parallel.sourceRunnerTemplateFile", required = true)
-    private String sourceRunnerTemplateFile = "";
+    @Parameter(property = "parallel.sourceRunnerTemplateFile", required = true, defaultValue = "")
+    private String sourceRunnerTemplateFile;
 
     /**
      * The path where the generated runner classes should be created.
      */
-    @Parameter(property = "parallel.generatedRunnerDirectory", required = true)
-    private String generatedRunnerDirectory = "";
+    @Parameter(property = "parallel.generatedRunnerDirectory", required = true, defaultValue = "")
+    private String generatedRunnerDirectory;
 
     /**
      * The path to .feature files or a concrete single feature file.
      */
-    @Parameter(property = "parallel.sourceFeatures", required = true)
-    private String sourceFeatures = "";
+    @Parameter(property = "parallel.sourceFeatures", required = true, defaultValue = "")
+    private String sourceFeatures;
 
     /**
      * The path where the generated .feature files should be created.
      */
-    @Parameter(property = "parallel.generatedFeatureDirectory", required = true)
-    private String generatedFeatureDirectory = "";
+    @Parameter(property = "parallel.generatedFeatureDirectory", required = true, defaultValue = "")
+    private String generatedFeatureDirectory;
 
     /**
      * An optional number of test runs for each generated .feature file.
      */
     @Parameter(property = "parallel.numberOfTestRuns", defaultValue = "1")
-    private int numberOfTestRuns = 1;
+    private int numberOfTestRuns;
 
     /**
      * Optional scenario tags to be included from feature and runner generation.
@@ -80,11 +82,23 @@ CucablePlugin extends AbstractMojo {
     private List<String> includeScenarioTags;
 
     /**
+     * Optional include scenario tags connector (can be `and` or `or`) - default value is 'or'.
+     */
+    @Parameter(property = "parallel.includeScenarioTagsConnector", defaultValue = "or")
+    private String includeScenarioTagsConnector;
+
+    /**
      * Optional scenario tags to be excluded from feature and runner generation
      * If used together with includeScenarioTags, the excluded tags overrule the included ones.
      */
     @Parameter(property = "parallel.excludeScenarioTags")
     private List<String> excludeScenarioTags;
+
+    /**
+     * Optional exclude scenario tags connector (can be `and` or `or`) - default value is 'or'.
+     */
+    @Parameter(property = "parallel.excludeScenarioTagsConnector", defaultValue = "or")
+    private String excludeScenarioTagsConnector;
 
     /**
      * Optional parallelization mode. By default, Cucable generates single scenarios (mode "scenarios").
@@ -98,14 +112,20 @@ CucablePlugin extends AbstractMojo {
      * Optional desired number of test runners that each run multiple features in sequence.
      */
     @Parameter(property = "parallel.desiredNumberOfRunners", defaultValue = "0")
-    private int desiredNumberOfRunners = 0;
+    private int desiredNumberOfRunners;
+
+    /**
+     * Optional desired number of features to run in sequence per test runner.
+     */
+    @Parameter(property = "parallel.desiredNumberOfFeaturesPerRunner", defaultValue = "0")
+    private int desiredNumberOfFeaturesPerRunner;
 
     /**
      * Optional log level to control what information is logged in the console.
      * Allowed values: default, compact, minimal, off
      */
-    @Parameter(property = "parallel.logLevel")
-    private String logLevel = "default";
+    @Parameter(property = "parallel.logLevel", defaultValue = "default")
+    private String logLevel;
 
     /**
      * Optional custom parameters that are available inside the specified template file.
@@ -144,10 +164,13 @@ CucablePlugin extends AbstractMojo {
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDirectory);
         propertyManager.setNumberOfTestRuns(numberOfTestRuns);
         propertyManager.setExcludeScenarioTags(excludeScenarioTags);
+        propertyManager.setExcludeScenarioTagsConnector(excludeScenarioTagsConnector);
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
+        propertyManager.setIncludeScenarioTagsConnector(includeScenarioTagsConnector);
         propertyManager.setParallelizationMode(parallelizationMode);
         propertyManager.setCustomPlaceholders(customPlaceholders);
         propertyManager.setDesiredNumberOfRunners(desiredNumberOfRunners);
+        propertyManager.setDesiredNumberOfFeaturesPerRunner(desiredNumberOfFeaturesPerRunner);
 
         // Validate passed POM properties
         propertyManager.checkForMissingMandatoryProperties();

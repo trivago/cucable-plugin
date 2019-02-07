@@ -37,10 +37,13 @@
     - [Optional Parameters](#optional-parameters)
       - [numberOfTestRuns](#numberoftestruns)
       - [includeScenarioTags](#includescenariotags)
+        - [includeScenarioTagsConnector](#includescenariotagsconnector)
       - [excludeScenarioTags](#excludescenariotags)
+        - [excludeScenarioTagsConnector](#excludescenariotagsconnector)
       - [parallelizationMode](#parallelizationmode)
       - [logLevel](#loglevel)
       - [desiredNumberOfRunners](#desirednumberofrunners)
+      - [desiredNumberOfFeaturesPerRunner](#desirednumberoffeaturesperrunner)
     - [Generating runners and features inside target directory](#generating-runners-and-features-inside-target-directory)
     - [Complete Example](#complete-example)
       - [Source feature file](#source-feature-file)
@@ -173,9 +176,9 @@ This is the default mode of Cucable. Having multiple runners that run one "singl
 
 ## One runner per group of generated scenarios
 
-If you set the `desiredNumberOfRunners` option to a number greater than 0, Cucable will automatically switch to the multi-feature runner mode.
+If you use the `desiredNumberOfRunners` or `desiredNumberOfFeaturesPerRunner` option, Cucable will automatically switch to the multi-feature runner mode.
 
-This means that it will only generate the specified number of runners and distribute the generated features equally to each one of them. This is helpful if a group of scenarios should be executed during each forked run of your test framework.
+This means that it will only generate the specified number of runners (or features per runner) and distribute the generated features evenly among the runners. This is helpful if a group of scenarios should be executed during each forked run of your test framework.
 
 **Note:** If a runner runs only one feature, it automatically has the same name as the feature. Otherwise it will have a unique auto-generated name.
 
@@ -222,7 +225,9 @@ The following sections break down the above steps.
             <param>@skip</param>
         </excludeScenarioTags>
         <logLevel>compact</logLevel>
+        
         <desiredNumberOfRunners>2</desiredNumberOfRunners>                                
+        <!-- or <desiredNumberOfFeaturesPerRunner>5</desiredNumberOfRunners> -->
     </configuration>    
 </plugin>
 ```
@@ -356,6 +361,16 @@ To include multiple tags, just add each one into as its own ```<param>```:
 __Note:__ When using _includeScenarioTags_ and _excludeScenarioTags_ together, the _excludeScenarioTags_ will override the _includeScenarioTags_.
 This means that a scenario containing an included tag __and__ an excluded tag will be __excluded__!
 
+##### includeScenarioTagsConnector
+
+By default, the include scenario tags are combined using `or`. With this property, this can be changed to `and`.
+
+This means that only those scenarios are included that contain __all__ specified include scenario tags.
+
+```xml
+<includeScenarioTagsConnector>and</includeScenarioTagsConnector>
+```
+
 #### excludeScenarioTags
 
 Optional scenario tags that __should not be included__ in the feature and runner generation.
@@ -370,6 +385,16 @@ To include multiple tags, just add each one into as its own ```<param>```:
 
 __Note:__ When using `includeScenarioTags` and `excludeScenarioTags` together, the `excludeScenarioTags` will override the `includeScenarioTags`.
 This means that a scenario containing an included tag __and__ an excluded tag will be __excluded__!
+
+##### excludeScenarioTagsConnector
+
+By default, the exclude scenario tags are combined using `or`. With this property, this can be changed to `and`.
+
+This means that only those scenarios are excluded that contain __all__ specified exclude scenario tags.
+
+```xml
+<excludeScenarioTagsConnector>or</excludeScenarioTagsConnector>
+```
 
 #### parallelizationMode
 
@@ -407,6 +432,16 @@ This can be configured by passing the `logLevel` property:
 If you set this options, all generated features will be distributed to a fixed set of runner classes. This means that one runner can potentially run multiple features in sequence.
 
 If this option is not set, its default value is `0` which basically means "Generate a dedicated runner for every generated feature".
+
+__Note:__ If this is used together with `desiredNumberOfFeaturesPerRunner`, the specified number of features per runner is ignored!
+
+#### desiredNumberOfFeaturesPerRunner
+
+If you set this option, all generated features will be distributed to a dynamic set of runner classes so that every runner contains a fixed number of generated features. This means that one runner can potentially run multiple features in sequence.
+
+If this option is not set, its default value is `0` which basically means "Generate a dedicated runner for every generated feature".
+
+__Note:__ If this is used together with `desiredNumberOfRunners`, the specified number of features per runner is ignored!
 
 ### Generating runners and features inside target directory
 
@@ -553,7 +588,7 @@ Then I see <b>85</b> items
 
 #### Generated runners
 
-The generated runners point to each one of the generated feature files (unless you use the `desiredNumberOfRunners` option).
+The generated runners point to each one of the generated feature files (unless you use the `desiredNumberOfRunners` or `desiredNumberOfFeaturesPerRunner` option).
 
 This is an example for one of the generated runners - note how the placeholders are now replaced with the name of the feature to run:
 

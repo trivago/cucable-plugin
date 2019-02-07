@@ -69,19 +69,25 @@
 
                     <!-- optional: custom data that is available in Cucable placeholders in a template -->
                     <!--<customPlaceholders>-->
-                        <!--<comment>This should appear inside the template</comment>-->
+                    <!--<comment>This should appear inside the template</comment>-->
                     <!--</customPlaceholders>-->
 
                     <!-- optional: include scenarios with certain tags -->
                     <!--<includeScenarioTags>-->
-                        <!--<param>@scenarioTag1</param>-->
-                        <!--<param>@scenarioTag2</param>-->
+                    <!--<param>@scenarioTag1</param>-->
+                    <!--<param>@scenarioTag2</param>-->
                     <!--</includeScenarioTags>-->
+
+                    <!-- optional: combine include scenario tags with 'and' or 'or' -->
+                    <includeScenarioTagsConnector>or1</includeScenarioTagsConnector>
 
                     <!-- optional: exclude scenarios with certain tags -->
                     <!--<excludeScenarioTags>-->
-                        <!--<param>@skipme</param>-->
+                    <!--<param>@skipme</param>-->
                     <!--</excludeScenarioTags>-->
+
+                    <!-- optional: combine exclude scenario tags with 'and' or 'or' -->
+                    <excludeScenarioTagsConnector>or2</excludeScenarioTagsConnector>
 
                     <!-- optional: change parallelization mode of Cucable (default: "scenarios")-->
                     <!--<parallelizationMode>scenarios</parallelizationMode>-->
@@ -91,8 +97,13 @@
                          if set to a number greater than 1 -->
                     <!--<numberOfTestRuns>1</numberOfTestRuns>-->
 
-                    <!-- optional: generate fixed number of runners and distribute all features round-robin. -->
+                    <!-- optional: generate a fixed number of runners and distribute all features round-robin.
+                     This can only be used if desiredNumberOfFeaturesPerRunner is NOT used! -->
                     <!--<desiredNumberOfRunners>2</desiredNumberOfRunners>-->
+
+                    <!-- optional: distribute a fixed number features per runner round-robin.
+                    This can only be used if desiredNumberOfRunners is NOT used! -->
+                    <!--<desiredNumberOfFeaturesPerRunner>2</desiredNumberOfFeaturesPerRunner>-->
 
                     <!-- optional: Cucable log level -->
                     <!--<logLevel>default</logLevel>-->

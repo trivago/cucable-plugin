@@ -47,10 +47,13 @@ public class PropertyManager {
     private List<Integer> scenarioLineNumbers;
     private int numberOfTestRuns;
     private List<String> includeScenarioTags;
+    private String includeScenarioTagsConnector;
     private List<String> excludeScenarioTags;
+    private String excludeScenarioTagsConnector;
     private ParallelizationMode parallelizationMode;
     private Map<String, String> customPlaceholders;
     private int desiredNumberOfRunners;
+    private int desiredNumberOfFeaturesPerRunner;
 
     @Inject
     public PropertyManager(CucableLogger logger) {
@@ -127,6 +130,14 @@ public class PropertyManager {
         validateTags(excludeScenarioTags, "exclude");
     }
 
+    public String getExcludeScenarioTagsConnector() {
+        return excludeScenarioTagsConnector;
+    }
+
+    public void setExcludeScenarioTagsConnector(final String excludeScenarioTagsConnector) {
+        this.excludeScenarioTagsConnector = excludeScenarioTagsConnector;
+    }
+
     public List<String> getIncludeScenarioTags() {
         return includeScenarioTags;
     }
@@ -134,6 +145,14 @@ public class PropertyManager {
     public void setIncludeScenarioTags(final List<String> includeScenarioTags) throws CucablePluginException {
         this.includeScenarioTags = includeScenarioTags;
         validateTags(includeScenarioTags, "include");
+    }
+
+    public String getIncludeScenarioTagsConnector() {
+        return includeScenarioTagsConnector;
+    }
+
+    public void setIncludeScenarioTagsConnector(final String includeScenarioTagsConnector) {
+        this.includeScenarioTagsConnector = includeScenarioTagsConnector;
     }
 
     public ParallelizationMode getParallelizationMode() {
@@ -164,6 +183,14 @@ public class PropertyManager {
 
     public void setDesiredNumberOfRunners(final int desiredNumberOfRunners) {
         this.desiredNumberOfRunners = desiredNumberOfRunners;
+    }
+
+    public int getDesiredNumberOfFeaturesPerRunner() {
+        return desiredNumberOfFeaturesPerRunner;
+    }
+
+    public void setDesiredNumberOfFeaturesPerRunner(int desiredNumberOfFeaturesPerRunner) {
+        this.desiredNumberOfFeaturesPerRunner = desiredNumberOfFeaturesPerRunner;
     }
 
     /**
@@ -267,6 +294,8 @@ public class PropertyManager {
     private void validateTags(final List<String> tags, final String tagType) throws CucablePluginException {
         if (tags != null) {
             for (String tag : tags) {
+                System.out.println("CHECKING " + tag);
+
                 if (!tag.startsWith("@")) {
                     throw new CucablePluginException(
                             "Tag '" + tag + "' of type '" + tagType + "' does not start with '@'.");
