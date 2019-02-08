@@ -47,15 +47,17 @@ public class GherkinDocumentParser {
 
     private final GherkinToCucableConverter gherkinToCucableConverter;
     private final GherkinTranslations gherkinTranslations;
+    private PropertyManager propertyManager;
 
     @Inject
-    public GherkinDocumentParser(
+    GherkinDocumentParser(
             final GherkinToCucableConverter gherkinToCucableConverter,
             final GherkinTranslations gherkinTranslations,
             final PropertyManager propertyManager
     ) {
         this.gherkinToCucableConverter = gherkinToCucableConverter;
         this.gherkinTranslations = gherkinTranslations;
+        this.propertyManager = propertyManager;
     }
 
     /**
@@ -64,17 +66,13 @@ public class GherkinDocumentParser {
      * @param featureContent      A feature string.
      * @param featureFilePath     The path to the source feature file.
      * @param scenarioLineNumbers An optional line number of a scenario inside a feature file.
-     * @param includeScenarioTags Optional scenario tags to include into scenario generation.
-     * @param excludeScenarioTags Optional scenario tags to exclude from scenario generation.
      * @return A {@link SingleScenario} list.
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
     public List<SingleScenario> getSingleScenariosFromFeature(
             final String featureContent,
             final String featureFilePath,
-            final List<Integer> scenarioLineNumbers,
-            final List<String> includeScenarioTags,
-            final List<String> excludeScenarioTags) throws CucablePluginException {
+            final List<Integer> scenarioLineNumbers) throws CucablePluginException {
 
         String escapedFeatureContent = featureContent.replace("\\n", "\\\\n");
 
@@ -119,8 +117,6 @@ public class GherkinDocumentParser {
                             );
                     addGherkinScenarioInformationToSingleScenario(scenario, singleScenario);
                     if (scenarioShouldBeIncluded(
-                            includeScenarioTags,
-                            excludeScenarioTags,
                             singleScenario.getScenarioTags(),
                             singleScenario.getFeatureTags()
                     )) {
@@ -148,8 +144,6 @@ public class GherkinDocumentParser {
                             );
                     for (SingleScenario singleScenario : outlineScenarios) {
                         if (scenarioShouldBeIncluded(
-                                includeScenarioTags,
-                                excludeScenarioTags,
                                 singleScenario.getScenarioTags(),
                                 singleScenario.getFeatureTags(),
                                 singleScenario.getExampleTags()
@@ -334,17 +328,16 @@ public class GherkinDocumentParser {
     /**
      * Checks if a scenario should be included in the runner and feature generation based on the tag settings.
      *
-     * @param includeScenarioTags the include tags list.
-     * @param excludeScenarioTags the exclude tags list.
-     * @param sourceTagsList      any number of source tag lists to be considered
+     * @param sourceTagsList any number of source tag lists to be considered
      * @return true if an include tag  and no exclude tags are included in the source tag list.
      */
     @SafeVarargs
     private final boolean scenarioShouldBeIncluded(
-            final List<String> includeScenarioTags,
-            final List<String> excludeScenarioTags,
             final List<String>... sourceTagsList
     ) {
+
+        List<String> includeScenarioTags = propertyManager.getIncludeScenarioTags();
+        List<String> excludeScenarioTags = propertyManager.getExcludeScenarioTags();
 
         List<String> combinedSourceTags = new ArrayList<>();
         for (List<String> sourceTags : sourceTagsList) {

@@ -174,9 +174,7 @@ public class FeatureFileConverter {
                     gherkinDocumentParser.getSingleScenariosFromFeature(
                             featureFileContent,
                             featureFilePathString,
-                            lineNumbers,
-                            includeScenarioTags,
-                            excludeScenarioTags
+                            lineNumbers
                     );
         } catch (CucablePluginException e) {
             throw new FeatureFileParseException(featureFilePathString);

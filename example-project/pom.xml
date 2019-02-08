@@ -79,7 +79,7 @@
                     <!--</includeScenarioTags>-->
 
                     <!-- optional: combine include scenario tags with 'and' or 'or' -->
-                    <includeScenarioTagsConnector>or1</includeScenarioTagsConnector>
+                    <includeScenarioTagsConnector>or</includeScenarioTagsConnector>
 
                     <!-- optional: exclude scenarios with certain tags -->
                     <!--<excludeScenarioTags>-->
@@ -87,7 +87,7 @@
                     <!--</excludeScenarioTags>-->
 
                     <!-- optional: combine exclude scenario tags with 'and' or 'or' -->
-                    <excludeScenarioTagsConnector>or2</excludeScenarioTagsConnector>
+                    <excludeScenarioTagsConnector>or</excludeScenarioTagsConnector>
 
                     <!-- optional: change parallelization mode of Cucable (default: "scenarios")-->
                     <!--<parallelizationMode>scenarios</parallelizationMode>-->
