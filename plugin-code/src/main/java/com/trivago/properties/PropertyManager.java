@@ -139,7 +139,8 @@ public class PropertyManager {
             this.excludeScenarioTagsConnector = TagConnectMode.valueOf(excludeScenarioTagsConnector.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new CucablePluginException(
-                    "Unknown <excludeScenarioTagConnector> '" + excludeScenarioTagsConnector + "'. Please use 'and' or 'or'."
+                    "Unknown <excludeScenarioTagConnector> '" + excludeScenarioTagsConnector +
+                            "'. Please use 'and' or 'or'."
             );
         }
     }
@@ -162,7 +163,8 @@ public class PropertyManager {
             this.includeScenarioTagsConnector = TagConnectMode.valueOf(includeScenarioTagsConnector.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new CucablePluginException(
-                    "Unknown <includeScenarioTagsConnector> '" + includeScenarioTagsConnector + "'. Please use 'and' or 'or'."
+                    "Unknown <includeScenarioTagsConnector> '" + includeScenarioTagsConnector +
+                            "'. Please use 'and' or 'or'."
             );
         }
     }
@@ -176,7 +178,8 @@ public class PropertyManager {
             this.parallelizationMode = ParallelizationMode.valueOf(parallelizationMode.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new CucablePluginException(
-                    "Unknown <parallelizationMode> '" + parallelizationMode + "'. Please use 'scenarios' or 'features'."
+                    "Unknown <parallelizationMode> '" + parallelizationMode +
+                            "'. Please use 'scenarios' or 'features'."
             );
         }
     }

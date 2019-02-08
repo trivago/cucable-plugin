@@ -82,7 +82,7 @@ public class FeatureFileConverterTest {
 
         when(fileIO.readContentFromFile("TEST_PATH")).thenReturn("TEST_CONTENT");
 
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH", null)).thenThrow(new CucablePluginException(""));
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH")).thenThrow(new CucablePluginException(""));
 
         List<Path> pathList = new ArrayList<>();
         Path mockPath = mock(Path.class);
@@ -98,7 +98,7 @@ public class FeatureFileConverterTest {
     public void invalidLineNumberTest() throws Exception {
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.SCENARIOS.toString());
         propertyManager.setSourceFeatures("testscenario:2");
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH", null)).thenReturn(new ArrayList<>());
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH")).thenReturn(new ArrayList<>());
 
         List<Path> pathList = new ArrayList<>();
         Path mockPath = mock(Path.class);
@@ -125,7 +125,7 @@ public class FeatureFileConverterTest {
         List<SingleScenario> scenarioList = new ArrayList<>();
         SingleScenario singleScenario = new SingleScenario("feature", "", "", "featureDescription", "name", "scenarioDescription", new ArrayList<>(), new ArrayList<>());
         scenarioList.add(singleScenario);
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH", null)).thenReturn(scenarioList);
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH")).thenReturn(scenarioList);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
@@ -159,7 +159,7 @@ public class FeatureFileConverterTest {
         List<SingleScenario> scenarioList = new ArrayList<>();
         SingleScenario singleScenario = new SingleScenario("feature", "", "", "featureDescription", "name", "scenarioDescription", new ArrayList<>(), new ArrayList<>());
         scenarioList.add(singleScenario);
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH", null)).thenReturn(scenarioList);
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH")).thenReturn(scenarioList);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
@@ -195,7 +195,7 @@ public class FeatureFileConverterTest {
         SingleScenario singleScenario = new SingleScenario("feature", "", "", "featureDescription", "name", "scenarioDescription", new ArrayList<>(), new ArrayList<>());
         scenarioList.add(singleScenario);
         scenarioList.add(singleScenario);
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH", null)).thenReturn(scenarioList);
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", "TEST_PATH")).thenReturn(scenarioList);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);

@@ -63,16 +63,14 @@ public class GherkinDocumentParser {
     /**
      * Returns a {@link SingleScenario} list from a given feature file.
      *
-     * @param featureContent      A feature string.
-     * @param featureFilePath     The path to the source feature file.
-     * @param scenarioLineNumbers An optional line number of a scenario inside a feature file.
+     * @param featureContent  A feature string.
+     * @param featureFilePath The path to the source feature file.
      * @return A {@link SingleScenario} list.
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
     public List<SingleScenario> getSingleScenariosFromFeature(
             final String featureContent,
-            final String featureFilePath,
-            final List<Integer> scenarioLineNumbers) throws CucablePluginException {
+            final String featureFilePath) throws CucablePluginException {
 
         String escapedFeatureContent = featureContent.replace("\\n", "\\\\n");
 
@@ -81,8 +79,8 @@ public class GherkinDocumentParser {
         String featureName = feature.getKeyword() + ": " + feature.getName();
         String featureLanguage = feature.getLanguage();
         String featureDescription = feature.getDescription();
-        List<String> featureTags =
-                gherkinToCucableConverter.convertGherkinTagsToCucableTags(feature.getTags());
+        List<String> featureTags = gherkinToCucableConverter.convertGherkinTagsToCucableTags(feature.getTags());
+        List<Integer> scenarioLineNumbers = propertyManager.getScenarioLineNumbers();
 
         ArrayList<SingleScenario> singleScenarioFeatures = new ArrayList<>();
         List<Step> backgroundSteps = new ArrayList<>();
@@ -315,11 +313,11 @@ public class GherkinDocumentParser {
         try {
             gherkinDocument = gherkinDocumentParser.parse(featureContent);
         } catch (ParserException parserException) {
-            throw new CucablePluginException("Could not parse feature!");
+            throw new CucablePluginException("Could not parse feature: " + parserException.getMessage());
         }
 
         if (gherkinDocument == null || gherkinDocument.getFeature() == null) {
-            throw new CucablePluginException("Could not parse feature!");
+            throw new CucablePluginException("Could not parse features from gherkin document!");
         }
 
         return gherkinDocument;
