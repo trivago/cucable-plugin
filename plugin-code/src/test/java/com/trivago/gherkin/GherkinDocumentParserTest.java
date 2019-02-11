@@ -82,6 +82,34 @@ public class GherkinDocumentParserTest {
     }
 
     @Test
+    public void validFeatureTwoIncludeTagsWithAndConnectorTest() throws Exception {
+        String featureContent = getTwoScenariosWithTags();
+
+        List<String> includeScenarioTags = new ArrayList<>();
+        includeScenarioTags.add("@tag1");
+        includeScenarioTags.add("@tag2");
+        when(propertyManager.getIncludeScenarioTags()).thenReturn(includeScenarioTags);
+        when(propertyManager.getIncludeScenarioTagsConnector()).thenReturn(PropertyManager.TagConnectMode.AND);
+
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "");
+        assertThat(singleScenariosFromFeature.size(), is(1));
+    }
+
+    @Test
+    public void validFeatureTwoExcludeTagsWithAndConnectorTest() throws Exception {
+        String featureContent = getTwoScenariosWithTags();
+
+        List<String> excludeScenarioTags = new ArrayList<>();
+        excludeScenarioTags.add("@tag1");
+        excludeScenarioTags.add("@tag2");
+        when(propertyManager.getExcludeScenarioTags()).thenReturn(excludeScenarioTags);
+        when(propertyManager.getExcludeScenarioTagsConnector()).thenReturn(PropertyManager.TagConnectMode.AND);
+
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "");
+        assertThat(singleScenariosFromFeature.size(), is(1));
+    }
+
+    @Test
     public void validFeatureOneExcludeTagNoScenarioTagsTest() throws Exception {
         String featureContent = "@featureTag\n" +
                 "Feature: test feature\n" +
@@ -142,15 +170,13 @@ public class GherkinDocumentParserTest {
     public void validScenarioExcludeTagOverridesIncludeTagTest() throws Exception {
         String featureContent = getTwoScenariosWithTags();
 
-        List<String> excludeScenarioTags = new ArrayList<>();
-        excludeScenarioTags.add("@tag1");
-        when(propertyManager.getExcludeScenarioTags()).thenReturn(excludeScenarioTags);
-        List<String> includeScenarioTags = new ArrayList<>();
-        includeScenarioTags.add("@tag1");
-        when(propertyManager.getIncludeScenarioTags()).thenReturn(includeScenarioTags);
+        List<String> tags = new ArrayList<>();
+        tags.add("@tag1");
+        when(propertyManager.getExcludeScenarioTags()).thenReturn(tags);
+        when(propertyManager.getIncludeScenarioTags()).thenReturn(tags);
 
         List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "");
-        assertThat(singleScenariosFromFeature.size(), is(0));
+        assertThat(singleScenariosFromFeature.size(), is(1));
     }
 
     @Test
@@ -342,11 +368,8 @@ public class GherkinDocumentParserTest {
         assertThat(singleScenariosFromFeature.size(), is(2));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
-
         assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline, key = 1, value = one"));
-
         scenario = singleScenariosFromFeature.get(1);
-
         assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline, key = 2, value = two"));
     }
 

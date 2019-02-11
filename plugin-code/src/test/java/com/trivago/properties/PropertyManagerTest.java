@@ -38,6 +38,56 @@ public class PropertyManagerTest {
     }
 
     @Test
+    public void setExcludeScenarioTagsTest() throws CucablePluginException {
+        List<String> tags = new ArrayList<>();
+        tags.add("@tag1");
+        tags.add("@tag2");
+        propertyManager.setExcludeScenarioTags(tags);
+        assertThat(propertyManager.getExcludeScenarioTags().size(), is(2));
+    }
+
+    @Test
+    public void setExcludeScenarioTagsConnectorTest() throws CucablePluginException {
+        propertyManager.setExcludeScenarioTagsConnector("or");
+        assertThat(propertyManager.getExcludeScenarioTagsConnector(), is(PropertyManager.TagConnectMode.OR));
+        propertyManager.setExcludeScenarioTagsConnector("and");
+        assertThat(propertyManager.getExcludeScenarioTagsConnector(), is(PropertyManager.TagConnectMode.AND));
+    }
+
+    @Test(expected = CucablePluginException.class)
+    public void setExcludeScenarioTagsConnectorInvalidTest() throws CucablePluginException {
+        propertyManager.setExcludeScenarioTagsConnector("invalid");
+    }
+
+    @Test
+    public void setIncludeScenarioTagsTest() throws CucablePluginException {
+        List<String> tags = new ArrayList<>();
+        tags.add("@tag1");
+        tags.add("@tag2");
+        propertyManager.setIncludeScenarioTags(tags);
+        assertThat(propertyManager.getIncludeScenarioTags().size(), is(2));
+    }
+
+    @Test
+    public void setIncludeScenarioTagsConnectorTest() throws CucablePluginException {
+        propertyManager.setIncludeScenarioTagsConnector("or");
+        assertThat(propertyManager.getIncludeScenarioTagsConnector(), is(PropertyManager.TagConnectMode.OR));
+        propertyManager.setIncludeScenarioTagsConnector("and");
+        assertThat(propertyManager.getIncludeScenarioTagsConnector(), is(PropertyManager.TagConnectMode.AND));
+    }
+
+    @Test(expected = CucablePluginException.class)
+    public void setIncludeScenarioTagsConnectorInvalidTest() throws CucablePluginException {
+        propertyManager.setIncludeScenarioTagsConnector("invalid");
+    }
+
+    @Test
+    public void setDesiredNumberOfFeaturesPerRunnerTest() {
+        propertyManager.setDesiredNumberOfFeaturesPerRunner(5);
+        assertThat(propertyManager.getDesiredNumberOfFeaturesPerRunner(), is(5));
+    }
+
+    @Test
     public void customPlaceholdersTest() {
         Map<String, String> customPlaceholders = new HashMap<>();
         customPlaceholders.put("one", "two");

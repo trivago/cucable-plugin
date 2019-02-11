@@ -164,8 +164,6 @@ public class FeatureFileConverter {
 
         String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
 
-        List<Integer> lineNumbers = propertyManager.getScenarioLineNumbers();
-
         List<SingleScenario> singleScenarios;
         try {
             singleScenarios =
@@ -180,7 +178,8 @@ public class FeatureFileConverter {
         // In case of a provided line number: if there are no scenarios created
         // that means that the provided line number is wrong.
         if (propertyManager.hasValidScenarioLineNumbers() && singleScenarios.size() == 0) {
-            throw new CucablePluginException("There is no parsable scenario or scenario outline at line " + lineNumbers);
+            throw new CucablePluginException("There is no parsable scenario or scenario outline at line " +
+                    propertyManager.getScenarioLineNumbers());
         }
 
         return generateFeatureFiles(sourceFeatureFilePath, singleScenarios);
