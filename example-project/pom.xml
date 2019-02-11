@@ -78,18 +78,18 @@
                     <!--<param>@scenarioTag2</param>-->
                     <!--</includeScenarioTags>-->
 
-                    <!-- optional: combine include scenario tags with 'and' or 'or' -->
-                    <includeScenarioTagsConnector>or</includeScenarioTagsConnector>
+                    <!-- optional: combine include scenario tags with 'and' or 'or' (default: 'or') -->
+                    <!--<includeScenarioTagsConnector>and</includeScenarioTagsConnector>-->
 
                     <!-- optional: exclude scenarios with certain tags -->
                     <!--<excludeScenarioTags>-->
                     <!--<param>@skipme</param>-->
                     <!--</excludeScenarioTags>-->
 
-                    <!-- optional: combine exclude scenario tags with 'and' or 'or' -->
-                    <excludeScenarioTagsConnector>or</excludeScenarioTagsConnector>
+                    <!-- optional: combine exclude scenario tags with 'and' or 'or' (default: 'or') -->
+                    <!--<excludeScenarioTagsConnector>and</excludeScenarioTagsConnector>-->
 
-                    <!-- optional: change parallelization mode of Cucable (default: "scenarios")-->
+                    <!-- optional: change parallelization mode of Cucable (default: 'scenarios')-->
                     <!--<parallelizationMode>scenarios</parallelizationMode>-->
                     <!--<parallelizationMode>features</parallelizationMode>-->
 

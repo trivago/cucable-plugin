@@ -6,9 +6,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
-## [1.4.0] - 2019-02-11
+## [1.4.0] - UNRELEASED
 
+### Added
 
+- Support for `and` and `or` mode for `includeScenarioTags` and `excludeScenarioTags` (via `includeScenarioTagsConnector` and `excludeScenarioTagsConnector` parameters) (#88)
 
 ## [1.3.2] - 2019-02-01
 
