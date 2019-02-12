@@ -70,7 +70,8 @@ public class GherkinDocumentParser {
      */
     public List<SingleScenario> getSingleScenariosFromFeature(
             final String featureContent,
-            final String featureFilePath) throws CucablePluginException {
+            final String featureFilePath,
+            final List<Integer> scenarioLineNumbers) throws CucablePluginException {
 
         String escapedFeatureContent = featureContent.replace("\\n", "\\\\n");
         GherkinDocument gherkinDocument = getGherkinDocumentFromFeatureFileContent(escapedFeatureContent);
@@ -80,7 +81,6 @@ public class GherkinDocumentParser {
         String featureLanguage = feature.getLanguage();
         String featureDescription = feature.getDescription();
         List<String> featureTags = gherkinToCucableConverter.convertGherkinTagsToCucableTags(feature.getTags());
-        List<Integer> scenarioLineNumbers = propertyManager.getScenarioLineNumbers();
 
         ArrayList<SingleScenario> singleScenarioFeatures = new ArrayList<>();
         List<Step> backgroundSteps = new ArrayList<>();

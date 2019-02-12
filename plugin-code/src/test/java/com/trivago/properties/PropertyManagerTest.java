@@ -3,6 +3,7 @@ package com.trivago.properties;
 import com.trivago.exceptions.CucablePluginException;
 import com.trivago.exceptions.properties.WrongOrMissingPropertiesException;
 import com.trivago.logging.CucableLogger;
+import com.trivago.vo.CucableFeature;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -37,9 +38,33 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void setExcludeScenarioTagsTest() throws CucablePluginException {
+    public void setGeneratedRunnerDirectoryTest(){
+        propertyManager.setGeneratedRunnerDirectory("test");
+        assertThat(propertyManager.getGeneratedRunnerDirectory(), is("test"));
+    }
+
+    @Test
+    public void setGeneratedFeatureDirectoryTest(){
+        propertyManager.setGeneratedFeatureDirectory("test");
+        assertThat(propertyManager.getGeneratedFeatureDirectory(), is("test"));
+    }
+
+    @Test
+    public void setNumberOfTestRunsTest(){
+        propertyManager.setNumberOfTestRuns(11);
+        assertThat(propertyManager.getNumberOfTestRuns(), is(11));
+    }
+
+    @Test
+    public void setExcludeScenarioTagsTest() {
         propertyManager.setExcludeScenarioTags("tag1, tag2");
         assertThat(propertyManager.getExcludeScenarioTags().size(), is(2));
+    }
+
+    @Test
+    public void setDesiredNumberOfRunnersTest() {
+        propertyManager.setDesiredNumberOfRunners(12);
+        assertThat(propertyManager.getDesiredNumberOfRunners(), is(12));
     }
 
     @Test
@@ -56,7 +81,7 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void setIncludeScenarioTagsTest() throws CucablePluginException {
+    public void setIncludeScenarioTagsTest() {
         propertyManager.setIncludeScenarioTags("tag1,tag2");
         assertThat(propertyManager.getIncludeScenarioTags().size(), is(2));
     }
@@ -115,25 +140,30 @@ public class PropertyManagerTest {
     @Test
     public void featureWithoutScenarioLineNumberTest() {
         propertyManager.setSourceFeatures("my.feature");
-        assertThat(propertyManager.getSourceFeatures(), is("my.feature"));
-        assertThat(propertyManager.getScenarioLineNumbers(), is(notNullValue()));
-        assertThat(propertyManager.getScenarioLineNumbers().size(), is(0));
+        List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
+        assertThat(sourceFeatures.size(), is(1));
+        assertThat(sourceFeatures.get(0).getName(), is("my.feature"));
+        assertThat(sourceFeatures.get(0).getLineNumbers(), is(notNullValue()));
+        assertThat(sourceFeatures.get(0).getLineNumbers().size(), is(0));
     }
 
     @Test
     public void featureWithScenarioLineNumberTest() {
         propertyManager.setSourceFeatures("my.feature:123");
-        assertThat(propertyManager.getSourceFeatures(), is("my.feature"));
-        assertThat(propertyManager.getScenarioLineNumbers().size(), is(1));
-        assertThat(propertyManager.getScenarioLineNumbers().get(0), is(123));
+        List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
+        assertThat(sourceFeatures.size(), is(1));
+        assertThat(sourceFeatures.get(0).getName(), is("my.feature"));
+        assertThat(sourceFeatures.get(0).getLineNumbers().size(), is(1));
+        assertThat(sourceFeatures.get(0).getLineNumbers().get(0), is(123));
     }
 
     @Test
     public void featureWithInvalidScenarioLineNumberTest() {
         propertyManager.setSourceFeatures("my.feature:abc");
-        assertThat(propertyManager.getSourceFeatures(), is("my.feature:abc"));
-        assertThat(propertyManager.getScenarioLineNumbers(), is(notNullValue()));
-        assertThat(propertyManager.getScenarioLineNumbers().size(), is(0));
+        List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
+        assertThat(sourceFeatures.size(), is(1));
+        assertThat(sourceFeatures.get(0).getName(), is("my.feature:abc"));
+        assertThat(sourceFeatures.get(0).getLineNumbers().size(), is(0));
     }
 
     @Test
@@ -189,16 +219,16 @@ public class PropertyManagerTest {
         propertyManager.logProperties();
         verify(logger, times(6)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
         List<String> capturedLogs = logCaptor.getAllValues();
-        assertThat(capturedLogs.get(0), is("- sourceRunnerTemplateFile  : null"));
-        assertThat(capturedLogs.get(1), is("- generatedRunnerDirectory  : null"));
-        assertThat(capturedLogs.get(2), is("- sourceFeatures            : null"));
-        assertThat(capturedLogs.get(3), is("- parallelizationMode       : null"));
-        assertThat(capturedLogs.get(4), is("- generatedFeatureDirectory : null"));
+        assertThat(capturedLogs.get(0), is("- sourceFeatures            :"));
+        assertThat(capturedLogs.get(1), is("- sourceRunnerTemplateFile  : null"));
+        assertThat(capturedLogs.get(2), is("- generatedRunnerDirectory  : null"));
+        assertThat(capturedLogs.get(3), is("- generatedFeatureDirectory : null"));
+        assertThat(capturedLogs.get(4), is("- parallelizationMode       : null"));
         assertThat(capturedLogs.get(5), is("- numberOfTestRuns          : 0"));
     }
 
     @Test
-    public void logExtendedPropertiesTest() throws CucablePluginException {
+    public void logExtendedPropertiesTest() {
         ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
         propertyManager.setExcludeScenarioTags("exclude1, exclude2");
         propertyManager.setIncludeScenarioTags("include1, include2");
@@ -215,17 +245,17 @@ public class PropertyManagerTest {
 
         verify(logger, times(13)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
         List<String> capturedLogs = logCaptor.getAllValues();
-        assertThat(capturedLogs.get(0), is("- sourceRunnerTemplateFile  : null"));
-        assertThat(capturedLogs.get(1), is("- generatedRunnerDirectory  : null"));
-        assertThat(capturedLogs.get(2), is("- sourceFeatures            : test.feature"));
-        assertThat(capturedLogs.get(3), is("                              with line number 3"));
-        assertThat(capturedLogs.get(4), is("- includeScenarioTags       : @include1, @include2"));
-        assertThat(capturedLogs.get(5), is("- excludeScenarioTags       : @exclude1, @exclude2"));
-        assertThat(capturedLogs.get(6), is("- parallelizationMode       : null"));
+        assertThat(capturedLogs.get(0), is("- sourceFeatures            :"));
+        assertThat(capturedLogs.get(1), is("  - test.feature with line number 3"));
+        assertThat(capturedLogs.get(2), is("- sourceRunnerTemplateFile  : null"));
+        assertThat(capturedLogs.get(3), is("- generatedRunnerDirectory  : null"));
+        assertThat(capturedLogs.get(4), is("- generatedFeatureDirectory : null"));
+        assertThat(capturedLogs.get(5), is("- includeScenarioTags       : @include1, @include2"));
+        assertThat(capturedLogs.get(6), is("- excludeScenarioTags       : @exclude1, @exclude2"));
         assertThat(capturedLogs.get(7), is("- customPlaceholders        :"));
         assertThat(capturedLogs.get(8), is("  key1 => value1"));
         assertThat(capturedLogs.get(9), is("  key2 => value2"));
-        assertThat(capturedLogs.get(10), is("- generatedFeatureDirectory : null"));
+        assertThat(capturedLogs.get(10), is("- parallelizationMode       : null"));
         assertThat(capturedLogs.get(11), is("- numberOfTestRuns          : 0"));
         assertThat(capturedLogs.get(12), is("- desiredNumberOfRunners    : 2"));
     }
@@ -233,7 +263,7 @@ public class PropertyManagerTest {
     @Test
     public void logMissingPropertiesTest() throws CucablePluginException {
         expectedException.expect(WrongOrMissingPropertiesException.class);
-        expectedException.expectMessage("Properties not specified correctly in the configuration section of your pom file: [<sourceRunnerTemplateFile>, <generatedRunnerDirectory>, <sourceFeatures>, <generatedFeatureDirectory>]");
+        expectedException.expectMessage("Properties not specified correctly in the configuration section of your pom file: [<sourceFeatures>, <sourceRunnerTemplateFile>, <generatedRunnerDirectory>, <generatedFeatureDirectory>]");
         propertyManager.checkForMissingMandatoryProperties();
 
     }

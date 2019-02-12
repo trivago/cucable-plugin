@@ -306,6 +306,17 @@ This can specify
 * the path to a specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file (e.g. ```src/test/resources/features/MyFeature.feature```)
 * the path to a specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file including line numbers of specific scenarios/scenario outlines inside this file (e.g. ```src/test/resources/features/MyFeature.feature:12:19``` would only convert the scenarios starting at line _12_ and _19_ inside _MyFeature.feature_)
 
+**Note:** From Cucable 1.4.0 onwards it is possible to specify a combination as a comma separated list:
+
+```xml
+<sourceFeatures>
+    src/test/resources/features/sometests,
+    src/test/resources/features/MyFeature.feature:8:15
+</sourceFeatures>
+```
+
+This example would process all features in the `src/test/resources/features/sometests` directory **and** scenarios at lines 8 and 15 of `src/test/resources/features/MyFeature.feature`.
+
 #### generatedFeatureDirectory
 
 The path where the __generated__ [Cucumber](https://cucumber.io) .feature files should be located (e.g. _src/test/resources/parallel_).

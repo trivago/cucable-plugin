@@ -181,7 +181,7 @@ CucablePlugin extends AbstractMojo {
         fileManager.prepareGeneratedFeatureAndRunnerDirectories();
 
         // Conversion of scenarios into single scenarios and runners.
-        featureFileConverter.generateParallelizableFeatures(fileManager.getFeatureFilePaths());
+       featureFileConverter.generateParallelizableFeatures(propertyManager.getSourceFeatures());
     }
 
     /**
