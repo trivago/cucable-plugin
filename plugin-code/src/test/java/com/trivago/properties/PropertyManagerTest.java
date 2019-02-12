@@ -10,7 +10,6 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -39,10 +38,7 @@ public class PropertyManagerTest {
 
     @Test
     public void setExcludeScenarioTagsTest() throws CucablePluginException {
-        List<String> tags = new ArrayList<>();
-        tags.add("@tag1");
-        tags.add("@tag2");
-        propertyManager.setExcludeScenarioTags(tags);
+        propertyManager.setExcludeScenarioTags("tag1, tag2");
         assertThat(propertyManager.getExcludeScenarioTags().size(), is(2));
     }
 
@@ -61,10 +57,7 @@ public class PropertyManagerTest {
 
     @Test
     public void setIncludeScenarioTagsTest() throws CucablePluginException {
-        List<String> tags = new ArrayList<>();
-        tags.add("@tag1");
-        tags.add("@tag2");
-        propertyManager.setIncludeScenarioTags(tags);
+        propertyManager.setIncludeScenarioTags("tag1,tag2");
         assertThat(propertyManager.getIncludeScenarioTags().size(), is(2));
     }
 
@@ -144,26 +137,6 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void wrongIncludeTagFormatTest() throws Exception {
-        expectedException.expect(CucablePluginException.class);
-        expectedException.expectMessage("Tag 'noAtInFront' of type 'include' does not start with '@'.");
-
-        List<String> tags = new ArrayList<>();
-        tags.add("noAtInFront");
-        propertyManager.setIncludeScenarioTags(tags);
-    }
-
-    @Test
-    public void wrongExcludeTagFormatTest() throws Exception {
-        expectedException.expect(CucablePluginException.class);
-        expectedException.expectMessage("Tag 'noAtInFront' of type 'exclude' does not start with '@'.");
-
-        List<String> tags = new ArrayList<>();
-        tags.add("noAtInFront");
-        propertyManager.setExcludeScenarioTags(tags);
-    }
-
-    @Test
     public void checkForDisallowedParallelizationModePropertiesScenariosMode() throws CucablePluginException {
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.SCENARIOS.toString());
         propertyManager.checkForDisallowedParallelizationModeProperties();
@@ -186,9 +159,7 @@ public class PropertyManagerTest {
 
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
         propertyManager.setSourceFeatures(testFolder.getRoot().getPath());
-        List<String> excludeTags = new ArrayList<>();
-        excludeTags.add("@someTag");
-        propertyManager.setExcludeScenarioTags(excludeTags);
+        propertyManager.setExcludeScenarioTags("someTag");
 
         propertyManager.checkForDisallowedParallelizationModeProperties();
     }
@@ -200,9 +171,7 @@ public class PropertyManagerTest {
 
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
         propertyManager.setSourceFeatures(testFolder.getRoot().getPath());
-        List<String> includeTags = new ArrayList<>();
-        includeTags.add("@someTag");
-        propertyManager.setIncludeScenarioTags(includeTags);
+        propertyManager.setIncludeScenarioTags("someTag");
 
         propertyManager.checkForDisallowedParallelizationModeProperties();
     }
@@ -231,16 +200,8 @@ public class PropertyManagerTest {
     @Test
     public void logExtendedPropertiesTest() throws CucablePluginException {
         ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
-
-        List<String> excludeScenarioTags = new ArrayList<>();
-        excludeScenarioTags.add("@exclude1");
-        excludeScenarioTags.add("@exclude2");
-        propertyManager.setExcludeScenarioTags(excludeScenarioTags);
-
-        List<String> includeScenarioTags = new ArrayList<>();
-        includeScenarioTags.add("@include1");
-        includeScenarioTags.add("@include2");
-        propertyManager.setIncludeScenarioTags(includeScenarioTags);
+        propertyManager.setExcludeScenarioTags("exclude1, exclude2");
+        propertyManager.setIncludeScenarioTags("include1, include2");
 
         Map<String, String> customPlaceholders = new HashMap<>();
         customPlaceholders.put("key1", "value1");

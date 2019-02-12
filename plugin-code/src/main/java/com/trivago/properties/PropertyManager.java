@@ -125,9 +125,18 @@ public class PropertyManager {
         return excludeScenarioTags;
     }
 
-    public void setExcludeScenarioTags(final List<String> excludeScenarioTags) throws CucablePluginException {
-        this.excludeScenarioTags = excludeScenarioTags;
-        validateTags(excludeScenarioTags, "exclude");
+    public void setExcludeScenarioTags(final String excludeScenarioTags) {
+        this.excludeScenarioTags = new ArrayList<>();
+        if (excludeScenarioTags == null) {
+            return;
+        }
+        for (String tag : excludeScenarioTags.split(",")) {
+            String trimmedTag = tag.trim();
+            if (!trimmedTag.startsWith("@")) {
+                trimmedTag = "@" + trimmedTag;
+            }
+            this.excludeScenarioTags.add(trimmedTag);
+        }
     }
 
     public TagConnectMode getExcludeScenarioTagsConnector() {
@@ -149,9 +158,18 @@ public class PropertyManager {
         return includeScenarioTags;
     }
 
-    public void setIncludeScenarioTags(final List<String> includeScenarioTags) throws CucablePluginException {
-        this.includeScenarioTags = includeScenarioTags;
-        validateTags(includeScenarioTags, "include");
+    public void setIncludeScenarioTags(final String includeScenarioTags) {
+        this.includeScenarioTags = new ArrayList<>();
+        if (includeScenarioTags == null) {
+            return;
+        }
+        for (String tag : includeScenarioTags.split(",")) {
+            String trimmedTag = tag.trim();
+            if (!trimmedTag.startsWith("@")) {
+                trimmedTag = "@" + trimmedTag;
+            }
+            this.includeScenarioTags.add(trimmedTag);
+        }
     }
 
     public TagConnectMode getIncludeScenarioTagsConnector() {
@@ -297,26 +315,6 @@ public class PropertyManager {
         }
 
         logger.logInfoSeparator(logLevels);
-    }
-
-    /**
-     * Checks a list of tags for missing '@' prefixes
-     *
-     * @param tags    A list of tags.
-     * @param tagType The type of the passed tags.
-     * @throws CucablePluginException Thrown when a tag does not start with '@'.
-     */
-    private void validateTags(final List<String> tags, final String tagType) throws CucablePluginException {
-        if (tags != null) {
-            for (String tag : tags) {
-                System.out.println("CHECKING " + tag);
-
-                if (!tag.startsWith("@")) {
-                    throw new CucablePluginException(
-                            "Tag '" + tag + "' of type '" + tagType + "' does not start with '@'.");
-                }
-            }
-        }
     }
 
     /**

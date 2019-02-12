@@ -26,9 +26,6 @@ import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 
 import javax.inject.Inject;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
 import java.util.Map;
 
 /**
@@ -75,11 +72,11 @@ CucablePlugin extends AbstractMojo {
     private int numberOfTestRuns;
 
     /**
-     * Optional scenario tags to be included from feature and runner generation.
+     * Optional comma separated list of scenario tags to be included from feature and runner generation.
      * If used together with excludeScenarioTags, the excluded tags overrule this setting.
      */
     @Parameter(property = "parallel.includeScenarioTags")
-    private List<String> includeScenarioTags;
+    private String includeScenarioTags;
 
     /**
      * Optional include scenario tags connector (can be `and` or `or`) - default value is 'or'.
@@ -88,11 +85,11 @@ CucablePlugin extends AbstractMojo {
     private String includeScenarioTagsConnector;
 
     /**
-     * Optional scenario tags to be excluded from feature and runner generation
+     * Optional comma separated list of scenario tags to be excluded from feature and runner generation
      * If used together with includeScenarioTags, the excluded tags overrule the included ones.
      */
     @Parameter(property = "parallel.excludeScenarioTags")
-    private List<String> excludeScenarioTags;
+    private String excludeScenarioTags;
 
     /**
      * Optional exclude scenario tags connector (can be `and` or `or`) - default value is 'or'.

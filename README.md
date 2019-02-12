@@ -217,13 +217,8 @@ The following sections break down the above steps.
         
         <!-- Optional properties -->
         <numberOfTestRuns>1</numberOfTestRuns>
-        <includeScenarioTags>
-            <param>@includeMe</param>
-            <param>@includeMeAsWell</param>
-        </includeScenarioTags>                                
-        <excludeScenarioTags>
-            <param>@skip</param>
-        </excludeScenarioTags>
+        <includeScenarioTags>@includeMe,@includeMeAsWell</includeScenarioTags>                                
+        <excludeScenarioTags>@skip</excludeScenarioTags>
         <logLevel>compact</logLevel>
         
         <desiredNumberOfRunners>2</desiredNumberOfRunners>                                
@@ -349,13 +344,10 @@ For each test run, the whole set of features and runners is generated like this:
 #### includeScenarioTags
 
 Optional scenario tags that __should be included__ in the feature and runner generation.
-To include multiple tags, just add each one into as its own ```<param>```:
+To include multiple tags, just comma separate them:
 
 ```xml
-<includeScenarioTags>
-    <param>@scenario1Tag1</param>
-    <param>@scenario1Tag2</param>
-</includeScenarioTags>
+<includeScenarioTags>@scenario1Tag1,@scenario1Tag2</includeScenarioTags>
 ```
 
 __Note:__ When using _includeScenarioTags_ and _excludeScenarioTags_ together, the _excludeScenarioTags_ will override the _includeScenarioTags_.
@@ -374,13 +366,11 @@ This means that only those scenarios are included that contain __all__ specified
 #### excludeScenarioTags
 
 Optional scenario tags that __should not be included__ in the feature and runner generation.
-To include multiple tags, just add each one into as its own ```<param>```:
+
+To include multiple tags, just comma separate them:
 
 ```xml
-<excludeScenarioTags>
-    <param>@tag1</param>
-    <param>@tag2</param>
-</excludeScenarioTags>
+<excludeScenarioTags>@tag1,@tag2</excludeScenarioTags>
 ```
 
 __Note:__ When using `includeScenarioTags` and `excludeScenarioTags` together, the `excludeScenarioTags` will override the `includeScenarioTags`.

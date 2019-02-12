@@ -73,10 +73,7 @@
                     <!--</customPlaceholders>-->
 
                     <!-- optional: include scenarios with certain tags -->
-                    <!--<includeScenarioTags>-->
-                    <!--<param>@scenarioTag1</param>-->
-                    <!--<param>@scenarioTag2</param>-->
-                    <!--</includeScenarioTags>-->
+                    <includeScenarioTags>scenario1Tag1,scenario1Tag2</includeScenarioTags>
 
                     <!-- optional: combine include scenario tags with 'and' or 'or' (default: 'or') -->
                     <!--<includeScenarioTagsConnector>and</includeScenarioTagsConnector>-->
