@@ -12,6 +12,15 @@ Back to [Readme](README.md).
 
 - Support for `and` and `or` mode for `includeScenarioTags` and `excludeScenarioTags` (via `includeScenarioTagsConnector` and `excludeScenarioTagsConnector` parameters) (#88)
 
+### Changed
+
+- `includeScenarioTags` and `excludeScenarioTags` are now specified as a list of strings:
+  
+    ```
+    <includeScenarioTags>@tag1,@tag2</includeScenarioTags>
+    <excludeScenarioTags>@tag3</excludeScenarioTags>
+    ```
+
 ## [1.3.2] - 2019-02-01
 
 ### Fixed

@@ -11,9 +11,8 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.failsafe.plugin.version>2.22.1</maven.failsafe.plugin.version>
+        <maven.failsafe.plugin.version>3.0.0-M3</maven.failsafe.plugin.version>
         <maven.build.helper.plugin.version>3.0.0</maven.build.helper.plugin.version>
-        <junit.version>4.12</junit.version>
         <cucumber.version>4.2.2</cucumber.version>
         <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
 
@@ -72,16 +71,14 @@
                     <!--<comment>This should appear inside the template</comment>-->
                     <!--</customPlaceholders>-->
 
-                    <!-- optional: include scenarios with certain tags -->
-                    <includeScenarioTags>scenario1Tag1,scenario1Tag2</includeScenarioTags>
+                    <!-- optional: include scenarios with certain tags (can be specified with or without '@') -->
+                    <!--<includeScenarioTags>scenario1Tag1,scenario1Tag2</includeScenarioTags>-->
 
                     <!-- optional: combine include scenario tags with 'and' or 'or' (default: 'or') -->
                     <!--<includeScenarioTagsConnector>and</includeScenarioTagsConnector>-->
 
-                    <!-- optional: exclude scenarios with certain tags -->
-                    <!--<excludeScenarioTags>-->
-                    <!--<param>@skipme</param>-->
-                    <!--</excludeScenarioTags>-->
+                    <!-- optional: exclude scenarios with certain tags (can be specified with or without '@') -->
+                    <!--<excludeScenarioTags>@skipme</excludeScenarioTags>-->
 
                     <!-- optional: combine exclude scenario tags with 'and' or 'or' (default: 'or') -->
                     <!--<excludeScenarioTagsConnector>and</excludeScenarioTagsConnector>-->

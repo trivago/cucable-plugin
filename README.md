@@ -13,7 +13,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Cucable Maven Plugin](#cucable-maven-plugin)
   - [Repository Structure](#repository-structure)
   - [Changelog](#changelog)
@@ -73,7 +72,7 @@ This plugin does the following:
 
 Those generated runners and features can then be used with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/) in order to parallelize test runs.
 
-**Note:** From version 0.1.7 on this also works for non-english feature files!
+This also works for **non-english** feature files!
 
 ## Repository Structure
 
