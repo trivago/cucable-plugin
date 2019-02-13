@@ -6,6 +6,39 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.4.0] - UNRELEASED
+
+### Added
+
+- Support for `and` and `or` mode for `includeScenarioTags` and `excludeScenarioTags` via `includeScenarioTagsConnector` and `excludeScenarioTagsConnector` parameters (default: 'or') (#88):
+
+    ```
+    <includeScenarioTagsConnector>and</includeScenarioTagsConnector>
+    <excludeScenarioTagsConnector>or</excludeScenarioTagsConnector>
+    ```
+
+- Support to specify multiple `sourceFeatures` (#55), e.g.:
+    ```
+    <sourceFeatures>
+        src/test/resources/features/sometests,
+        src/test/resources/features/MyFeature.feature:8:15
+    </sourceFeatures>
+    ```
+
+### Changed
+
+- `includeScenarioTags` and `excludeScenarioTags` are now specified as a list of strings:
+  
+    ```
+    <includeScenarioTags>@tag1,@tag2</includeScenarioTags>
+    <excludeScenarioTags>@tag3</excludeScenarioTags>
+    ```
+- `includeScenarioTags` and `excludeScenarioTags` can now be used without the preceding `@`:
+
+     `<includeScenarioTags>tag1,tag2</includeScenarioTags>`
+    
+- Completely rewritten feature handling to support more options 
+
 ## [1.3.2] - 2019-02-01
 
 ### Fixed
@@ -198,6 +231,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[1.4.0]: https://github.com/trivago/cucable-plugin/compare/1.3.2...1.4.0
 [1.3.2]: https://github.com/trivago/cucable-plugin/compare/1.3.1...1.3.2
 [1.3.1]: https://github.com/trivago/cucable-plugin/compare/1.3.0...1.3.1
 [1.3.0]: https://github.com/trivago/cucable-plugin/compare/1.2.0...1.3.0

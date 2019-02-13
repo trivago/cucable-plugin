@@ -13,7 +13,6 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Cucable Maven Plugin](#cucable-maven-plugin)
   - [Repository Structure](#repository-structure)
   - [Changelog](#changelog)
@@ -37,10 +36,13 @@
     - [Optional Parameters](#optional-parameters)
       - [numberOfTestRuns](#numberoftestruns)
       - [includeScenarioTags](#includescenariotags)
+        - [includeScenarioTagsConnector](#includescenariotagsconnector)
       - [excludeScenarioTags](#excludescenariotags)
+        - [excludeScenarioTagsConnector](#excludescenariotagsconnector)
       - [parallelizationMode](#parallelizationmode)
       - [logLevel](#loglevel)
       - [desiredNumberOfRunners](#desirednumberofrunners)
+      - [desiredNumberOfFeaturesPerRunner](#desirednumberoffeaturesperrunner)
     - [Generating runners and features inside target directory](#generating-runners-and-features-inside-target-directory)
     - [Complete Example](#complete-example)
       - [Source feature file](#source-feature-file)
@@ -70,7 +72,7 @@ This plugin does the following:
 
 Those generated runners and features can then be used with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/) in order to parallelize test runs.
 
-**Note:** From version 0.1.7 on this also works for non-english feature files!
+This also works for **non-english** feature files!
 
 ## Repository Structure
 
@@ -173,9 +175,9 @@ This is the default mode of Cucable. Having multiple runners that run one "singl
 
 ## One runner per group of generated scenarios
 
-If you set the `desiredNumberOfRunners` option to a number greater than 0, Cucable will automatically switch to the multi-feature runner mode.
+If you use the `desiredNumberOfRunners` or `desiredNumberOfFeaturesPerRunner` option, Cucable will automatically switch to the multi-feature runner mode.
 
-This means that it will only generate the specified number of runners and distribute the generated features equally to each one of them. This is helpful if a group of scenarios should be executed during each forked run of your test framework.
+This means that it will only generate the specified number of runners (or features per runner) and distribute the generated features evenly among the runners. This is helpful if a group of scenarios should be executed during each forked run of your test framework.
 
 **Note:** If a runner runs only one feature, it automatically has the same name as the feature. Otherwise it will have a unique auto-generated name.
 
@@ -214,15 +216,12 @@ The following sections break down the above steps.
         
         <!-- Optional properties -->
         <numberOfTestRuns>1</numberOfTestRuns>
-        <includeScenarioTags>
-            <param>@includeMe</param>
-            <param>@includeMeAsWell</param>
-        </includeScenarioTags>                                
-        <excludeScenarioTags>
-            <param>@skip</param>
-        </excludeScenarioTags>
+        <includeScenarioTags>@includeMe,@includeMeAsWell</includeScenarioTags>                                
+        <excludeScenarioTags>@skip</excludeScenarioTags>
         <logLevel>compact</logLevel>
+        
         <desiredNumberOfRunners>2</desiredNumberOfRunners>                                
+        <!-- or <desiredNumberOfFeaturesPerRunner>5</desiredNumberOfRunners> -->
     </configuration>    
 </plugin>
 ```
@@ -307,6 +306,17 @@ This can specify
 * the path to a specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file (e.g. ```src/test/resources/features/MyFeature.feature```)
 * the path to a specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file including line numbers of specific scenarios/scenario outlines inside this file (e.g. ```src/test/resources/features/MyFeature.feature:12:19``` would only convert the scenarios starting at line _12_ and _19_ inside _MyFeature.feature_)
 
+**Note:** From Cucable 1.4.0 onwards it is possible to specify a combination as a comma separated list:
+
+```xml
+<sourceFeatures>
+    src/test/resources/features/sometests,
+    src/test/resources/features/MyFeature.feature:8:15
+</sourceFeatures>
+```
+
+This example would process all features in the `src/test/resources/features/sometests` directory **and** scenarios at lines 8 and 15 of `src/test/resources/features/MyFeature.feature`.
+
 #### generatedFeatureDirectory
 
 The path where the __generated__ [Cucumber](https://cucumber.io) .feature files should be located (e.g. _src/test/resources/parallel_).
@@ -344,32 +354,47 @@ For each test run, the whole set of features and runners is generated like this:
 #### includeScenarioTags
 
 Optional scenario tags that __should be included__ in the feature and runner generation.
-To include multiple tags, just add each one into as its own ```<param>```:
+To include multiple tags, just comma separate them:
 
 ```xml
-<includeScenarioTags>
-    <param>@scenario1Tag1</param>
-    <param>@scenario1Tag2</param>
-</includeScenarioTags>
+<includeScenarioTags>@scenario1Tag1,@scenario1Tag2</includeScenarioTags>
 ```
 
 __Note:__ When using _includeScenarioTags_ and _excludeScenarioTags_ together, the _excludeScenarioTags_ will override the _includeScenarioTags_.
 This means that a scenario containing an included tag __and__ an excluded tag will be __excluded__!
 
+##### includeScenarioTagsConnector
+
+By default, the include scenario tags are combined using `or`. With this property, this can be changed to `and`.
+
+This means that only those scenarios are included that contain __all__ specified include scenario tags.
+
+```xml
+<includeScenarioTagsConnector>and</includeScenarioTagsConnector>
+```
+
 #### excludeScenarioTags
 
 Optional scenario tags that __should not be included__ in the feature and runner generation.
-To include multiple tags, just add each one into as its own ```<param>```:
+
+To include multiple tags, just comma separate them:
 
 ```xml
-<excludeScenarioTags>
-    <param>@tag1</param>
-    <param>@tag2</param>
-</excludeScenarioTags>
+<excludeScenarioTags>@tag1,@tag2</excludeScenarioTags>
 ```
 
 __Note:__ When using `includeScenarioTags` and `excludeScenarioTags` together, the `excludeScenarioTags` will override the `includeScenarioTags`.
 This means that a scenario containing an included tag __and__ an excluded tag will be __excluded__!
+
+##### excludeScenarioTagsConnector
+
+By default, the exclude scenario tags are combined using `or`. With this property, this can be changed to `and`.
+
+This means that only those scenarios are excluded that contain __all__ specified exclude scenario tags.
+
+```xml
+<excludeScenarioTagsConnector>or</excludeScenarioTagsConnector>
+```
 
 #### parallelizationMode
 
@@ -407,6 +432,16 @@ This can be configured by passing the `logLevel` property:
 If you set this options, all generated features will be distributed to a fixed set of runner classes. This means that one runner can potentially run multiple features in sequence.
 
 If this option is not set, its default value is `0` which basically means "Generate a dedicated runner for every generated feature".
+
+__Note:__ If this is used together with `desiredNumberOfFeaturesPerRunner`, the specified number of features per runner is ignored!
+
+#### desiredNumberOfFeaturesPerRunner
+
+If you set this option, all generated features will be distributed to a dynamic set of runner classes so that every runner contains a fixed number of generated features. This means that one runner can potentially run multiple features in sequence.
+
+If this option is not set, its default value is `0` which basically means "Generate a dedicated runner for every generated feature".
+
+__Note:__ If this is used together with `desiredNumberOfRunners`, the specified number of features per runner is ignored!
 
 ### Generating runners and features inside target directory
 
@@ -553,7 +588,7 @@ Then I see <b>85</b> items
 
 #### Generated runners
 
-The generated runners point to each one of the generated feature files (unless you use the `desiredNumberOfRunners` option).
+The generated runners point to each one of the generated feature files (unless you use the `desiredNumberOfRunners` or `desiredNumberOfFeaturesPerRunner` option).
 
 This is an example for one of the generated runners - note how the placeholders are now replaced with the name of the feature to run:
 

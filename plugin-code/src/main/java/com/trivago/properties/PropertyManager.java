@@ -21,6 +21,7 @@ import com.trivago.exceptions.properties.WrongOrMissingPropertiesException;
 import com.trivago.logging.CucableLogger;
 import com.trivago.logging.CucableLogger.CucableLogLevel;
 import com.trivago.logging.Language;
+import com.trivago.vo.CucableFeature;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -42,15 +43,17 @@ public class PropertyManager {
 
     private String sourceRunnerTemplateFile;
     private String generatedRunnerDirectory;
-    private String sourceFeatures;
+    private List<CucableFeature> sourceFeatures;
     private String generatedFeatureDirectory;
-    private List<Integer> scenarioLineNumbers;
     private int numberOfTestRuns;
     private List<String> includeScenarioTags;
+    private TagConnectMode includeScenarioTagsConnector;
     private List<String> excludeScenarioTags;
+    private TagConnectMode excludeScenarioTagsConnector;
     private ParallelizationMode parallelizationMode;
     private Map<String, String> customPlaceholders;
     private int desiredNumberOfRunners;
+    private int desiredNumberOfFeaturesPerRunner;
 
     @Inject
     public PropertyManager(CucableLogger logger) {
@@ -73,33 +76,31 @@ public class PropertyManager {
         this.generatedRunnerDirectory = generatedRunnerDirectory;
     }
 
-    public String getSourceFeatures() {
+    public List<CucableFeature> getSourceFeatures() {
         return sourceFeatures;
     }
 
     public void setSourceFeatures(final String sourceFeatures) {
-        StringBuffer resultBuffer = new StringBuffer();
-        Matcher matcher = Pattern.compile(":(\\d*)").matcher(sourceFeatures);
-        List<Integer> scenarioLineNumbers = new ArrayList<>();
-        while (matcher.find()) {
-            try {
-                scenarioLineNumbers.add(Integer.parseInt(matcher.group(1)));
-                matcher.appendReplacement(resultBuffer, "");
-            } catch (NumberFormatException ignored) {
-                // Ignore unparsable line numbers
+        List<CucableFeature> cucableFeatures = new ArrayList<>();
+        Pattern lineNumberPattern = Pattern.compile(":(\\d*)");
+        for (String sourceFeature : sourceFeatures.split(",")) {
+            String trimmedFeature = sourceFeature.trim();
+            StringBuffer resultBuffer = new StringBuffer();
+            Matcher matcher = lineNumberPattern.matcher(trimmedFeature);
+            List<Integer> scenarioLineNumbers = new ArrayList<>();
+            while (matcher.find()) {
+                try {
+                    scenarioLineNumbers.add(Integer.parseInt(matcher.group(1)));
+                    matcher.appendReplacement(resultBuffer, "");
+                } catch (NumberFormatException ignored) {
+                    // Ignore unparsable line numbers
+                }
             }
+            matcher.appendTail(resultBuffer);
+            cucableFeatures.add(new CucableFeature(resultBuffer.toString(), scenarioLineNumbers));
         }
-        matcher.appendTail(resultBuffer);
-        this.scenarioLineNumbers = scenarioLineNumbers;
-        this.sourceFeatures = resultBuffer.toString();
-    }
 
-    public List<Integer> getScenarioLineNumbers() {
-        return scenarioLineNumbers;
-    }
-
-    public boolean hasValidScenarioLineNumbers() {
-        return scenarioLineNumbers != null && !scenarioLineNumbers.isEmpty();
+        this.sourceFeatures = cucableFeatures;
     }
 
     public String getGeneratedFeatureDirectory() {
@@ -122,18 +123,66 @@ public class PropertyManager {
         return excludeScenarioTags;
     }
 
-    public void setExcludeScenarioTags(final List<String> excludeScenarioTags) throws CucablePluginException {
-        this.excludeScenarioTags = excludeScenarioTags;
-        validateTags(excludeScenarioTags, "exclude");
+    public void setExcludeScenarioTags(final String excludeScenarioTags) {
+        this.excludeScenarioTags = new ArrayList<>();
+        if (excludeScenarioTags == null) {
+            return;
+        }
+        for (String tag : excludeScenarioTags.split(",")) {
+            String trimmedTag = tag.trim();
+            if (!trimmedTag.startsWith("@")) {
+                trimmedTag = "@" + trimmedTag;
+            }
+            this.excludeScenarioTags.add(trimmedTag);
+        }
+    }
+
+    public TagConnectMode getExcludeScenarioTagsConnector() {
+        return excludeScenarioTagsConnector;
+    }
+
+    public void setExcludeScenarioTagsConnector(final String excludeScenarioTagsConnector) throws CucablePluginException {
+        try {
+            this.excludeScenarioTagsConnector = TagConnectMode.valueOf(excludeScenarioTagsConnector.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new CucablePluginException(
+                    "Unknown <excludeScenarioTagConnector> '" + excludeScenarioTagsConnector +
+                            "'. Please use 'and' or 'or'."
+            );
+        }
     }
 
     public List<String> getIncludeScenarioTags() {
         return includeScenarioTags;
     }
 
-    public void setIncludeScenarioTags(final List<String> includeScenarioTags) throws CucablePluginException {
-        this.includeScenarioTags = includeScenarioTags;
-        validateTags(includeScenarioTags, "include");
+    public void setIncludeScenarioTags(final String includeScenarioTags) {
+        this.includeScenarioTags = new ArrayList<>();
+        if (includeScenarioTags == null) {
+            return;
+        }
+        for (String tag : includeScenarioTags.split(",")) {
+            String trimmedTag = tag.trim();
+            if (!trimmedTag.startsWith("@")) {
+                trimmedTag = "@" + trimmedTag;
+            }
+            this.includeScenarioTags.add(trimmedTag);
+        }
+    }
+
+    public TagConnectMode getIncludeScenarioTagsConnector() {
+        return includeScenarioTagsConnector;
+    }
+
+    public void setIncludeScenarioTagsConnector(final String includeScenarioTagsConnector) throws CucablePluginException {
+        try {
+            this.includeScenarioTagsConnector = TagConnectMode.valueOf(includeScenarioTagsConnector.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            throw new CucablePluginException(
+                    "Unknown <includeScenarioTagsConnector> '" + includeScenarioTagsConnector +
+                            "'. Please use 'and' or 'or'."
+            );
+        }
     }
 
     public ParallelizationMode getParallelizationMode() {
@@ -145,7 +194,8 @@ public class PropertyManager {
             this.parallelizationMode = ParallelizationMode.valueOf(parallelizationMode.toUpperCase());
         } catch (IllegalArgumentException e) {
             throw new CucablePluginException(
-                    "Unknown <parallelizationMode> '" + parallelizationMode + "'. Please use 'scenarios' or 'features'."
+                    "Unknown <parallelizationMode> '" + parallelizationMode +
+                            "'. Please use 'scenarios' or 'features'."
             );
         }
     }
@@ -166,6 +216,14 @@ public class PropertyManager {
         this.desiredNumberOfRunners = desiredNumberOfRunners;
     }
 
+    public int getDesiredNumberOfFeaturesPerRunner() {
+        return desiredNumberOfFeaturesPerRunner;
+    }
+
+    public void setDesiredNumberOfFeaturesPerRunner(int desiredNumberOfFeaturesPerRunner) {
+        this.desiredNumberOfFeaturesPerRunner = desiredNumberOfFeaturesPerRunner;
+    }
+
     /**
      * Checks the pom settings for the plugin.
      *
@@ -175,9 +233,11 @@ public class PropertyManager {
     public void checkForMissingMandatoryProperties() throws CucablePluginException {
         List<String> missingProperties = new ArrayList<>();
 
+        if (sourceFeatures == null || sourceFeatures.isEmpty()) {
+            saveMissingProperty("", "<sourceFeatures>", missingProperties);
+        }
         saveMissingProperty(sourceRunnerTemplateFile, "<sourceRunnerTemplateFile>", missingProperties);
         saveMissingProperty(generatedRunnerDirectory, "<generatedRunnerDirectory>", missingProperties);
-        saveMissingProperty(sourceFeatures, "<sourceFeatures>", missingProperties);
         saveMissingProperty(generatedFeatureDirectory, "<generatedFeatureDirectory>", missingProperties);
 
         if (!missingProperties.isEmpty()) {
@@ -186,17 +246,24 @@ public class PropertyManager {
     }
 
     /**
-     * Checks for properties that are not allowed in parallelizationMode = FEATURE.
+     * Checks for properties that are not allowed in combination.
      *
      * @throws CucablePluginException Thrown when a wrong property is used.
      */
-    public void checkForDisallowedParallelizationModeProperties() throws CucablePluginException {
+    public void checkForDisallowedPropertyCombinations() throws CucablePluginException {
+
+        if (desiredNumberOfFeaturesPerRunner > 0 && desiredNumberOfRunners > 0) {
+            throw new CucablePluginException(
+                    "You cannot use desiredNumberOfFeaturesPerRunner and desiredNumberOfRunners at the same time!"
+            );
+        }
+
         if (parallelizationMode == ParallelizationMode.SCENARIOS) {
             return;
         }
-        String errorMessage = "";
 
-        if (!new File(sourceFeatures).isDirectory()) {
+        String errorMessage = "";
+        if (!new File(String.valueOf(sourceFeatures.get(0).getName())).isDirectory()) {
             errorMessage = "sourceFeatures should point to a directory!";
         } else if (excludeScenarioTags != null && !excludeScenarioTags.isEmpty()) {
             errorMessage = "you cannot specify excludeScenarioTags!";
@@ -214,31 +281,41 @@ public class PropertyManager {
     public void logProperties() {
         CucableLogLevel[] logLevels = new CucableLogLevel[]{DEFAULT, COMPACT};
 
-        logger.info(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile), logLevels);
-        logger.info(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory), logLevels);
-
-        logger.info(String.format("- sourceFeatures            : %s", sourceFeatures), logLevels);
-        if (hasValidScenarioLineNumbers()) {
-            logger.info(String.format("%30swith %s %s", " ",
-                    Language.singularPlural(scenarioLineNumbers.size(), "line number", "line numbers"),
-                    scenarioLineNumbers.stream().map(String::valueOf).collect(Collectors.joining(", "))),
-                    logLevels
-            );
+        logger.info("- sourceFeatures               :", logLevels);
+        if (sourceFeatures != null) {
+            for (CucableFeature sourceFeature : sourceFeatures) {
+                String logLine = "  - " + sourceFeature.getName();
+                if (sourceFeature.hasValidScenarioLineNumbers()) {
+                    List<Integer> lineNumbers = sourceFeature.getLineNumbers();
+                    logLine += String.format(" with %s %s",
+                            Language.singularPlural(lineNumbers.size(), "line number", "line numbers"),
+                            lineNumbers.stream().map(String::valueOf).collect(Collectors.joining(",")));
+                }
+                logger.info(logLine, logLevels);
+            }
         }
+
+        logger.info(String.format("- sourceRunnerTemplateFile     : %s", sourceRunnerTemplateFile), logLevels);
+
+        logger.logInfoSeparator(DEFAULT);
+        logger.info(String.format("- generatedRunnerDirectory     : %s", generatedRunnerDirectory), logLevels);
+        logger.info(String.format("- generatedFeatureDirectory    : %s", generatedFeatureDirectory), logLevels);
+        logger.logInfoSeparator(DEFAULT);
 
         if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
-            logger.info(String.format("- includeScenarioTags       : %s",
+            logger.info(String.format("- includeScenarioTags          : %s",
                     String.join(", ", includeScenarioTags)), logLevels);
+            logger.info("- includeScenarioTagsConnector : " +
+                    includeScenarioTagsConnector.name().toLowerCase(), logLevels);
         }
         if (excludeScenarioTags != null && !excludeScenarioTags.isEmpty()) {
-            logger.info(String.format("- excludeScenarioTags       : %s",
+            logger.info(String.format("- excludeScenarioTags          : %s",
                     String.join(", ", excludeScenarioTags)), logLevels);
+            logger.info("- excludeScenarioTagsConnector : " +
+                    excludeScenarioTagsConnector.name().toLowerCase(), logLevels);
         }
-
-        logger.info(String.format("- parallelizationMode       : %s", parallelizationMode), logLevels);
-
         if (customPlaceholders != null && !customPlaceholders.isEmpty()) {
-            logger.info("- customPlaceholders        :", logLevels);
+            logger.info("- customPlaceholders           :", logLevels);
             for (Map.Entry<String, String> customPlaceholder : customPlaceholders.entrySet()) {
                 logger.info(
                         String.format("  %s => %s", customPlaceholder.getKey(), customPlaceholder.getValue()),
@@ -247,32 +324,14 @@ public class PropertyManager {
             }
         }
 
-        logger.info(String.format("- generatedFeatureDirectory : %s", generatedFeatureDirectory), logLevels);
-        logger.info(String.format("- numberOfTestRuns          : %d", numberOfTestRuns), logLevels);
+        logger.info(String.format("- parallelizationMode          : %s", parallelizationMode.name().toLowerCase()), logLevels);
+        logger.info(String.format("- numberOfTestRuns             : %d", numberOfTestRuns), logLevels);
 
         if (desiredNumberOfRunners > 0) {
-            logger.info(String.format("- desiredNumberOfRunners    : %d", desiredNumberOfRunners), logLevels);
+            logger.info(String.format("- desiredNumberOfRunners       : %d", desiredNumberOfRunners), logLevels);
         }
 
         logger.logInfoSeparator(logLevels);
-    }
-
-    /**
-     * Checks a list of tags for missing '@' prefixes
-     *
-     * @param tags    A list of tags.
-     * @param tagType The type of the passed tags.
-     * @throws CucablePluginException Thrown when a tag does not start with '@'.
-     */
-    private void validateTags(final List<String> tags, final String tagType) throws CucablePluginException {
-        if (tags != null) {
-            for (String tag : tags) {
-                if (!tag.startsWith("@")) {
-                    throw new CucablePluginException(
-                            "Tag '" + tag + "' of type '" + tagType + "' does not start with '@'.");
-                }
-            }
-        }
     }
 
     /**
@@ -294,5 +353,9 @@ public class PropertyManager {
 
     public enum ParallelizationMode {
         SCENARIOS, FEATURES
+    }
+
+    public enum TagConnectMode {
+        AND, OR
     }
 }

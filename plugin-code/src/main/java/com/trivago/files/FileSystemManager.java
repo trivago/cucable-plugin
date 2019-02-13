@@ -20,6 +20,7 @@ import com.trivago.exceptions.CucablePluginException;
 import com.trivago.exceptions.filesystem.FileDeletionException;
 import com.trivago.exceptions.filesystem.PathCreationException;
 import com.trivago.properties.PropertyManager;
+import com.trivago.vo.CucableFeature;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -28,14 +29,14 @@ import java.io.IOException;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
 
 @Singleton
 public class FileSystemManager {
 
-    private static final String FEATURE_SUFFIX = ".feature";
+    private static final String FEATURE_FILE_EXTENSION = ".feature";
     private final PropertyManager propertyManager;
 
     @Inject
@@ -44,40 +45,29 @@ public class FileSystemManager {
     }
 
     /**
-     * Create generated feature and runner dirs if they don't exist and clear their contents.
-     */
-    public void prepareGeneratedFeatureAndRunnerDirectories() throws CucablePluginException {
-        createDirIfNotExists(propertyManager.getGeneratedFeatureDirectory());
-        removeFilesFromPath(propertyManager.getGeneratedFeatureDirectory(), "feature");
-
-        createDirIfNotExists(propertyManager.getGeneratedRunnerDirectory());
-        removeFilesFromPath(propertyManager.getGeneratedRunnerDirectory(), "java");
-    }
-
-    /**
      * Returns a list of feature file paths located in the specified source feature directory.
      *
      * @return a list of feature file paths.
      * @throws CucablePluginException see {@link CucablePluginException}
      */
-    public List<Path> getFeatureFilePaths() throws CucablePluginException {
+    public List<Path> getPathsFromCucableFeature(final CucableFeature cucableFeature) throws CucablePluginException {
 
-        List<Path> featureFilePaths = new ArrayList<>();
-        String sourceFeatures = propertyManager.getSourceFeatures();
-        File sourceFeaturesFile = new File(sourceFeatures);
+        if (cucableFeature == null){
+            return Collections.emptyList();
+        }
 
+        String sourceFeatures = cucableFeature.getName();
+        File sourceFeaturesFile = new File(cucableFeature.getName());
         // Check if the property value is a single file or a directory
-        if (sourceFeaturesFile.isFile() && sourceFeatures.endsWith(FEATURE_SUFFIX)) {
-            featureFilePaths.add(Paths.get(sourceFeatures));
+        if (sourceFeaturesFile.isFile() && sourceFeatures.endsWith(FEATURE_FILE_EXTENSION)) {
+            return Collections.singletonList(Paths.get(sourceFeatures));
         } else if (sourceFeaturesFile.isDirectory()) {
-            featureFilePaths = getFilesWithFeatureExtension(sourceFeatures);
+            return getFilesWithFeatureExtension(sourceFeatures);
         } else {
             throw new CucablePluginException(
                     sourceFeatures + " is not a feature file or a directory."
             );
         }
-
-        return featureFilePaths;
     }
 
     /**
@@ -91,12 +81,23 @@ public class FileSystemManager {
         try {
             return Files.walk(Paths.get(sourceFeatureDirectory))
                     .filter(Files::isRegularFile)
-                    .filter(p -> p.toString().endsWith(FEATURE_SUFFIX))
+                    .filter(p -> p.toString().endsWith(FEATURE_FILE_EXTENSION))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             throw new CucablePluginException(
                     "Unable to traverse feature files in " + sourceFeatureDirectory + ": " + e.getMessage());
         }
+    }
+
+    /**
+     * Create generated feature and runner dirs if they don't exist and clear their contents.
+     */
+    public void prepareGeneratedFeatureAndRunnerDirectories() throws CucablePluginException {
+        createDirIfNotExists(propertyManager.getGeneratedFeatureDirectory());
+        removeFilesFromPath(propertyManager.getGeneratedFeatureDirectory(), "feature");
+
+        createDirIfNotExists(propertyManager.getGeneratedRunnerDirectory());
+        removeFilesFromPath(propertyManager.getGeneratedRunnerDirectory(), "java");
     }
 
     /**

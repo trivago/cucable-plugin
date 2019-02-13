@@ -110,21 +110,4 @@ public final class SingleScenario {
     public void setExampleTags(final List<String> exampleTags) {
         this.exampleTags = exampleTags;
     }
-
-    @Override
-    public String toString() {
-        return "SingleScenario{" +
-                "featureName='" + featureName + '\'' +
-                ", featureFilePath='" + featureFilePath + '\'' +
-                ", featureLanguage='" + featureLanguage + '\'' +
-                ", featureDescription='" + featureDescription + '\'' +
-                ", scenarioName='" + scenarioName + '\'' +
-                ", scenarioDescription='" + scenarioDescription + '\'' +
-                ", featureTags=" + featureTags +
-                ", backgroundSteps=" + backgroundSteps +
-                ", scenarioTags=" + scenarioTags +
-                ", exampleTags=" + exampleTags +
-                ", steps=" + steps +
-                '}';
-    }
 }

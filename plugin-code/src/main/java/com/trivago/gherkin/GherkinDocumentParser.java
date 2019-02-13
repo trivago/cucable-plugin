@@ -47,44 +47,40 @@ public class GherkinDocumentParser {
 
     private final GherkinToCucableConverter gherkinToCucableConverter;
     private final GherkinTranslations gherkinTranslations;
+    private PropertyManager propertyManager;
 
     @Inject
-    public GherkinDocumentParser(
+    GherkinDocumentParser(
             final GherkinToCucableConverter gherkinToCucableConverter,
             final GherkinTranslations gherkinTranslations,
             final PropertyManager propertyManager
     ) {
         this.gherkinToCucableConverter = gherkinToCucableConverter;
         this.gherkinTranslations = gherkinTranslations;
+        this.propertyManager = propertyManager;
     }
 
     /**
      * Returns a {@link SingleScenario} list from a given feature file.
      *
-     * @param featureContent      A feature string.
-     * @param featureFilePath     The path to the source feature file.
-     * @param scenarioLineNumbers An optional line number of a scenario inside a feature file.
-     * @param includeScenarioTags Optional scenario tags to include into scenario generation.
-     * @param excludeScenarioTags Optional scenario tags to exclude from scenario generation.
+     * @param featureContent  A feature string.
+     * @param featureFilePath The path to the source feature file.
      * @return A {@link SingleScenario} list.
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
     public List<SingleScenario> getSingleScenariosFromFeature(
             final String featureContent,
             final String featureFilePath,
-            final List<Integer> scenarioLineNumbers,
-            final List<String> includeScenarioTags,
-            final List<String> excludeScenarioTags) throws CucablePluginException {
+            final List<Integer> scenarioLineNumbers) throws CucablePluginException {
 
         String escapedFeatureContent = featureContent.replace("\\n", "\\\\n");
-
         GherkinDocument gherkinDocument = getGherkinDocumentFromFeatureFileContent(escapedFeatureContent);
+
         Feature feature = gherkinDocument.getFeature();
         String featureName = feature.getKeyword() + ": " + feature.getName();
         String featureLanguage = feature.getLanguage();
         String featureDescription = feature.getDescription();
-        List<String> featureTags =
-                gherkinToCucableConverter.convertGherkinTagsToCucableTags(feature.getTags());
+        List<String> featureTags = gherkinToCucableConverter.convertGherkinTagsToCucableTags(feature.getTags());
 
         ArrayList<SingleScenario> singleScenarioFeatures = new ArrayList<>();
         List<Step> backgroundSteps = new ArrayList<>();
@@ -119,8 +115,6 @@ public class GherkinDocumentParser {
                             );
                     addGherkinScenarioInformationToSingleScenario(scenario, singleScenario);
                     if (scenarioShouldBeIncluded(
-                            includeScenarioTags,
-                            excludeScenarioTags,
                             singleScenario.getScenarioTags(),
                             singleScenario.getFeatureTags()
                     )) {
@@ -148,8 +142,6 @@ public class GherkinDocumentParser {
                             );
                     for (SingleScenario singleScenario : outlineScenarios) {
                         if (scenarioShouldBeIncluded(
-                                includeScenarioTags,
-                                excludeScenarioTags,
                                 singleScenario.getScenarioTags(),
                                 singleScenario.getFeatureTags(),
                                 singleScenario.getExampleTags()
@@ -321,11 +313,11 @@ public class GherkinDocumentParser {
         try {
             gherkinDocument = gherkinDocumentParser.parse(featureContent);
         } catch (ParserException parserException) {
-            throw new CucablePluginException("Could not parse feature!");
+            throw new CucablePluginException("Could not parse feature: " + parserException.getMessage());
         }
 
         if (gherkinDocument == null || gherkinDocument.getFeature() == null) {
-            throw new CucablePluginException("Could not parse feature!");
+            throw new CucablePluginException("Could not parse features from gherkin document!");
         }
 
         return gherkinDocument;
@@ -334,54 +326,66 @@ public class GherkinDocumentParser {
     /**
      * Checks if a scenario should be included in the runner and feature generation based on the tag settings.
      *
-     * @param includeScenarioTags the include tags list.
-     * @param excludeScenarioTags the exclude tags list.
-     * @param sourceTagsList      any number of source tag lists to be considered
+     * @param sourceTagsList any number of source tag lists to be considered
      * @return true if an include tag  and no exclude tags are included in the source tag list.
      */
     @SafeVarargs
-    private final boolean scenarioShouldBeIncluded(
-            final List<String> includeScenarioTags,
-            final List<String> excludeScenarioTags,
-            final List<String>... sourceTagsList
-    ) {
+    private final boolean scenarioShouldBeIncluded(final List<String>... sourceTagsList) {
 
-        List<String> combinedSourceTags = new ArrayList<>();
+        List<String> includeScenarioTags = propertyManager.getIncludeScenarioTags();
+        List<String> excludeScenarioTags = propertyManager.getExcludeScenarioTags();
+
+        PropertyManager.TagConnectMode includeScenarioTagsConnector = propertyManager.getIncludeScenarioTagsConnector();
+        PropertyManager.TagConnectMode excludeScenarioTagsConnector = propertyManager.getExcludeScenarioTagsConnector();
+
+        List<String> combinedScenarioTags = new ArrayList<>();
         for (List<String> sourceTags : sourceTagsList) {
-            combinedSourceTags.addAll(sourceTags);
+            combinedScenarioTags.addAll(sourceTags);
         }
 
         // If there are no scenario tags but include scenario tags, this scenario cannot be included.
         // If there are no scenario tags and no include scenario tags, this scenario can be directly included.
-        if (combinedSourceTags.isEmpty()) {
+        if (combinedScenarioTags.isEmpty()) {
             return includeScenarioTags == null || includeScenarioTags.isEmpty();
-        } else {
-            boolean result = false;
-            for (String sourceTag : combinedSourceTags) {
-                if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
-                    // If there are include scenario tags, check if any scenario tag matches any include tag...
-                    for (String includeScenarioTag : includeScenarioTags) {
-                        if (sourceTag.equalsIgnoreCase(includeScenarioTag)) {
-                            result = true;
-                            break;
-                        }
-                    }
-                } else {
-                    // ...else include all.
-                    result = true;
-                }
+        }
 
-                // If there are exclude scenario tags, check if any scenario tag matches any exclude tag.
-                if (excludeScenarioTags != null && !excludeScenarioTags.isEmpty()) {
-                    for (String excludeScenarioTag : excludeScenarioTags) {
-                        if (sourceTag.equalsIgnoreCase(excludeScenarioTag)) {
-                            return false;
-                        }
-                    }
+        boolean scenarioShouldBeIncluded;
+
+        if (includeScenarioTags == null || includeScenarioTags.isEmpty()) {
+            scenarioShouldBeIncluded = true;
+        } else {
+            int matches = getTagMatches(includeScenarioTags, combinedScenarioTags);
+            if (includeScenarioTagsConnector == PropertyManager.TagConnectMode.AND) {
+                scenarioShouldBeIncluded = matches == includeScenarioTags.size();
+            } else {
+                scenarioShouldBeIncluded = matches >= 1;
+            }
+        }
+
+        if (excludeScenarioTags == null || excludeScenarioTags.isEmpty()) {
+            return scenarioShouldBeIncluded;
+        }
+
+        int matches = getTagMatches(excludeScenarioTags, combinedScenarioTags);
+        if (excludeScenarioTagsConnector == PropertyManager.TagConnectMode.AND) {
+            scenarioShouldBeIncluded = matches == excludeScenarioTags.size();
+        } else {
+            scenarioShouldBeIncluded = matches == 0;
+        }
+
+        return scenarioShouldBeIncluded;
+    }
+
+    private int getTagMatches(final List<String> tagsToCheck, final List<String> combinedScenarioTags) {
+        int matches = 0;
+        for (String combinedScenarioTag : combinedScenarioTags) {
+            for (String excludeScenarioTag : tagsToCheck) {
+                if (excludeScenarioTag.equalsIgnoreCase(combinedScenarioTag)) {
+                    matches++;
                 }
             }
-            return result;
         }
+        return matches;
     }
 
     /**
@@ -392,7 +396,6 @@ public class GherkinDocumentParser {
      * @param rowIndex     The row index of the example table to consider.
      * @return a {@link String} with placeholders substituted for actual values from the example table.
      */
-
     private String replacePlaceholderInString(
             final String sourceString,
             final Map<String, List<String>> exampleMap,
