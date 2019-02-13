@@ -246,11 +246,18 @@ public class PropertyManager {
     }
 
     /**
-     * Checks for properties that are not allowed in parallelizationMode = FEATURE.
+     * Checks for properties that are not allowed in combination.
      *
      * @throws CucablePluginException Thrown when a wrong property is used.
      */
-    public void checkForDisallowedParallelizationModeProperties() throws CucablePluginException {
+    public void checkForDisallowedPropertyCombinations() throws CucablePluginException {
+
+        if (desiredNumberOfFeaturesPerRunner > 0 && desiredNumberOfRunners > 0) {
+            throw new CucablePluginException(
+                    "You cannot use desiredNumberOfFeaturesPerRunner and desiredNumberOfRunners at the same time!"
+            );
+        }
+
         if (parallelizationMode == ParallelizationMode.SCENARIOS) {
             return;
         }

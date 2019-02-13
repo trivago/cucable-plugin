@@ -111,9 +111,16 @@ public class FeatureFileConverter {
             }
         }
 
-        int runnerFileCounter = generateRunnerClasses(
-                allGeneratedFeaturePaths, propertyManager.getDesiredNumberOfRunners()
-        );
+        int runnerFileCounter;
+        if (propertyManager.getDesiredNumberOfFeaturesPerRunner() > 0) {
+            runnerFileCounter = generateRunnerClassesWithDesiredNumberOfFeatures(
+                    allGeneratedFeaturePaths, propertyManager.getDesiredNumberOfFeaturesPerRunner()
+            );
+        } else {
+            runnerFileCounter = generateRunnerClassesWithDesiredNumberOfRunners(
+                    allGeneratedFeaturePaths, propertyManager.getDesiredNumberOfRunners()
+            );
+        }
 
         logger.logInfoSeparator(DEFAULT);
         logger.info(
@@ -153,7 +160,8 @@ public class FeatureFileConverter {
      * @return A list of generated feature paths.
      * @throws CucablePluginException in case feature files cannot be created.
      */
-    private List<String> generateFeaturesWithFeaturesParallelizationMode(final Path sourceFeatureFilePath) throws CucablePluginException {
+    private List<String> generateFeaturesWithFeaturesParallelizationMode(final Path sourceFeatureFilePath) throws
+            CucablePluginException {
         String featureFilePathString = sourceFeatureFilePath.toString();
         String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
         return generateFeatureFiles(sourceFeatureFilePath, featureFileContent);
@@ -301,7 +309,8 @@ public class FeatureFileConverter {
      * @return The number of generated runners.
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
-    private int generateRunnerClasses(final List<String> generatedFeatureNames, final int numberOfDesiredRunners) throws CucablePluginException {
+    private int generateRunnerClassesWithDesiredNumberOfRunners(final List<String> generatedFeatureNames, final int numberOfDesiredRunners) throws
+            CucablePluginException {
 
         int targetRunnerNumber = numberOfDesiredRunners;
         if (targetRunnerNumber == 0) {
@@ -332,6 +341,40 @@ public class FeatureFileConverter {
 
         return runnerFileCounter;
     }
+
+    /**
+     * Generate runner classes for a list of feature file paths.
+     *
+     * @param generatedFeatureNames            The list of generated feature file names.
+     * @param numberOfDesiredFeaturesPerRunner The number of desired features per runner.
+     * @return The number of generated runners.
+     * @throws CucablePluginException see {@link CucablePluginException}.
+     */
+    private int generateRunnerClassesWithDesiredNumberOfFeatures(
+            final List<String> generatedFeatureNames,
+            final int numberOfDesiredFeaturesPerRunner)
+            throws CucablePluginException {
+
+        int currentRunnerFeatureCount = 0;
+        int totalFeatureCount = 0;
+        List<String> generatedFeatureNamesForSingleRunner = new ArrayList<>();
+        int runnerFileCounter = 0;
+        for (String generatedFeatureName : generatedFeatureNames) {
+            generatedFeatureNamesForSingleRunner.add(generatedFeatureName);
+            currentRunnerFeatureCount++;
+            totalFeatureCount++;
+            if (totalFeatureCount == generatedFeatureNames.size() ||
+                    currentRunnerFeatureCount >= numberOfDesiredFeaturesPerRunner) {
+                runnerFileCounter++;
+                generateRunnerClass(generatedFeatureNamesForSingleRunner);
+                currentRunnerFeatureCount = 0;
+                generatedFeatureNamesForSingleRunner = new ArrayList<>();
+            }
+        }
+
+        return runnerFileCounter;
+    }
+
 
     /**
      * Generate a single runner class from a list of feature files.

@@ -171,7 +171,7 @@ CucablePlugin extends AbstractMojo {
 
         // Validate passed POM properties
         propertyManager.checkForMissingMandatoryProperties();
-        propertyManager.checkForDisallowedParallelizationModeProperties();
+        propertyManager.checkForDisallowedPropertyCombinations();
 
         // Logging
         logPluginInformationHeader();

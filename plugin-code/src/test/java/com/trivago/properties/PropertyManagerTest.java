@@ -38,19 +38,19 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void setGeneratedRunnerDirectoryTest(){
+    public void setGeneratedRunnerDirectoryTest() {
         propertyManager.setGeneratedRunnerDirectory("test");
         assertThat(propertyManager.getGeneratedRunnerDirectory(), is("test"));
     }
 
     @Test
-    public void setGeneratedFeatureDirectoryTest(){
+    public void setGeneratedFeatureDirectoryTest() {
         propertyManager.setGeneratedFeatureDirectory("test");
         assertThat(propertyManager.getGeneratedFeatureDirectory(), is("test"));
     }
 
     @Test
-    public void setNumberOfTestRunsTest(){
+    public void setNumberOfTestRunsTest() {
         propertyManager.setNumberOfTestRuns(11);
         assertThat(propertyManager.getNumberOfTestRuns(), is(11));
     }
@@ -169,7 +169,7 @@ public class PropertyManagerTest {
     @Test
     public void checkForDisallowedParallelizationModePropertiesScenariosMode() throws CucablePluginException {
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.SCENARIOS.toString());
-        propertyManager.checkForDisallowedParallelizationModeProperties();
+        propertyManager.checkForDisallowedPropertyCombinations();
     }
 
     @Test
@@ -179,7 +179,7 @@ public class PropertyManagerTest {
 
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
         propertyManager.setSourceFeatures("my.feature");
-        propertyManager.checkForDisallowedParallelizationModeProperties();
+        propertyManager.checkForDisallowedPropertyCombinations();
     }
 
     @Test
@@ -191,7 +191,7 @@ public class PropertyManagerTest {
         propertyManager.setSourceFeatures(testFolder.getRoot().getPath());
         propertyManager.setExcludeScenarioTags("someTag");
 
-        propertyManager.checkForDisallowedParallelizationModeProperties();
+        propertyManager.checkForDisallowedPropertyCombinations();
     }
 
     @Test
@@ -203,14 +203,21 @@ public class PropertyManagerTest {
         propertyManager.setSourceFeatures(testFolder.getRoot().getPath());
         propertyManager.setIncludeScenarioTags("someTag");
 
-        propertyManager.checkForDisallowedParallelizationModeProperties();
+        propertyManager.checkForDisallowedPropertyCombinations();
     }
 
     @Test
     public void checkForDisallowedParallelizationModePropertiesValid() throws CucablePluginException {
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
         propertyManager.setSourceFeatures(testFolder.getRoot().getPath());
-        propertyManager.checkForDisallowedParallelizationModeProperties();
+        propertyManager.checkForDisallowedPropertyCombinations();
+    }
+
+    @Test(expected = CucablePluginException.class)
+    public void desiredNumberOfRunnersAndFeaturesPerRunnersTest() throws CucablePluginException {
+        propertyManager.setDesiredNumberOfRunners(2);
+        propertyManager.setDesiredNumberOfFeaturesPerRunner(3);
+        propertyManager.checkForDisallowedPropertyCombinations();
     }
 
     @Test

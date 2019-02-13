@@ -103,7 +103,7 @@
 
                     <!-- optional: distribute a fixed number features per runner round-robin.
                     This can only be used if desiredNumberOfRunners is NOT used! -->
-                    <!--<desiredNumberOfFeaturesPerRunner>2</desiredNumberOfFeaturesPerRunner>-->
+                    <desiredNumberOfFeaturesPerRunner>4</desiredNumberOfFeaturesPerRunner>
 
                     <!-- optional: Cucable log level -->
                     <!--<logLevel>default</logLevel>-->
