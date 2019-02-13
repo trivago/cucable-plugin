@@ -24,6 +24,8 @@ Back to [Readme](README.md).
         src/test/resources/features/MyFeature.feature:8:15
     </sourceFeatures>
     ```
+    
+- Ability to generate runners with a specific number of features by specifying `desiredNumberOfFeaturesPerRunner`
 
 ### Changed
 
