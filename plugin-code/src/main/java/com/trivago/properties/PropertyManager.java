@@ -281,7 +281,7 @@ public class PropertyManager {
     public void logProperties() {
         CucableLogLevel[] logLevels = new CucableLogLevel[]{DEFAULT, COMPACT};
 
-        logger.info("- sourceFeatures            :", logLevels);
+        logger.info("- sourceFeatures               :", logLevels);
         if (sourceFeatures != null) {
             for (CucableFeature sourceFeature : sourceFeatures) {
                 String logLine = "  - " + sourceFeature.getName();
@@ -295,23 +295,27 @@ public class PropertyManager {
             }
         }
 
-        logger.info(String.format("- sourceRunnerTemplateFile  : %s", sourceRunnerTemplateFile), logLevels);
+        logger.info(String.format("- sourceRunnerTemplateFile     : %s", sourceRunnerTemplateFile), logLevels);
 
         logger.logInfoSeparator(DEFAULT);
-        logger.info(String.format("- generatedRunnerDirectory  : %s", generatedRunnerDirectory), logLevels);
-        logger.info(String.format("- generatedFeatureDirectory : %s", generatedFeatureDirectory), logLevels);
+        logger.info(String.format("- generatedRunnerDirectory     : %s", generatedRunnerDirectory), logLevels);
+        logger.info(String.format("- generatedFeatureDirectory    : %s", generatedFeatureDirectory), logLevels);
         logger.logInfoSeparator(DEFAULT);
 
         if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
-            logger.info(String.format("- includeScenarioTags       : %s",
+            logger.info(String.format("- includeScenarioTags          : %s",
                     String.join(", ", includeScenarioTags)), logLevels);
+            logger.info("- includeScenarioTagsConnector : " +
+                    includeScenarioTagsConnector.name().toLowerCase(), logLevels);
         }
         if (excludeScenarioTags != null && !excludeScenarioTags.isEmpty()) {
-            logger.info(String.format("- excludeScenarioTags       : %s",
+            logger.info(String.format("- excludeScenarioTags          : %s",
                     String.join(", ", excludeScenarioTags)), logLevels);
+            logger.info("- excludeScenarioTagsConnector : " +
+                    excludeScenarioTagsConnector.name().toLowerCase(), logLevels);
         }
         if (customPlaceholders != null && !customPlaceholders.isEmpty()) {
-            logger.info("- customPlaceholders        :", logLevels);
+            logger.info("- customPlaceholders           :", logLevels);
             for (Map.Entry<String, String> customPlaceholder : customPlaceholders.entrySet()) {
                 logger.info(
                         String.format("  %s => %s", customPlaceholder.getKey(), customPlaceholder.getValue()),
@@ -320,11 +324,11 @@ public class PropertyManager {
             }
         }
 
-        logger.info(String.format("- parallelizationMode       : %s", parallelizationMode), logLevels);
-        logger.info(String.format("- numberOfTestRuns          : %d", numberOfTestRuns), logLevels);
+        logger.info(String.format("- parallelizationMode          : %s", parallelizationMode.name().toLowerCase()), logLevels);
+        logger.info(String.format("- numberOfTestRuns             : %d", numberOfTestRuns), logLevels);
 
         if (desiredNumberOfRunners > 0) {
-            logger.info(String.format("- desiredNumberOfRunners    : %d", desiredNumberOfRunners), logLevels);
+            logger.info(String.format("- desiredNumberOfRunners       : %d", desiredNumberOfRunners), logLevels);
         }
 
         logger.logInfoSeparator(logLevels);

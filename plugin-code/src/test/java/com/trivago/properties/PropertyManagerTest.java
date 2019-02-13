@@ -221,21 +221,22 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void logMandatoryPropertiesTest() {
+    public void logMandatoryPropertiesTest() throws CucablePluginException {
         ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
+        propertyManager.setParallelizationMode("scenarios");
         propertyManager.logProperties();
         verify(logger, times(6)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
         List<String> capturedLogs = logCaptor.getAllValues();
-        assertThat(capturedLogs.get(0), is("- sourceFeatures            :"));
-        assertThat(capturedLogs.get(1), is("- sourceRunnerTemplateFile  : null"));
-        assertThat(capturedLogs.get(2), is("- generatedRunnerDirectory  : null"));
-        assertThat(capturedLogs.get(3), is("- generatedFeatureDirectory : null"));
-        assertThat(capturedLogs.get(4), is("- parallelizationMode       : null"));
-        assertThat(capturedLogs.get(5), is("- numberOfTestRuns          : 0"));
+        assertThat(capturedLogs.get(0), is("- sourceFeatures               :"));
+        assertThat(capturedLogs.get(1), is("- sourceRunnerTemplateFile     : null"));
+        assertThat(capturedLogs.get(2), is("- generatedRunnerDirectory     : null"));
+        assertThat(capturedLogs.get(3), is("- generatedFeatureDirectory    : null"));
+        assertThat(capturedLogs.get(4), is("- parallelizationMode          : scenarios"));
+        assertThat(capturedLogs.get(5), is("- numberOfTestRuns             : 0"));
     }
 
     @Test
-    public void logExtendedPropertiesTest() {
+    public void logExtendedPropertiesTest() throws CucablePluginException {
         ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
         propertyManager.setExcludeScenarioTags("exclude1, exclude2");
         propertyManager.setIncludeScenarioTags("include1, include2");
@@ -247,24 +248,29 @@ public class PropertyManagerTest {
 
         propertyManager.setSourceFeatures("test.feature:3");
         propertyManager.setDesiredNumberOfRunners(2);
+        propertyManager.setParallelizationMode("features");
+        propertyManager.setIncludeScenarioTagsConnector("or");
+        propertyManager.setExcludeScenarioTagsConnector("and");
 
         propertyManager.logProperties();
 
-        verify(logger, times(13)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
+        verify(logger, times(15)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
         List<String> capturedLogs = logCaptor.getAllValues();
-        assertThat(capturedLogs.get(0), is("- sourceFeatures            :"));
+        assertThat(capturedLogs.get(0), is("- sourceFeatures               :"));
         assertThat(capturedLogs.get(1), is("  - test.feature with line number 3"));
-        assertThat(capturedLogs.get(2), is("- sourceRunnerTemplateFile  : null"));
-        assertThat(capturedLogs.get(3), is("- generatedRunnerDirectory  : null"));
-        assertThat(capturedLogs.get(4), is("- generatedFeatureDirectory : null"));
-        assertThat(capturedLogs.get(5), is("- includeScenarioTags       : @include1, @include2"));
-        assertThat(capturedLogs.get(6), is("- excludeScenarioTags       : @exclude1, @exclude2"));
-        assertThat(capturedLogs.get(7), is("- customPlaceholders        :"));
-        assertThat(capturedLogs.get(8), is("  key1 => value1"));
-        assertThat(capturedLogs.get(9), is("  key2 => value2"));
-        assertThat(capturedLogs.get(10), is("- parallelizationMode       : null"));
-        assertThat(capturedLogs.get(11), is("- numberOfTestRuns          : 0"));
-        assertThat(capturedLogs.get(12), is("- desiredNumberOfRunners    : 2"));
+        assertThat(capturedLogs.get(2), is("- sourceRunnerTemplateFile     : null"));
+        assertThat(capturedLogs.get(3), is("- generatedRunnerDirectory     : null"));
+        assertThat(capturedLogs.get(4), is("- generatedFeatureDirectory    : null"));
+        assertThat(capturedLogs.get(5), is("- includeScenarioTags          : @include1, @include2"));
+        assertThat(capturedLogs.get(6), is("- includeScenarioTagsConnector : or"));
+        assertThat(capturedLogs.get(7), is("- excludeScenarioTags          : @exclude1, @exclude2"));
+        assertThat(capturedLogs.get(8), is("- excludeScenarioTagsConnector : and"));
+        assertThat(capturedLogs.get(9), is("- customPlaceholders           :"));
+        assertThat(capturedLogs.get(10), is("  key1 => value1"));
+        assertThat(capturedLogs.get(11), is("  key2 => value2"));
+        assertThat(capturedLogs.get(12), is("- parallelizationMode          : features"));
+        assertThat(capturedLogs.get(13), is("- numberOfTestRuns             : 0"));
+        assertThat(capturedLogs.get(14), is("- desiredNumberOfRunners       : 2"));
     }
 
     @Test
