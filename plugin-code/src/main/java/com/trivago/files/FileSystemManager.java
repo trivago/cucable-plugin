@@ -20,19 +20,73 @@ import com.trivago.exceptions.CucablePluginException;
 import com.trivago.exceptions.filesystem.FileDeletionException;
 import com.trivago.exceptions.filesystem.PathCreationException;
 import com.trivago.properties.PropertyManager;
+import com.trivago.vo.CucableFeature;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
+import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
+import java.util.Collections;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Singleton
 public class FileSystemManager {
 
+    private static final String FEATURE_FILE_EXTENSION = ".feature";
     private final PropertyManager propertyManager;
 
     @Inject
     public FileSystemManager(PropertyManager propertyManager) {
         this.propertyManager = propertyManager;
+    }
+
+    /**
+     * Returns a list of feature file paths located in the specified source feature directory.
+     *
+     * @return a list of feature file paths.
+     * @throws CucablePluginException see {@link CucablePluginException}
+     */
+    public List<Path> getPathsFromCucableFeature(final CucableFeature cucableFeature) throws CucablePluginException {
+
+        if (cucableFeature == null){
+            return Collections.emptyList();
+        }
+
+        String sourceFeatures = cucableFeature.getName();
+        File sourceFeaturesFile = new File(cucableFeature.getName());
+        // Check if the property value is a single file or a directory
+        if (sourceFeaturesFile.isFile() && sourceFeatures.endsWith(FEATURE_FILE_EXTENSION)) {
+            return Collections.singletonList(Paths.get(sourceFeatures));
+        } else if (sourceFeaturesFile.isDirectory()) {
+            return getFilesWithFeatureExtension(sourceFeatures);
+        } else {
+            throw new CucablePluginException(
+                    sourceFeatures + " is not a feature file or a directory."
+            );
+        }
+    }
+
+    /**
+     * Returns a list of feature files in the given directory.
+     *
+     * @param sourceFeatureDirectory The source directory to scan for feature files.
+     * @return A list of feature files in the given directory.
+     * @throws CucablePluginException see {@link CucablePluginException}.
+     */
+    private List<Path> getFilesWithFeatureExtension(final String sourceFeatureDirectory) throws CucablePluginException {
+        try {
+            return Files.walk(Paths.get(sourceFeatureDirectory))
+                    .filter(Files::isRegularFile)
+                    .filter(p -> p.toString().endsWith(FEATURE_FILE_EXTENSION))
+                    .collect(Collectors.toList());
+        } catch (IOException e) {
+            throw new CucablePluginException(
+                    "Unable to traverse feature files in " + sourceFeatureDirectory + ": " + e.getMessage());
+        }
     }
 
     /**

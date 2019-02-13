@@ -28,6 +28,7 @@ import java.io.IOException;
  */
 @Singleton
 public class FileIO {
+
     /**
      * Writes string content to a file.
      *

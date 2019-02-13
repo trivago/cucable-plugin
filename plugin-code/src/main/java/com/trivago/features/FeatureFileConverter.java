@@ -21,6 +21,7 @@ import com.trivago.exceptions.filesystem.FeatureFileParseException;
 import com.trivago.exceptions.filesystem.FileCreationException;
 import com.trivago.exceptions.filesystem.MissingFileException;
 import com.trivago.files.FileIO;
+import com.trivago.files.FileSystemManager;
 import com.trivago.gherkin.GherkinDocumentParser;
 import com.trivago.logging.CucableLogger;
 import com.trivago.logging.Language;
@@ -32,18 +33,12 @@ import com.trivago.vo.SingleScenario;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.File;
-import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 import static com.trivago.logging.CucableLogger.CucableLogLevel.COMPACT;
 import static com.trivago.logging.CucableLogger.CucableLogLevel.DEFAULT;
@@ -69,6 +64,7 @@ public class FeatureFileConverter {
     private final FeatureFileContentRenderer featureFileContentRenderer;
     private final RunnerFileContentRenderer runnerFileContentRenderer;
     private final FileIO fileIO;
+    private FileSystemManager fileSystemManager;
     private final CucableLogger logger;
 
     // Holds the current number of single features per feature key
@@ -82,6 +78,7 @@ public class FeatureFileConverter {
             FeatureFileContentRenderer featureFileContentRenderer,
             RunnerFileContentRenderer runnerFileContentRenderer,
             FileIO fileIO,
+            FileSystemManager fileSystemManager,
             CucableLogger logger
     ) {
         this.propertyManager = propertyManager;
@@ -89,6 +86,7 @@ public class FeatureFileConverter {
         this.featureFileContentRenderer = featureFileContentRenderer;
         this.runnerFileContentRenderer = runnerFileContentRenderer;
         this.fileIO = fileIO;
+        this.fileSystemManager = fileSystemManager;
         this.logger = logger;
     }
 
@@ -105,7 +103,7 @@ public class FeatureFileConverter {
         List<String> allGeneratedFeaturePaths = new ArrayList<>();
 
         for (CucableFeature cucableFeature : cucableFeatures) {
-            List<Path> paths = getPathFromCucableFeature(cucableFeature);
+            List<Path> paths = fileSystemManager.getPathsFromCucableFeature(cucableFeature);
             for (Path path : paths) {
                 List<String> generatedFeatureFilePaths = generateParallelizableFeatures(path, cucableFeature.getLineNumbers());
                 allGeneratedFeaturePaths.addAll(generatedFeatureFilePaths);
@@ -130,47 +128,6 @@ public class FeatureFileConverter {
     }
 
     /**
-     * Returns a list of feature file paths located in the specified source feature directory.
-     *
-     * @return a list of feature file paths.
-     * @throws CucablePluginException see {@link CucablePluginException}
-     */
-    private List<Path> getPathFromCucableFeature(final CucableFeature cucableFeature) throws CucablePluginException {
-
-        String sourceFeatures = cucableFeature.getName();
-        File sourceFeaturesFile = new File(cucableFeature.getName());
-        // Check if the property value is a single file or a directory
-        if (sourceFeaturesFile.isFile() && sourceFeatures.endsWith(FEATURE_FILE_EXTENSION)) {
-            return Collections.singletonList(Paths.get(sourceFeatures));
-        } else if (sourceFeaturesFile.isDirectory()) {
-            return getFilesWithFeatureExtension(sourceFeatures);
-        } else {
-            throw new CucablePluginException(
-                    sourceFeatures + " is not a feature file or a directory."
-            );
-        }
-    }
-
-    /**
-     * Returns a list of feature files in the given directory.
-     *
-     * @param sourceFeatureDirectory The source directory to scan for feature files.
-     * @return A list of feature files in the given directory.
-     * @throws CucablePluginException see {@link CucablePluginException}.
-     */
-    private List<Path> getFilesWithFeatureExtension(final String sourceFeatureDirectory) throws CucablePluginException {
-        try {
-            return Files.walk(Paths.get(sourceFeatureDirectory))
-                    .filter(Files::isRegularFile)
-                    .filter(p -> p.toString().endsWith(FEATURE_FILE_EXTENSION))
-                    .collect(Collectors.toList());
-        } catch (IOException e) {
-            throw new CucablePluginException(
-                    "Unable to traverse feature files in " + sourceFeatureDirectory + ": " + e.getMessage());
-        }
-    }
-
-    /**
      * Converts all scenarios in the given feature file to single
      * scenario feature files and their respective runners.
      *
@@ -179,12 +136,14 @@ public class FeatureFileConverter {
      * @return Number of created scenarios.
      * @throws CucablePluginException see {@link CucablePluginException}
      */
-    private List<String> generateParallelizableFeatures(final Path sourceFeatureFilePath, final List<Integer> lineNumbers)
-            throws CucablePluginException {
-        if (propertyManager.getParallelizationMode() == PropertyManager.ParallelizationMode.SCENARIOS) {
-            return generateFeaturesWithScenariosParallelizationMode(sourceFeatureFilePath, lineNumbers);
+    private List<String> generateParallelizableFeatures(
+            final Path sourceFeatureFilePath,
+            final List<Integer> lineNumbers) throws CucablePluginException {
+
+        if (propertyManager.getParallelizationMode() == PropertyManager.ParallelizationMode.FEATURES) {
+            return generateFeaturesWithFeaturesParallelizationMode(sourceFeatureFilePath);
         }
-        return generateFeaturesWithFeaturesParallelizationMode(sourceFeatureFilePath);
+        return generateFeaturesWithScenariosParallelizationMode(sourceFeatureFilePath, lineNumbers);
     }
 
     /**
@@ -218,6 +177,7 @@ public class FeatureFileConverter {
         }
 
         String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
+
         List<SingleScenario> singleScenarios;
         try {
             singleScenarios =

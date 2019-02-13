@@ -10,7 +10,13 @@ Back to [Readme](README.md).
 
 ### Added
 
-- Support for `and` and `or` mode for `includeScenarioTags` and `excludeScenarioTags` (via `includeScenarioTagsConnector` and `excludeScenarioTagsConnector` parameters) (#88)
+- Support for `and` and `or` mode for `includeScenarioTags` and `excludeScenarioTags` via `includeScenarioTagsConnector` and `excludeScenarioTagsConnector` parameters (default: 'or') (#88):
+
+    ```
+    <includeScenarioTagsConnector>and</includeScenarioTagsConnector>
+    <excludeScenarioTagsConnector>or</excludeScenarioTagsConnector>
+    ```
+
 - Support to specify multiple `sourceFeatures` (#55), e.g.:
     ```
     <sourceFeatures>
@@ -27,8 +33,11 @@ Back to [Readme](README.md).
     <includeScenarioTags>@tag1,@tag2</includeScenarioTags>
     <excludeScenarioTags>@tag3</excludeScenarioTags>
     ```
+- `includeScenarioTags` and `excludeScenarioTags` can now be used without the preceding `@`:
+
+     `<includeScenarioTags>tag1,tag2</includeScenarioTags>`
     
-- Rewritten feature handling to support more options 
+- Completely rewritten feature handling to support more options 
 
 ## [1.3.2] - 2019-02-01
 
