@@ -25,7 +25,7 @@ Back to [Readme](README.md).
     </sourceFeatures>
     ```
     
-- Ability to generate runners with a specific number of features by specifying `desiredNumberOfFeaturesPerRunner`
+- Ability to generate runners with a specific number of features by specifying `desiredNumberOfFeaturesPerRunner` (#70)
 
 ### Changed
 

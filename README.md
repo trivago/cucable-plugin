@@ -13,7 +13,9 @@
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
+
 - [Cucable Maven Plugin](#cucable-maven-plugin)
+  - [Cucumber 4](#cucumber-4)
   - [Repository Structure](#repository-structure)
   - [Changelog](#changelog)
   - [Maven dependency](#maven-dependency)
@@ -73,6 +75,16 @@ This plugin does the following:
 Those generated runners and features can then be used with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/) in order to parallelize test runs.
 
 This also works for **non-english** feature files!
+
+## Cucumber 4
+
+Even though Cucumber 4 supports basic parallel runs, Cucable has more options that may be beneficial for your use case:
+
+* It supports running single scenarios, complete features or sequences of single scenarios in parallel
+* It supports splitting scenarios and attaching them to a fixed number of runners
+* It supports splitting scenarios and attaching batches of them to a dynamic number of runners
+* You don't need any test framework changes because Cucable runs before the framework invocations
+* You have full control over your runners because of template variables and custom placeholders
 
 ## Repository Structure
 
@@ -433,7 +445,7 @@ If you set this options, all generated features will be distributed to a fixed s
 
 If this option is not set, its default value is `0` which basically means "Generate a dedicated runner for every generated feature".
 
-__Note:__ If this is used together with `desiredNumberOfFeaturesPerRunner`, the specified number of features per runner is ignored!
+__Note:__ This cannot be used together with `desiredNumberOfFeaturesPerRunner`!
 
 #### desiredNumberOfFeaturesPerRunner
 
@@ -441,7 +453,7 @@ If you set this option, all generated features will be distributed to a dynamic 
 
 If this option is not set, its default value is `0` which basically means "Generate a dedicated runner for every generated feature".
 
-__Note:__ If this is used together with `desiredNumberOfRunners`, the specified number of features per runner is ignored!
+__Note:__ This cannot be used together with `desiredNumberOfRunners`!
 
 ### Generating runners and features inside target directory
 
