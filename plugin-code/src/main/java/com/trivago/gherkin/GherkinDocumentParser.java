@@ -406,12 +406,10 @@ public class GherkinDocumentParser {
         while (m.find()) {
             String currentPlaceholder = m.group(0);
             List<String> placeholderColumn = exampleMap.get(currentPlaceholder);
-            if (placeholderColumn == null) {
-                throw new IllegalStateException(String.format("In scenario outline placeholder \"%s\" is not listed in the \"Examples\" table.", currentPlaceholder));
+            if (placeholderColumn != null) {
+                result = result.replace(currentPlaceholder, placeholderColumn.get(rowIndex));
             }
-            result = result.replace(currentPlaceholder, placeholderColumn.get(rowIndex));
         }
-
         return result;
     }
 }

@@ -414,48 +414,6 @@ public class GherkinDocumentParserTest {
         assertThat(firstRow.get(2), is("one"));
     }
 
-    @Test(expected = IllegalStateException.class)
-    public void nonexistentPlaceholderInOutlineNameTest() throws Exception {
-        String featureContent = "Feature: test feature 3\n" +
-                "\n" +
-                "  Scenario Outline: This is a scenario outline with <nonexistentPlaceholder>\n" +
-                "    When I search for key <key>\n" +
-                "    | test | <key> | <value> |" +
-                "\n" +
-                "    Examples:\n" +
-                "      | key | value |\n" +
-                "      | 1   | one   |\n";
-        gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void nonexistentPlaceholderInOutlineStepTest() throws Exception {
-        String featureContent = "Feature: test feature 3\n" +
-                "\n" +
-                "  Scenario Outline: This is a scenario outline\n" +
-                "    When I search for key <nonexistentplaceholder>\n" +
-                "    | test | <key> | <value> |" +
-                "\n" +
-                "    Examples:\n" +
-                "      | key | value |\n" +
-                "      | 1   | one   |\n";
-        gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
-    }
-
-    @Test(expected = IllegalStateException.class)
-    public void nonexistentPlaceholderInOutlineDataTableTest() throws Exception {
-        String featureContent = "Feature: test feature 3\n" +
-                "\n" +
-                "  Scenario Outline: This is a scenario outline\n" +
-                "    When I search for key \n" +
-                "    | test | <nonexistentplaceholder> | <value> |" +
-                "\n" +
-                "    Examples:\n" +
-                "      | key | value |\n" +
-                "      | 1   | one   |\n";
-        gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
-    }
-
     private String getTwoScenariosWithTags() {
         return "@featureTag\n" +
                 "Feature: test feature\n" +
