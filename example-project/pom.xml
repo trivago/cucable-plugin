@@ -57,12 +57,6 @@
                     <!-- process all features in the given directory -->
                     <sourceFeatures>src/test/resources/features</sourceFeatures>
 
-
-                    <!-- Test -->
-                    <!--<sourceFeatures>src/test/resources/features/Karalljo2.feature</sourceFeatures>-->
-                    <!-- /Test -->
-
-
                     <!-- process a specific feature file in the given directory -->
                     <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest9.feature</sourceFeatures>-->
 
