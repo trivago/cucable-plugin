@@ -15,7 +15,7 @@ Back to [Readme](README.md).
 
 ### Added
 
-* [Cucumber tag expression] support (#104)
+* [Cucumber tag expression](https://docs.cucumber.io/cucumber/api/#tag-expressions) support (#104)
 
 ### Removed
 
