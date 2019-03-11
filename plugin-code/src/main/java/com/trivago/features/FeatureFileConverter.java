@@ -17,7 +17,6 @@
 package com.trivago.features;
 
 import com.trivago.exceptions.CucablePluginException;
-import com.trivago.exceptions.filesystem.FeatureFileParseException;
 import com.trivago.exceptions.filesystem.FileCreationException;
 import com.trivago.exceptions.filesystem.MissingFileException;
 import com.trivago.files.FileIO;
@@ -187,17 +186,12 @@ public class FeatureFileConverter {
         String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
 
         List<SingleScenario> singleScenarios;
-        try {
-            singleScenarios =
-                    gherkinDocumentParser.getSingleScenariosFromFeature(
-                            featureFileContent,
-                            featureFilePathString,
-                            lineNumbers
-                    );
-        } catch (CucablePluginException e) {
-            throw new FeatureFileParseException(featureFilePathString);
-        }
-
+        singleScenarios =
+                gherkinDocumentParser.getSingleScenariosFromFeature(
+                        featureFileContent,
+                        featureFilePathString,
+                        lineNumbers
+                );
         return generateFeatureFiles(sourceFeatureFilePath, singleScenarios);
     }
 

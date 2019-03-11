@@ -72,30 +72,11 @@ CucablePlugin extends AbstractMojo {
     private int numberOfTestRuns;
 
     /**
-     * Optional comma separated list of scenario tags to be included from feature and runner generation.
-     * If used together with excludeScenarioTags, the excluded tags overrule this setting.
+     * Optional Cucumber tag expression to include or exclude certain tagged scenarios.
+     * See also https://docs.cucumber.io/cucumber/api/#tag-expressions
      */
     @Parameter(property = "parallel.includeScenarioTags")
     private String includeScenarioTags;
-
-    /**
-     * Optional include scenario tags connector (can be `and` or `or`) - default value is 'or'.
-     */
-    @Parameter(property = "parallel.includeScenarioTagsConnector", defaultValue = "or")
-    private String includeScenarioTagsConnector;
-
-    /**
-     * Optional comma separated list of scenario tags to be excluded from feature and runner generation
-     * If used together with includeScenarioTags, the excluded tags overrule the included ones.
-     */
-    @Parameter(property = "parallel.excludeScenarioTags")
-    private String excludeScenarioTags;
-
-    /**
-     * Optional exclude scenario tags connector (can be `and` or `or`) - default value is 'or'.
-     */
-    @Parameter(property = "parallel.excludeScenarioTagsConnector", defaultValue = "or")
-    private String excludeScenarioTagsConnector;
 
     /**
      * Optional parallelization mode. By default, Cucable generates single scenarios (mode "scenarios").
@@ -160,10 +141,7 @@ CucablePlugin extends AbstractMojo {
         propertyManager.setSourceFeatures(sourceFeatures);
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDirectory);
         propertyManager.setNumberOfTestRuns(numberOfTestRuns);
-        propertyManager.setExcludeScenarioTags(excludeScenarioTags);
-        propertyManager.setExcludeScenarioTagsConnector(excludeScenarioTagsConnector);
         propertyManager.setIncludeScenarioTags(includeScenarioTags);
-        propertyManager.setIncludeScenarioTagsConnector(includeScenarioTagsConnector);
         propertyManager.setParallelizationMode(parallelizationMode);
         propertyManager.setCustomPlaceholders(customPlaceholders);
         propertyManager.setDesiredNumberOfRunners(desiredNumberOfRunners);

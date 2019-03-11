@@ -38,9 +38,6 @@
     - [Optional Parameters](#optional-parameters)
       - [numberOfTestRuns](#numberoftestruns)
       - [includeScenarioTags](#includescenariotags)
-        - [includeScenarioTagsConnector](#includescenariotagsconnector)
-      - [excludeScenarioTags](#excludescenariotags)
-        - [excludeScenarioTagsConnector](#excludescenariotagsconnector)
       - [parallelizationMode](#parallelizationmode)
       - [logLevel](#loglevel)
       - [desiredNumberOfRunners](#desirednumberofrunners)
@@ -365,47 +362,31 @@ For each test run, the whole set of features and runners is generated like this:
 
 #### includeScenarioTags
 
-Optional scenario tags that __should be included__ in the feature and runner generation.
-To include multiple tags, just comma separate them:
+`includeScenarioTags` can be used to provide a [Cucumber tag expression](https://docs.cucumber.io/cucumber/api/#tag-expressions) in order to specify which tags should be included or excluded from scenario generation:
 
+__Example:__ include scenarios that are tagged with _@scenario1_:
 ```xml
-<includeScenarioTags>@scenario1Tag1,@scenario1Tag2</includeScenarioTags>
+<includeScenarioTags>@scenario1</includeScenarioTags>
 ```
 
-__Note:__ When using _includeScenarioTags_ and _excludeScenarioTags_ together, the _excludeScenarioTags_ will override the _includeScenarioTags_.
-This means that a scenario containing an included tag __and__ an excluded tag will be __excluded__!
-
-##### includeScenarioTagsConnector
-
-By default, the include scenario tags are combined using `or`. With this property, this can be changed to `and`.
-
-This means that only those scenarios are included that contain __all__ specified include scenario tags.
-
+__Example:__ include scenarios that are tagged with _@scenario1_ __or__ _@scenario2_:
 ```xml
-<includeScenarioTagsConnector>and</includeScenarioTagsConnector>
+<includeScenarioTags>@scenario1 or @scenario2</includeScenarioTags>
 ```
 
-#### excludeScenarioTags
-
-Optional scenario tags that __should not be included__ in the feature and runner generation.
-
-To include multiple tags, just comma separate them:
-
+__Example:__ include scenarios that are tagged with _@scenario1_ __and__ _@scenario2_:
 ```xml
-<excludeScenarioTags>@tag1,@tag2</excludeScenarioTags>
+<includeScenarioTags>@scenario1 and @scenario2</includeScenarioTags>
 ```
 
-__Note:__ When using `includeScenarioTags` and `excludeScenarioTags` together, the `excludeScenarioTags` will override the `includeScenarioTags`.
-This means that a scenario containing an included tag __and__ an excluded tag will be __excluded__!
-
-##### excludeScenarioTagsConnector
-
-By default, the exclude scenario tags are combined using `or`. With this property, this can be changed to `and`.
-
-This means that only those scenarios are excluded that contain __all__ specified exclude scenario tags.
-
+__Example:__ include scenarios that are __not__ tagged with _@scenario1_:
 ```xml
-<excludeScenarioTagsConnector>or</excludeScenarioTagsConnector>
+<includeScenarioTags>not @scenario1</includeScenarioTags>
+```
+
+__Example:__ include scenarios that are __not__ tagged with _@scenario1_ but tagged with _scenario2_ __or__ _scenario3_:
+```xml
+<includeScenarioTags>not @scenario1 and (@scenario2 or scenario3)</includeScenarioTags>
 ```
 
 #### parallelizationMode
