@@ -13,6 +13,10 @@ Back to [Readme](README.md).
 * Untrue error on missing example table columns (#100)
 * Errors before scenario parsing are not reported as parse errors anymore
 
+### Added
+
+* [Cucumber tag expression] support (#104)
+
 ### Removed
 
 * Removed parameters `excludeScenarioTags`, `includeScenarioTagsConnector` and `excludeScenarioTagsConnector` in favor of [Cucumber tag expressions](https://docs.cucumber.io/cucumber/api/#tag-expressions) in `includeScenarioTags`
