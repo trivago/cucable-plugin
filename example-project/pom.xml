@@ -1,4 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
+<!--suppress UnresolvedMavenProperty -->
 <project xmlns="http://maven.apache.org/POM/4.0.0"
          xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
          xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
@@ -6,7 +7,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-test-project</artifactId>
-    <version>1.4.1</version>
+    <version>1.5.0</version>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -77,17 +78,10 @@
                     <!--<comment>This should appear inside the template</comment>-->
                     <!--</customPlaceholders>-->
 
-                    <!-- optional: include scenarios with certain tags (can be specified with or without '@') -->
-                    <!--<includeScenarioTags>scenario1Tag1,scenario1Tag2</includeScenarioTags>-->
-
-                    <!-- optional: combine include scenario tags with 'and' or 'or' (default: 'or') -->
-                    <!--<includeScenarioTagsConnector>and</includeScenarioTagsConnector>-->
-
-                    <!-- optional: exclude scenarios with certain tags (can be specified with or without '@') -->
-                    <!--<excludeScenarioTags>@skipme</excludeScenarioTags>-->
-
-                    <!-- optional: combine exclude scenario tags with 'and' or 'or' (default: 'or') -->
-                    <!--<excludeScenarioTagsConnector>and</excludeScenarioTagsConnector>-->
+                    <!-- optional: Cucumber tag expression to include or exclude scenarios with certain tags (see https://docs.cucumber.io/cucumber/api/#tag-expressions) -->
+                    <!--<includeScenarioTags>@scenario1Tag1</includeScenarioTags>-->
+                    <!--<includeScenarioTags>not @skipMe</includeScenarioTags>-->
+                    <!--<includeScenarioTags>(@scenario1Tag1 or @scenario1Tag2) and not @skipMe</includeScenarioTags>-->
 
                     <!-- optional: change parallelization mode of Cucable (default: 'scenarios')-->
                     <!--<parallelizationMode>scenarios</parallelizationMode>-->

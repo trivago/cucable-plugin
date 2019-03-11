@@ -6,11 +6,20 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
-## [1.4.1] - 2019-03-08
+## [1.5.0] - 2019-03-11
 
 ### Fixed
 
 * Untrue error on missing example table columns (#100)
+* Errors before scenario parsing are not reported as parse errors anymore
+
+### Removed
+
+* Removed parameters `excludeScenarioTags`, `includeScenarioTagsConnector` and `excludeScenarioTagsConnector` in favor of [Cucumber tag expressions](https://docs.cucumber.io/cucumber/api/#tag-expressions) in `includeScenarioTags`
+
+### Changed
+
+* `includeScenarioTags` now expects a [Cucumber tag expression](https://docs.cucumber.io/cucumber/api/#tag-expressions)
 
 ## [1.4.0] - 2019-02-13
 

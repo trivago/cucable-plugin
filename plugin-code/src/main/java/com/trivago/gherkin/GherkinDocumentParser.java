@@ -31,6 +31,9 @@ import gherkin.ast.GherkinDocument;
 import gherkin.ast.Scenario;
 import gherkin.ast.ScenarioDefinition;
 import gherkin.ast.ScenarioOutline;
+import io.cucumber.tagexpressions.Expression;
+import io.cucumber.tagexpressions.TagExpressionException;
+import io.cucumber.tagexpressions.TagExpressionParser;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -45,9 +48,10 @@ public class GherkinDocumentParser {
 
     private static final Pattern SCENARIO_OUTLINE_PLACEHOLDER_PATTERN = Pattern.compile("<.+?>");
 
+    private final TagExpressionParser tagExpressionParser = new TagExpressionParser();
     private final GherkinToCucableConverter gherkinToCucableConverter;
     private final GherkinTranslations gherkinTranslations;
-    private PropertyManager propertyManager;
+    private final PropertyManager propertyManager;
 
     @Inject
     GherkinDocumentParser(
@@ -330,13 +334,9 @@ public class GherkinDocumentParser {
      * @return true if an include tag  and no exclude tags are included in the source tag list.
      */
     @SafeVarargs
-    private final boolean scenarioShouldBeIncluded(final List<String>... sourceTagsList) {
+    private final boolean scenarioShouldBeIncluded(final List<String>... sourceTagsList) throws CucablePluginException {
 
-        List<String> includeScenarioTags = propertyManager.getIncludeScenarioTags();
-        List<String> excludeScenarioTags = propertyManager.getExcludeScenarioTags();
-
-        PropertyManager.TagConnectMode includeScenarioTagsConnector = propertyManager.getIncludeScenarioTagsConnector();
-        PropertyManager.TagConnectMode excludeScenarioTagsConnector = propertyManager.getExcludeScenarioTagsConnector();
+        String includeScenarioTags = propertyManager.getIncludeScenarioTags();
 
         List<String> combinedScenarioTags = new ArrayList<>();
         for (List<String> sourceTags : sourceTagsList) {
@@ -349,31 +349,17 @@ public class GherkinDocumentParser {
             return includeScenarioTags == null || includeScenarioTags.isEmpty();
         }
 
-        boolean scenarioShouldBeIncluded;
-
         if (includeScenarioTags == null || includeScenarioTags.isEmpty()) {
-            scenarioShouldBeIncluded = true;
-        } else {
-            int matches = getTagMatches(includeScenarioTags, combinedScenarioTags);
-            if (includeScenarioTagsConnector == PropertyManager.TagConnectMode.AND) {
-                scenarioShouldBeIncluded = matches == includeScenarioTags.size();
-            } else {
-                scenarioShouldBeIncluded = matches >= 1;
-            }
+            return true;
         }
 
-        if (excludeScenarioTags == null || excludeScenarioTags.isEmpty()) {
-            return scenarioShouldBeIncluded;
+        Expression tagExpression;
+        try {
+            tagExpression = tagExpressionParser.parse(includeScenarioTags);
+        } catch (TagExpressionException e) {
+            throw new CucablePluginException("The tag expression '" + includeScenarioTags + "' is invalid: " + e.getMessage());
         }
-
-        int matches = getTagMatches(excludeScenarioTags, combinedScenarioTags);
-        if (excludeScenarioTagsConnector == PropertyManager.TagConnectMode.AND) {
-            scenarioShouldBeIncluded = matches == excludeScenarioTags.size();
-        } else {
-            scenarioShouldBeIncluded = matches == 0;
-        }
-
-        return scenarioShouldBeIncluded;
+        return tagExpression.evaluate(combinedScenarioTags);
     }
 
     private int getTagMatches(final List<String> tagsToCheck, final List<String> combinedScenarioTags) {

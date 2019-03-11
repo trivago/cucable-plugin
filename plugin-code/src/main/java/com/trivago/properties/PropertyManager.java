@@ -46,10 +46,7 @@ public class PropertyManager {
     private List<CucableFeature> sourceFeatures;
     private String generatedFeatureDirectory;
     private int numberOfTestRuns;
-    private List<String> includeScenarioTags;
-    private TagConnectMode includeScenarioTagsConnector;
-    private List<String> excludeScenarioTags;
-    private TagConnectMode excludeScenarioTagsConnector;
+    private String includeScenarioTags;
     private ParallelizationMode parallelizationMode;
     private Map<String, String> customPlaceholders;
     private int desiredNumberOfRunners;
@@ -119,70 +116,12 @@ public class PropertyManager {
         this.numberOfTestRuns = numberOfTestRuns;
     }
 
-    public List<String> getExcludeScenarioTags() {
-        return excludeScenarioTags;
-    }
-
-    public void setExcludeScenarioTags(final String excludeScenarioTags) {
-        this.excludeScenarioTags = new ArrayList<>();
-        if (excludeScenarioTags == null) {
-            return;
-        }
-        for (String tag : excludeScenarioTags.split(",")) {
-            String trimmedTag = tag.trim();
-            if (!trimmedTag.startsWith("@")) {
-                trimmedTag = "@" + trimmedTag;
-            }
-            this.excludeScenarioTags.add(trimmedTag);
-        }
-    }
-
-    public TagConnectMode getExcludeScenarioTagsConnector() {
-        return excludeScenarioTagsConnector;
-    }
-
-    public void setExcludeScenarioTagsConnector(final String excludeScenarioTagsConnector) throws CucablePluginException {
-        try {
-            this.excludeScenarioTagsConnector = TagConnectMode.valueOf(excludeScenarioTagsConnector.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CucablePluginException(
-                    "Unknown <excludeScenarioTagConnector> '" + excludeScenarioTagsConnector +
-                            "'. Please use 'and' or 'or'."
-            );
-        }
-    }
-
-    public List<String> getIncludeScenarioTags() {
+    public String getIncludeScenarioTags() {
         return includeScenarioTags;
     }
 
     public void setIncludeScenarioTags(final String includeScenarioTags) {
-        this.includeScenarioTags = new ArrayList<>();
-        if (includeScenarioTags == null) {
-            return;
-        }
-        for (String tag : includeScenarioTags.split(",")) {
-            String trimmedTag = tag.trim();
-            if (!trimmedTag.startsWith("@")) {
-                trimmedTag = "@" + trimmedTag;
-            }
-            this.includeScenarioTags.add(trimmedTag);
-        }
-    }
-
-    public TagConnectMode getIncludeScenarioTagsConnector() {
-        return includeScenarioTagsConnector;
-    }
-
-    public void setIncludeScenarioTagsConnector(final String includeScenarioTagsConnector) throws CucablePluginException {
-        try {
-            this.includeScenarioTagsConnector = TagConnectMode.valueOf(includeScenarioTagsConnector.toUpperCase());
-        } catch (IllegalArgumentException e) {
-            throw new CucablePluginException(
-                    "Unknown <includeScenarioTagsConnector> '" + includeScenarioTagsConnector +
-                            "'. Please use 'and' or 'or'."
-            );
-        }
+        this.includeScenarioTags = includeScenarioTags;
     }
 
     public ParallelizationMode getParallelizationMode() {
@@ -265,8 +204,6 @@ public class PropertyManager {
         String errorMessage = "";
         if (!new File(String.valueOf(sourceFeatures.get(0).getName())).isDirectory()) {
             errorMessage = "sourceFeatures should point to a directory!";
-        } else if (excludeScenarioTags != null && !excludeScenarioTags.isEmpty()) {
-            errorMessage = "you cannot specify excludeScenarioTags!";
         } else if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
             errorMessage = "you cannot specify includeScenarioTags!";
         }
@@ -305,14 +242,6 @@ public class PropertyManager {
         if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
             logger.info(String.format("- includeScenarioTags          : %s",
                     String.join(", ", includeScenarioTags)), logLevels);
-            logger.info("- includeScenarioTagsConnector : " +
-                    includeScenarioTagsConnector.name().toLowerCase(), logLevels);
-        }
-        if (excludeScenarioTags != null && !excludeScenarioTags.isEmpty()) {
-            logger.info(String.format("- excludeScenarioTags          : %s",
-                    String.join(", ", excludeScenarioTags)), logLevels);
-            logger.info("- excludeScenarioTagsConnector : " +
-                    excludeScenarioTagsConnector.name().toLowerCase(), logLevels);
         }
         if (customPlaceholders != null && !customPlaceholders.isEmpty()) {
             logger.info("- customPlaceholders           :", logLevels);
@@ -353,9 +282,5 @@ public class PropertyManager {
 
     public enum ParallelizationMode {
         SCENARIOS, FEATURES
-    }
-
-    public enum TagConnectMode {
-        AND, OR
     }
 }
