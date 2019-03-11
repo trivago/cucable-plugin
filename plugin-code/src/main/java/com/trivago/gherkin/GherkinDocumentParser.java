@@ -362,18 +362,6 @@ public class GherkinDocumentParser {
         return tagExpression.evaluate(combinedScenarioTags);
     }
 
-    private int getTagMatches(final List<String> tagsToCheck, final List<String> combinedScenarioTags) {
-        int matches = 0;
-        for (String combinedScenarioTag : combinedScenarioTags) {
-            for (String excludeScenarioTag : tagsToCheck) {
-                if (excludeScenarioTag.equalsIgnoreCase(combinedScenarioTag)) {
-                    matches++;
-                }
-            }
-        }
-        return matches;
-    }
-
     /**
      * Replaces the example value placeholders in a String by the actual example table values.
      *
@@ -399,4 +387,3 @@ public class GherkinDocumentParser {
         return result;
     }
 }
-
