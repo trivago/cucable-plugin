@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.5.1] - 2019-03-14
+
+### Fixed
+
+* Potentially wrong handling of scenarios without tags when a tag expression is provided in `<includeScenarioTags>`
+
 ## [1.5.0] - 2019-03-11
 
 ### Fixed
@@ -252,6 +258,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[1.5.1]: https://github.com/trivago/cucable-plugin/compare/1.5.0...1.5.1
 [1.5.0]: https://github.com/trivago/cucable-plugin/compare/1.4.0...1.5.0
 [1.4.0]: https://github.com/trivago/cucable-plugin/compare/1.3.2...1.4.0
 [1.3.2]: https://github.com/trivago/cucable-plugin/compare/1.3.1...1.3.2

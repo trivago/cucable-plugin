@@ -343,12 +343,6 @@ public class GherkinDocumentParser {
             combinedScenarioTags.addAll(sourceTags);
         }
 
-        // If there are no scenario tags but include scenario tags, this scenario cannot be included.
-        // If there are no scenario tags and no include scenario tags, this scenario can be directly included.
-        if (combinedScenarioTags.isEmpty()) {
-            return includeScenarioTags == null || includeScenarioTags.isEmpty();
-        }
-
         if (includeScenarioTags == null || includeScenarioTags.isEmpty()) {
             return true;
         }
