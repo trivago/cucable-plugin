@@ -10,7 +10,7 @@ Back to [Readme](README.md).
 
 ### Fixed
 
-* Potentially wrong handling of scenarios without tags when a tag expression is provided in `<includeScenarioTags>`
+* Potentially wrong handling of scenarios without tags when a tag expression is provided in `<includeScenarioTags>` (#107)
 
 ## [1.5.0] - 2019-03-11
 
