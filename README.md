@@ -225,8 +225,7 @@ The following sections break down the above steps.
         
         <!-- Optional properties -->
         <numberOfTestRuns>1</numberOfTestRuns>
-        <includeScenarioTags>@includeMe,@includeMeAsWell</includeScenarioTags>                                
-        <excludeScenarioTags>@skip</excludeScenarioTags>
+        <includeScenarioTags>@includeMe and @includeMeAsWell</includeScenarioTags>                                
         <logLevel>compact</logLevel>
         
         <desiredNumberOfRunners>2</desiredNumberOfRunners>                                
@@ -399,7 +398,7 @@ Sometimes it may be desirable, to parallelize complete features. When setting th
 <parallelizationMode>features</parallelizationMode>
 ```
 
-__Note:__ For this mode to work, `<sourceFeatures>` must specify a directory. Also, `includeScenarioTags` and `excludeScenarioTags` cannot be used. 
+__Note:__ For this mode to work, `<sourceFeatures>` must specify a directory. Also, `includeScenarioTags` cannot be used. 
 
 #### logLevel
 
