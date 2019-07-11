@@ -6,6 +6,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.5.2] - 2019-07-11
+
+### Changed
+
+* Updated dependencies
+* Replaced `cobertura` with `jacoco`
+
 ## [1.5.1] - 2019-03-14
 
 ### Fixed
@@ -258,6 +265,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[1.5.2]: https://github.com/trivago/cucable-plugin/compare/1.5.1...1.5.2
 [1.5.1]: https://github.com/trivago/cucable-plugin/compare/1.5.0...1.5.1
 [1.5.0]: https://github.com/trivago/cucable-plugin/compare/1.4.0...1.5.0
 [1.4.0]: https://github.com/trivago/cucable-plugin/compare/1.3.2...1.4.0
