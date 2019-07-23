@@ -32,6 +32,9 @@ public final class FeatureRunner {
     // The name of the feature file this runner belongs to.
     private final List<String> featureFileNames;
 
+    // The name matching the scenarios this runner will execute.
+    private final String[] scenarioName;
+
     /**
      * Constructor for a single or multiple feature runner.
      *
@@ -41,11 +44,12 @@ public final class FeatureRunner {
      */
     public FeatureRunner(
             final String runnerTemplatePath,
-            final String runnerClassName, final List<String> featureFileNames) {
+            final String runnerClassName, final List<String> featureFileNames, final String... scenarioName) {
 
         this.runnerTemplatePath = runnerTemplatePath;
         this.runnerClassName = runnerClassName;
         this.featureFileNames = featureFileNames;
+        this.scenarioName = scenarioName;
     }
 
     public String getRunnerTemplatePath() {
@@ -54,6 +58,10 @@ public final class FeatureRunner {
 
     public List<String> getFeatureFileNames() {
         return featureFileNames;
+    }
+
+    public String[] getScenarioName() {
+        return scenarioName;
     }
 
     public String getRunnerClassName() {

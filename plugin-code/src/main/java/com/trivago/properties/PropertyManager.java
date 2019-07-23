@@ -27,6 +27,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -51,6 +52,7 @@ public class PropertyManager {
     private Map<String, String> customPlaceholders;
     private int desiredNumberOfRunners;
     private int desiredNumberOfFeaturesPerRunner;
+    private List<String> scenarioNames = new ArrayList<>();
 
     @Inject
     public PropertyManager(CucableLogger logger) {
@@ -161,6 +163,24 @@ public class PropertyManager {
 
     public void setDesiredNumberOfFeaturesPerRunner(int desiredNumberOfFeaturesPerRunner) {
         this.desiredNumberOfFeaturesPerRunner = desiredNumberOfFeaturesPerRunner;
+    }
+
+    public List<String> getScenarioNames() {
+        return scenarioNames;
+    }
+
+    public void setScenarioNames(final String scenarioNames) {
+        List<String> scenarioNameList = new ArrayList<>();
+
+        if (scenarioNames != null && !scenarioNames.trim().isEmpty()) {
+            // Split scenarioNames on ',' and adjacent spaces to avoid multiple trims.
+            scenarioNameList = Arrays.asList(scenarioNames.trim().split("\\s*,\\s*"));
+
+            // If scenarioNames is specified, set desiredNumberOfRunners to the number of scenario names.
+            setDesiredNumberOfRunners(scenarioNameList.size());
+        }
+
+        this.scenarioNames = scenarioNameList;
     }
 
     /**

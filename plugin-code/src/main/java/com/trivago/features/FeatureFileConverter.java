@@ -33,11 +33,7 @@ import com.trivago.vo.SingleScenario;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
 import static com.trivago.logging.CucableLogger.CucableLogLevel.COMPACT;
 import static com.trivago.logging.CucableLogger.CucableLogLevel.DEFAULT;
@@ -307,28 +303,40 @@ public class FeatureFileConverter {
             CucablePluginException {
 
         int targetRunnerNumber = numberOfDesiredRunners;
-        if (targetRunnerNumber == 0) {
-            targetRunnerNumber = generatedFeatureNames.size();
-        }
-
-        List<List<String>> generatedFeatureNamesPerRunner = new ArrayList<>(targetRunnerNumber);
-        for (int i = 0; i < targetRunnerNumber; i++) {
-            generatedFeatureNamesPerRunner.add(new ArrayList<>());
-        }
-
-        int currentRunnerIndex = 0;
-        for (String generatedFeatureName : generatedFeatureNames) {
-            generatedFeatureNamesPerRunner.get(currentRunnerIndex).add(generatedFeatureName);
-            currentRunnerIndex++;
-            if (currentRunnerIndex >= targetRunnerNumber) {
-                currentRunnerIndex = 0;
-            }
-        }
-
         int runnerFileCounter = 0;
-        for (List<String> generatedFeatureNamesForSingleRunner : generatedFeatureNamesPerRunner) {
-            if (generatedFeatureNamesForSingleRunner.size() > 0) {
-                generateRunnerClass(generatedFeatureNamesForSingleRunner);
+        List<String> scenarioNames = propertyManager.getScenarioNames();
+
+        if (scenarioNames.isEmpty()) {
+            if (targetRunnerNumber == 0) {
+                targetRunnerNumber = generatedFeatureNames.size();
+            }
+
+            List<List<String>> generatedFeatureNamesPerRunner = new ArrayList<>(targetRunnerNumber);
+            for (int i = 0; i < targetRunnerNumber; i++) {
+                generatedFeatureNamesPerRunner.add(new ArrayList<>());
+            }
+
+            int currentRunnerIndex = 0;
+            for (String generatedFeatureName : generatedFeatureNames) {
+                generatedFeatureNamesPerRunner.get(currentRunnerIndex).add(generatedFeatureName);
+                currentRunnerIndex++;
+                if (currentRunnerIndex >= targetRunnerNumber) {
+                    currentRunnerIndex = 0;
+                }
+            }
+
+            for (List<String> generatedFeatureNamesForSingleRunner : generatedFeatureNamesPerRunner) {
+                if (generatedFeatureNamesForSingleRunner.size() > 0) {
+                    generateRunnerClass(generatedFeatureNamesForSingleRunner);
+                    runnerFileCounter++;
+                }
+            }
+        } else {
+            for (String scenarioName : scenarioNames) {
+                // When scenario names are specified, the `name: {"scenarioName"}` option in the runner decides which
+                // scenarios will be executed by the runner. So pass an empty list to generateRunnerClass() as it is
+                // not required to list the feature names along with the scenario name.
+                generateRunnerClass(Collections.emptyList(), scenarioName);
                 runnerFileCounter++;
             }
         }
@@ -374,9 +382,10 @@ public class FeatureFileConverter {
      * Generate a single runner class from a list of feature files.
      *
      * @param generatedFeatureFileNames The list of generated generated feature file names.
+     * @param scenarioName              The name matching the scenarios this runner will execute, if specified.
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
-    private void generateRunnerClass(final List<String> generatedFeatureFileNames) throws CucablePluginException {
+    private void generateRunnerClass(final List<String> generatedFeatureFileNames, String... scenarioName) throws CucablePluginException {
 
         // The runner class name will be equal to the feature name if there is only one feature to run.
         // Otherwise, a generated runner class name is used.
@@ -392,7 +401,7 @@ public class FeatureFileConverter {
         // Generate runner for the newly generated single scenario feature file
         FeatureRunner featureRunner =
                 new FeatureRunner(
-                        propertyManager.getSourceRunnerTemplateFile(), runnerClassName, generatedFeatureFileNames);
+                        propertyManager.getSourceRunnerTemplateFile(), runnerClassName, generatedFeatureFileNames, scenarioName);
 
         String renderedRunnerClassContent =
                 runnerFileContentRenderer.getRenderedRunnerFileContent(featureRunner);

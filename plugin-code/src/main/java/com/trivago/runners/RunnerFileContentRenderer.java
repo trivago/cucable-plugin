@@ -36,6 +36,7 @@ public class RunnerFileContentRenderer {
     private static final String CUCABLE_FEATURE_PLACEHOLDER = "[CUCABLE:FEATURE]";
     private static final String CUCABLE_RUNNER_PLACEHOLDER = "[CUCABLE:RUNNER]";
     private static final String CUCABLE_CUSTOM_PLACEHOLDER = "[CUCABLE:CUSTOM:%s]";
+    private static final String CUCABLE_NAME_PLACEHOLDER = "[CUCABLE:NAME]";
 
     private final FileIO fileIO;
     private final PropertyManager propertyManager;
@@ -63,6 +64,7 @@ public class RunnerFileContentRenderer {
 
         final String runnerTemplatePath = featureRunner.getRunnerTemplatePath();
         final String runnerClassName = featureRunner.getRunnerClassName();
+        final String[] scenarioName = featureRunner.getScenarioName();
 
         String fileString = fileIO.readContentFromFile(runnerTemplatePath);
         checkForPlaceholderErrors(fileString);
@@ -72,6 +74,10 @@ public class RunnerFileContentRenderer {
         }
 
         fileString = replaceFeatureFilePlaceholder(fileString, featureRunner.getFeatureFileNames());
+        if (scenarioName.length > 0) {
+            checkForScenarioNamePlaceholder(runnerTemplatePath, fileString);
+            fileString = replaceScenarioNamePlaceholder(fileString, scenarioName[0]);
+        }
         fileString = fileString.replace(CUCABLE_RUNNER_PLACEHOLDER, runnerClassName);
         fileString = replaceCustomParameters(fileString);
         fileString = addCucableInfo(fileString, runnerTemplatePath);
@@ -99,6 +105,22 @@ public class RunnerFileContentRenderer {
         final Matcher matcher = pattern.matcher(runnerFileContentString);
         if (!matcher.find()) {
             throw new CucablePluginException("At least one " + CUCABLE_FEATURE_PLACEHOLDER + " placeholder is needed in your template.");
+        }
+    }
+
+    /**
+     * Check for scenario name placeholder in the specified template.
+     *
+     * @param runnerFileContentString The source string.
+     * @throws CucablePluginException see {@link CucablePluginException}.
+     */
+    private void checkForScenarioNamePlaceholder(final String runnerTemplatePath, final String runnerFileContentString) throws CucablePluginException {
+        final String scenarioNameRegex = "\\" + CUCABLE_NAME_PLACEHOLDER;
+        final Pattern scenarioNamePattern = Pattern.compile(scenarioNameRegex, Pattern.MULTILINE);
+        final Matcher scenarioNameMatcher = scenarioNamePattern.matcher(runnerFileContentString);
+
+        if (!scenarioNameMatcher.find()) {
+            throw new CucablePluginException("When a scenario name is specified, a " + CUCABLE_NAME_PLACEHOLDER + " placeholder is needed in your sourceRunnerTemplateFile - " + runnerTemplatePath);
         }
     }
 
@@ -144,17 +166,46 @@ public class RunnerFileContentRenderer {
 
         String fullCucableFeaturePlaceholder = matcher.group(0);
         StringBuilder completeFeatureStringBuilder = new StringBuilder();
-        for (int i = 0; i < featureFileNames.size(); i++) {
-            String featureFileName = featureFileNames.get(i);
-            completeFeatureStringBuilder.append(
-                    fullCucableFeaturePlaceholder.replace(CUCABLE_FEATURE_PLACEHOLDER, featureFileName)
-            );
-            if (i < featureFileNames.size() - 1) {
-                completeFeatureStringBuilder.append(",\n");
+
+        if (!featureFileNames.isEmpty()) {
+            for (int i = 0; i < featureFileNames.size(); i++) {
+                String featureFileName = featureFileNames.get(i);
+                completeFeatureStringBuilder.append(
+                        fullCucableFeaturePlaceholder.replace(CUCABLE_FEATURE_PLACEHOLDER, featureFileName)
+                );
+                if (i < featureFileNames.size() - 1) {
+                    completeFeatureStringBuilder.append(",\n");
+                }
             }
+        } else {
+            // When a scenario name is specified, the 'name: {"scenarioName"}' option in the runner decides the
+            // scenarios that will be executed by it. So strip placeholder so that 'feature: {}' will have the
+            // generated feature directory instead of the generated feature file names.
+            completeFeatureStringBuilder.append(
+                    fullCucableFeaturePlaceholder.replace("/" + CUCABLE_FEATURE_PLACEHOLDER + ".feature", "")
+            );
         }
 
         return runnerFileContentString.replace(fullCucableFeaturePlaceholder, completeFeatureStringBuilder);
+    }
+
+    /**
+     * Replace the scenarioName placeholder in the template.
+     *
+     * @param runnerFileContentString The source string.
+     * @return The new string with the replaced custom placeholders.
+     */
+    private String replaceScenarioNamePlaceholder(final String runnerFileContentString, String scenarioName) {
+
+        String resultString = runnerFileContentString;
+        String placeholder = CUCABLE_NAME_PLACEHOLDER;
+        String newResultString = resultString.replace(placeholder, scenarioName);
+
+        if (newResultString.equals(resultString)) {
+            logger.warn("Scenario name placeholder '" + placeholder + "' could not be found in your Cucable template.");
+        }
+
+        return newResultString;
     }
 
     /**

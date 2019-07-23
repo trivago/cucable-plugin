@@ -112,6 +112,14 @@ CucablePlugin extends AbstractMojo {
     @Parameter(property = "parallel.customPlaceholders")
     private Map<String, String> customPlaceholders;
 
+    /**
+     * Optional comma separated list of scenario names to run only scenarios whose names match at least one name
+     * in the list. See also "--name" in Cucumber command-line options ("java cucumber.api.cli.Main --help" or
+     * "mvn test -Dcucumber.options="--help"").
+     */
+    @Parameter(property = "parallel.scenarioNames")
+    private String scenarioNames;
+
     @Inject
     public CucablePlugin(
             PropertyManager propertyManager,
@@ -146,6 +154,7 @@ CucablePlugin extends AbstractMojo {
         propertyManager.setCustomPlaceholders(customPlaceholders);
         propertyManager.setDesiredNumberOfRunners(desiredNumberOfRunners);
         propertyManager.setDesiredNumberOfFeaturesPerRunner(desiredNumberOfFeaturesPerRunner);
+        propertyManager.setScenarioNames(scenarioNames);
 
         // Validate passed POM properties
         propertyManager.checkForMissingMandatoryProperties();
