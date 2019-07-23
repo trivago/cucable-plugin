@@ -57,6 +57,9 @@ public class FeatureFileContentRendererTest {
 
         String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
 
+        // In a windows system, replace line separator "\r\n" with "\n".
+        renderedFeatureFileContent = renderedFeatureFileContent.replaceAll("\\r\\n", "\n");
+
         assertThat(renderedFeatureFileContent, is(expectedOutput));
     }
 
@@ -95,6 +98,9 @@ public class FeatureFileContentRendererTest {
 
         String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
 
+        // In a windows system, replace line separator "\r\n" with "\n".
+        renderedFeatureFileContent = renderedFeatureFileContent.replaceAll("\\r\\n", "\n");
+
         assertThat(renderedFeatureFileContent, is(expectedOutput));
     }
 
@@ -129,6 +135,9 @@ public class FeatureFileContentRendererTest {
 
         String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
 
+        // In a windows system, replace line separator "\r\n" with "\n".
+        renderedFeatureFileContent = renderedFeatureFileContent.replaceAll("\\r\\n", "\n");
+
         assertThat(renderedFeatureFileContent, is(expectedOutput));
     }
 
@@ -155,6 +164,9 @@ public class FeatureFileContentRendererTest {
         singleScenario.setSteps(steps);
 
         String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
+
+        // In a windows system, replace line separator "\r\n" with "\n".
+        renderedFeatureFileContent = renderedFeatureFileContent.replaceAll("\\r\\n", "\n");
 
         assertThat(renderedFeatureFileContent, is(expectedOutput));
     }
@@ -193,6 +205,9 @@ public class FeatureFileContentRendererTest {
         singleScenario.setScenarioTags(scenarioTags);
 
         String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
+
+        // In a windows system, replace line separator "\r\n" with "\n".
+        renderedFeatureFileContent = renderedFeatureFileContent.replaceAll("\\r\\n", "\n");
 
         assertThat(renderedFeatureFileContent, is(expectedOutput));
     }
