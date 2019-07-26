@@ -313,6 +313,40 @@ public class FeatureFileConverterTest {
         verify(fileIO, times(2)).writeContentToFile(anyString(), anyString());
     }
 
+    @Test(expected = CucablePluginException.class)
+    public void noScenariosMatchingScenarioNamesTest() throws Exception {
+        String generatedFeatureDir = testFolder.getRoot().getPath().concat("/features/");
+        String generatedRunnerDir = testFolder.getRoot().getPath().concat("/runners/");
+
+        final String FEATURE_FILE_NAME = "FEATURE_FILE.feature";
+        final String GENERATED_FEATURE_FILE_NAME = "FEATURE_FILE_scenario001_run001_IT.feature";
+
+        propertyManager.setNumberOfTestRuns(1);
+        propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
+        propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
+        propertyManager.setScenarioNames("scenarioName1");
+
+        when(fileIO.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
+        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME)).thenReturn("Scenario: noMatch");
+
+        List<CucableFeature> cucableFeatures = new ArrayList<>();
+        CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
+        cucableFeatures.add(cucableFeature);
+
+        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature)).thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
+
+        List<SingleScenario> scenarioList = new ArrayList<>();
+        SingleScenario singleScenario = getSingleScenario();
+        scenarioList.add(singleScenario);
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null)).thenReturn(scenarioList);
+
+        String featureFileContent = "test";
+        when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
+        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class))).thenReturn("RUNNER_CONTENT");
+
+        featureFileConverter.generateParallelizableFeatures(cucableFeatures);
+    }
+
     private SingleScenario getSingleScenario() {
         return new SingleScenario(
                 "feature", "", "",
