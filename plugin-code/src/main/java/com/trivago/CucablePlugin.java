@@ -114,8 +114,9 @@ CucablePlugin extends AbstractMojo {
 
     /**
      * Optional comma separated list of scenario names to run only scenarios whose names match at least one name
-     * in the list. See also "--name" in Cucumber command-line options ("java cucumber.api.cli.Main --help" or
-     * "mvn test -Dcucumber.options="--help"").
+     * in the list. Number of runners created will be equal to the number of scenario names specified and each
+     * runner will hold individual scenarios matching 1 scenario name. See also "--name" in Cucumber command-line
+     * options ("java cucumber.api.cli.Main --help" or "mvn test -Dcucumber.options="--help"").
      */
     @Parameter(property = "parallel.scenarioNames")
     private String scenarioNames;

@@ -213,7 +213,7 @@ public class PropertyManager {
 
         if (desiredNumberOfFeaturesPerRunner > 0 && desiredNumberOfRunners > 0) {
             throw new CucablePluginException(
-                    "You cannot use desiredNumberOfFeaturesPerRunner and desiredNumberOfRunners at the same time!"
+                    "You cannot use desiredNumberOfFeaturesPerRunner and desiredNumberOfRunners/scenarioNames at the same time!"
             );
         }
 
