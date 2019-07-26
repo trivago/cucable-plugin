@@ -435,6 +435,18 @@ If this option is not set, its default value is `0` which basically means "Gener
 
 __Note:__ This cannot be used together with `desiredNumberOfRunners`!
 
+#### scenarioNames
+
+A comma separated list of strings (regular expressions) matching a scenario name, either completely or partially. If you set this option, only scenarios matching the specified names will be loaded into the generated runners. The number of runner files will default to the number of scenario names and each runner file will contain the scenarios matching 1 name. Please note that this will override `desiredNumberOfRunners`.
+For example, if the following scenario names are specified:
+```xml
+<scenarioNames>
+    name1,
+    name2
+</scenarioNames>
+```
+2 runner files will be generated. The first file will contain all the scenarios matching `name1` and the second file will contain all the scenarios matching `name2`.
+
 ### Generating runners and features inside target directory
 
 It may be desirable for you to generate the Cucable features and runners in Maven's `target` directory.
