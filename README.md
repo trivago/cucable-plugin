@@ -438,7 +438,7 @@ __Note:__ This cannot be used together with `desiredNumberOfRunners`!
 
 #### scenarioNames
 
-A comma separated list of strings matching a scenario name, either completely or partially. If you set this option, only scenarios matching the specified names will be loaded into the generated runners. The number of runner files will default to the number of scenario names and each runner file will contain the scenarios matching 1 name. Please note that this will override `desiredNumberOfRunners`.
+A comma separated list of strings matching a scenario name, either completely or partially. Please see "--name" in Cucumber command-line options ("java cucumber.api.cli.Main --help" or "mvn test -Dcucumber.options="--help""). If you set this option, only scenarios matching the specified names will be loaded into the generated runners. The number of runner files will default to the number of scenario names and each runner file will contain the scenarios matching 1 name. Please note that this will override `desiredNumberOfRunners`.
 For example, if the following scenario names are specified:
 ```xml
 <scenarioNames>
