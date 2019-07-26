@@ -34,6 +34,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.nio.file.Path;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -321,6 +322,7 @@ public class FeatureFileConverter {
         }
 
         int currentRunnerIndex = 0;
+        int matchCount = 0;
         for (String generatedFeatureName : generatedFeatureNames) {
             if (scenarioNames.isEmpty()) {
                 generatedFeatureNamesPerRunner.get(currentRunnerIndex).add(generatedFeatureName);
@@ -331,6 +333,7 @@ public class FeatureFileConverter {
             } else {
                 // Move all scenarios matching a scenario name into its own group.
                 String scenarioText = fileIO.readContentFromFile(propertyManager.getGeneratedFeatureDirectory() + "/" + generatedFeatureName + ".feature");
+
                 if (scenarioText != null) {
                     for (String scenarioName : scenarioNames) {
                         String regex = "Scenario:.+" + scenarioName;
@@ -338,11 +341,18 @@ public class FeatureFileConverter {
                         Matcher matcher = pattern.matcher(scenarioText);
                         if (matcher.find()) {
                             generatedFeatureNamesPerRunner.get(scenarioNames.indexOf(scenarioName)).add(generatedFeatureName);
+                            matchCount++;
                             break;
                         }
                     }
                 }
             }
+        }
+
+        if (!scenarioNames.isEmpty() && matchCount == 0) {
+            throw new CucablePluginException(
+                    "No matching scenarios found for specified scenario names - " + Arrays.toString(scenarioNames.toArray()) + "!"
+            );
         }
 
         int runnerFileCounter = 0;
