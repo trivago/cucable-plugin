@@ -11,6 +11,7 @@ import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -76,6 +77,16 @@ public class PropertyManagerTest {
         assertThat(propertyManager.getCustomPlaceholders().size(), is(2));
         assertThat(propertyManager.getCustomPlaceholders().get("one"), is("two"));
         assertThat(propertyManager.getCustomPlaceholders().get("three"), is("four"));
+    }
+
+    @Test
+    public void scenarioNamesTest() {
+        List<String> expectedList = new ArrayList<>();
+        expectedList.add("scenarioName1");
+        expectedList.add("scenarioName2");
+        propertyManager.setScenarioNames("scenarioName1, scenarioName2");
+
+        assertThat(propertyManager.getScenarioNames(), is(expectedList));
     }
 
     @Test

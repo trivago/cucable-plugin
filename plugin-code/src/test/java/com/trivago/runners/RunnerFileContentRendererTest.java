@@ -70,6 +70,10 @@ public class RunnerFileContentRendererTest {
         );
 
         String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(featureRunner);
+
+        // In a windows system, replace line separator "\r\n" with "\n".
+        renderedRunnerFileContent = renderedRunnerFileContent.replaceAll("\\r\\n", "\n");
+
         assertThat(renderedRunnerFileContent, is(expectedOutput));
     }
 
@@ -112,6 +116,9 @@ public class RunnerFileContentRendererTest {
         );
 
         String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(featureRunner);
+
+        // In a windows system, replace line separator "\r\n" with "\n".
+        renderedRunnerFileContent = renderedRunnerFileContent.replaceAll("\\r\\n", "\n");
 
         assertThat(renderedRunnerFileContent, is(expectedOutput));
     }
@@ -160,6 +167,9 @@ public class RunnerFileContentRendererTest {
         );
 
         String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(featureRunner);
+
+        // In a windows system, replace line separator "\r\n" with "\n".
+        renderedRunnerFileContent = renderedRunnerFileContent.replaceAll("\\r\\n", "\n");
 
         assertThat(renderedRunnerFileContent, is(expectedOutput));
     }
@@ -210,6 +220,9 @@ public class RunnerFileContentRendererTest {
 
         String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(featureRunner);
 
+        // In a windows system, replace line separator "\r\n" with "\n".
+        renderedRunnerFileContent = renderedRunnerFileContent.replaceAll("\\r\\n", "\n");
+
         assertThat(renderedRunnerFileContent, is(expectedOutput));
     }
 
@@ -256,6 +269,9 @@ public class RunnerFileContentRendererTest {
 
         when(propertyManager.getCustomPlaceholders()).thenReturn(customParameters);
         String renderedRunnerFileContent = runnerFileContentRenderer.getRenderedRunnerFileContent(featureRunner);
+
+        // In a windows system, replace line separator "\r\n" with "\n".
+        renderedRunnerFileContent = renderedRunnerFileContent.replaceAll("\\r\\n", "\n");
 
         assertThat(renderedRunnerFileContent, is(
                 "Template [CUCABLE:FEATURE] testvalue1!\n" +

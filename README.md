@@ -42,6 +42,7 @@
       - [logLevel](#loglevel)
       - [desiredNumberOfRunners](#desirednumberofrunners)
       - [desiredNumberOfFeaturesPerRunner](#desirednumberoffeaturesperrunner)
+      - [scenarioNames](https://github.com/josepj/cucable-plugin/blob/master/README.md#scenarionames)
     - [Generating runners and features inside target directory](#generating-runners-and-features-inside-target-directory)
     - [Complete Example](#complete-example)
       - [Source feature file](#source-feature-file)
@@ -434,6 +435,20 @@ If you set this option, all generated features will be distributed to a dynamic 
 If this option is not set, its default value is `0` which basically means "Generate a dedicated runner for every generated feature".
 
 __Note:__ This cannot be used together with `desiredNumberOfRunners`!
+
+#### scenarioNames
+
+A comma separated list of strings matching a scenario name, either completely or partially. Please see `--name` in Cucumber command-line options (`java cucumber.api.cli.Main --help` or `mvn test -Dcucumber.options="--help`). If you set this option, only scenarios matching the specified names will be loaded into the generated runners. The number of runner files will default to the number of scenario names and each runner file will contain the scenarios matching 1 name. Please note that this will override `desiredNumberOfRunners`.
+For example, if the following scenario names are specified:
+```xml
+<scenarioNames>
+    name1,
+    name2
+</scenarioNames>
+```
+2 runner files will be generated. The first file will contain all the scenarios matching `name1` and the second file will contain all the scenarios matching `name2`.
+
+__Note:__ This cannot be used together with `desiredNumberOfFeaturesPerRunner`!
 
 ### Generating runners and features inside target directory
 
