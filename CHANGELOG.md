@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.5.3] - UNRELEASED
+
+### Added
+
+* Scenario name support (#127, contributed by @josepj)
+
 ## [1.5.2] - 2019-07-11
 
 ### Changed
