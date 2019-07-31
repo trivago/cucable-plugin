@@ -168,6 +168,18 @@ public class PropertyManagerTest {
     }
 
     @Test
+    public void checkForDisallowedParallelizationModePropertiesScenarioNamesSpecified() throws CucablePluginException {
+        expectedException.expect(CucablePluginException.class);
+        expectedException.expectMessage("In parallelizationMode = FEATURE, you cannot specify scenarioNames!");
+
+        propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
+        propertyManager.setSourceFeatures(testFolder.getRoot().getPath());
+        propertyManager.setScenarioNames("name1");
+
+        propertyManager.checkForDisallowedPropertyCombinations();
+    }
+
+    @Test
     public void checkForDisallowedParallelizationModePropertiesValid() throws CucablePluginException {
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
         propertyManager.setSourceFeatures(testFolder.getRoot().getPath());
