@@ -448,7 +448,7 @@ For example, if the following scenario names are specified:
 ```
 2 runner files will be generated. The first file will contain all the scenarios matching `name1` and the second file will contain all the scenarios matching `name2`.
 
-__Note:__ This cannot be used together with `desiredNumberOfFeaturesPerRunner`!
+__Note:__ This *cannot* be used together with `desiredNumberOfFeaturesPerRunner` or `parallelizationMode = features`!
 
 ### Generating runners and features inside target directory
 
