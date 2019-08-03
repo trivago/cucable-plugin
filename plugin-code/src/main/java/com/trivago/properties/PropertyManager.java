@@ -230,7 +230,7 @@ public class PropertyManager {
             errorMessage = "you cannot specify scenarioNames!";
         }
         if (!errorMessage.isEmpty()) {
-            throw new CucablePluginException("In parallelizationMode = FEATURE, ".concat(errorMessage));
+            throw new CucablePluginException("In parallelizationMode = " + ParallelizationMode.FEATURES.toString().toLowerCase() + ", ".concat(errorMessage));
         }
     }
 
