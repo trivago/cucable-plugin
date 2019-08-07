@@ -148,7 +148,7 @@ public class PropertyManagerTest {
     @Test
     public void checkForDisallowedParallelizationModePropertiesSourceFeaturesIsNotDirectoryTest() throws CucablePluginException {
         expectedException.expect(CucablePluginException.class);
-        expectedException.expectMessage("In parallelizationMode = FEATURE, sourceFeatures should point to a directory!");
+        expectedException.expectMessage("In parallelizationMode = features, sourceFeatures should point to a directory!");
 
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
         propertyManager.setSourceFeatures("my.feature");
@@ -158,11 +158,23 @@ public class PropertyManagerTest {
     @Test
     public void checkForDisallowedParallelizationModePropertiesIncludeTagsSpecified() throws CucablePluginException {
         expectedException.expect(CucablePluginException.class);
-        expectedException.expectMessage("In parallelizationMode = FEATURE, you cannot specify includeScenarioTags!");
+        expectedException.expectMessage("In parallelizationMode = features, you cannot specify includeScenarioTags!");
 
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
         propertyManager.setSourceFeatures(testFolder.getRoot().getPath());
         propertyManager.setIncludeScenarioTags("someTag");
+
+        propertyManager.checkForDisallowedPropertyCombinations();
+    }
+
+    @Test
+    public void checkForDisallowedParallelizationModePropertiesScenarioNamesSpecified() throws CucablePluginException {
+        expectedException.expect(CucablePluginException.class);
+        expectedException.expectMessage("In parallelizationMode = features, you cannot specify scenarioNames!");
+
+        propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
+        propertyManager.setSourceFeatures(testFolder.getRoot().getPath());
+        propertyManager.setScenarioNames("name1");
 
         propertyManager.checkForDisallowedPropertyCombinations();
     }

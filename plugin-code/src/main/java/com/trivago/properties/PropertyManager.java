@@ -226,9 +226,11 @@ public class PropertyManager {
             errorMessage = "sourceFeatures should point to a directory!";
         } else if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
             errorMessage = "you cannot specify includeScenarioTags!";
+        } else if (scenarioNames != null && !scenarioNames.isEmpty()) {
+            errorMessage = "you cannot specify scenarioNames!";
         }
         if (!errorMessage.isEmpty()) {
-            throw new CucablePluginException("In parallelizationMode = FEATURE, ".concat(errorMessage));
+            throw new CucablePluginException("In parallelizationMode = " + ParallelizationMode.FEATURES.toString().toLowerCase() + ", ".concat(errorMessage));
         }
     }
 
