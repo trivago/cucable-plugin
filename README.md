@@ -42,7 +42,7 @@
       - [logLevel](#loglevel)
       - [desiredNumberOfRunners](#desirednumberofrunners)
       - [desiredNumberOfFeaturesPerRunner](#desirednumberoffeaturesperrunner)
-      - [scenarioNames](https://github.com/josepj/cucable-plugin/blob/master/README.md#scenarionames)
+      - [scenarioNames](#scenarionames)
     - [Generating runners and features inside target directory](#generating-runners-and-features-inside-target-directory)
     - [Complete Example](#complete-example)
       - [Source feature file](#source-feature-file)
