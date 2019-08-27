@@ -370,6 +370,7 @@ public class GherkinDocumentParser {
             Matcher matcher = pattern.matcher(stringToMatch);
             if (matcher.find()) {
                 matchIndex = scenarioNames.indexOf(scenarioName);
+                break;
             }
         }
 
