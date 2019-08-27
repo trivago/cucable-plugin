@@ -118,10 +118,7 @@ public class GherkinDocumentParser {
                                     backgroundSteps
                             );
                     addGherkinScenarioInformationToSingleScenario(scenario, singleScenario);
-                    if (scenarioShouldBeIncluded(
-                            singleScenario.getScenarioTags(),
-                            singleScenario.getFeatureTags()
-                    )) {
+                    if (scenarioShouldBeIncluded(singleScenario)) {
                         singleScenarioFeatures.add(singleScenario);
                     }
                 }
@@ -145,11 +142,7 @@ public class GherkinDocumentParser {
                                     backgroundSteps
                             );
                     for (SingleScenario singleScenario : outlineScenarios) {
-                        if (scenarioShouldBeIncluded(
-                                singleScenario.getScenarioTags(),
-                                singleScenario.getFeatureTags(),
-                                singleScenario.getExampleTags()
-                        )) {
+                        if (scenarioShouldBeIncluded(singleScenario)) {
                             singleScenarioFeatures.add(singleScenario);
                         }
                     }
@@ -328,23 +321,23 @@ public class GherkinDocumentParser {
     }
 
     /**
-     * Checks if a scenario should be included in the runner and feature generation based on the tag settings.
+     * Checks if a scenario should be included in the runner and feature generation based on the tag settings and
+     * scenarioNames settings.
      *
-     * @param sourceTagsList any number of source tag lists to be considered
-     * @return true if an include tag  and no exclude tags are included in the source tag list.
+     * @param singleScenario a single scenario object.
+     * @return true if an include tag  and no exclude tags are included in the source tag list and scenario name
+     *         (if specified) matches.
      */
-    @SafeVarargs
-    private final boolean scenarioShouldBeIncluded(final List<String>... sourceTagsList) throws CucablePluginException {
+    private boolean scenarioShouldBeIncluded(SingleScenario singleScenario) throws CucablePluginException {
 
         String includeScenarioTags = propertyManager.getIncludeScenarioTags();
+        boolean scenarioNameMatchExists = matchScenarioWithScenarioNames(singleScenario.getScenarioName()) >= 0;
 
-        List<String> combinedScenarioTags = new ArrayList<>();
-        for (List<String> sourceTags : sourceTagsList) {
-            combinedScenarioTags.addAll(sourceTags);
-        }
+        List<String> combinedScenarioTags = singleScenario.getScenarioTags();
+        combinedScenarioTags.addAll(singleScenario.getFeatureTags());
 
         if (includeScenarioTags == null || includeScenarioTags.isEmpty()) {
-            return true;
+            return scenarioNameMatchExists;
         }
 
         Expression tagExpression;
@@ -353,7 +346,34 @@ public class GherkinDocumentParser {
         } catch (TagExpressionException e) {
             throw new CucablePluginException("The tag expression '" + includeScenarioTags + "' is invalid: " + e.getMessage());
         }
-        return tagExpression.evaluate(combinedScenarioTags);
+        return tagExpression.evaluate(combinedScenarioTags) && scenarioNameMatchExists;
+    }
+
+    /**
+     * Checks if a scenarioName value matches with the scenario name.
+     *
+     * @param stringToMatch the string that will be matched with the scenarioName value.
+     * @return index of the scenarioName value in the scenarioNames list if a match exists.
+     *         -1 if no match exists.
+     */
+    public int matchScenarioWithScenarioNames(String stringToMatch) {
+        List<String> scenarioNames = propertyManager.getScenarioNames();
+        int matchIndex = -1;
+
+        if (scenarioNames == null || scenarioNames.isEmpty()) {
+            return 0;
+        }
+
+        for (String scenarioName : scenarioNames) {
+            String regex = "(Scenario|Example):.+" + scenarioName;
+            Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+            Matcher matcher = pattern.matcher(stringToMatch);
+            if (matcher.find()) {
+                matchIndex = scenarioNames.indexOf(scenarioName);
+            }
+        }
+
+        return matchIndex;
     }
 
     /**

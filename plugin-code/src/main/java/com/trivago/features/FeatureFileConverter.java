@@ -335,15 +335,10 @@ public class FeatureFileConverter {
                 String scenarioText = fileIO.readContentFromFile(propertyManager.getGeneratedFeatureDirectory() + "/" + generatedFeatureName + ".feature");
 
                 if (scenarioText != null) {
-                    for (String scenarioName : scenarioNames) {
-                        String regex = "Scenario:.+" + scenarioName;
-                        Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-                        Matcher matcher = pattern.matcher(scenarioText);
-                        if (matcher.find()) {
-                            generatedFeatureNamesPerRunner.get(scenarioNames.indexOf(scenarioName)).add(generatedFeatureName);
-                            matchCount++;
-                            break;
-                        }
+                    int listIndex = gherkinDocumentParser.matchScenarioWithScenarioNames(scenarioText);
+                    if (listIndex >= 0) {
+                        generatedFeatureNamesPerRunner.get(listIndex).add(generatedFeatureName);
+                        matchCount++;
                     }
                 }
             }
