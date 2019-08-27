@@ -7,6 +7,8 @@ import com.trivago.vo.SingleScenario;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -65,6 +67,16 @@ public class GherkinDocumentParserTest {
         assertThat(singleScenariosFromFeature.size(), is(1));
     }
 
+    @Test
+    public void validFeatureOneScenarioNameTest() throws Exception {
+        String featureContent = getTwoScenariosWithTags();
+
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("scenario 1"));
+
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+    }
+
     @Test(expected = CucablePluginException.class)
     public void invalidFeatureOneIncludeTagTest() throws Exception {
         String featureContent = getTwoScenariosWithTags();
@@ -77,6 +89,59 @@ public class GherkinDocumentParserTest {
         String featureContent = getTwoScenariosWithTags();
 
         when(propertyManager.getIncludeScenarioTags()).thenReturn("@tag1 or @tag3");
+
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(2));
+    }
+
+    @Test
+    public void validFeatureTwoScenarioNamesTest() throws Exception {
+        String featureContent = getTwoScenariosWithTags();
+
+        when(propertyManager.getScenarioNames()).thenReturn(Arrays.asList("scenario 1", "scenario 2"));
+
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(2));
+    }
+
+    @Test
+    public void validFeatureTwoIncludeTagsOneScenarioNameTest() throws Exception {
+        String featureContent = getTwoScenariosWithTags();
+
+        when(propertyManager.getIncludeScenarioTags()).thenReturn("@tag1 or @tag3");
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("scenario 1"));
+
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+    }
+
+    @Test
+    public void validFeatureMatchingIncludeTagsNoMatchingScenarioNameTest() throws Exception {
+        String featureContent = getTwoScenariosWithTags();
+
+        when(propertyManager.getIncludeScenarioTags()).thenReturn("@tag1 or @tag3");
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("scenario 3"));
+
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(0));
+    }
+
+    @Test
+    public void validFeatureNoMatchingIncludeTagsMatchingScenarioNameTest() throws Exception {
+        String featureContent = getTwoScenariosWithTags();
+
+        when(propertyManager.getIncludeScenarioTags()).thenReturn("@tag4");
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("scenario 1"));
+
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(0));
+    }
+
+    @Test
+    public void validFeatureEmptyScenarioNameListTest() throws Exception {
+        String featureContent = getTwoScenariosWithTags();
+
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList(""));
 
         List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(2));
