@@ -86,7 +86,7 @@
                     <!--<includeScenarioTags>(@scenario1Tag1 or @scenario1Tag2) and not @skipMe</includeScenarioTags>-->
 
                     <!--optional: A comma separated list of strings matching a scenario name, either completely or partially. Please see "name" option in Cucumber command-line options-->
-                    <!--<scenarioNames>Scenario 1, Scenario 2</scenarioNames>-->
+                    <!--<scenarioNames>Scenario 1, Scenario 2, Mulțumesc</scenarioNames>-->
 
                     <!-- optional: change parallelization mode of Cucable (default: 'scenarios')-->
                     <!--<parallelizationMode>scenarios</parallelizationMode>-->

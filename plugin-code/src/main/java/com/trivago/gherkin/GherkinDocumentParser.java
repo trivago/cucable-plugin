@@ -331,7 +331,9 @@ public class GherkinDocumentParser {
     private boolean scenarioShouldBeIncluded(SingleScenario singleScenario) throws CucablePluginException {
 
         String includeScenarioTags = propertyManager.getIncludeScenarioTags();
-        boolean scenarioNameMatchExists = matchScenarioWithScenarioNames(singleScenario.getScenarioName()) >= 0;
+        String language = singleScenario.getFeatureLanguage();
+        String scenarioName = singleScenario.getScenarioName();
+        boolean scenarioNameMatchExists = matchScenarioWithScenarioNames(language, scenarioName) >= 0;
 
         List<String> combinedScenarioTags = singleScenario.getScenarioTags();
         combinedScenarioTags.addAll(singleScenario.getFeatureTags());
@@ -356,8 +358,9 @@ public class GherkinDocumentParser {
      * @return index of the scenarioName value in the scenarioNames list if a match exists.
      *         -1 if no match exists.
      */
-    public int matchScenarioWithScenarioNames(String stringToMatch) {
+    public int matchScenarioWithScenarioNames(String language, String stringToMatch) {
         List<String> scenarioNames = propertyManager.getScenarioNames();
+        String scenarioKeyword = gherkinTranslations.getScenarioKeyword(language);
         int matchIndex = -1;
 
         if (scenarioNames == null || scenarioNames.isEmpty()) {
@@ -365,7 +368,7 @@ public class GherkinDocumentParser {
         }
 
         for (String scenarioName : scenarioNames) {
-            String regex = "(Scenario|Example):.+" + scenarioName;
+            String regex = scenarioKeyword + ":.+" + scenarioName;
             Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
             Matcher matcher = pattern.matcher(stringToMatch);
             if (matcher.find()) {

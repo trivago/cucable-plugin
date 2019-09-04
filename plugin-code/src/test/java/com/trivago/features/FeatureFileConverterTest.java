@@ -131,7 +131,7 @@ public class FeatureFileConverterTest {
     public void convertToSingleScenariosAndRunnersWithScenarioNameTest() throws Exception {
         String generatedFeatureDir = testFolder.getRoot().getPath().concat("/features/");
         String generatedRunnerDir = testFolder.getRoot().getPath().concat("/runners/");
-        String scenarioMatchText = "Scenario: scenarioName1";
+        String scenarioMatchText = "Feature: feature1\n Scenario: scenarioName1";
 
         final String FEATURE_FILE_NAME = "FEATURE_FILE.feature";
         final String GENERATED_FEATURE_FILE_NAME = "FEATURE_FILE_scenario001_run001_IT.feature";
@@ -154,7 +154,7 @@ public class FeatureFileConverterTest {
         SingleScenario singleScenario = getSingleScenario();
         scenarioList.add(singleScenario);
         when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null)).thenReturn(scenarioList);
-        when(gherkinDocumentParser.matchScenarioWithScenarioNames(scenarioMatchText)).thenReturn(0);
+        when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatchText)).thenReturn(0);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
@@ -245,8 +245,8 @@ public class FeatureFileConverterTest {
     public void convertToSingleScenariosAndMultiRunnersWithScenarioNamesTest() throws Exception {
         String generatedFeatureDir = testFolder.getRoot().getPath().concat("/features/");
         String generatedRunnerDir = testFolder.getRoot().getPath().concat("/runners/");
-        final String scenarioMatch1Text = "Scenario: scenarioName1";
-        final String scenarioMatch2Text = "Scenario: scenarioName2";
+        final String scenarioMatch1Text = "Feature: feature1\n Scenario: scenarioName1";
+        final String scenarioMatch2Text = "Feature: feature2\n Scenario: scenarioName2";
 
         final String FEATURE_FILE_NAME = "FEATURE_FILE.feature";
         final String GENERATED_FEATURE_FILE_NAME1 = "FEATURE_FILE_scenario001_run001_IT.feature";
@@ -275,8 +275,8 @@ public class FeatureFileConverterTest {
         scenarioList.add(singleScenario);
         scenarioList.add(singleScenario);
         when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null)).thenReturn(scenarioList);
-        when(gherkinDocumentParser.matchScenarioWithScenarioNames(scenarioMatch1Text)).thenReturn(0);
-        when(gherkinDocumentParser.matchScenarioWithScenarioNames(scenarioMatch2Text)).thenReturn(1);
+        when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatch1Text)).thenReturn(0);
+        when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatch2Text)).thenReturn(1);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
@@ -295,8 +295,8 @@ public class FeatureFileConverterTest {
     public void convertToSingleScenariosAndMultiRunnersWithScenarioNamesAndExampleKeywordTest() throws Exception {
         String generatedFeatureDir = testFolder.getRoot().getPath().concat("/features/");
         String generatedRunnerDir = testFolder.getRoot().getPath().concat("/runners/");
-        final String scenarioMatch1Text = "Scenario: scenarioName1";
-        final String scenarioMatch2Text = "Example: scenarioName2";
+        final String scenarioMatch1Text = "Feature: feature1\n Scenario: scenarioName1";
+        final String scenarioMatch2Text = "Feature: feature2\n Example: scenarioName2";
 
         final String FEATURE_FILE_NAME = "FEATURE_FILE.feature";
         final String GENERATED_FEATURE_FILE_NAME1 = "FEATURE_FILE_scenario001_run001_IT.feature";
@@ -325,8 +325,8 @@ public class FeatureFileConverterTest {
         scenarioList.add(singleScenario);
         scenarioList.add(singleScenario);
         when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null)).thenReturn(scenarioList);
-        when(gherkinDocumentParser.matchScenarioWithScenarioNames(scenarioMatch1Text)).thenReturn(0);
-        when(gherkinDocumentParser.matchScenarioWithScenarioNames(scenarioMatch2Text)).thenReturn(1);
+        when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatch1Text)).thenReturn(0);
+        when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatch2Text)).thenReturn(1);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
@@ -376,7 +376,7 @@ public class FeatureFileConverterTest {
 
         final String FEATURE_FILE_NAME = "FEATURE_FILE.feature";
         final String GENERATED_FEATURE_FILE_NAME = "FEATURE_FILE_scenario001_run001_IT.feature";
-        final String scenarioNoMatchText = "Scenario: noMatch";
+        final String scenarioNoMatchText = "Feature: feature1\n Scenario: noMatch";
 
         propertyManager.setNumberOfTestRuns(1);
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
@@ -396,7 +396,7 @@ public class FeatureFileConverterTest {
         SingleScenario singleScenario = getSingleScenario();
         scenarioList.add(singleScenario);
         when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null)).thenReturn(scenarioList);
-        when(gherkinDocumentParser.matchScenarioWithScenarioNames(scenarioNoMatchText)).thenReturn(-1);
+        when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioNoMatchText)).thenReturn(-1);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);

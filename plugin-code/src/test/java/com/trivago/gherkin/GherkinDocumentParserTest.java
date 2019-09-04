@@ -77,6 +77,16 @@ public class GherkinDocumentParserTest {
         assertThat(singleScenariosFromFeature.size(), is(1));
     }
 
+    @Test
+    public void validFeatureOneScenarioNameNonEnglishTest() throws Exception {
+        String featureContent = getTwoScenariosNonEnglish();
+
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("Mulțumesc"));
+
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(2));
+    }
+
     @Test(expected = CucablePluginException.class)
     public void invalidFeatureOneIncludeTagTest() throws Exception {
         String featureContent = getTwoScenariosWithTags();
@@ -436,5 +446,14 @@ public class GherkinDocumentParserTest {
                 "@tag2\n" +
                 "@tag3\n" +
                 "Scenario: scenario 2";
+    }
+
+    private String getTwoScenariosNonEnglish() {
+        return "#language: ro\n" +
+                "Funcţionalitate: Bună ziua\n" +
+                "\n" +
+                "Scenariu: Mulțumesc foarte mult\n" +
+                "\n" +
+                "Scenariu: Mulțumesc foarte mult 2";
     }
 }
