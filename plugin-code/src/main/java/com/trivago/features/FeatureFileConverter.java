@@ -29,6 +29,9 @@ import com.trivago.runners.RunnerFileContentRenderer;
 import com.trivago.vo.CucableFeature;
 import com.trivago.vo.FeatureRunner;
 import com.trivago.vo.SingleScenario;
+import gherkin.AstBuilder;
+import gherkin.Parser;
+import gherkin.ast.GherkinDocument;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -39,8 +42,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 import static com.trivago.logging.CucableLogger.CucableLogLevel.COMPACT;
 import static com.trivago.logging.CucableLogger.CucableLogLevel.DEFAULT;
@@ -333,17 +334,14 @@ public class FeatureFileConverter {
             } else {
                 // Move all scenarios matching a scenario name into its own group.
                 String scenarioText = fileIO.readContentFromFile(propertyManager.getGeneratedFeatureDirectory() + "/" + generatedFeatureName + ".feature");
-
                 if (scenarioText != null) {
-                    for (String scenarioName : scenarioNames) {
-                        String regex = "Scenario:.+" + scenarioName;
-                        Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
-                        Matcher matcher = pattern.matcher(scenarioText);
-                        if (matcher.find()) {
-                            generatedFeatureNamesPerRunner.get(scenarioNames.indexOf(scenarioName)).add(generatedFeatureName);
-                            matchCount++;
-                            break;
-                        }
+                    Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
+                    String language = parser.parse(scenarioText).getFeature().getLanguage();
+
+                    int listIndex = gherkinDocumentParser.matchScenarioWithScenarioNames(language, scenarioText);
+                    if (listIndex >= 0) {
+                        generatedFeatureNamesPerRunner.get(listIndex).add(generatedFeatureName);
+                        matchCount++;
                     }
                 }
             }
