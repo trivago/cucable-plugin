@@ -354,6 +354,7 @@ public class GherkinDocumentParser {
     /**
      * Checks if a scenarioName value matches with the scenario name.
      *
+     * @param language Feature file language ("en", "ro" etc).
      * @param stringToMatch the string that will be matched with the scenarioName value.
      * @return index of the scenarioName value in the scenarioNames list if a match exists.
      *         -1 if no match exists.
