@@ -6,7 +6,18 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
-## [1.5.3] - UNRELEASED
+## [1.6.0] - 2019-12-10
+
+### Changed
+
+* Cucable is now more resilient when trying to deal with unparsable features - these are skipped instead of stopping the overall execution.
+
+### Fixed
+
+* Utf-8 encoding error on linux (#150)
+* Scenarios had too many tags when there were also feature tags (#145)
+
+## [1.5.3] - 2019-09-09
 
 ### Added
 
@@ -271,6 +282,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[1.6.0]: https://github.com/trivago/cucable-plugin/compare/1.5.3...1.6.0
 [1.5.3]: https://github.com/trivago/cucable-plugin/compare/1.5.2...1.5.3
 [1.5.2]: https://github.com/trivago/cucable-plugin/compare/1.5.1...1.5.2
 [1.5.1]: https://github.com/trivago/cucable-plugin/compare/1.5.0...1.5.1

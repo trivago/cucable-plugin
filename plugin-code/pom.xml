@@ -6,7 +6,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-plugin</artifactId>
-    <version>1.5.3</version>
+    <version>1.6.0</version>
     <url>https://github.com/trivago/cucable-plugin</url>
 
     <name>Cucable Maven Plugin</name>
@@ -80,9 +80,9 @@
         <tag.expressions.version>2.0.2</tag.expressions.version>
         <apache.commons.version>3.9</apache.commons.version>
 
-        <mockito.version>3.0.0</mockito.version>
-        <junit5.vintage.version>5.5.1</junit5.vintage.version>
-        <openpojo.version>0.8.12</openpojo.version>
+        <mockito.version>3.2.0</mockito.version>
+        <junit5.vintage.version>5.6.0-M1</junit5.vintage.version>
+        <openpojo.version>0.8.13</openpojo.version>
     </properties>
 
     <profiles>

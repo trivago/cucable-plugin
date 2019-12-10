@@ -1,6 +1,7 @@
 package com.trivago.gherkin;
 
 import com.trivago.exceptions.CucablePluginException;
+import com.trivago.logging.CucableLogger;
 import com.trivago.properties.PropertyManager;
 import com.trivago.vo.DataTable;
 import com.trivago.vo.SingleScenario;
@@ -15,25 +16,28 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.core.Is.is;
 import static org.junit.Assert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.times;
 
 public class GherkinDocumentParserTest {
 
     private GherkinDocumentParser gherkinDocumentParser;
     private PropertyManager propertyManager;
+    private CucableLogger mockedLogger;
 
     @Before
     public void setup() {
         GherkinToCucableConverter gherkinToCucableConverter = new GherkinToCucableConverter();
         GherkinTranslations gherkinTranslations = new GherkinTranslations();
         propertyManager = mock(PropertyManager.class);
-        gherkinDocumentParser = new GherkinDocumentParser(gherkinToCucableConverter, gherkinTranslations, propertyManager);
+        mockedLogger = mock(CucableLogger.class);
+        gherkinDocumentParser = new GherkinDocumentParser(gherkinToCucableConverter, gherkinTranslations, propertyManager, mockedLogger);
     }
 
-    @Test(expected = CucablePluginException.class)
+    @Test
     public void invalidFeatureTest() throws Exception {
         gherkinDocumentParser.getSingleScenariosFromFeature("", "", null);
+        verify(mockedLogger, times(1)).warn("No parsable gherkin.");
     }
 
     @Test

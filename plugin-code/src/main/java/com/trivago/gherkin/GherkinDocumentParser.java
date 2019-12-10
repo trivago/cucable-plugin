@@ -17,6 +17,7 @@
 package com.trivago.gherkin;
 
 import com.trivago.exceptions.CucablePluginException;
+import com.trivago.logging.CucableLogger;
 import com.trivago.properties.PropertyManager;
 import com.trivago.vo.DataTable;
 import com.trivago.vo.SingleScenario;
@@ -24,13 +25,7 @@ import com.trivago.vo.Step;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.ParserException;
-import gherkin.ast.Background;
-import gherkin.ast.Examples;
-import gherkin.ast.Feature;
-import gherkin.ast.GherkinDocument;
-import gherkin.ast.Scenario;
-import gherkin.ast.ScenarioDefinition;
-import gherkin.ast.ScenarioOutline;
+import gherkin.ast.*;
 import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionException;
 import io.cucumber.tagexpressions.TagExpressionParser;
@@ -38,6 +33,7 @@ import io.cucumber.tagexpressions.TagExpressionParser;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
@@ -52,16 +48,18 @@ public class GherkinDocumentParser {
     private final GherkinToCucableConverter gherkinToCucableConverter;
     private final GherkinTranslations gherkinTranslations;
     private final PropertyManager propertyManager;
+    private final CucableLogger cucableLogger;
 
     @Inject
     GherkinDocumentParser(
             final GherkinToCucableConverter gherkinToCucableConverter,
             final GherkinTranslations gherkinTranslations,
-            final PropertyManager propertyManager
-    ) {
+            final PropertyManager propertyManager,
+            final CucableLogger logger) {
         this.gherkinToCucableConverter = gherkinToCucableConverter;
         this.gherkinTranslations = gherkinTranslations;
         this.propertyManager = propertyManager;
+        this.cucableLogger = logger;
     }
 
     /**
@@ -81,6 +79,10 @@ public class GherkinDocumentParser {
         GherkinDocument gherkinDocument = getGherkinDocumentFromFeatureFileContent(escapedFeatureContent);
 
         Feature feature = gherkinDocument.getFeature();
+        if (feature == null) {
+            return Collections.emptyList();
+        }
+
         String featureName = feature.getKeyword() + ": " + feature.getName();
         String featureLanguage = feature.getLanguage();
         String featureDescription = feature.getDescription();
@@ -161,7 +163,6 @@ public class GherkinDocumentParser {
      * @param featureLanguage The feature language this scenario outline belongs to.
      * @param featureTags     The feature tags of the parent feature.
      * @param backgroundSteps Return a Cucable {@link SingleScenario} list.
-     * @throws CucablePluginException Thrown when the scenario outline does not contain an example table.
      */
     private List<SingleScenario> getSingleScenariosFromOutline(
             final ScenarioOutline scenarioOutline,
@@ -171,7 +172,7 @@ public class GherkinDocumentParser {
             final String featureDescription,
             final List<String> featureTags,
             final List<Step> backgroundSteps
-    ) throws CucablePluginException {
+    ) {
 
         // Retrieve the translation of "Scenario" in the target language and add it to the scenario
         String translatedScenarioKeyword = gherkinTranslations.getScenarioKeyword(featureLanguage);
@@ -185,7 +186,8 @@ public class GherkinDocumentParser {
         List<Step> steps = gherkinToCucableConverter.convertGherkinStepsToCucableSteps(scenarioOutline.getSteps());
 
         if (scenarioOutline.getExamples().isEmpty()) {
-            throw new CucablePluginException("Scenario outline without examples table!");
+            cucableLogger.warn("Scenario outline without example table!");
+            return outlineScenarios;
         }
 
         for (Examples exampleTable : scenarioOutline.getExamples()) {
@@ -314,7 +316,7 @@ public class GherkinDocumentParser {
         }
 
         if (gherkinDocument == null || gherkinDocument.getFeature() == null) {
-            throw new CucablePluginException("Could not parse features from gherkin document!");
+            cucableLogger.warn("No parsable gherkin.");
         }
 
         return gherkinDocument;
@@ -326,7 +328,7 @@ public class GherkinDocumentParser {
      *
      * @param singleScenario a single scenario object.
      * @return true if an include tag  and no exclude tags are included in the source tag list and scenario name
-     *         (if specified) matches.
+     * (if specified) matches.
      */
     private boolean scenarioShouldBeIncluded(SingleScenario singleScenario) throws CucablePluginException {
 
@@ -354,10 +356,10 @@ public class GherkinDocumentParser {
     /**
      * Checks if a scenarioName value matches with the scenario name.
      *
-     * @param language Feature file language ("en", "ro" etc).
+     * @param language      Feature file language ("en", "ro" etc).
      * @param stringToMatch the string that will be matched with the scenarioName value.
      * @return index of the scenarioName value in the scenarioNames list if a match exists.
-     *         -1 if no match exists.
+     * -1 if no match exists.
      */
     public int matchScenarioWithScenarioNames(String language, String stringToMatch) {
         List<String> scenarioNames = propertyManager.getScenarioNames();

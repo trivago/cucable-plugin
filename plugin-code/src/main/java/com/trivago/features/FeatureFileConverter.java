@@ -405,7 +405,6 @@ public class FeatureFileConverter {
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
     private void generateRunnerClass(final List<String> generatedFeatureFileNames) throws CucablePluginException {
-
         // The runner class name will be equal to the feature name if there is only one feature to run.
         // Otherwise, a generated runner class name is used.
         String runnerClassName;
