@@ -38,7 +38,7 @@ public class FileIO {
      */
     public void writeContentToFile(String content, String filePath) throws FileCreationException {
         try {
-            FileUtils.fileWrite(filePath, content);
+            FileUtils.fileWrite(filePath, "UTF-8", content);
         } catch (IOException e) {
             throw new FileCreationException(filePath);
         }
@@ -53,7 +53,7 @@ public class FileIO {
      */
     public String readContentFromFile(String filePath) throws MissingFileException {
         try {
-            return FileUtils.fileRead(filePath);
+            return FileUtils.fileRead(filePath, "UTF-8");
         } catch (IOException e) {
             throw new MissingFileException(filePath);
         }

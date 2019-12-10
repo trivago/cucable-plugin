@@ -8,6 +8,17 @@
 [![codecov](https://codecov.io/gh/trivago/cucable-plugin/branch/master/graph/badge.svg)](https://codecov.io/gh/trivago/cucable-plugin)
 [![Twitter URL](https://img.shields.io/twitter/url/http/shields.io.svg?style=social)](https://twitter.com/bischoffdev)
 
+---
+
+### Note:
+
+This project is feature-complete. Expect only bug fixes at this time.
+For new projects, you should consider using Cucumber's native parallelization feature instead.
+
+Thanks to everyone using, testing and improving Cucable over the last years!
+
+---
+
 ![Cucumber compatible](documentation/img/cucumber-compatible-black-64.png)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
@@ -16,6 +27,7 @@
 
 - [Cucable Maven Plugin](#cucable-maven-plugin)
   - [Cucumber 4](#cucumber-4)
+  - [Cucumber 5](#cucumber-5)
   - [Repository Structure](#repository-structure)
   - [Changelog](#changelog)
   - [Maven dependency](#maven-dependency)
@@ -83,6 +95,10 @@ Even though Cucumber 4 supports basic parallel runs, Cucable has more options th
 * It supports splitting scenarios and attaching batches of them to a dynamic number of runners
 * You don't need any test framework changes because Cucable runs before the framework invocations
 * You have full control over your runners because of template variables and custom placeholders
+
+## Cucumber 5
+
+* Cucumber 5 (using testng or junit 5) can natively run features and scenarios in parallel. Cucable __can__ be used but does not __have__ to be.
 
 ## Repository Structure
 
