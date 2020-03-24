@@ -1,6 +1,7 @@
 package steps;
 
 import io.cucumber.datatable.DataTable;
+import io.cucumber.docstring.DocString;
 import io.cucumber.java.en.And;
 import io.cucumber.java.en.Given;
 import io.cucumber.java.en.Then;
@@ -50,11 +51,11 @@ public class ExampleSteps {
     }
 
     @Given("^this is a given step with a docstring$")
-    public void thisIsAGivenStepWithADocstring(DataTable docString) {
+    public void thisIsAGivenStepWithADocstring(DocString docString) {
     }
 
     @Then("^I do something with a docstring$")
-    public void iDoSomethingWithADocstring(DataTable docString) {
+    public void iDoSomethingWithADocstring(DocString docString) {
     }
 
     @Gitt("^for å unngå at firmaet går konkurs$")
