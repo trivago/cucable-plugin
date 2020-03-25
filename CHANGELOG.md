@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.7.0] - UNRELEASED
+
+### Added
+
+* Support for Cucumber feature text files
+
 ## [1.6.0] - 2019-12-10
 
 ### Changed
@@ -282,6 +288,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[1.7.0]: https://github.com/trivago/cucable-plugin/compare/1.6.0...1.7.0
 [1.6.0]: https://github.com/trivago/cucable-plugin/compare/1.5.3...1.6.0
 [1.5.3]: https://github.com/trivago/cucable-plugin/compare/1.5.2...1.5.3
 [1.5.2]: https://github.com/trivago/cucable-plugin/compare/1.5.1...1.5.2

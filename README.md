@@ -12,7 +12,7 @@
 
 ### Note:
 
-This project is feature-complete. Expect only bug fixes at this time.
+This project is feature-complete. Expect mostly bug fixes from this point on.
 For new projects, you should consider using Cucumber's native parallelization feature instead.
 
 Thanks to everyone using, testing and improving Cucable over the last years!
