@@ -1,2 +1,3 @@
-features/testfeature/MyTest1.feature:19
-features/MyTest4.feature:5
+file:///Users/bbischoff/Development/cucable-plugin/src/test/resources/features/testfeature/MyTest1.feature:12
+src/test/resources/features/testfeature/MyTest1.feature:19
+src/test/resources/features/testfeature/MyTest4.feature:5

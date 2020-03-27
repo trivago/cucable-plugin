@@ -1,7 +1,9 @@
 package com.trivago.properties;
 
 import com.trivago.exceptions.CucablePluginException;
+import com.trivago.exceptions.filesystem.MissingFileException;
 import com.trivago.exceptions.properties.WrongOrMissingPropertiesException;
+import com.trivago.files.FileIO;
 import com.trivago.logging.CucableLogger;
 import com.trivago.vo.CucableFeature;
 import org.junit.Before;
@@ -35,7 +37,8 @@ public class PropertyManagerTest {
     @Before
     public void setup() {
         logger = mock(CucableLogger.class);
-        propertyManager = new PropertyManager(logger);
+        FileIO fileIO = mock(FileIO.class);
+        propertyManager = new PropertyManager(logger, fileIO);
     }
 
     @Test
@@ -111,7 +114,7 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void featureWithoutScenarioLineNumberTest() {
+    public void featureWithoutScenarioLineNumberTest() throws MissingFileException {
         propertyManager.setSourceFeatures("my.feature");
         List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
         assertThat(sourceFeatures.size(), is(1));
@@ -121,7 +124,7 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void featureWithScenarioLineNumberTest() {
+    public void featureWithScenarioLineNumberTest() throws MissingFileException {
         propertyManager.setSourceFeatures("my.feature:123");
         List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
         assertThat(sourceFeatures.size(), is(1));
@@ -131,7 +134,7 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void featureWithInvalidScenarioLineNumberTest() {
+    public void featureWithInvalidScenarioLineNumberTest() throws MissingFileException {
         propertyManager.setSourceFeatures("my.feature:abc");
         List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
         assertThat(sourceFeatures.size(), is(1));

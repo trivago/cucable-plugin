@@ -58,7 +58,7 @@ public class FeatureFileConverterTest {
         fileIO = mock(FileIO.class);
         fileSystemManager = mock(FileSystemManager.class);
         logger = mock(CucableLogger.class);
-        propertyManager = new PropertyManager(logger);
+        propertyManager = new PropertyManager(logger, fileIO);
 
         featureFileConverter = new FeatureFileConverter(
                 propertyManager,
