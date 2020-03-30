@@ -1,7 +1,9 @@
 package com.trivago.properties;
 
 import com.trivago.exceptions.CucablePluginException;
+import com.trivago.exceptions.filesystem.MissingFileException;
 import com.trivago.exceptions.properties.WrongOrMissingPropertiesException;
+import com.trivago.files.FileIO;
 import com.trivago.logging.CucableLogger;
 import com.trivago.vo.CucableFeature;
 import org.junit.Before;
@@ -17,12 +19,13 @@ import java.util.List;
 import java.util.Map;
 
 import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
-import static org.junit.Assert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 public class PropertyManagerTest {
     @Rule
@@ -31,11 +34,13 @@ public class PropertyManagerTest {
     public ExpectedException expectedException = ExpectedException.none();
     private PropertyManager propertyManager;
     private CucableLogger logger;
+    private FileIO fileIO;
 
     @Before
     public void setup() {
         logger = mock(CucableLogger.class);
-        propertyManager = new PropertyManager(logger);
+        fileIO = mock(FileIO.class);
+        propertyManager = new PropertyManager(logger, fileIO);
     }
 
     @Test
@@ -111,7 +116,7 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void featureWithoutScenarioLineNumberTest() {
+    public void featureWithoutScenarioLineNumberTest() throws MissingFileException {
         propertyManager.setSourceFeatures("my.feature");
         List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
         assertThat(sourceFeatures.size(), is(1));
@@ -121,7 +126,23 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void featureWithScenarioLineNumberTest() {
+    public void featureTextFileTest() throws MissingFileException {
+        when(fileIO.readContentFromFile("src/test/resources/features.txt")).thenCallRealMethod();
+        propertyManager.setSourceFeatures("@src/test/resources/features.txt");
+        List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
+        assertThat(sourceFeatures.size(), is(2));
+        assertThat(sourceFeatures.get(0).getName(), is("file:///features/feature1.feature"));
+        assertThat(sourceFeatures.get(0).getLineNumbers(), is(notNullValue()));
+        assertThat(sourceFeatures.get(0).getLineNumbers().size(), is(1));
+        assertThat(sourceFeatures.get(0).getLineNumbers().get(0), is(12));
+        assertThat(sourceFeatures.get(1).getName(), is("file:///features/feature2.feature"));
+        assertThat(sourceFeatures.get(1).getLineNumbers(), is(notNullValue()));
+        assertThat(sourceFeatures.get(1).getLineNumbers().size(), is(1));
+        assertThat(sourceFeatures.get(1).getLineNumbers().get(0), is(25));
+    }
+
+    @Test
+    public void featureWithScenarioLineNumberTest() throws MissingFileException {
         propertyManager.setSourceFeatures("my.feature:123");
         List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
         assertThat(sourceFeatures.size(), is(1));
@@ -131,7 +152,7 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void featureWithInvalidScenarioLineNumberTest() {
+    public void featureWithInvalidScenarioLineNumberTest() throws MissingFileException {
         propertyManager.setSourceFeatures("my.feature:abc");
         List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
         assertThat(sourceFeatures.size(), is(1));
@@ -227,7 +248,7 @@ public class PropertyManagerTest {
         verify(logger, times(12)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
         List<String> capturedLogs = logCaptor.getAllValues();
         assertThat(capturedLogs.get(0), is("- sourceFeatures               :"));
-        assertThat(capturedLogs.get(1), is("  - test.feature with line number 3"));
+        assertThat(capturedLogs.get(1), is("  - test.feature (line 3)"));
         assertThat(capturedLogs.get(2), is("- sourceRunnerTemplateFile     : null"));
         assertThat(capturedLogs.get(3), is("- generatedRunnerDirectory     : null"));
         assertThat(capturedLogs.get(4), is("- generatedFeatureDirectory    : null"));

@@ -31,7 +31,7 @@ import java.util.Map;
 /**
  * The main plugin class.
  */
-@SuppressWarnings("FieldCanBeLocal")
+@SuppressWarnings("unused")
 @Mojo(name = "parallel")
 final class
 CucablePlugin extends AbstractMojo {
@@ -44,25 +44,25 @@ CucablePlugin extends AbstractMojo {
     /**
      * The complete path to the runner template file.
      */
-    @Parameter(property = "parallel.sourceRunnerTemplateFile", required = true, defaultValue = "")
+    @Parameter(property = "parallel.sourceRunnerTemplateFile", required = true)
     private String sourceRunnerTemplateFile;
 
     /**
      * The path where the generated runner classes should be created.
      */
-    @Parameter(property = "parallel.generatedRunnerDirectory", required = true, defaultValue = "")
+    @Parameter(property = "parallel.generatedRunnerDirectory", required = true)
     private String generatedRunnerDirectory;
 
     /**
      * The path to .feature files or a concrete single feature file.
      */
-    @Parameter(property = "parallel.sourceFeatures", required = true, defaultValue = "")
+    @Parameter(property = "parallel.sourceFeatures", required = true)
     private String sourceFeatures;
 
     /**
      * The path where the generated .feature files should be created.
      */
-    @Parameter(property = "parallel.generatedFeatureDirectory", required = true, defaultValue = "")
+    @Parameter(property = "parallel.generatedFeatureDirectory", required = true)
     private String generatedFeatureDirectory;
 
     /**

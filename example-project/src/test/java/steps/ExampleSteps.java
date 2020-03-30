@@ -1,16 +1,18 @@
 package steps;
 
-import cucumber.api.java.en.And;
-import cucumber.api.java.en.Given;
-import cucumber.api.java.en.Then;
-import cucumber.api.java.en.When;
-import cucumber.api.java.no.Gitt;
-import cucumber.api.java.no.Og;
-import cucumber.api.java.ro.Atunci;
-import cucumber.api.java.ro.Cand;
-import cucumber.api.java.ro.Datefiind;
 import io.cucumber.datatable.DataTable;
+import io.cucumber.docstring.DocString;
+import io.cucumber.java.en.And;
+import io.cucumber.java.en.Given;
+import io.cucumber.java.en.Then;
+import io.cucumber.java.en.When;
+import io.cucumber.java.no.Gitt;
+import io.cucumber.java.no.Og;
+import io.cucumber.java.ro.Atunci;
+import io.cucumber.java.ro.Cand;
+import io.cucumber.java.ro.Datefiind;
 
+@SuppressWarnings("unused")
 public class ExampleSteps {
     @Given("^this is a given step$")
     public void thisIsAGivenStep() {
@@ -49,11 +51,11 @@ public class ExampleSteps {
     }
 
     @Given("^this is a given step with a docstring$")
-    public void thisIsAGivenStepWithADocstring(DataTable docString) {
+    public void thisIsAGivenStepWithADocstring(DocString docString) {
     }
 
     @Then("^I do something with a docstring$")
-    public void iDoSomethingWithADocstring(DataTable docString) {
+    public void iDoSomethingWithADocstring(DocString docString) {
     }
 
     @Gitt("^for å unngå at firmaet går konkurs$")

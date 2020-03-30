@@ -1,8 +1,6 @@
 package com.trivago.features;
 
 import com.trivago.exceptions.CucablePluginException;
-import com.trivago.exceptions.filesystem.FileCreationException;
-import com.trivago.exceptions.filesystem.MissingFileException;
 import com.trivago.files.FileIO;
 import com.trivago.files.FileSystemManager;
 import com.trivago.gherkin.GherkinDocumentParser;
@@ -25,7 +23,7 @@ import java.util.Collections;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
-import static org.junit.Assert.assertThat;
+import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.mock;
@@ -51,14 +49,14 @@ public class FeatureFileConverterTest {
     private FileSystemManager fileSystemManager;
 
     @Before
-    public void setup() throws MissingFileException, FileCreationException {
+    public void setup() {
         gherkinDocumentParser = mock(GherkinDocumentParser.class);
         featureFileContentRenderer = mock(FeatureFileContentRenderer.class);
         runnerFileContentRenderer = mock(RunnerFileContentRenderer.class);
         fileIO = mock(FileIO.class);
         fileSystemManager = mock(FileSystemManager.class);
         logger = mock(CucableLogger.class);
-        propertyManager = new PropertyManager(logger);
+        propertyManager = new PropertyManager(logger, fileIO);
 
         featureFileConverter = new FeatureFileConverter(
                 propertyManager,

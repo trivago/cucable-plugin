@@ -12,7 +12,7 @@
 
 ### Note:
 
-This project is feature-complete. Expect only bug fixes at this time.
+This project is feature-complete. Expect mostly bug fixes from this point on.
 For new projects, you should consider using Cucumber's native parallelization feature instead.
 
 Thanks to everyone using, testing and improving Cucable over the last years!
@@ -326,10 +326,30 @@ If you use a text file (e.g. _src/test/resources/cucable.template_), all **[CUCA
 
 #### sourceFeatures
 
-This can specify
-* the root path of your __existing__ [Cucumber](https://cucumber.io) _.feature_ files (e.g. ```src/test/resources/features```)
-* the path to a specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file (e.g. ```src/test/resources/features/MyFeature.feature```)
-* the path to a specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file including line numbers of specific scenarios/scenario outlines inside this file (e.g. ```src/test/resources/features/MyFeature.feature:12:19``` would only convert the scenarios starting at line _12_ and _19_ inside _MyFeature.feature_)
+This property specifies the location of the features that Cucable should process. It must point to one of the following:
+
+* the root path of your __existing__ [Cucumber](https://cucumber.io) _.feature_ files, e.g.
+ `src/test/resources/features`
+* the path to a specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file, e.g.
+  `src/test/resources/features/MyFeature.feature`
+* the path to a specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file with optional line numbers of specific scenarios e.g.
+  `src/test/resources/features/MyFeature.feature:12:19`
+* comma separated paths to specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file(s) with optional line numbers or feature directories e.g.
+  ```
+  src/test/resources/features/MyFeature.feature:12:19, src/test/resources/features/MyOther.feature, src/test/some/other/feature/directory
+  ```
+* the path to a [Cucumber](https://cucumber.io) text file containing the path to a feature including line number(s) per line (as written by the [Cucumber rerun reporter plugin](https://cucumber.io/docs/cucumber/reporting/?sbsearch=rerun#built-in-reporter-plugins), e.g.
+  ```
+  @src/test/resources/rerun.txt
+  ```
+  
+  __Note:__ The path to a text file has to start with an `@` character! 
+  
+  The file contents can look like this:
+  ```
+  file:///pathToProject/resources/features/feature1.feature:12
+  file:///pathToProject/resources/features/feature4.feature:6
+  ```
 
 **Note:** From Cucable 1.4.0 onwards it is possible to specify a combination as a comma separated list:
 

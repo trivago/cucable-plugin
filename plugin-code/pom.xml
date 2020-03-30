@@ -6,7 +6,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-plugin</artifactId>
-    <version>1.6.0</version>
+    <version>1.7.0</version>
     <url>https://github.com/trivago/cucable-plugin</url>
 
     <name>Cucable Maven Plugin</name>
@@ -63,7 +63,7 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <maven.version>3.6.1</maven.version>
+        <maven.version>3.6.3</maven.version>
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.8</nexus.staging.maven.plugin.version>
         <maven.plugin.plugin.version>3.5.1</maven.plugin.plugin.version>
@@ -71,17 +71,17 @@
         <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
         <jacoco.maven.plugin>0.8.4</jacoco.maven.plugin>
-        <plexus.component.annotations.version>2.0.0</plexus.component.annotations.version>
+        <plexus.component.annotations.version>2.1.0</plexus.component.annotations.version>
         <maven.plugin.annotations.version>3.6.0</maven.plugin.annotations.version>
         <maven.source.plugin.version>3.0.1</maven.source.plugin.version>
         <maven.compiler.source>1.8</maven.compiler.source>
         <maven.compiler.target>1.8</maven.compiler.target>
-        <gherkin.version>5.1.0</gherkin.version>
-        <tag.expressions.version>2.0.2</tag.expressions.version>
-        <apache.commons.version>3.9</apache.commons.version>
+        <gherkin.version>5.2.0</gherkin.version>
+        <tag.expressions.version>2.0.4</tag.expressions.version>
+        <apache.commons.version>3.10</apache.commons.version>
 
-        <mockito.version>3.2.0</mockito.version>
-        <junit5.vintage.version>5.6.0-M1</junit5.vintage.version>
+        <mockito.version>3.3.3</mockito.version>
+        <junit5.vintage.version>5.6.1</junit5.vintage.version>
         <openpojo.version>0.8.13</openpojo.version>
     </properties>
 

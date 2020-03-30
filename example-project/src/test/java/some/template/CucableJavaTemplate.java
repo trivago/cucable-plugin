@@ -1,12 +1,13 @@
 package some.template;
 
-import cucumber.api.CucumberOptions;
-import cucumber.api.junit.Cucumber;
+import io.cucumber.junit.Cucumber;
+import io.cucumber.junit.CucumberOptions;
 import org.junit.runner.RunWith;
 
 @RunWith(Cucumber.class)
 @CucumberOptions(
         glue = "steps",
+        strict = true,
         features = {"target/parallel/features/[CUCABLE:FEATURE].feature"},
         plugin = {"json:target/cucumber-report/[CUCABLE:RUNNER].json"}
 )

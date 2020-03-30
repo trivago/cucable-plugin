@@ -17,7 +17,9 @@
 package com.trivago.properties;
 
 import com.trivago.exceptions.CucablePluginException;
+import com.trivago.exceptions.filesystem.MissingFileException;
 import com.trivago.exceptions.properties.WrongOrMissingPropertiesException;
+import com.trivago.files.FileIO;
 import com.trivago.logging.CucableLogger;
 import com.trivago.logging.CucableLogger.CucableLogLevel;
 import com.trivago.logging.Language;
@@ -41,6 +43,7 @@ import static com.trivago.logging.CucableLogger.CucableLogLevel.DEFAULT;
 public class PropertyManager {
 
     private final CucableLogger logger;
+    private final FileIO fileIO;
 
     private String sourceRunnerTemplateFile;
     private String generatedRunnerDirectory;
@@ -55,8 +58,9 @@ public class PropertyManager {
     private List<String> scenarioNames = new ArrayList<>();
 
     @Inject
-    public PropertyManager(CucableLogger logger) {
+    public PropertyManager(final CucableLogger logger, final FileIO fileIO) {
         this.logger = logger;
+        this.fileIO = fileIO;
     }
 
     public String getSourceRunnerTemplateFile() {
@@ -79,10 +83,21 @@ public class PropertyManager {
         return sourceFeatures;
     }
 
-    public void setSourceFeatures(final String sourceFeatures) {
+    public void setSourceFeatures(final String sourceFeatures) throws MissingFileException {
+        String featuresToProcess;
+        if (sourceFeatures.startsWith("@")) {
+            featuresToProcess = fileIO.readContentFromFile(sourceFeatures.substring(1))
+                    .replace("\n", ",");
+        } else {
+            featuresToProcess = sourceFeatures;
+        }
+        this.sourceFeatures = sourceFeaturePathsToCucableFeatureList(featuresToProcess.split(","));
+    }
+
+    private List<CucableFeature> sourceFeaturePathsToCucableFeatureList(final String[] sourceFeatures) {
         List<CucableFeature> cucableFeatures = new ArrayList<>();
         Pattern lineNumberPattern = Pattern.compile(":(\\d*)");
-        for (String sourceFeature : sourceFeatures.split(",")) {
+        for (String sourceFeature : sourceFeatures) {
             String trimmedFeature = sourceFeature.trim();
             StringBuffer resultBuffer = new StringBuffer();
             Matcher matcher = lineNumberPattern.matcher(trimmedFeature);
@@ -98,8 +113,7 @@ public class PropertyManager {
             matcher.appendTail(resultBuffer);
             cucableFeatures.add(new CucableFeature(resultBuffer.toString(), scenarioLineNumbers));
         }
-
-        this.sourceFeatures = cucableFeatures;
+        return cucableFeatures;
     }
 
     public String getGeneratedFeatureDirectory() {
@@ -246,8 +260,8 @@ public class PropertyManager {
                 String logLine = "  - " + sourceFeature.getName();
                 if (sourceFeature.hasValidScenarioLineNumbers()) {
                     List<Integer> lineNumbers = sourceFeature.getLineNumbers();
-                    logLine += String.format(" with %s %s",
-                            Language.singularPlural(lineNumbers.size(), "line number", "line numbers"),
+                    logLine += String.format(" (%s %s)",
+                            Language.singularPlural(lineNumbers.size(), "line", "lines"),
                             lineNumbers.stream().map(String::valueOf).collect(Collectors.joining(",")));
                 }
                 logger.info(logLine, logLevels);
