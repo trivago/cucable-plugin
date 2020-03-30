@@ -6,11 +6,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
-## [1.7.0] - UNRELEASED
+## [1.7.0] - 2020-03-30
 
 ### Added
 
 * Support for Cucumber feature text files
+
+### Changed
+
+* Various dependency and documentation updates
 
 ## [1.6.0] - 2019-12-10
 
