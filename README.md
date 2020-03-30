@@ -351,17 +351,6 @@ This property specifies the location of the features that Cucable should process
   file:///pathToProject/resources/features/feature4.feature:6
   ```
 
-**Note:** From Cucable 1.4.0 onwards it is possible to specify a combination as a comma separated list:
-
-```xml
-<sourceFeatures>
-    src/test/resources/features/sometests,
-    src/test/resources/features/MyFeature.feature:8:15
-</sourceFeatures>
-```
-
-This example would process all features in the `src/test/resources/features/sometests` directory **and** scenarios at lines 8 and 15 of `src/test/resources/features/MyFeature.feature`.
-
 #### generatedFeatureDirectory
 
 The path where the __generated__ [Cucumber](https://cucumber.io) .feature files should be located (e.g. _src/test/resources/parallel_).

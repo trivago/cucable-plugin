@@ -10,7 +10,7 @@ Back to [Readme](README.md).
 
 ### Added
 
-* Support for Cucumber feature text files
+* Support for Cucumber feature text files (#154)
 
 ### Changed
 
