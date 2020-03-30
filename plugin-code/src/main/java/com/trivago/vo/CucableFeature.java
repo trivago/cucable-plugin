@@ -19,8 +19,8 @@ package com.trivago.vo;
 import java.util.List;
 
 public class CucableFeature {
-    private String name;
-    private List<Integer> lineNumbers;
+    private final String name;
+    private final List<Integer> lineNumbers;
 
     public CucableFeature(final String name, final List<Integer> lineNumbers) {
         this.name = name;

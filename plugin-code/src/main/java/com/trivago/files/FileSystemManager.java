@@ -52,12 +52,14 @@ public class FileSystemManager {
      */
     public List<Path> getPathsFromCucableFeature(final CucableFeature cucableFeature) throws CucablePluginException {
 
-        if (cucableFeature == null){
+        if (cucableFeature == null) {
             return Collections.emptyList();
         }
 
-        String sourceFeatures = cucableFeature.getName();
-        File sourceFeaturesFile = new File(cucableFeature.getName());
+        String sourceFeatures = cucableFeature.getName().
+                replace("file://", "");
+
+        File sourceFeaturesFile = new File(sourceFeatures);
         // Check if the property value is a single file or a directory
         if (sourceFeaturesFile.isFile() && sourceFeatures.endsWith(FEATURE_FILE_EXTENSION)) {
             return Collections.singletonList(Paths.get(sourceFeatures));

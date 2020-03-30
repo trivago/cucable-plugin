@@ -67,7 +67,7 @@ public class FeatureFileConverter {
     private final FeatureFileContentRenderer featureFileContentRenderer;
     private final RunnerFileContentRenderer runnerFileContentRenderer;
     private final FileIO fileIO;
-    private FileSystemManager fileSystemManager;
+    private final FileSystemManager fileSystemManager;
     private final CucableLogger logger;
 
     // Holds the current number of single features per feature key
@@ -107,6 +107,9 @@ public class FeatureFileConverter {
 
         for (CucableFeature cucableFeature : cucableFeatures) {
             List<Path> paths = fileSystemManager.getPathsFromCucableFeature(cucableFeature);
+            if (paths.size() == 0) {
+                logger.warn("No features and runners could be created. Please check your properties!");
+            }
             for (Path path : paths) {
                 List<String> generatedFeatureFilePaths = generateParallelizableFeatures(path, cucableFeature.getLineNumbers());
                 allGeneratedFeaturePaths.addAll(generatedFeatureFilePaths);

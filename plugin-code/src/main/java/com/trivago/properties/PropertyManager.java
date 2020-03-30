@@ -92,7 +92,6 @@ public class PropertyManager {
             featuresToProcess = sourceFeatures;
         }
         this.sourceFeatures = sourceFeaturePathsToCucableFeatureList(featuresToProcess.split(","));
-        ;
     }
 
     private List<CucableFeature> sourceFeaturePathsToCucableFeatureList(final String[] sourceFeatures) {
@@ -261,8 +260,8 @@ public class PropertyManager {
                 String logLine = "  - " + sourceFeature.getName();
                 if (sourceFeature.hasValidScenarioLineNumbers()) {
                     List<Integer> lineNumbers = sourceFeature.getLineNumbers();
-                    logLine += String.format(" with %s %s",
-                            Language.singularPlural(lineNumbers.size(), "line number", "line numbers"),
+                    logLine += String.format(" (%s %s)",
+                            Language.singularPlural(lineNumbers.size(), "line", "lines"),
                             lineNumbers.stream().map(String::valueOf).collect(Collectors.joining(",")));
                 }
                 logger.info(logLine, logLevels);

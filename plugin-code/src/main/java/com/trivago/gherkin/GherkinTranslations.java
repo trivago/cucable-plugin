@@ -5,8 +5,6 @@ import gherkin.GherkinDialectProvider;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.util.Arrays;
-import java.util.List;
 
 @Singleton
 class GherkinTranslations {
