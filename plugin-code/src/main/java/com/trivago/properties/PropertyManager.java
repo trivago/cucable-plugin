@@ -56,6 +56,7 @@ public class PropertyManager {
     private int desiredNumberOfRunners;
     private int desiredNumberOfFeaturesPerRunner;
     private List<String> scenarioNames = new ArrayList<>();
+    private boolean isCucumberFeatureListFileSource;
 
     @Inject
     public PropertyManager(final CucableLogger logger, final FileIO fileIO) {
@@ -86,8 +87,9 @@ public class PropertyManager {
     public void setSourceFeatures(final String sourceFeatures) throws MissingFileException {
         String featuresToProcess;
         if (sourceFeatures.startsWith("@")) {
+            isCucumberFeatureListFileSource = true;
             featuresToProcess = fileIO.readContentFromFile(sourceFeatures.substring(1))
-                    .replace("\n", ",");
+                    .replace(System.lineSeparator(), ",");
         } else {
             featuresToProcess = sourceFeatures;
         }
@@ -314,6 +316,10 @@ public class PropertyManager {
         if (propertyValue == null || propertyValue.isEmpty()) {
             missingProperties.add(propertyName);
         }
+    }
+
+    public boolean isCucumberFeatureListFileSource() {
+        return isCucumberFeatureListFileSource;
     }
 
     public enum ParallelizationMode {

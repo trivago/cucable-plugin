@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.7.1] - 2020-04-03
+
+### Changed
+
+* Runner and feature file names generated from Cucumber feature text files are now postfixed with `_rerun_IT`
+
 ## [1.7.0] - 2020-03-30
 
 ### Added

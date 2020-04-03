@@ -59,6 +59,7 @@ public class FeatureFileConverter {
     private static final String INTEGRATION_TEST_POSTFIX = "_IT";
     private static final String PATH_SEPARATOR = "/";
     private static final String TEST_RUNS_COUNTER_FORMAT = "_run%03d";
+    private static final String TEST_RERUNS_FORMAT = "_rerun";
     private static final String FEATURE_COUNTER_FORMAT = "_feature%03d";
     private static final String SCENARIO_COUNTER_FORMAT = "_scenario%03d";
 
@@ -224,12 +225,16 @@ public class FeatureFileConverter {
             featureCounter++;
             String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
             for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
-                String testRunsCounterFilenamePart = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
                 String generatedFileName =
                         featureFileName
-                                .concat(scenarioCounterFilenamePart)
-                                .concat(testRunsCounterFilenamePart)
-                                .concat(INTEGRATION_TEST_POSTFIX);
+                                .concat(scenarioCounterFilenamePart);
+
+                String testRunsCounterFilenamePart = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
+                generatedFileName = generatedFileName.concat(testRunsCounterFilenamePart);
+                if (propertyManager.isCucumberFeatureListFileSource()) {
+                    generatedFileName = generatedFileName.concat(TEST_RERUNS_FORMAT);
+                }
+                generatedFileName = generatedFileName.concat(INTEGRATION_TEST_POSTFIX);
                 saveFeature(
                         generatedFileName,
                         featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)
