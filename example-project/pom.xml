@@ -7,7 +7,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-test-project</artifactId>
-    <version>1.7.1</version>
+    <version>1.7.2</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -70,7 +70,7 @@
                     <!--</sourceFeatures>-->
 
                     <!-- process a text file containing paths to features and line numbers (as it is written by the Cucumber rerun formatter) -->
-                    <!-- <sourceFeatures>@src/test/resources/cucumber-feature-list.txt</sourceFeatures>-->
+                     <sourceFeatures>@src/test/resources/cucumber-feature-list.txt</sourceFeatures>
 
                     <!-- process a specific feature file and specific line numbers in the given directory -->
                     <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>-->

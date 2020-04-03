@@ -60,16 +60,23 @@ public class FileSystemManager {
                 replace("file://", "");
 
         File sourceFeaturesFile = new File(sourceFeatures);
+
+        if (sourceFeatures.trim().isEmpty()) {
+            return Collections.emptyList();
+        }
+
         // Check if the property value is a single file or a directory
         if (sourceFeaturesFile.isFile() && sourceFeatures.endsWith(FEATURE_FILE_EXTENSION)) {
             return Collections.singletonList(Paths.get(sourceFeatures));
-        } else if (sourceFeaturesFile.isDirectory()) {
-            return getFilesWithFeatureExtension(sourceFeatures);
-        } else {
-            throw new CucablePluginException(
-                    sourceFeatures + " is not a feature file or a directory."
-            );
         }
+
+        if (sourceFeaturesFile.isDirectory()) {
+            return getFilesWithFeatureExtension(sourceFeatures);
+        }
+
+        throw new CucablePluginException(
+                sourceFeatures + " is not a feature file or a directory."
+        );
     }
 
     /**
@@ -79,7 +86,8 @@ public class FileSystemManager {
      * @return A list of feature files in the given directory.
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
-    private List<Path> getFilesWithFeatureExtension(final String sourceFeatureDirectory) throws CucablePluginException {
+    private List<Path> getFilesWithFeatureExtension(final String sourceFeatureDirectory) throws
+            CucablePluginException {
         try {
             return Files.walk(Paths.get(sourceFeatureDirectory))
                     .filter(Files::isRegularFile)

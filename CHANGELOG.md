@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.7.2] - 2020-04-03
+
+### Fixed
+
+* Cucable does not fail on empty Cucumber feature list file.
+
 ## [1.7.1] - 2020-04-03
 
 ### Changed
@@ -298,6 +304,8 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[1.7.2]: https://github.com/trivago/cucable-plugin/compare/1.7.1...1.7.2
+[1.7.1]: https://github.com/trivago/cucable-plugin/compare/1.7.0...1.7.1
 [1.7.0]: https://github.com/trivago/cucable-plugin/compare/1.6.0...1.7.0
 [1.6.0]: https://github.com/trivago/cucable-plugin/compare/1.5.3...1.6.0
 [1.5.3]: https://github.com/trivago/cucable-plugin/compare/1.5.2...1.5.3

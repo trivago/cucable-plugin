@@ -221,7 +221,7 @@ public class PropertyManagerTest {
         propertyManager.logProperties();
         verify(logger, times(6)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
         List<String> capturedLogs = logCaptor.getAllValues();
-        assertThat(capturedLogs.get(0), is("- sourceFeatures               :"));
+        assertThat(capturedLogs.get(0), is("- sourceFeatures:"));
         assertThat(capturedLogs.get(1), is("- sourceRunnerTemplateFile     : null"));
         assertThat(capturedLogs.get(2), is("- generatedRunnerDirectory     : null"));
         assertThat(capturedLogs.get(3), is("- generatedFeatureDirectory    : null"));
@@ -247,7 +247,7 @@ public class PropertyManagerTest {
 
         verify(logger, times(12)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
         List<String> capturedLogs = logCaptor.getAllValues();
-        assertThat(capturedLogs.get(0), is("- sourceFeatures               :"));
+        assertThat(capturedLogs.get(0), is("- sourceFeatures:"));
         assertThat(capturedLogs.get(1), is("  - test.feature (line 3)"));
         assertThat(capturedLogs.get(2), is("- sourceRunnerTemplateFile     : null"));
         assertThat(capturedLogs.get(3), is("- generatedRunnerDirectory     : null"));
