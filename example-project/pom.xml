@@ -7,7 +7,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-test-project</artifactId>
-    <version>1.7.2</version>
+    <version>1.8.0</version>
     <packaging>jar</packaging>
 
     <properties>

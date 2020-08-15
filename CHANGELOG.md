@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.8.0] - 2020-08-15
+
+### Fixed
+
+* Correct handling of feature tags in combination with multiple tagged example tables (#168)
+
 ## [1.7.2] - 2020-04-03
 
 ### Fixed
@@ -304,6 +310,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[1.8.0]: https://github.com/trivago/cucable-plugin/compare/1.7.2...1.8.0
 [1.7.2]: https://github.com/trivago/cucable-plugin/compare/1.7.1...1.7.2
 [1.7.1]: https://github.com/trivago/cucable-plugin/compare/1.7.0...1.7.1
 [1.7.0]: https://github.com/trivago/cucable-plugin/compare/1.6.0...1.7.0
