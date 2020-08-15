@@ -11,6 +11,7 @@ Back to [Readme](README.md).
 ### Fixed
 
 * Correct handling of feature tags in combination with multiple tagged example tables (#168)
+* Invalid runner class name for features beginning with numbers (#156)
 
 ## [1.7.2] - 2020-04-03
 
