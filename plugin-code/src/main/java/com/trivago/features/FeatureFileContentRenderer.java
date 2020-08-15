@@ -63,7 +63,6 @@ class FeatureFileContentRenderer {
             );
             addSteps(renderedContent, singleScenario.getBackgroundSteps());
             addSteps(renderedContent, singleScenario.getSteps());
-
         }
 
         addComments(renderedContent, firstScenario.getFeatureFilePath());

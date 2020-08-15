@@ -133,7 +133,7 @@ All changes are documented in the [full changelog](CHANGELOG.md).
 
 The `[CUCABLE:RUNNER]` template placeholder is automatically replaced with the class name of the generated runner class.
 
-If the generated runner runs only one "single scenario" feature, its name will be the same as the generated feature (e.g. `MyFeature_scenario001_run001_IT`).
+If the generated runner runs only one "single scenario" feature, its name will be the same as the generated feature (e.g. `Runner_MyFeature_scenario001_run001_IT`).
 
 In case the runner runs multiple "single scenario" features, its name will be auto-generated (e.g. `CucableMultiRunner_1da810a2_c4c6_4edb_b078_d81329593950_IT`).
 
@@ -624,7 +624,7 @@ The generated runners point to each one of the generated feature files (unless y
 
 This is an example for one of the generated runners - note how the placeholders are now replaced with the name of the feature to run:
 
-*MyFeature_scenario001_run001_IT.java*
+*Runner_MyFeature_scenario001_run001_IT.java*
 
 <pre>
 import cucumber.api.CucumberOptions;
