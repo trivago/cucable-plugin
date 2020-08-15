@@ -25,7 +25,13 @@ import com.trivago.vo.Step;
 import gherkin.AstBuilder;
 import gherkin.Parser;
 import gherkin.ParserException;
-import gherkin.ast.*;
+import gherkin.ast.Background;
+import gherkin.ast.Examples;
+import gherkin.ast.Feature;
+import gherkin.ast.GherkinDocument;
+import gherkin.ast.Scenario;
+import gherkin.ast.ScenarioDefinition;
+import gherkin.ast.ScenarioOutline;
 import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionException;
 import io.cucumber.tagexpressions.TagExpressionParser;
@@ -38,6 +44,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import java.util.stream.Collectors;
 
 @Singleton
 public class GherkinDocumentParser {
@@ -143,6 +150,7 @@ public class GherkinDocumentParser {
                                     featureTags,
                                     backgroundSteps
                             );
+
                     for (SingleScenario singleScenario : outlineScenarios) {
                         if (scenarioShouldBeIncluded(singleScenario)) {
                             singleScenarioFeatures.add(singleScenario);
@@ -151,6 +159,7 @@ public class GherkinDocumentParser {
                 }
             }
         }
+
         return singleScenarioFeatures;
     }
 
@@ -186,7 +195,7 @@ public class GherkinDocumentParser {
         List<Step> steps = gherkinToCucableConverter.convertGherkinStepsToCucableSteps(scenarioOutline.getSteps());
 
         if (scenarioOutline.getExamples().isEmpty()) {
-            cucableLogger.warn("Scenario outline without example table!");
+            cucableLogger.warn("Scenario outline '" + scenarioOutline.getName() + "' without example table!");
             return outlineScenarios;
         }
 
@@ -214,6 +223,7 @@ public class GherkinDocumentParser {
                 List<Step> substitutedSteps = substituteStepExamplePlaceholders(steps, exampleMap, rowIndex);
                 singleScenario.setSteps(substitutedSteps);
                 singleScenario.setScenarioTags(scenarioTags);
+
                 singleScenario.setExampleTags(
                         gherkinToCucableConverter.convertGherkinTagsToCucableTags(exampleTable.getTags())
                 );
@@ -327,30 +337,31 @@ public class GherkinDocumentParser {
      * scenarioNames settings.
      *
      * @param singleScenario a single scenario object.
-     * @return true if an include tag  and no exclude tags are included in the source tag list and scenario name
-     * (if specified) matches.
+     * @return true if the combined tags match the given tag expression and the scenario name (if specified) matches.
      */
-    private boolean scenarioShouldBeIncluded(SingleScenario singleScenario) throws CucablePluginException {
+    private boolean scenarioShouldBeIncluded(final SingleScenario singleScenario) throws CucablePluginException {
 
         String includeScenarioTags = propertyManager.getIncludeScenarioTags();
         String language = singleScenario.getFeatureLanguage();
         String scenarioName = singleScenario.getScenarioName();
         boolean scenarioNameMatchExists = matchScenarioWithScenarioNames(language, scenarioName) >= 0;
 
-        List<String> combinedScenarioTags = singleScenario.getScenarioTags();
+        List<String> combinedScenarioTags = new ArrayList<>(singleScenario.getScenarioTags());
         combinedScenarioTags.addAll(singleScenario.getFeatureTags());
+        combinedScenarioTags.addAll(singleScenario.getExampleTags());
+        combinedScenarioTags = combinedScenarioTags.stream().distinct().collect(Collectors.toList());
 
         if (includeScenarioTags == null || includeScenarioTags.isEmpty()) {
             return scenarioNameMatchExists;
         }
 
-        Expression tagExpression;
         try {
-            tagExpression = tagExpressionParser.parse(includeScenarioTags);
+            Expression tagExpression = tagExpressionParser.parse(includeScenarioTags);
+            return tagExpression.evaluate(combinedScenarioTags) && scenarioNameMatchExists;
         } catch (TagExpressionException e) {
             throw new CucablePluginException("The tag expression '" + includeScenarioTags + "' is invalid: " + e.getMessage());
         }
-        return tagExpression.evaluate(combinedScenarioTags) && scenarioNameMatchExists;
+
     }
 
     /**

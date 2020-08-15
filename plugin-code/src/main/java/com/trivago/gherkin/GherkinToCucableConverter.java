@@ -30,6 +30,8 @@ import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Singleton
 class GherkinToCucableConverter {
@@ -72,14 +74,9 @@ class GherkinToCucableConverter {
             final DataTable gherkinDataTable) {
 
         com.trivago.vo.DataTable dataTable = new com.trivago.vo.DataTable();
-        for (TableRow row : gherkinDataTable.getRows()) {
-            List<TableCell> cells = row.getCells();
-            List<String> rowValues = new ArrayList<>();
-            for (TableCell cell : cells) {
-                rowValues.add(cell.getValue());
-            }
-            dataTable.addRow(rowValues);
-        }
+        gherkinDataTable.getRows().stream().map(TableRow::getCells)
+                .map(cells -> cells.stream().map(TableCell::getValue).collect(Collectors.toList()))
+                .forEachOrdered(dataTable::addRow);
         return dataTable;
     }
 
@@ -90,11 +87,7 @@ class GherkinToCucableConverter {
      * @return a {@link String} list of tags.
      */
     List<String> convertGherkinTagsToCucableTags(final List<Tag> gherkinTags) {
-        List<String> tags = new ArrayList<>();
-        for (Tag gherkinTag : gherkinTags) {
-            tags.add(gherkinTag.getName());
-        }
-        return tags;
+        return gherkinTags.stream().map(Tag::getName).collect(Collectors.toList());
     }
 
     /**
@@ -106,23 +99,21 @@ class GherkinToCucableConverter {
     Map<String, List<String>> convertGherkinExampleTableToCucableExampleMap(
             final Examples exampleTable
     ) {
-        Map<String, List<String>> exampleMap = new LinkedHashMap<>();
+        Map<String, List<String>> exampleMap;
 
         List<TableCell> headerCells = exampleTable.getTableHeader().getCells();
-        for (TableCell headerCell : headerCells) {
-            exampleMap.put("<" + headerCell.getValue() + ">", new ArrayList<>());
-        }
+        exampleMap = headerCells.stream().collect(
+                Collectors.toMap(headerCell -> "<" + headerCell.getValue() + ">",
+                        headerCell -> new ArrayList<>(), (a, b) -> b, LinkedHashMap::new));
         Object[] columnKeys = exampleMap.keySet().toArray();
 
         List<TableRow> tableBody = exampleTable.getTableBody();
-        for (TableRow tableRow : tableBody) {
-            List<TableCell> cells = tableRow.getCells();
-            for (int i = 0; i < cells.size(); i++) {
-                String columnKey = (String) columnKeys[i];
-                List<String> values = exampleMap.get(columnKey);
-                values.add(cells.get(i).getValue());
-            }
-        }
+        tableBody.stream().map(TableRow::getCells).forEachOrdered(
+                cells -> IntStream.range(0, cells.size()).forEachOrdered(i -> {
+                    String columnKey = (String) columnKeys[i];
+                    List<String> values = exampleMap.get(columnKey);
+                    values.add(cells.get(i).getValue());
+                }));
         return exampleMap;
     }
 }

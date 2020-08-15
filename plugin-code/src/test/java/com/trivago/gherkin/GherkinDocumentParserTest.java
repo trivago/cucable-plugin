@@ -441,6 +441,65 @@ public class GherkinDocumentParserTest {
         assertThat(firstRow.get(2), is("one"));
     }
 
+    @Test
+    public void taggedFeatureAndExamplesTest() throws Exception {
+        String featureContent = getScenarioWithFeatureAndExampleTags();
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(3));
+        assertThat(singleScenariosFromFeature.get(0).getSteps().size(), is(2));
+        assertThat(singleScenariosFromFeature.get(1).getSteps().size(), is(2));
+        assertThat(singleScenariosFromFeature.get(2).getSteps().size(), is(2));
+
+    }
+
+    @Test
+    public void taggedFeatureAndExamplesRequestedExampleTagTest() throws Exception {
+        String featureContent = getScenarioWithFeatureAndExampleTags();
+        when(propertyManager.getIncludeScenarioTags()).thenReturn("@exampleTag1");
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+        assertThat(singleScenariosFromFeature.get(0).getSteps().size(), is(2));
+    }
+
+    @Test
+    public void taggedFeatureAndExamplesRequestedFeatureAndExampleTagTest() throws Exception {
+        String featureContent = getScenarioWithFeatureAndExampleTags();
+        when(propertyManager.getIncludeScenarioTags()).thenReturn("@featureTag and @exampleTag1");
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+        assertThat(singleScenariosFromFeature.get(0).getSteps().size(), is(2));
+    }
+
+    @Test
+    public void taggedFeatureAndExamplesRequestedInvalidExampleTagTest() throws Exception {
+        String featureContent = getScenarioWithFeatureAndExampleTags();
+        when(propertyManager.getIncludeScenarioTags()).thenReturn("@exampleTag1 and @exampleTag2");
+        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(0));
+    }
+
+    private String getScenarioWithFeatureAndExampleTags() {
+        return "@featureTag\n" +
+                "Feature: test feature 3\n" +
+                "\n" +
+                "  Scenario Outline: This is a scenario outline\n" +
+                "    When I search for key <key>\n" +
+                "    Then I get <value>\n" +
+                "\n" +
+                "@exampleTag1\n" +
+                "Examples:\n" +
+                "      | key | value   |\n" +
+                "      | 1   | one     |\n" +
+                "@exampleTag2\n" +
+                "Examples:\n" +
+                "      | key | value   |\n" +
+                "      | 2   | two     |\n" +
+                "@exampleTag3\n" +
+                "Examples:\n" +
+                "      | key | value   |\n" +
+                "      | 3   | three   |\n";
+    }
+
     private String getTwoScenariosWithTags() {
         return "@featureTag\n" +
                 "Feature: test feature\n" +
