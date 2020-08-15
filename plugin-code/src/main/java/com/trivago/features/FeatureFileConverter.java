@@ -417,7 +417,7 @@ public class FeatureFileConverter {
         // Otherwise, a generated runner class name is used.
         String runnerClassName;
         if (generatedFeatureFileNames.size() == 1) {
-            runnerClassName = generatedFeatureFileNames.get(0);
+            runnerClassName = "Runner_" + generatedFeatureFileNames.get(0);
         } else {
             runnerClassName = "CucableMultiRunner_"
                     .concat(UUID.randomUUID().toString().replace("-", "_"))
