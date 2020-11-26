@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.9.0] - 2020-11-26
+
+### Added
+* Better error messages when features cannot be parsed (#173)
+* `Background` steps are now preserved as `Background` in generated scenarios (#160)
+
 ## [1.8.0] - 2020-08-15
 
 ### Fixed
@@ -311,6 +317,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[1.9.0]: https://github.com/trivago/cucable-plugin/compare/1.8.0...1.9.0
 [1.8.0]: https://github.com/trivago/cucable-plugin/compare/1.7.2...1.8.0
 [1.7.2]: https://github.com/trivago/cucable-plugin/compare/1.7.1...1.7.2
 [1.7.1]: https://github.com/trivago/cucable-plugin/compare/1.7.0...1.7.1

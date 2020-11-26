@@ -31,8 +31,10 @@ public class WrongOrMissingPropertiesExceptionTest {
         List<String> properties = new ArrayList<>();
         properties.add("OneProperty");
         WrongOrMissingPropertiesException exception = new WrongOrMissingPropertiesException(properties);
-        assertThat(exception.getMessage(),
-                is("Property not specified correctly in the configuration section of your pom file: [OneProperty]"));
+        assertThat(
+                exception.getMessage(),
+                is("Property not specified correctly in the configuration section of your pom file: [OneProperty]")
+        );
     }
 
     @Test
@@ -41,7 +43,9 @@ public class WrongOrMissingPropertiesExceptionTest {
         properties.add("OneProperty");
         properties.add("AnotherProperty");
         WrongOrMissingPropertiesException exception = new WrongOrMissingPropertiesException(properties);
-        assertThat(exception.getMessage(),
-                is("Properties not specified correctly in the configuration section of your pom file: [OneProperty, AnotherProperty]"));
+        assertThat(
+                exception.getMessage(),
+                is("Properties not specified correctly in the configuration section of your pom file: [OneProperty, AnotherProperty]")
+        );
     }
 }

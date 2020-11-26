@@ -107,20 +107,25 @@ public class FeatureFileConverterTest {
         CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
-        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature)).thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
+        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
+                .thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
 
         List<SingleScenario> scenarioList = new ArrayList<>();
         SingleScenario singleScenario = getSingleScenario();
         scenarioList.add(singleScenario);
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null)).thenReturn(scenarioList);
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null))
+                .thenReturn(scenarioList);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
-        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class))).thenReturn("RUNNER_CONTENT");
+        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class)))
+                .thenReturn("RUNNER_CONTENT");
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
 
         ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
-        verify(logger, times(1)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
+        verify(logger, times(1)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class),
+                                      any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
+        );
         assertThat(logCaptor.getAllValues().get(0), is("Cucable created 1 separate feature file and 1 runner."));
         verify(fileIO, times(2)).writeContentToFile(anyString(), anyString());
     }
@@ -140,28 +145,34 @@ public class FeatureFileConverterTest {
         propertyManager.setScenarioNames("scenarioName1");
 
         when(fileIO.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
-        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME)).thenReturn(scenarioMatchText);
+        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME))
+                .thenReturn(scenarioMatchText);
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
         CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
-        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature)).thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
+        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
+                .thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
 
         List<SingleScenario> scenarioList = new ArrayList<>();
         SingleScenario singleScenario = getSingleScenario();
         scenarioList.add(singleScenario);
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null)).thenReturn(scenarioList);
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null))
+                .thenReturn(scenarioList);
         when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatchText)).thenReturn(0);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
-        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class))).thenReturn("RUNNER_CONTENT");
+        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class)))
+                .thenReturn("RUNNER_CONTENT");
 
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
 
         ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
-        verify(logger, times(1)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
+        verify(logger, times(1)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class),
+                                      any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
+        );
         assertThat(logCaptor.getAllValues().get(0), is("Cucable created 1 separate feature file and 1 runner."));
         verify(fileIO, times(2)).writeContentToFile(anyString(), anyString());
     }
@@ -184,17 +195,20 @@ public class FeatureFileConverterTest {
         CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
-        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature)).thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
+        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
+                .thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
 
         List<SingleScenario> scenarioList = new ArrayList<>();
         SingleScenario singleScenario = getSingleScenario();
         scenarioList.add(singleScenario);
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null)).thenReturn(scenarioList);
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null))
+                .thenReturn(scenarioList);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
 
-        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class))).thenReturn("RUNNER_CONTENT");
+        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class)))
+                .thenReturn("RUNNER_CONTENT");
 
 
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
@@ -221,18 +235,21 @@ public class FeatureFileConverterTest {
         CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
-        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature)).thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
+        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
+                .thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
 
         List<SingleScenario> scenarioList = new ArrayList<>();
         SingleScenario singleScenario = getSingleScenario();
         scenarioList.add(singleScenario);
         scenarioList.add(singleScenario);
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null)).thenReturn(scenarioList);
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null))
+                .thenReturn(scenarioList);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
 
-        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class))).thenReturn("RUNNER_CONTENT");
+        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class)))
+                .thenReturn("RUNNER_CONTENT");
 
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
 
@@ -257,8 +274,10 @@ public class FeatureFileConverterTest {
         propertyManager.setScenarioNames("scenarioName1, scenarioName2");
 
         when(fileIO.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
-        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME1)).thenReturn(scenarioMatch1Text);
-        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME2)).thenReturn(scenarioMatch2Text);
+        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME1))
+                .thenReturn(scenarioMatch1Text);
+        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME2))
+                .thenReturn(scenarioMatch2Text);
 
         when(fileIO.readContentFromFile(generatedFeatureDir + "/" + FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
 
@@ -266,25 +285,30 @@ public class FeatureFileConverterTest {
         CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
-        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature)).thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
+        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
+                .thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
 
         List<SingleScenario> scenarioList = new ArrayList<>();
         SingleScenario singleScenario = getSingleScenario();
         scenarioList.add(singleScenario);
         scenarioList.add(singleScenario);
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null)).thenReturn(scenarioList);
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null))
+                .thenReturn(scenarioList);
         when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatch1Text)).thenReturn(0);
         when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatch2Text)).thenReturn(1);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
 
-        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class))).thenReturn("RUNNER_CONTENT");
+        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class)))
+                .thenReturn("RUNNER_CONTENT");
 
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
 
         ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
-        verify(logger, times(1)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
+        verify(logger, times(1)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class),
+                                      any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
+        );
         assertThat(logCaptor.getAllValues().get(0), is("Cucable created 2 separate feature files and 2 runners."));
         verify(fileIO, times(4)).writeContentToFile(anyString(), anyString());
     }
@@ -307,8 +331,10 @@ public class FeatureFileConverterTest {
         propertyManager.setScenarioNames("scenarioName1, scenarioName2");
 
         when(fileIO.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
-        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME1)).thenReturn(scenarioMatch1Text);
-        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME2)).thenReturn(scenarioMatch2Text);
+        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME1))
+                .thenReturn(scenarioMatch1Text);
+        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME2))
+                .thenReturn(scenarioMatch2Text);
 
         when(fileIO.readContentFromFile(generatedFeatureDir + "/" + FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
 
@@ -316,25 +342,30 @@ public class FeatureFileConverterTest {
         CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
-        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature)).thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
+        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
+                .thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
 
         List<SingleScenario> scenarioList = new ArrayList<>();
         SingleScenario singleScenario = getSingleScenario();
         scenarioList.add(singleScenario);
         scenarioList.add(singleScenario);
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null)).thenReturn(scenarioList);
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null))
+                .thenReturn(scenarioList);
         when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatch1Text)).thenReturn(0);
         when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatch2Text)).thenReturn(1);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
 
-        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class))).thenReturn("RUNNER_CONTENT");
+        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class)))
+                .thenReturn("RUNNER_CONTENT");
 
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
 
         ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
-        verify(logger, times(1)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
+        verify(logger, times(1)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class),
+                                      any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
+        );
         assertThat(logCaptor.getAllValues().get(0), is("Cucable created 2 separate feature files and 2 runners."));
         verify(fileIO, times(4)).writeContentToFile(anyString(), anyString());
     }
@@ -358,9 +389,11 @@ public class FeatureFileConverterTest {
         CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
-        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature)).thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
+        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
+                .thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
 
-        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class))).thenReturn("RUNNER_CONTENT");
+        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class)))
+                .thenReturn("RUNNER_CONTENT");
 
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
 
@@ -382,23 +415,27 @@ public class FeatureFileConverterTest {
         propertyManager.setScenarioNames("scenarioName1");
 
         when(fileIO.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
-        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME)).thenReturn(scenarioNoMatchText);
+        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME))
+                .thenReturn(scenarioNoMatchText);
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
         CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
-        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature)).thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
+        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
+                .thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
 
         List<SingleScenario> scenarioList = new ArrayList<>();
         SingleScenario singleScenario = getSingleScenario();
         scenarioList.add(singleScenario);
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null)).thenReturn(scenarioList);
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null))
+                .thenReturn(scenarioList);
         when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioNoMatchText)).thenReturn(-1);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
-        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class))).thenReturn("RUNNER_CONTENT");
+        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class)))
+                .thenReturn("RUNNER_CONTENT");
 
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
     }
@@ -407,6 +444,7 @@ public class FeatureFileConverterTest {
         return new SingleScenario(
                 "feature", "", "",
                 "featureDescription", "name",
-                "scenarioDescription", new ArrayList<>(), new ArrayList<>());
+                "scenarioDescription", new ArrayList<>(), new ArrayList<>()
+        );
     }
 }

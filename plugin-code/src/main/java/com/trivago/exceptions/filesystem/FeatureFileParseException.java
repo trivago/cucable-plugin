@@ -27,7 +27,7 @@ public class FeatureFileParseException extends CucablePluginException {
      *
      * @param featureFileName The name of the unparsable feature file.
      */
-    public FeatureFileParseException(final String featureFileName) {
-        super("Could not parse feature file '" + featureFileName + "'.");
+    public FeatureFileParseException(final String featureFileName, final String message) {
+        super("Could not parse feature file '" + featureFileName + "': " + message);
     }
 }

@@ -111,7 +111,8 @@ public class PropertyManagerTest {
     @Test
     public void wrongParallelizationModeTest() throws CucablePluginException {
         expectedException.expect(CucablePluginException.class);
-        expectedException.expectMessage("Unknown <parallelizationMode> 'unknown'. Please use 'scenarios' or 'features'.");
+        expectedException
+                .expectMessage("Unknown <parallelizationMode> 'unknown'. Please use 'scenarios' or 'features'.");
         propertyManager.setParallelizationMode("unknown");
     }
 
@@ -167,9 +168,11 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void checkForDisallowedParallelizationModePropertiesSourceFeaturesIsNotDirectoryTest() throws CucablePluginException {
+    public void checkForDisallowedParallelizationModePropertiesSourceFeaturesIsNotDirectoryTest()
+            throws CucablePluginException {
         expectedException.expect(CucablePluginException.class);
-        expectedException.expectMessage("In parallelizationMode = features, sourceFeatures should point to a directory!");
+        expectedException
+                .expectMessage("In parallelizationMode = features, sourceFeatures should point to a directory!");
 
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
         propertyManager.setSourceFeatures("my.feature");
@@ -219,7 +222,9 @@ public class PropertyManagerTest {
         ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
         propertyManager.setParallelizationMode("scenarios");
         propertyManager.logProperties();
-        verify(logger, times(6)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
+        verify(logger, times(6)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class),
+                                      any(CucableLogger.CucableLogLevel.class)
+        );
         List<String> capturedLogs = logCaptor.getAllValues();
         assertThat(capturedLogs.get(0), is("- sourceFeatures:"));
         assertThat(capturedLogs.get(1), is("- sourceRunnerTemplateFile     : null"));
@@ -245,7 +250,9 @@ public class PropertyManagerTest {
 
         propertyManager.logProperties();
 
-        verify(logger, times(12)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class));
+        verify(logger, times(12)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class),
+                                       any(CucableLogger.CucableLogLevel.class)
+        );
         List<String> capturedLogs = logCaptor.getAllValues();
         assertThat(capturedLogs.get(0), is("- sourceFeatures:"));
         assertThat(capturedLogs.get(1), is("  - test.feature (line 3)"));
@@ -264,7 +271,8 @@ public class PropertyManagerTest {
     @Test
     public void logMissingPropertiesTest() throws CucablePluginException {
         expectedException.expect(WrongOrMissingPropertiesException.class);
-        expectedException.expectMessage("Properties not specified correctly in the configuration section of your pom file: [<sourceFeatures>, <sourceRunnerTemplateFile>, <generatedRunnerDirectory>, <generatedFeatureDirectory>]");
+        expectedException.expectMessage(
+                "Properties not specified correctly in the configuration section of your pom file: [<sourceFeatures>, <sourceRunnerTemplateFile>, <generatedRunnerDirectory>, <generatedFeatureDirectory>]");
         propertyManager.checkForMissingMandatoryProperties();
 
     }

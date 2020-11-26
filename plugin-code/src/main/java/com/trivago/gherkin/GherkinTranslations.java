@@ -10,6 +10,8 @@ import javax.inject.Singleton;
 class GherkinTranslations {
 
     private static final String SCENARIO = "Scenario";
+    private static final String BACKGROUND = "Background";
+
     private final GherkinDialectProvider gherkinDialectProvider;
 
     @Inject

@@ -19,18 +19,20 @@ public class PojoTest {
 
     @Test
     public void ensureExpectedPojoCount() {
-        List<PojoClass> pojoClasses = PojoClassFactory.getPojoClasses(POJO_PACKAGE,
-                pojoClass -> !pojoClass.getSourcePath().contains("/test-classes/"));
+        List<PojoClass> pojoClasses = PojoClassFactory.getPojoClasses(
+                POJO_PACKAGE,
+                pojoClass -> !pojoClass.getSourcePath().contains("/test-classes/")
+        );
         Affirm.affirmEquals("Classes added / removed?", EXPECTED_CLASS_COUNT, pojoClasses.size());
     }
 
     @Test
     public void testPojoStructureAndBehavior() {
         Validator validator = ValidatorBuilder.create()
-                .with(new SetterTester())
-                .with(new GetterTester())
-                .with(new NoPublicFieldsExceptStaticFinalRule())
-                .build();
+                                              .with(new SetterTester())
+                                              .with(new GetterTester())
+                                              .with(new NoPublicFieldsExceptStaticFinalRule())
+                                              .build();
 
         validator.validate(POJO_PACKAGE, new FilterPackageInfo());
     }

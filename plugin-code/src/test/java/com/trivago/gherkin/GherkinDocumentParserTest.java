@@ -33,7 +33,10 @@ public class GherkinDocumentParserTest {
         GherkinTranslations gherkinTranslations = new GherkinTranslations();
         propertyManager = mock(PropertyManager.class);
         mockedLogger = mock(CucableLogger.class);
-        gherkinDocumentParser = new GherkinDocumentParser(gherkinToCucableConverter, gherkinTranslations, propertyManager, mockedLogger);
+        gherkinDocumentParser =
+                new GherkinDocumentParser(gherkinToCucableConverter, gherkinTranslations, propertyManager,
+                                          mockedLogger
+                );
     }
 
     @Test
@@ -45,15 +48,16 @@ public class GherkinDocumentParserTest {
     @Test
     public void validFeatureTest() throws Exception {
         String featureContent = "@featureTag\n" +
-                "Feature: test feature\n" +
-                "\n" +
-                "@scenario1Tag1\n" +
-                "@scenario1Tag2\n" +
-                "Scenario: This is a scenario with two steps\n" +
-                "Given this is step 1\n" +
-                "Then this is step 2\n";
+                                "Feature: test feature\n" +
+                                "\n" +
+                                "@scenario1Tag1\n" +
+                                "@scenario1Tag2\n" +
+                                "Scenario: This is a scenario with two steps\n" +
+                                "Given this is step 1\n" +
+                                "Then this is step 2\n";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(1));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -69,7 +73,8 @@ public class GherkinDocumentParserTest {
 
         when(propertyManager.getIncludeScenarioTags()).thenReturn("@tag1");
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(1));
     }
 
@@ -79,7 +84,8 @@ public class GherkinDocumentParserTest {
 
         when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("scenario 1"));
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(1));
     }
 
@@ -89,7 +95,8 @@ public class GherkinDocumentParserTest {
 
         when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("Mulțumesc"));
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(2));
     }
 
@@ -106,7 +113,8 @@ public class GherkinDocumentParserTest {
 
         when(propertyManager.getIncludeScenarioTags()).thenReturn("@tag1 or @tag3");
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(2));
     }
 
@@ -116,7 +124,8 @@ public class GherkinDocumentParserTest {
 
         when(propertyManager.getScenarioNames()).thenReturn(Arrays.asList("scenario 1", "scenario 2"));
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(2));
     }
 
@@ -127,7 +136,8 @@ public class GherkinDocumentParserTest {
         when(propertyManager.getIncludeScenarioTags()).thenReturn("@tag1 or @tag3");
         when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("scenario 1"));
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(1));
     }
 
@@ -138,7 +148,8 @@ public class GherkinDocumentParserTest {
         when(propertyManager.getIncludeScenarioTags()).thenReturn("@tag1 or @tag3");
         when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("scenario 3"));
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(0));
     }
 
@@ -149,7 +160,8 @@ public class GherkinDocumentParserTest {
         when(propertyManager.getIncludeScenarioTags()).thenReturn("@tag4");
         when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("scenario 1"));
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(0));
     }
 
@@ -159,7 +171,8 @@ public class GherkinDocumentParserTest {
 
         when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList(""));
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(2));
     }
 
@@ -169,20 +182,22 @@ public class GherkinDocumentParserTest {
 
         when(propertyManager.getIncludeScenarioTags()).thenReturn("@tag1 and @tag2");
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(1));
     }
 
     @Test
     public void validFeatureOneIncludeTagNoScenarioTagsTest() throws Exception {
         String featureContent = "@featureTag\n" +
-                "Feature: test feature\n" +
-                "\n" +
-                "Scenario: scenario 1";
+                                "Feature: test feature\n" +
+                                "\n" +
+                                "Scenario: scenario 1";
 
         when(propertyManager.getIncludeScenarioTags()).thenReturn("@tag1");
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(0));
     }
 
@@ -192,7 +207,8 @@ public class GherkinDocumentParserTest {
 
         when(propertyManager.getIncludeScenarioTags()).thenReturn("@featureTag");
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(2));
     }
 
@@ -205,16 +221,17 @@ public class GherkinDocumentParserTest {
     @Test
     public void validFeatureWithDataTableTest() throws Exception {
         String featureContent = "@featureTag\n" +
-                "Feature: test feature\n" +
-                "\n" +
-                "@scenario1Tag1\n" +
-                "@scenario1Tag2\n" +
-                "Scenario: This is a scenario with two steps\n" +
-                "Given this is step 1\n" +
-                "|value1|value2|\n" +
-                "Then this is step 2\n";
+                                "Feature: test feature\n" +
+                                "\n" +
+                                "@scenario1Tag1\n" +
+                                "@scenario1Tag2\n" +
+                                "Scenario: This is a scenario with two steps\n" +
+                                "Given this is step 1\n" +
+                                "|value1|value2|\n" +
+                                "Then this is step 2\n";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(1));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -230,17 +247,18 @@ public class GherkinDocumentParserTest {
     @Test
     public void validFeatureWithBackgroundScenarioTest() throws Exception {
         String featureContent = "Feature: FeatureName\n" +
-                "\n" +
-                "  Background:\n" +
-                "    Given BackgroundGivenStep\n" +
-                "    And BackgroundGivenStep2\n" +
-                "\n" +
-                "  @tag1\n" +
-                "  @tag2\n" +
-                "  Scenario: This is a scenario with background\n" +
-                "    Then ThenStep";
+                                "\n" +
+                                "  Background:\n" +
+                                "    Given BackgroundGivenStep\n" +
+                                "    And BackgroundGivenStep2\n" +
+                                "\n" +
+                                "  @tag1\n" +
+                                "  @tag2\n" +
+                                "  Scenario: This is a scenario with background\n" +
+                                "    Then ThenStep";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(1));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -254,17 +272,18 @@ public class GherkinDocumentParserTest {
     @Test
     public void validFeatureWithScenarioOutlineTest() throws Exception {
         String featureContent = "Feature: test feature 3\n" +
-                "\n" +
-                "  Scenario Outline: This is a scenario outline\n" +
-                "    When I search for key <key>\n" +
-                "    Then I see the value '<value>'\n" +
-                "\n" +
-                "    Examples:\n" +
-                "      | key | value |\n" +
-                "      | 1   | one   |\n" +
-                "      | 2   | two   |";
+                                "\n" +
+                                "  Scenario Outline: This is a scenario outline\n" +
+                                "    When I search for key <key>\n" +
+                                "    Then I see the value '<value>'\n" +
+                                "\n" +
+                                "    Examples:\n" +
+                                "      | key | value |\n" +
+                                "      | 1   | one   |\n" +
+                                "      | 2   | two   |";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(2));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -291,22 +310,23 @@ public class GherkinDocumentParserTest {
     @Test
     public void validFeatureWithScenarioOutlineAndTwoExampleTablesTest() throws Exception {
         String featureContent = "Feature: test feature 3\n" +
-                "\n" +
-                "  Scenario Outline: This is a scenario outline\n" +
-                "    When I search for key <key>\n" +
-                "    Then I see the value '<value>'\n" +
-                "\n" +
-                "    Examples:\n" +
-                "      | key | value |\n" +
-                "      | 1   | one   |\n" +
-                "      | 2   | two   |\n" +
-                "\n" +
-                "    Examples:\n" +
-                "      | key | value |\n" +
-                "      | 1   | uno   |\n" +
-                "      | 2   | dos   |";
+                                "\n" +
+                                "  Scenario Outline: This is a scenario outline\n" +
+                                "    When I search for key <key>\n" +
+                                "    Then I see the value '<value>'\n" +
+                                "\n" +
+                                "    Examples:\n" +
+                                "      | key | value |\n" +
+                                "      | 1   | one   |\n" +
+                                "      | 2   | two   |\n" +
+                                "\n" +
+                                "    Examples:\n" +
+                                "      | key | value |\n" +
+                                "      | 1   | uno   |\n" +
+                                "      | 2   | dos   |";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(4));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -353,17 +373,18 @@ public class GherkinDocumentParserTest {
     @Test
     public void validScenarioNamesWithScenarioOutlineTest() throws Exception {
         String featureContent = "Feature: test feature 3\n" +
-                "\n" +
-                "  Scenario Outline: This is a scenario outline, key = <key>, value = <value>\n" +
-                "    This is a step\n" +
-                "    How about another step\n" +
-                "\n" +
-                "    Examples:\n" +
-                "      | key | value |\n" +
-                "      | 1   | one   |\n" +
-                "      | 2   | two   |";
+                                "\n" +
+                                "  Scenario Outline: This is a scenario outline, key = <key>, value = <value>\n" +
+                                "    This is a step\n" +
+                                "    How about another step\n" +
+                                "\n" +
+                                "    Examples:\n" +
+                                "      | key | value |\n" +
+                                "      | 1   | one   |\n" +
+                                "      | 2   | two   |";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(2));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
@@ -375,16 +396,17 @@ public class GherkinDocumentParserTest {
     @Test
     public void validScenarioWithLineBreakInExampleTableTest() throws Exception {
         String featureContent = "Feature: test feature 3\n" +
-                "\n" +
-                "  Scenario Outline: This is a scenario outline\n" +
-                "    Given this is a step with <key> and <value>\n" +
-                "\n" +
-                "    Examples:\n" +
-                "      | key | value |\n" +
-                "      | 1   | one   |\n" +
-                "      | 23   | two\\nthree   |";
+                                "\n" +
+                                "  Scenario Outline: This is a scenario outline\n" +
+                                "    Given this is a step with <key> and <value>\n" +
+                                "\n" +
+                                "    Examples:\n" +
+                                "      | key | value |\n" +
+                                "      | 1   | one   |\n" +
+                                "      | 23   | two\\nthree   |";
 
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         String stepName = singleScenariosFromFeature.get(1).getSteps().get(0).getName();
         assertThat(stepName, is("Given this is a step with 23 and two\\nthree"));
     }
@@ -392,43 +414,52 @@ public class GherkinDocumentParserTest {
     @Test
     public void replacePlaceholderInStringTest() throws Exception {
         String featureContent = "Feature: test feature 3\n" +
-                "\n" +
-                "  Scenario Outline: This is a scenario with <key> and <value>!\n" +
-                "    Given this is a step\n" +
-                "\n" +
-                "    Examples:\n" +
-                "      | key | value |\n" +
-                "      | 1   | one   |\n";
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
-        assertThat(singleScenariosFromFeature.get(0).getScenarioName(), is("Scenario: This is a scenario with 1 and one!"));
+                                "\n" +
+                                "  Scenario Outline: This is a scenario with <key> and <value>!\n" +
+                                "    Given this is a step\n" +
+                                "\n" +
+                                "    Examples:\n" +
+                                "      | key | value |\n" +
+                                "      | 1   | one   |\n";
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(
+                singleScenariosFromFeature.get(0).getScenarioName(),
+                is("Scenario: This is a scenario with 1 and one!")
+        );
     }
 
     @Test
     public void replacePlaceholderInStringWithMissingPlaceholdersTest() throws Exception {
         String featureContent = "Feature: test feature 3\n" +
-                "\n" +
-                "  Scenario Outline: This is a scenario with <key> and <value>!\n" +
-                "    Given this is a step\n" +
-                "\n" +
-                "    Examples:\n" +
-                "      | someKey | someValue |\n" +
-                "      | 1       | one       |\n";
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
-        assertThat(singleScenariosFromFeature.get(0).getScenarioName(), is("Scenario: This is a scenario with <key> and <value>!"));
+                                "\n" +
+                                "  Scenario Outline: This is a scenario with <key> and <value>!\n" +
+                                "    Given this is a step\n" +
+                                "\n" +
+                                "    Examples:\n" +
+                                "      | someKey | someValue |\n" +
+                                "      | 1       | one       |\n";
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(
+                singleScenariosFromFeature.get(0).getScenarioName(),
+                is("Scenario: This is a scenario with <key> and <value>!")
+        );
     }
 
     @Test
     public void replaceDataTableExamplePlaceholderTest() throws Exception {
         String featureContent = "Feature: test feature 3\n" +
-                "\n" +
-                "  Scenario Outline: This is a scenario outline\n" +
-                "    When I search for key <key>\n" +
-                "    | test | <key> | <value> |" +
-                "\n" +
-                "    Examples:\n" +
-                "      | key | value |\n" +
-                "      | 1   | one   |\n";
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+                                "\n" +
+                                "  Scenario Outline: This is a scenario outline\n" +
+                                "    When I search for key <key>\n" +
+                                "    | test | <key> | <value> |" +
+                                "\n" +
+                                "    Examples:\n" +
+                                "      | key | value |\n" +
+                                "      | 1   | one   |\n";
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(1));
         assertThat(singleScenariosFromFeature.get(0).getSteps().size(), is(1));
 
@@ -444,7 +475,8 @@ public class GherkinDocumentParserTest {
     @Test
     public void taggedFeatureAndExamplesTest() throws Exception {
         String featureContent = getScenarioWithFeatureAndExampleTags();
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(3));
         assertThat(singleScenariosFromFeature.get(0).getSteps().size(), is(2));
         assertThat(singleScenariosFromFeature.get(1).getSteps().size(), is(2));
@@ -456,7 +488,8 @@ public class GherkinDocumentParserTest {
     public void taggedFeatureAndExamplesRequestedExampleTagTest() throws Exception {
         String featureContent = getScenarioWithFeatureAndExampleTags();
         when(propertyManager.getIncludeScenarioTags()).thenReturn("@exampleTag1");
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(1));
         assertThat(singleScenariosFromFeature.get(0).getSteps().size(), is(2));
     }
@@ -465,7 +498,8 @@ public class GherkinDocumentParserTest {
     public void taggedFeatureAndExamplesRequestedFeatureAndExampleTagTest() throws Exception {
         String featureContent = getScenarioWithFeatureAndExampleTags();
         when(propertyManager.getIncludeScenarioTags()).thenReturn("@featureTag and @exampleTag1");
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(1));
         assertThat(singleScenariosFromFeature.get(0).getSteps().size(), is(2));
     }
@@ -474,51 +508,52 @@ public class GherkinDocumentParserTest {
     public void taggedFeatureAndExamplesRequestedInvalidExampleTagTest() throws Exception {
         String featureContent = getScenarioWithFeatureAndExampleTags();
         when(propertyManager.getIncludeScenarioTags()).thenReturn("@exampleTag1 and @exampleTag2");
-        List<SingleScenario> singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(0));
     }
 
     private String getScenarioWithFeatureAndExampleTags() {
         return "@featureTag\n" +
-                "Feature: test feature 3\n" +
-                "\n" +
-                "  Scenario Outline: This is a scenario outline\n" +
-                "    When I search for key <key>\n" +
-                "    Then I get <value>\n" +
-                "\n" +
-                "@exampleTag1\n" +
-                "Examples:\n" +
-                "      | key | value   |\n" +
-                "      | 1   | one     |\n" +
-                "@exampleTag2\n" +
-                "Examples:\n" +
-                "      | key | value   |\n" +
-                "      | 2   | two     |\n" +
-                "@exampleTag3\n" +
-                "Examples:\n" +
-                "      | key | value   |\n" +
-                "      | 3   | three   |\n";
+               "Feature: test feature 3\n" +
+               "\n" +
+               "  Scenario Outline: This is a scenario outline\n" +
+               "    When I search for key <key>\n" +
+               "    Then I get <value>\n" +
+               "\n" +
+               "@exampleTag1\n" +
+               "Examples:\n" +
+               "      | key | value   |\n" +
+               "      | 1   | one     |\n" +
+               "@exampleTag2\n" +
+               "Examples:\n" +
+               "      | key | value   |\n" +
+               "      | 2   | two     |\n" +
+               "@exampleTag3\n" +
+               "Examples:\n" +
+               "      | key | value   |\n" +
+               "      | 3   | three   |\n";
     }
 
     private String getTwoScenariosWithTags() {
         return "@featureTag\n" +
-                "Feature: test feature\n" +
-                "\n" +
-                "@tag1\n" +
-                "@tag2\n" +
-                "Scenario: scenario 1\n" +
-                "\n" +
-                "@tag2\n" +
-                "@tag3\n" +
-                "Scenario: scenario 2";
+               "Feature: test feature\n" +
+               "\n" +
+               "@tag1\n" +
+               "@tag2\n" +
+               "Scenario: scenario 1\n" +
+               "\n" +
+               "@tag2\n" +
+               "@tag3\n" +
+               "Scenario: scenario 2";
     }
 
     private String getTwoScenariosNonEnglish() {
         return "#language: ro\n" +
-                "Funcţionalitate: Bună ziua\n" +
-                "\n" +
-                "Scenariu: Mulțumesc foarte mult\n" +
-                "\n" +
-                "Scenariu: Mulțumesc foarte mult 2";
+               "Funcţionalitate: Bună ziua\n" +
+               "\n" +
+               "Scenariu: Mulțumesc foarte mult\n" +
+               "\n" +
+               "Scenariu: Mulțumesc foarte mult 2";
     }
 }

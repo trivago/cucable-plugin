@@ -17,6 +17,7 @@
 package com.trivago.gherkin;
 
 import com.trivago.exceptions.CucablePluginException;
+import com.trivago.exceptions.filesystem.FeatureFileParseException;
 import com.trivago.logging.CucableLogger;
 import com.trivago.properties.PropertyManager;
 import com.trivago.vo.DataTable;
@@ -51,7 +52,6 @@ public class GherkinDocumentParser {
 
     private static final Pattern SCENARIO_OUTLINE_PLACEHOLDER_PATTERN = Pattern.compile("<.+?>");
 
-    private final TagExpressionParser tagExpressionParser = new TagExpressionParser();
     private final GherkinToCucableConverter gherkinToCucableConverter;
     private final GherkinTranslations gherkinTranslations;
     private final PropertyManager propertyManager;
@@ -62,7 +62,8 @@ public class GherkinDocumentParser {
             final GherkinToCucableConverter gherkinToCucableConverter,
             final GherkinTranslations gherkinTranslations,
             final PropertyManager propertyManager,
-            final CucableLogger logger) {
+            final CucableLogger logger
+    ) {
         this.gherkinToCucableConverter = gherkinToCucableConverter;
         this.gherkinTranslations = gherkinTranslations;
         this.propertyManager = propertyManager;
@@ -80,10 +81,16 @@ public class GherkinDocumentParser {
     public List<SingleScenario> getSingleScenariosFromFeature(
             final String featureContent,
             final String featureFilePath,
-            final List<Integer> scenarioLineNumbers) throws CucablePluginException {
+            final List<Integer> scenarioLineNumbers
+    ) throws CucablePluginException {
 
         String escapedFeatureContent = featureContent.replace("\\n", "\\\\n");
-        GherkinDocument gherkinDocument = getGherkinDocumentFromFeatureFileContent(escapedFeatureContent);
+        GherkinDocument gherkinDocument;
+        try {
+            gherkinDocument = getGherkinDocumentFromFeatureFileContent(escapedFeatureContent);
+        } catch (CucablePluginException e) {
+            throw new FeatureFileParseException(featureFilePath, e.getMessage());
+        }
 
         Feature feature = gherkinDocument.getFeature();
         if (feature == null) {
@@ -113,8 +120,8 @@ public class GherkinDocumentParser {
             if (scenarioDefinition instanceof Scenario) {
                 Scenario scenario = (Scenario) scenarioDefinition;
                 if (scenarioLineNumbers == null
-                        || scenarioLineNumbers.isEmpty()
-                        || scenarioLineNumbers.contains(scenario.getLocation().getLine())) {
+                    || scenarioLineNumbers.isEmpty()
+                    || scenarioLineNumbers.contains(scenario.getLocation().getLine())) {
                     SingleScenario singleScenario =
                             new SingleScenario(
                                     featureName,
@@ -138,8 +145,8 @@ public class GherkinDocumentParser {
                 ScenarioOutline scenarioOutline = (ScenarioOutline) scenarioDefinition;
 
                 if (scenarioLineNumbers == null
-                        || scenarioLineNumbers.isEmpty()
-                        || scenarioLineNumbers.contains(scenarioOutline.getLocation().getLine())) {
+                    || scenarioLineNumbers.isEmpty()
+                    || scenarioLineNumbers.contains(scenarioOutline.getLocation().getLine())) {
                     List<SingleScenario> outlineScenarios =
                             getSingleScenariosFromOutline(
                                     scenarioOutline,
@@ -243,7 +250,8 @@ public class GherkinDocumentParser {
      * @return A {@link Step} list with substituted names.
      */
     private List<Step> substituteStepExamplePlaceholders(
-            final List<Step> steps, final Map<String, List<String>> exampleMap, final int rowIndex) {
+            final List<Step> steps, final Map<String, List<String>> exampleMap, final int rowIndex
+    ) {
 
         List<Step> substitutedSteps = new ArrayList<>();
         for (Step step : steps) {
@@ -297,7 +305,8 @@ public class GherkinDocumentParser {
      * @param singleScenario  an existing Cucable {@link SingleScenario}.
      */
     private void addGherkinScenarioInformationToSingleScenario(
-            final Scenario gherkinScenario, final SingleScenario singleScenario) {
+            final Scenario gherkinScenario, final SingleScenario singleScenario
+    ) {
 
         List<String> tags = gherkinToCucableConverter.convertGherkinTagsToCucableTags(gherkinScenario.getTags());
         singleScenario.setScenarioTags(tags);
@@ -322,7 +331,7 @@ public class GherkinDocumentParser {
         try {
             gherkinDocument = gherkinDocumentParser.parse(featureContent);
         } catch (ParserException parserException) {
-            throw new CucablePluginException("Could not parse feature: " + parserException.getMessage());
+            throw new CucablePluginException(parserException.getMessage());
         }
 
         if (gherkinDocument == null || gherkinDocument.getFeature() == null) {
@@ -356,10 +365,11 @@ public class GherkinDocumentParser {
         }
 
         try {
-            Expression tagExpression = tagExpressionParser.parse(includeScenarioTags);
+            Expression tagExpression = TagExpressionParser.parse(includeScenarioTags);
             return tagExpression.evaluate(combinedScenarioTags) && scenarioNameMatchExists;
         } catch (TagExpressionException e) {
-            throw new CucablePluginException("The tag expression '" + includeScenarioTags + "' is invalid: " + e.getMessage());
+            throw new CucablePluginException(
+                    "The tag expression '" + includeScenarioTags + "' is invalid: " + e.getMessage());
         }
 
     }
@@ -405,7 +415,8 @@ public class GherkinDocumentParser {
     private String replacePlaceholderInString(
             final String sourceString,
             final Map<String, List<String>> exampleMap,
-            final int rowIndex) {
+            final int rowIndex
+    ) {
 
         String result = sourceString;
         Matcher m = SCENARIO_OUTLINE_PLACEHOLDER_PATTERN.matcher(sourceString);

@@ -14,8 +14,8 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
-import static org.hamcrest.core.Is.is;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 public class GherkinToCucableConverterTest {
     private GherkinToCucableConverter gherkinToCucableConverter;
@@ -29,9 +29,11 @@ public class GherkinToCucableConverterTest {
     public void convertGherkinStepsToCucableStepsTest() {
         List<Step> gherkinSteps = Arrays.asList(
                 new Step(new Location(1, 1),
-                        "Given ", "this is a test step", null),
+                         "Given ", "this is a test step", null
+                ),
                 new Step(new Location(2, 1),
-                        "Then ", "I get a test result", null)
+                         "Then ", "I get a test result", null
+                )
         );
 
         List<com.trivago.vo.Step> steps = gherkinToCucableConverter.convertGherkinStepsToCucableSteps(gherkinSteps);
