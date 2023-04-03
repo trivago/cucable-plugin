@@ -518,13 +518,13 @@ After this step, use the *build-helper-maven-plugin* in your POM file in order t
                 <goals>
                     <goal>add-test-source</goal>
                 </goals>
+                <configuration>
+                  <sources>
+                    <source>${project.build.directory}/parallel/runners</source>
+                  </sources>
+                </configuration>   
             </execution>
-        </executions>
-        <configuration>
-            <sources>
-                <source>${project.build.directory}/parallel/runners</source>
-            </sources>
-        </configuration>    
+        </executions> 
     </plugin>
 </plugins>
 
