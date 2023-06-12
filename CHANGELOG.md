@@ -6,6 +6,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.10.0] - UNRELEASED
+
+### Changed
+
+* Dependency updates 
+
 ## [1.9.0] - 2020-11-26
 
 ### Added
@@ -317,6 +323,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[1.10.0]: https://github.com/trivago/cucable-plugin/compare/1.9.0...1.10.0
 [1.9.0]: https://github.com/trivago/cucable-plugin/compare/1.8.0...1.9.0
 [1.8.0]: https://github.com/trivago/cucable-plugin/compare/1.7.2...1.8.0
 [1.7.2]: https://github.com/trivago/cucable-plugin/compare/1.7.1...1.7.2
