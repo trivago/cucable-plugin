@@ -1,7 +1,7 @@
 package com.trivago.runners;
 
 import com.trivago.exceptions.CucablePluginException;
-import com.trivago.files.FileIO;
+import com.trivago.files.FileSystemManager;
 import com.trivago.logging.CucableLogger;
 import com.trivago.properties.PropertyManager;
 import com.trivago.vo.FeatureRunner;
@@ -19,16 +19,16 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 public class RunnerFileContentRendererTest {
-    private FileIO fileIO;
+    private FileSystemManager fileSystemManager;
     private RunnerFileContentRenderer runnerFileContentRenderer;
     private PropertyManager propertyManager;
 
     @Before
     public void setup() {
-        fileIO = mock(FileIO.class);
+        fileSystemManager = mock(FileSystemManager.class);
         propertyManager = mock(PropertyManager.class);
         CucableLogger logger = mock(CucableLogger.class);
-        runnerFileContentRenderer = new RunnerFileContentRenderer(fileIO, propertyManager, logger);
+        runnerFileContentRenderer = new RunnerFileContentRenderer(fileSystemManager, propertyManager, logger);
     }
 
     @Test
@@ -45,7 +45,7 @@ public class RunnerFileContentRendererTest {
                           "public class [CUCABLE:RUNNER] {\n" +
                           "}\n";
 
-        when(fileIO.readContentFromFile(anyString())).thenReturn(template);
+        when(fileSystemManager.readContentFromFile(anyString())).thenReturn(template);
 
         String expectedOutput = "package parallel;\n" +
                                 "\n" +
@@ -91,7 +91,7 @@ public class RunnerFileContentRendererTest {
                           "public class [CUCABLE:RUNNER] {\n" +
                           "}\n";
 
-        when(fileIO.readContentFromFile(anyString())).thenReturn(template);
+        when(fileSystemManager.readContentFromFile(anyString())).thenReturn(template);
 
         String expectedOutput = "package parallel;\n" +
                                 "\n" +
@@ -140,7 +140,7 @@ public class RunnerFileContentRendererTest {
                           "public class MyClass {\n" +
                           "}\n";
 
-        when(fileIO.readContentFromFile(anyString())).thenReturn(template);
+        when(fileSystemManager.readContentFromFile(anyString())).thenReturn(template);
 
         String expectedOutput = "\n" +
                                 "\n" +
@@ -190,7 +190,7 @@ public class RunnerFileContentRendererTest {
                           "public class MyClass {\n" +
                           "}\n";
 
-        when(fileIO.readContentFromFile(anyString())).thenReturn(template);
+        when(fileSystemManager.readContentFromFile(anyString())).thenReturn(template);
 
         String expectedOutput = "\n" +
                                 "\n" +
@@ -240,7 +240,7 @@ public class RunnerFileContentRendererTest {
                           "public class [FEATURE_FILE_NAME] {\n" +
                           "}\n";
 
-        when(fileIO.readContentFromFile(anyString())).thenReturn(template);
+        when(fileSystemManager.readContentFromFile(anyString())).thenReturn(template);
 
         ArrayList<String> featureFileNames = new ArrayList<>();
         featureFileNames.add("featureFileName");
@@ -255,7 +255,7 @@ public class RunnerFileContentRendererTest {
     public void customParametersTest() throws CucablePluginException {
         String template =
                 "Template [CUCABLE:FEATURE] [CUCABLE:CUSTOM:test1]!\n[CUCABLE:CUSTOM:test2], [CUCABLE:CUSTOM:test1]...";
-        when(fileIO.readContentFromFile(anyString())).thenReturn(template);
+        when(fileSystemManager.readContentFromFile(anyString())).thenReturn(template);
 
         Map<String, String> customParameters = new HashMap<>();
         customParameters.put("test1", "testvalue1");
@@ -285,7 +285,7 @@ public class RunnerFileContentRendererTest {
     public void missingRequiredPlaceholderTest() throws Exception {
         String template = "No Placeholder included";
 
-        when(fileIO.readContentFromFile(anyString())).thenReturn(template);
+        when(fileSystemManager.readContentFromFile(anyString())).thenReturn(template);
 
         ArrayList<String> featureFileNames = new ArrayList<>();
         featureFileNames.add("featureFileName");

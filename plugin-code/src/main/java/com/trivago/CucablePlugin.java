@@ -166,10 +166,11 @@ CucablePlugin extends AbstractMojo {
         propertyManager.logProperties();
 
         // Create the necessary directories if missing.
-        fileManager.prepareGeneratedFeatureAndRunnerDirectories();
+        fileManager.prepareGeneratedFeatureAndRunnerDirectories(propertyManager.getGeneratedRunnerDirectory(),
+                propertyManager.getGeneratedFeatureDirectory());
 
         // Conversion of scenarios into single scenarios and runners.
-       featureFileConverter.generateParallelizableFeatures(propertyManager.getSourceFeatures());
+        featureFileConverter.generateParallelizableFeatures(propertyManager.getSourceFeatures());
     }
 
     /**

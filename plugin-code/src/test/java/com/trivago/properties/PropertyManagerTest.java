@@ -1,9 +1,8 @@
 package com.trivago.properties;
 
 import com.trivago.exceptions.CucablePluginException;
-import com.trivago.exceptions.filesystem.MissingFileException;
 import com.trivago.exceptions.properties.WrongOrMissingPropertiesException;
-import com.trivago.files.FileIO;
+import com.trivago.files.FileSystemManager;
 import com.trivago.logging.CucableLogger;
 import com.trivago.vo.CucableFeature;
 import org.junit.Before;
@@ -22,10 +21,8 @@ import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
+import static org.mockito.ArgumentMatchers.anyString;
+import static org.mockito.Mockito.*;
 
 public class PropertyManagerTest {
     @Rule
@@ -34,13 +31,13 @@ public class PropertyManagerTest {
     public ExpectedException expectedException = ExpectedException.none();
     private PropertyManager propertyManager;
     private CucableLogger logger;
-    private FileIO fileIO;
+    private FileSystemManager fileSystemManager;
 
     @Before
     public void setup() {
         logger = mock(CucableLogger.class);
-        fileIO = mock(FileIO.class);
-        propertyManager = new PropertyManager(logger, fileIO);
+        fileSystemManager = mock(FileSystemManager.class);
+        propertyManager = new PropertyManager(logger, fileSystemManager);
     }
 
     @Test
@@ -117,7 +114,51 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void featureWithoutScenarioLineNumberTest() throws MissingFileException {
+    public void featureWithTextFileAndRegularFeature() throws CucablePluginException {
+        when(fileSystemManager.readContentFromFile("src/test/resources/features.txt")).thenCallRealMethod();
+        propertyManager.setSourceFeatures("MyTest1.feature, @src/test/resources/features.txt");
+        List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
+        assertThat(sourceFeatures.size(), is(3));
+        assertThat(sourceFeatures.get(0).getName(), is("MyTest1.feature"));
+        assertThat(sourceFeatures.get(0).getLineNumbers(), is(notNullValue()));
+        assertThat(sourceFeatures.get(0).getLineNumbers().size(), is(0));
+        assertThat(sourceFeatures.get(1).getName(), is("file:///features/feature1.feature"));
+        assertThat(sourceFeatures.get(1).getLineNumbers(), is(notNullValue()));
+        assertThat(sourceFeatures.get(1).getLineNumbers().size(), is(1));
+        assertThat(sourceFeatures.get(1).getLineNumbers().get(0), is(12));
+        assertThat(sourceFeatures.get(2).getName(), is("file:///features/feature2.feature"));
+        assertThat(sourceFeatures.get(2).getLineNumbers(), is(notNullValue()));
+        assertThat(sourceFeatures.get(2).getLineNumbers().size(), is(1));
+        assertThat(sourceFeatures.get(2).getLineNumbers().get(0), is(25));
+    }
+
+    @Test
+    public void featureWithTextFileFolder() throws CucablePluginException {
+        when(fileSystemManager.readContentFromFile(anyString())).thenCallRealMethod();
+        when(fileSystemManager.getFilesWithExtension(anyString(), anyString())).thenCallRealMethod();
+        propertyManager.setSourceFeatures("@src/test/resources");
+        List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
+        assertThat(sourceFeatures.size(), is(4));
+        assertThat(sourceFeatures.get(0).getName(), is("file:///features/feature1.feature"));
+        assertThat(sourceFeatures.get(0).getLineNumbers(), is(notNullValue()));
+        assertThat(sourceFeatures.get(0).getLineNumbers().size(), is(1));
+        assertThat(sourceFeatures.get(0).getLineNumbers().get(0), is(12));
+        assertThat(sourceFeatures.get(1).getName(), is("file:///features/feature2.feature"));
+        assertThat(sourceFeatures.get(1).getLineNumbers(), is(notNullValue()));
+        assertThat(sourceFeatures.get(1).getLineNumbers().size(), is(1));
+        assertThat(sourceFeatures.get(1).getLineNumbers().get(0), is(25));
+        assertThat(sourceFeatures.get(2).getName(), is("file:///features/feature3.feature"));
+        assertThat(sourceFeatures.get(2).getLineNumbers(), is(notNullValue()));
+        assertThat(sourceFeatures.get(2).getLineNumbers().size(), is(1));
+        assertThat(sourceFeatures.get(2).getLineNumbers().get(0), is(13));
+        assertThat(sourceFeatures.get(3).getName(), is("file:///features/feature4.feature"));
+        assertThat(sourceFeatures.get(3).getLineNumbers(), is(notNullValue()));
+        assertThat(sourceFeatures.get(3).getLineNumbers().size(), is(1));
+        assertThat(sourceFeatures.get(3).getLineNumbers().get(0), is(26));
+    }
+
+    @Test
+    public void featureWithoutScenarioLineNumberTest() throws CucablePluginException {
         propertyManager.setSourceFeatures("my.feature");
         List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
         assertThat(sourceFeatures.size(), is(1));
@@ -127,8 +168,8 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void featureTextFileTest() throws MissingFileException {
-        when(fileIO.readContentFromFile("src/test/resources/features.txt")).thenCallRealMethod();
+    public void featureTextFileTest() throws CucablePluginException {
+        when(fileSystemManager.readContentFromFile("src/test/resources/features.txt")).thenCallRealMethod();
         propertyManager.setSourceFeatures("@src/test/resources/features.txt");
         List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
         assertThat(sourceFeatures.size(), is(2));
@@ -143,7 +184,7 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void featureWithScenarioLineNumberTest() throws MissingFileException {
+    public void featureWithScenarioLineNumberTest() throws CucablePluginException {
         propertyManager.setSourceFeatures("my.feature:123");
         List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
         assertThat(sourceFeatures.size(), is(1));
@@ -153,7 +194,7 @@ public class PropertyManagerTest {
     }
 
     @Test
-    public void featureWithInvalidScenarioLineNumberTest() throws MissingFileException {
+    public void featureWithInvalidScenarioLineNumberTest() throws CucablePluginException {
         propertyManager.setSourceFeatures("my.feature:abc");
         List<CucableFeature> sourceFeatures = propertyManager.getSourceFeatures();
         assertThat(sourceFeatures.size(), is(1));

@@ -19,7 +19,7 @@ package com.trivago.properties;
 import com.trivago.exceptions.CucablePluginException;
 import com.trivago.exceptions.filesystem.MissingFileException;
 import com.trivago.exceptions.properties.WrongOrMissingPropertiesException;
-import com.trivago.files.FileIO;
+import com.trivago.files.FileSystemManager;
 import com.trivago.logging.CucableLogger;
 import com.trivago.logging.CucableLogger.CucableLogLevel;
 import com.trivago.logging.Language;
@@ -28,10 +28,8 @@ import com.trivago.vo.CucableFeature;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.nio.file.Path;
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
@@ -43,7 +41,7 @@ import static com.trivago.logging.CucableLogger.CucableLogLevel.DEFAULT;
 public class PropertyManager {
 
     private final CucableLogger logger;
-    private final FileIO fileIO;
+    private final FileSystemManager fileSystemManager;
 
     private String sourceRunnerTemplateFile;
     private String generatedRunnerDirectory;
@@ -59,9 +57,9 @@ public class PropertyManager {
     private String cucumberFeatureListFile;
 
     @Inject
-    public PropertyManager(final CucableLogger logger, final FileIO fileIO) {
+    public PropertyManager(final CucableLogger logger, final FileSystemManager fileSystemManager) {
         this.logger = logger;
-        this.fileIO = fileIO;
+        this.fileSystemManager = fileSystemManager;
     }
 
     public String getSourceRunnerTemplateFile() {
@@ -84,16 +82,52 @@ public class PropertyManager {
         return sourceFeatures;
     }
 
-    public void setSourceFeatures(final String sourceFeatures) throws MissingFileException {
-        String featuresToProcess;
-        if (sourceFeatures.startsWith("@")) {
-            cucumberFeatureListFile = sourceFeatures.substring(1);
-            featuresToProcess = fileIO.readContentFromFile(cucumberFeatureListFile)
-                    .replace(System.lineSeparator(), ",");
-        } else {
-            featuresToProcess = sourceFeatures;
+    public void setSourceFeatures(final String sourceFeatures) throws CucablePluginException {
+
+        List<String> allFeaturePaths = new ArrayList<>();
+
+        for (String feature : sourceFeatures.split(",")) {
+            feature = feature.trim();
+            if (feature.startsWith("@")) {
+                String cleanedUpPath = feature.substring(1);
+                List<String> textFiles = new ArrayList<>();
+                if (!cleanedUpPath.endsWith(".txt")) {
+                    // consider this a path
+                    List<Path> filesWithTxtExtension = fileSystemManager.getFilesWithExtension(cleanedUpPath, FileSystemManager.TEXT_FILE_EXTENSION);
+                    for (Path path : filesWithTxtExtension) {
+                        textFiles.add(path.toString());
+                    }
+                } else {
+                    textFiles.add(cleanedUpPath);
+                }
+
+                System.out.println("ADDED " + textFiles);
+
+                for (String textFile : textFiles) {
+                    System.out.println("Reading " + textFile);
+                    String insideFeatures = fileSystemManager.readContentFromFile(textFile);
+                    System.out.println("INSIDE: " + insideFeatures);
+                    String[] split = insideFeatures.split("\n");
+                    Collections.addAll(allFeaturePaths, split);
+                }
+            } else {
+                allFeaturePaths.add(feature);
+            }
         }
-        this.sourceFeatures = sourceFeaturePathsToCucableFeatureList(featuresToProcess.split(","));
+
+        System.out.println("RESULT: " + allFeaturePaths);
+
+        this.sourceFeatures = sourceFeaturePathsToCucableFeatureList(allFeaturePaths.toArray(new String[0]));
+
+//        String featuresToProcess;
+//        if (sourceFeatures.startsWith("@")) {
+//            cucumberFeatureListFile = sourceFeatures.substring(1);
+//            featuresToProcess = fileIO.readContentFromFile(cucumberFeatureListFile)
+//                    .replace(System.lineSeparator(), ",");
+//        } else {
+//            featuresToProcess = sourceFeatures;
+//        }
+//        this.sourceFeatures = sourceFeaturePathsToCucableFeatureList(featuresToProcess.split(","));
     }
 
     private List<CucableFeature> sourceFeaturePathsToCucableFeatureList(final String[] sourceFeatures) {
@@ -152,7 +186,7 @@ public class PropertyManager {
         } catch (IllegalArgumentException e) {
             throw new CucablePluginException(
                     "Unknown <parallelizationMode> '" + parallelizationMode +
-                            "'. Please use 'scenarios' or 'features'."
+                    "'. Please use 'scenarios' or 'features'."
             );
         }
     }

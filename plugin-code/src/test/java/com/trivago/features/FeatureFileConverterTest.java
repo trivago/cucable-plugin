@@ -1,7 +1,6 @@
 package com.trivago.features;
 
 import com.trivago.exceptions.CucablePluginException;
-import com.trivago.files.FileIO;
 import com.trivago.files.FileSystemManager;
 import com.trivago.gherkin.GherkinDocumentParser;
 import com.trivago.logging.CucableLogger;
@@ -39,7 +38,6 @@ public class FeatureFileConverterTest {
     public ExpectedException expectedException = ExpectedException.none();
 
     private FeatureFileConverter featureFileConverter;
-    private FileIO fileIO;
     private PropertyManager propertyManager;
     private GherkinDocumentParser gherkinDocumentParser;
     private FeatureFileContentRenderer featureFileContentRenderer;
@@ -53,17 +51,15 @@ public class FeatureFileConverterTest {
         gherkinDocumentParser = mock(GherkinDocumentParser.class);
         featureFileContentRenderer = mock(FeatureFileContentRenderer.class);
         runnerFileContentRenderer = mock(RunnerFileContentRenderer.class);
-        fileIO = mock(FileIO.class);
         fileSystemManager = mock(FileSystemManager.class);
         logger = mock(CucableLogger.class);
-        propertyManager = new PropertyManager(logger, fileIO);
+        propertyManager = new PropertyManager(logger, fileSystemManager);
 
         featureFileConverter = new FeatureFileConverter(
                 propertyManager,
                 gherkinDocumentParser,
                 featureFileContentRenderer,
                 runnerFileContentRenderer,
-                fileIO,
                 fileSystemManager,
                 logger
         );
@@ -101,7 +97,7 @@ public class FeatureFileConverterTest {
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
 
-        when(fileIO.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
+        when(fileSystemManager.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
         CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
@@ -127,7 +123,7 @@ public class FeatureFileConverterTest {
                                       any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
         );
         assertThat(logCaptor.getAllValues().get(0), is("Cucable created 1 separate feature file and 1 runner."));
-        verify(fileIO, times(2)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(2)).writeContentToFile(anyString(), anyString());
     }
 
     @Test
@@ -144,8 +140,8 @@ public class FeatureFileConverterTest {
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
         propertyManager.setScenarioNames("scenarioName1");
 
-        when(fileIO.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
-        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME))
+        when(fileSystemManager.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
+        when(fileSystemManager.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME))
                 .thenReturn(scenarioMatchText);
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
@@ -174,7 +170,7 @@ public class FeatureFileConverterTest {
                                       any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
         );
         assertThat(logCaptor.getAllValues().get(0), is("Cucable created 1 separate feature file and 1 runner."));
-        verify(fileIO, times(2)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(2)).writeContentToFile(anyString(), anyString());
     }
 
     @Test
@@ -189,7 +185,7 @@ public class FeatureFileConverterTest {
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
         propertyManager.setParallelizationMode("features");
 
-        when(fileIO.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
+        when(fileSystemManager.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
         CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
@@ -213,7 +209,7 @@ public class FeatureFileConverterTest {
 
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
 
-        verify(fileIO, times(2)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(2)).writeContentToFile(anyString(), anyString());
     }
 
     @Test
@@ -229,7 +225,7 @@ public class FeatureFileConverterTest {
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
         propertyManager.setParallelizationMode("scenarios");
 
-        when(fileIO.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
+        when(fileSystemManager.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
         CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
@@ -253,7 +249,7 @@ public class FeatureFileConverterTest {
 
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
 
-        verify(fileIO, times(3)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(3)).writeContentToFile(anyString(), anyString());
     }
 
     @Test
@@ -273,13 +269,13 @@ public class FeatureFileConverterTest {
         propertyManager.setParallelizationMode("scenarios");
         propertyManager.setScenarioNames("scenarioName1, scenarioName2");
 
-        when(fileIO.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
-        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME1))
+        when(fileSystemManager.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
+        when(fileSystemManager.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME1))
                 .thenReturn(scenarioMatch1Text);
-        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME2))
+        when(fileSystemManager.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME2))
                 .thenReturn(scenarioMatch2Text);
 
-        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
+        when(fileSystemManager.readContentFromFile(generatedFeatureDir + "/" + FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
         CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
@@ -310,7 +306,7 @@ public class FeatureFileConverterTest {
                                       any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
         );
         assertThat(logCaptor.getAllValues().get(0), is("Cucable created 2 separate feature files and 2 runners."));
-        verify(fileIO, times(4)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(4)).writeContentToFile(anyString(), anyString());
     }
 
     @Test
@@ -330,13 +326,13 @@ public class FeatureFileConverterTest {
         propertyManager.setParallelizationMode("scenarios");
         propertyManager.setScenarioNames("scenarioName1, scenarioName2");
 
-        when(fileIO.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
-        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME1))
+        when(fileSystemManager.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
+        when(fileSystemManager.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME1))
                 .thenReturn(scenarioMatch1Text);
-        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME2))
+        when(fileSystemManager.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME2))
                 .thenReturn(scenarioMatch2Text);
 
-        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
+        when(fileSystemManager.readContentFromFile(generatedFeatureDir + "/" + FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
         CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
@@ -367,7 +363,7 @@ public class FeatureFileConverterTest {
                                       any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
         );
         assertThat(logCaptor.getAllValues().get(0), is("Cucable created 2 separate feature files and 2 runners."));
-        verify(fileIO, times(4)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(4)).writeContentToFile(anyString(), anyString());
     }
 
     @Test
@@ -383,7 +379,7 @@ public class FeatureFileConverterTest {
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
 
-        when(fileIO.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
+        when(fileSystemManager.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
         CucableFeature cucableFeature = new CucableFeature(FEATURE_FILE_NAME, null);
@@ -397,7 +393,7 @@ public class FeatureFileConverterTest {
 
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
 
-        verify(fileIO, times(2)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(2)).writeContentToFile(anyString(), anyString());
     }
 
     @Test(expected = CucablePluginException.class)
@@ -414,8 +410,8 @@ public class FeatureFileConverterTest {
         propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
         propertyManager.setScenarioNames("scenarioName1");
 
-        when(fileIO.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
-        when(fileIO.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME))
+        when(fileSystemManager.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
+        when(fileSystemManager.readContentFromFile(generatedFeatureDir + "/" + GENERATED_FEATURE_FILE_NAME))
                 .thenReturn(scenarioNoMatchText);
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();

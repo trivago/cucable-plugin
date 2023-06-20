@@ -1,9 +1,12 @@
 package com.trivago.files;
 
 import com.trivago.exceptions.CucablePluginException;
+import com.trivago.exceptions.filesystem.FileCreationException;
+import com.trivago.exceptions.filesystem.MissingFileException;
 import com.trivago.exceptions.filesystem.PathCreationException;
 import com.trivago.properties.PropertyManager;
 import com.trivago.vo.CucableFeature;
+import org.hamcrest.core.Is;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
@@ -21,36 +24,29 @@ import static org.mockito.Mockito.when;
 public class FileSystemManagerTest {
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
-    private PropertyManager propertyManager;
     private FileSystemManager fileSystemManager;
 
     @Before
     public void setup() {
-        propertyManager = mock(PropertyManager.class);
-        fileSystemManager = new FileSystemManager(propertyManager);
+        fileSystemManager = new FileSystemManager();
     }
 
     @Test(expected = PathCreationException.class)
     public void prepareGeneratedFeatureAndRunnerDirsMissingFeatureDirTest() throws Exception {
-        when(propertyManager.getGeneratedFeatureDirectory()).thenReturn("");
-        fileSystemManager.prepareGeneratedFeatureAndRunnerDirectories();
+        fileSystemManager.prepareGeneratedFeatureAndRunnerDirectories("", "");
     }
 
     @Test(expected = PathCreationException.class)
     public void prepareGeneratedFeatureAndRunnerDirsMissingRunnerDirTest() throws Exception {
         String featurePath = testFolder.getRoot().getPath().concat("/featureDir");
-        when(propertyManager.getGeneratedFeatureDirectory()).thenReturn(featurePath);
-        when(propertyManager.getGeneratedRunnerDirectory()).thenReturn("");
-        fileSystemManager.prepareGeneratedFeatureAndRunnerDirectories();
+        fileSystemManager.prepareGeneratedFeatureAndRunnerDirectories("", featurePath);
     }
 
     @Test
     public void prepareGeneratedFeatureAndRunnerDirsTest() throws Exception {
         String featurePath = testFolder.getRoot().getPath().concat("/featureDir");
         String runnerPath = testFolder.getRoot().getPath().concat("/runnerDir");
-        when(propertyManager.getGeneratedFeatureDirectory()).thenReturn(featurePath);
-        when(propertyManager.getGeneratedRunnerDirectory()).thenReturn(runnerPath);
-        fileSystemManager.prepareGeneratedFeatureAndRunnerDirectories();
+        fileSystemManager.prepareGeneratedFeatureAndRunnerDirectories(runnerPath, featurePath);
     }
 
     @Test
@@ -88,5 +84,24 @@ public class FileSystemManagerTest {
         List<Path> pathsFromCucableFeature = fileSystemManager.getPathsFromCucableFeature(cucableFeatures);
         assertThat(pathsFromCucableFeature, is(notNullValue()));
         assertThat(pathsFromCucableFeature.size(), is(1));
+    }
+
+    @Test(expected = FileCreationException.class)
+    public void writeToInvalidFileTest() throws Exception {
+        fileSystemManager.writeContentToFile(null, "");
+    }
+
+    @Test
+    public void fileReadWriteTest() throws Exception {
+        String testString = "This is a test!";
+        String path = testFolder.getRoot().getPath().concat("/test.tmp");
+        fileSystemManager.writeContentToFile(testString, path);
+        assertThat(fileSystemManager.readContentFromFile(path), Is.is(testString));
+    }
+
+    @Test(expected = MissingFileException.class)
+    public void readFromMissingFileTest() throws Exception {
+        String wrongPath = testFolder.getRoot().getPath().concat("/missing.tmp");
+        fileSystemManager.readContentFromFile(wrongPath);
     }
 }

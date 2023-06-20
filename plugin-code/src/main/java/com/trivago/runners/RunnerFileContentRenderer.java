@@ -17,7 +17,7 @@
 package com.trivago.runners;
 
 import com.trivago.exceptions.CucablePluginException;
-import com.trivago.files.FileIO;
+import com.trivago.files.FileSystemManager;
 import com.trivago.logging.CucableLogger;
 import com.trivago.properties.PropertyManager;
 import com.trivago.vo.FeatureRunner;
@@ -37,17 +37,17 @@ public class RunnerFileContentRenderer {
     private static final String CUCABLE_RUNNER_PLACEHOLDER = "[CUCABLE:RUNNER]";
     private static final String CUCABLE_CUSTOM_PLACEHOLDER = "[CUCABLE:CUSTOM:%s]";
 
-    private final FileIO fileIO;
+    private final FileSystemManager fileSystemManager;
     private final PropertyManager propertyManager;
     private final CucableLogger logger;
 
     @Inject
     public RunnerFileContentRenderer(
-            final FileIO fileIO,
+            final FileSystemManager fileSystemManager,
             final PropertyManager propertyManager,
             final CucableLogger logger
     ) {
-        this.fileIO = fileIO;
+        this.fileSystemManager = fileSystemManager;
         this.propertyManager = propertyManager;
         this.logger = logger;
     }
@@ -64,7 +64,7 @@ public class RunnerFileContentRenderer {
         final String runnerTemplatePath = featureRunner.getRunnerTemplatePath();
         final String runnerClassName = featureRunner.getRunnerClassName();
 
-        String fileString = fileIO.readContentFromFile(runnerTemplatePath);
+        String fileString = fileSystemManager.readContentFromFile(runnerTemplatePath);
         checkForPlaceholderErrors(fileString);
 
         if (runnerTemplatePath.trim().toLowerCase().endsWith(".java")) {

@@ -73,7 +73,7 @@
                     <!-- <sourceFeatures>@src/test/resources/cucumber-feature-list.txt</sourceFeatures> -->
 
                     <!-- process a folder that hosts text files containing paths to features and line numbers (as it is written by the Cucumber rerun formatter) -->
-                    <sourceFeatures>@src/test/resources</sourceFeatures>
+                    <sourceFeatures>src/test/resources/features/testfeature/sub/MyTest1.feature, @src/test/resources</sourceFeatures>
 
                     <!-- process a specific feature file and specific line numbers in the given directory -->
                     <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>-->
