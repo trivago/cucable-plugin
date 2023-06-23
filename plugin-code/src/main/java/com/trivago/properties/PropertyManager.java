@@ -175,7 +175,7 @@ public class PropertyManager {
         } catch (IllegalArgumentException e) {
             throw new CucablePluginException(
                     "Unknown <parallelizationMode> '" + parallelizationMode +
-                    "'. Please use 'scenarios' or 'features'."
+                            "'. Please use 'scenarios' or 'features'."
             );
         }
     }
@@ -285,14 +285,13 @@ public class PropertyManager {
             logger.info(String.format("- sourceFeatures from file %s:", cucumberFeatureListFile), logLevels);
         }
         if (sourceFeatures != null) {
+            String currentOrigin = null;
             for (CucableFeature sourceFeature : sourceFeatures) {
-                String logLine = "  - " + sourceFeature.getName();
-                if (sourceFeature.hasValidScenarioLineNumbers()) {
-                    List<Integer> lineNumbers = sourceFeature.getLineNumbers();
-                    logLine += String.format(" (%s %s)",
-                            Language.singularPlural(lineNumbers.size(), "line", "lines"),
-                            lineNumbers.stream().map(String::valueOf).collect(Collectors.joining(",")));
+                if (Objects.equals(currentOrigin, sourceFeature.getOrigin())) {
+                    continue;
                 }
+                currentOrigin = sourceFeature.getOrigin();
+                String logLine = "  - " + currentOrigin;
                 logger.info(logLine, logLevels);
             }
         }

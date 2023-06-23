@@ -296,7 +296,7 @@ public class PropertyManagerTest {
         );
         List<String> capturedLogs = logCaptor.getAllValues();
         assertThat(capturedLogs.get(0), is("- sourceFeatures:"));
-        assertThat(capturedLogs.get(1), is("  - test.feature (line 3)"));
+        assertThat(capturedLogs.get(1), is("  - test.feature:3"));
         assertThat(capturedLogs.get(2), is("- sourceRunnerTemplateFile     : null"));
         assertThat(capturedLogs.get(3), is("- generatedRunnerDirectory     : null"));
         assertThat(capturedLogs.get(4), is("- generatedFeatureDirectory    : null"));
