@@ -101,7 +101,8 @@ public class FeatureFileConverter {
                 logger.warn("No features and runners could be created. Please check your properties!");
             }
             for (Path path : paths) {
-                List<String> generatedFeatureFilePaths = generateParallelizableFeatures(path, cucableFeature.getLineNumbers());
+                List<String> generatedFeatureFilePaths =
+                        generateParallelizableFeatures(path, cucableFeature.getLineNumbers());
                 allGeneratedFeaturePaths.addAll(generatedFeatureFilePaths);
                 featureFileCounter += generatedFeatureFilePaths.size();
             }
@@ -136,7 +137,6 @@ public class FeatureFileConverter {
      *
      * @param sourceFeatureFilePath feature file to process.
      * @param lineNumbers           scenario line numbers.
-     * @return Number of created scenarios.
      * @throws CucablePluginException see {@link CucablePluginException}
      */
     private List<String> generateParallelizableFeatures(
@@ -176,7 +176,7 @@ public class FeatureFileConverter {
             final List<Integer> lineNumbers) throws CucablePluginException {
 
         String featureFilePathString = sourceFeatureFilePath.toString();
-        if (featureFilePathString == null || featureFilePathString.equals("")) {
+        if (featureFilePathString.equals("")) {
             throw new MissingFileException(featureFilePathString);
         }
 
@@ -383,7 +383,7 @@ public class FeatureFileConverter {
             currentRunnerFeatureCount++;
             totalFeatureCount++;
             if (totalFeatureCount == generatedFeatureNames.size() ||
-                currentRunnerFeatureCount >= numberOfDesiredFeaturesPerRunner) {
+                    currentRunnerFeatureCount >= numberOfDesiredFeaturesPerRunner) {
                 runnerFileCounter++;
                 generateRunnerClass(generatedFeatureNamesForSingleRunner);
                 currentRunnerFeatureCount = 0;

@@ -21,6 +21,7 @@ import com.trivago.features.FeatureFileConverter;
 import com.trivago.files.FileSystemManager;
 import com.trivago.logging.CucableLogger;
 import com.trivago.properties.PropertyManager;
+import com.trivago.vo.CucableFeature;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -166,8 +167,14 @@ CucablePlugin extends AbstractMojo {
         propertyManager.logProperties();
 
         // Create the necessary directories if missing.
-        fileManager.prepareGeneratedFeatureAndRunnerDirectories(propertyManager.getGeneratedRunnerDirectory(),
-                propertyManager.getGeneratedFeatureDirectory());
+        fileManager.prepareGeneratedFeatureAndRunnerDirectories(
+                propertyManager.getGeneratedRunnerDirectory(),
+                propertyManager.getGeneratedFeatureDirectory()
+        );
+
+        for (CucableFeature sourceFeature : propertyManager.getSourceFeatures()) {
+            System.out.println(sourceFeature);
+        }
 
         // Conversion of scenarios into single scenarios and runners.
         featureFileConverter.generateParallelizableFeatures(propertyManager.getSourceFeatures());

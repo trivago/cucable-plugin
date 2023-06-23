@@ -21,17 +21,14 @@ import com.trivago.exceptions.properties.WrongOrMissingPropertiesException;
 import com.trivago.files.FileSystemManager;
 import com.trivago.logging.CucableLogger;
 import com.trivago.logging.CucableLogger.CucableLogLevel;
-import com.trivago.logging.Language;
 import com.trivago.vo.CucableFeature;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import java.util.stream.Collectors;
 
 import static com.trivago.logging.CucableLogger.CucableLogLevel.COMPACT;
 import static com.trivago.logging.CucableLogger.CucableLogLevel.DEFAULT;
@@ -53,7 +50,7 @@ public class PropertyManager {
     private int desiredNumberOfRunners;
     private int desiredNumberOfFeaturesPerRunner;
     private List<String> scenarioNames = new ArrayList<>();
-    private String cucumberFeatureListFile;
+    private SortedMap<String, Integer> scenarioCountByName = new TreeMap<String, Integer>();
 
     @Inject
     public PropertyManager(final CucableLogger logger, final FileSystemManager fileSystemManager) {
@@ -85,6 +82,7 @@ public class PropertyManager {
 
         List<String> allFeaturePaths = new ArrayList<>();
         List<String> allFeaturePathOrigins = new ArrayList<>();
+        List<String> allTextFileOrigins = new ArrayList<>();
 
         for (String currentSourceFeature : sourceFeatures.split(",")) {
             currentSourceFeature = currentSourceFeature.trim();
@@ -107,17 +105,24 @@ public class PropertyManager {
                     for (String singleInsideFeature : singleInsideFeatures) {
                         allFeaturePathOrigins.add(currentSourceFeatureOrigin);
                         allFeaturePaths.add(singleInsideFeature);
+                        allTextFileOrigins.add(textFile);
                     }
                 }
             } else {
                 allFeaturePathOrigins.add(currentSourceFeatureOrigin);
                 allFeaturePaths.add(currentSourceFeature);
+                allTextFileOrigins.add("");
             }
         }
-        this.sourceFeatures = sourceFeaturePathsToCucableFeatureList(allFeaturePaths, allFeaturePathOrigins);
+        this.sourceFeatures = sourceFeaturePathsToCucableFeatureList(
+                allFeaturePaths, allTextFileOrigins, allFeaturePathOrigins
+        );
     }
 
-    private List<CucableFeature> sourceFeaturePathsToCucableFeatureList(final List<String> sourceFeatures, List<String> sourceFeatureOrigins) {
+    private List<CucableFeature> sourceFeaturePathsToCucableFeatureList(
+            final List<String> sourceFeatures,
+            final List<String> textFileOrigins,
+            List<String> sourceFeatureOrigins) {
         List<CucableFeature> cucableFeatures = new ArrayList<>();
         Pattern lineNumberPattern = Pattern.compile(":(\\d*)");
 
@@ -136,7 +141,20 @@ public class PropertyManager {
                 }
             }
             matcher.appendTail(resultBuffer);
-            cucableFeatures.add(new CucableFeature(sourceFeatureOrigins.get(i), resultBuffer.toString(), scenarioLineNumbers));
+
+            CucableFeature cucableFeature = new CucableFeature(
+                    sourceFeatureOrigins.get(i),
+                    textFileOrigins.get(i),
+                    resultBuffer.toString(),
+                    scenarioLineNumbers
+            );
+
+            if (!scenarioCountByName.containsKey(cucableFeature.getName())) {
+                scenarioCountByName.put(cucableFeature.getName(), 1);
+            } else {
+                scenarioCountByName.put(cucableFeature.getName(), scenarioCountByName.get(cucableFeature.getName()) + 1);
+            }
+            cucableFeatures.add(cucableFeature);
         }
         return cucableFeatures;
     }
@@ -261,15 +279,15 @@ public class PropertyManager {
         }
 
         String errorMessage = "";
-        if (!new File(String.valueOf(sourceFeatures.get(0).getName())).isDirectory()) {
-            errorMessage = "sourceFeatures should point to a directory!";
-        } else if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
+        if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
             errorMessage = "you cannot specify includeScenarioTags!";
         } else if (scenarioNames != null && !scenarioNames.isEmpty()) {
             errorMessage = "you cannot specify scenarioNames!";
         }
         if (!errorMessage.isEmpty()) {
-            throw new CucablePluginException("In parallelizationMode = " + ParallelizationMode.FEATURES.toString().toLowerCase() + ", ".concat(errorMessage));
+            throw new CucablePluginException("In parallelizationMode = " +
+                    ParallelizationMode.FEATURES.toString().toLowerCase() +
+                    ", ".concat(errorMessage));
         }
     }
 
@@ -279,11 +297,6 @@ public class PropertyManager {
     public void logProperties() {
         CucableLogLevel[] logLevels = new CucableLogLevel[]{DEFAULT, COMPACT};
 
-        if (!isCucumberFeatureListFileSource()) {
-            logger.info("- sourceFeatures:", logLevels);
-        } else {
-            logger.info(String.format("- sourceFeatures from file %s:", cucumberFeatureListFile), logLevels);
-        }
         if (sourceFeatures != null) {
             String currentOrigin = null;
             for (CucableFeature sourceFeature : sourceFeatures) {
@@ -342,10 +355,6 @@ public class PropertyManager {
         if (propertyValue == null || propertyValue.isEmpty()) {
             missingProperties.add(propertyName);
         }
-    }
-
-    public boolean isCucumberFeatureListFileSource() {
-        return cucumberFeatureListFile != null && !cucumberFeatureListFile.isEmpty();
     }
 
     public enum ParallelizationMode {

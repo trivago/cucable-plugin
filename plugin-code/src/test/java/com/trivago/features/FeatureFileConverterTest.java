@@ -75,14 +75,14 @@ public class FeatureFileConverterTest {
     public void convertEmptyPathListToSingleScenariosAndRunnersTest() throws Exception {
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.SCENARIOS.toString());
         List<CucableFeature> cucableFeatures = new ArrayList<>();
-        cucableFeatures.add(new CucableFeature("", "", null));
+        cucableFeatures.add(new CucableFeature("", "","", null));
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
     }
 
     @Test
     public void invalidLineNumberTest() throws Exception {
         List<CucableFeature> cucableFeatures = new ArrayList<>();
-        cucableFeatures.add(new CucableFeature("", "FEATURE_FILE.feature", Collections.singletonList(2)));
+        cucableFeatures.add(new CucableFeature("", "","FEATURE_FILE.feature", Collections.singletonList(2)));
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
     }
 
@@ -100,7 +100,7 @@ public class FeatureFileConverterTest {
         when(fileSystemManager.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
-        CucableFeature cucableFeature = new CucableFeature("", FEATURE_FILE_NAME, null);
+        CucableFeature cucableFeature = new CucableFeature("", "",FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
         when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
@@ -145,7 +145,7 @@ public class FeatureFileConverterTest {
                 .thenReturn(scenarioMatchText);
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
-        CucableFeature cucableFeature = new CucableFeature("", FEATURE_FILE_NAME, null);
+        CucableFeature cucableFeature = new CucableFeature("", "",FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
         when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
@@ -188,7 +188,7 @@ public class FeatureFileConverterTest {
         when(fileSystemManager.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
-        CucableFeature cucableFeature = new CucableFeature("", FEATURE_FILE_NAME, null);
+        CucableFeature cucableFeature = new CucableFeature("", "",FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
         when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
@@ -228,7 +228,7 @@ public class FeatureFileConverterTest {
         when(fileSystemManager.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
-        CucableFeature cucableFeature = new CucableFeature("", FEATURE_FILE_NAME, null);
+        CucableFeature cucableFeature = new CucableFeature("", "",FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
         when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
@@ -278,7 +278,7 @@ public class FeatureFileConverterTest {
         when(fileSystemManager.readContentFromFile(generatedFeatureDir + "/" + FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
-        CucableFeature cucableFeature = new CucableFeature("", FEATURE_FILE_NAME, null);
+        CucableFeature cucableFeature = new CucableFeature("", "",FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
         when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
@@ -335,7 +335,7 @@ public class FeatureFileConverterTest {
         when(fileSystemManager.readContentFromFile(generatedFeatureDir + "/" + FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
-        CucableFeature cucableFeature = new CucableFeature("", FEATURE_FILE_NAME, null);
+        CucableFeature cucableFeature = new CucableFeature("", "",FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
         when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
@@ -382,7 +382,7 @@ public class FeatureFileConverterTest {
         when(fileSystemManager.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
-        CucableFeature cucableFeature = new CucableFeature("", FEATURE_FILE_NAME, null);
+        CucableFeature cucableFeature = new CucableFeature("", "",FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
         when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
@@ -415,7 +415,7 @@ public class FeatureFileConverterTest {
                 .thenReturn(scenarioNoMatchText);
 
         List<CucableFeature> cucableFeatures = new ArrayList<>();
-        CucableFeature cucableFeature = new CucableFeature("", FEATURE_FILE_NAME, null);
+        CucableFeature cucableFeature = new CucableFeature("", "",FEATURE_FILE_NAME, null);
         cucableFeatures.add(cucableFeature);
 
         when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
