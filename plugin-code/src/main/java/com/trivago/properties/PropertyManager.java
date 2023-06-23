@@ -17,7 +17,6 @@
 package com.trivago.properties;
 
 import com.trivago.exceptions.CucablePluginException;
-import com.trivago.exceptions.filesystem.MissingFileException;
 import com.trivago.exceptions.properties.WrongOrMissingPropertiesException;
 import com.trivago.files.FileSystemManager;
 import com.trivago.logging.CucableLogger;
@@ -85,14 +84,15 @@ public class PropertyManager {
     public void setSourceFeatures(final String sourceFeatures) throws CucablePluginException {
 
         List<String> allFeaturePaths = new ArrayList<>();
+        List<String> allFeaturePathOrigins = new ArrayList<>();
 
-        for (String feature : sourceFeatures.split(",")) {
-            feature = feature.trim();
-            if (feature.startsWith("@")) {
-                String cleanedUpPath = feature.substring(1);
+        for (String currentSourceFeature : sourceFeatures.split(",")) {
+            currentSourceFeature = currentSourceFeature.trim();
+            String currentSourceFeatureOrigin = currentSourceFeature;
+            if (currentSourceFeature.startsWith("@")) {
+                String cleanedUpPath = currentSourceFeature.substring(1);
                 List<String> textFiles = new ArrayList<>();
                 if (!cleanedUpPath.endsWith(".txt")) {
-                    // consider this a path
                     List<Path> filesWithTxtExtension = fileSystemManager.getFilesWithExtension(cleanedUpPath, FileSystemManager.TEXT_FILE_EXTENSION);
                     for (Path path : filesWithTxtExtension) {
                         textFiles.add(path.toString());
@@ -101,39 +101,28 @@ public class PropertyManager {
                     textFiles.add(cleanedUpPath);
                 }
 
-                System.out.println("ADDED " + textFiles);
-
                 for (String textFile : textFiles) {
-                    System.out.println("Reading " + textFile);
                     String insideFeatures = fileSystemManager.readContentFromFile(textFile);
-                    System.out.println("INSIDE: " + insideFeatures);
-                    String[] split = insideFeatures.split("\n");
-                    Collections.addAll(allFeaturePaths, split);
+                    String[] singleInsideFeatures = insideFeatures.split("\n");
+                    for (String singleInsideFeature : singleInsideFeatures) {
+                        allFeaturePathOrigins.add(currentSourceFeatureOrigin);
+                        allFeaturePaths.add(singleInsideFeature);
+                    }
                 }
             } else {
-                allFeaturePaths.add(feature);
+                allFeaturePathOrigins.add(currentSourceFeatureOrigin);
+                allFeaturePaths.add(currentSourceFeature);
             }
         }
-
-        System.out.println("RESULT: " + allFeaturePaths);
-
-        this.sourceFeatures = sourceFeaturePathsToCucableFeatureList(allFeaturePaths.toArray(new String[0]));
-
-//        String featuresToProcess;
-//        if (sourceFeatures.startsWith("@")) {
-//            cucumberFeatureListFile = sourceFeatures.substring(1);
-//            featuresToProcess = fileIO.readContentFromFile(cucumberFeatureListFile)
-//                    .replace(System.lineSeparator(), ",");
-//        } else {
-//            featuresToProcess = sourceFeatures;
-//        }
-//        this.sourceFeatures = sourceFeaturePathsToCucableFeatureList(featuresToProcess.split(","));
+        this.sourceFeatures = sourceFeaturePathsToCucableFeatureList(allFeaturePaths, allFeaturePathOrigins);
     }
 
-    private List<CucableFeature> sourceFeaturePathsToCucableFeatureList(final String[] sourceFeatures) {
+    private List<CucableFeature> sourceFeaturePathsToCucableFeatureList(final List<String> sourceFeatures, List<String> sourceFeatureOrigins) {
         List<CucableFeature> cucableFeatures = new ArrayList<>();
         Pattern lineNumberPattern = Pattern.compile(":(\\d*)");
-        for (String sourceFeature : sourceFeatures) {
+
+        for (int i = 0; i < sourceFeatures.size(); i++) {
+            String sourceFeature = sourceFeatures.get(i);
             String trimmedFeature = sourceFeature.trim();
             StringBuffer resultBuffer = new StringBuffer();
             Matcher matcher = lineNumberPattern.matcher(trimmedFeature);
@@ -147,7 +136,7 @@ public class PropertyManager {
                 }
             }
             matcher.appendTail(resultBuffer);
-            cucableFeatures.add(new CucableFeature(resultBuffer.toString(), scenarioLineNumbers));
+            cucableFeatures.add(new CucableFeature(sourceFeatureOrigins.get(i), resultBuffer.toString(), scenarioLineNumbers));
         }
         return cucableFeatures;
     }

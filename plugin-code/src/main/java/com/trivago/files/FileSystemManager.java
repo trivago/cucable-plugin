@@ -91,7 +91,6 @@ public class FileSystemManager {
     public List<Path> getFilesWithExtension(final String sourceFeatureDirectory, final String extension) throws
             CucablePluginException {
         try {
-            System.out.println("EXTENSION: " + extension);
             return Files.walk(Paths.get(sourceFeatureDirectory))
                     .filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith("." + extension))

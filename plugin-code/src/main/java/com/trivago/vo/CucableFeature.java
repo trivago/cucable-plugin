@@ -21,8 +21,10 @@ import java.util.List;
 public class CucableFeature {
     private final String name;
     private final List<Integer> lineNumbers;
+    private final String origin;
 
-    public CucableFeature(final String name, final List<Integer> lineNumbers) {
+    public CucableFeature(final String origin, final String name, final List<Integer> lineNumbers) {
+        this.origin = origin;
         this.name = name;
         this.lineNumbers = lineNumbers;
     }
@@ -37,5 +39,9 @@ public class CucableFeature {
 
     public boolean hasValidScenarioLineNumbers() {
         return lineNumbers != null && !lineNumbers.isEmpty();
+    }
+
+    public String getOrigin() {
+        return this.origin;
     }
 }

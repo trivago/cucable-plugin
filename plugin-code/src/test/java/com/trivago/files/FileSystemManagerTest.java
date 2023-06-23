@@ -58,13 +58,13 @@ public class FileSystemManagerTest {
 
     @Test(expected = CucablePluginException.class)
     public void getPathsFromCucableFeatureInvalidFeatureTest() throws CucablePluginException {
-        CucableFeature cucableFeatures = new CucableFeature("name.feature", null);
+        CucableFeature cucableFeatures = new CucableFeature("", "name.feature", null);
         fileSystemManager.getPathsFromCucableFeature(cucableFeatures);
     }
 
     @Test
     public void getPathsFromCucableFeatureValidEmptyPathTest() throws CucablePluginException {
-        CucableFeature cucableFeatures = new CucableFeature(testFolder.getRoot().getPath(), null);
+        CucableFeature cucableFeatures = new CucableFeature("", testFolder.getRoot().getPath(), null);
         List<Path> pathsFromCucableFeature = fileSystemManager.getPathsFromCucableFeature(cucableFeatures);
         assertThat(pathsFromCucableFeature, is(notNullValue()));
         assertThat(pathsFromCucableFeature.size(), is(0));
@@ -72,7 +72,7 @@ public class FileSystemManagerTest {
 
     @Test
     public void getPathsFromCucableFeatureFullPathTest() throws CucablePluginException {
-        CucableFeature cucableFeatures = new CucableFeature("src/test/resources", null);
+        CucableFeature cucableFeatures = new CucableFeature("", "src/test/resources", null);
         List<Path> pathsFromCucableFeature = fileSystemManager.getPathsFromCucableFeature(cucableFeatures);
         assertThat(pathsFromCucableFeature, is(notNullValue()));
         assertThat(pathsFromCucableFeature.size(), is(2));
@@ -80,7 +80,7 @@ public class FileSystemManagerTest {
 
     @Test
     public void getPathsFromCucableFeatureValidFeatureTest() throws CucablePluginException {
-        CucableFeature cucableFeatures = new CucableFeature("src/test/resources/feature1.feature", null);
+        CucableFeature cucableFeatures = new CucableFeature("", "src/test/resources/feature1.feature", null);
         List<Path> pathsFromCucableFeature = fileSystemManager.getPathsFromCucableFeature(cucableFeatures);
         assertThat(pathsFromCucableFeature, is(notNullValue()));
         assertThat(pathsFromCucableFeature.size(), is(1));
