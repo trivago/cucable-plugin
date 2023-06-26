@@ -214,7 +214,6 @@ public class FeatureFileConverter {
         // Default parallelization mode
         for (SingleScenario singleScenario : singleScenarios) {
             String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
-            System.out.println(sourceFeatureFilePath);
             Integer featureCounter = singleFeatureCounters.getOrDefault(sourceFeatureFilePath.toString(), 0);
             featureCounter++;
             String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
@@ -225,12 +224,6 @@ public class FeatureFileConverter {
 
                 String testRunsCounterFilenamePart = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
                 generatedFileName = generatedFileName.concat(testRunsCounterFilenamePart);
-
-                // TODO: check if this comes from a text file
-
-//                if (propertyManager.isCucumberFeatureListFileSource()) {
-//                    generatedFileName = generatedFileName.concat(TEST_RERUNS_FORMAT);
-//                }
                 generatedFileName = generatedFileName.concat(INTEGRATION_TEST_POSTFIX);
                 saveFeature(
                         generatedFileName,
@@ -240,8 +233,6 @@ public class FeatureFileConverter {
                 singleFeatureCounters.put(sourceFeatureFilePath.toString(), featureCounter);
             }
         }
-
-        //logFeatureFileConversionMessage(sourceFeatureFilePath.toString(), singleScenarios.size());
         return generatedFeaturePaths;
     }
 
@@ -278,9 +269,7 @@ public class FeatureFileConverter {
             generatedFeaturePaths.add(generatedFileName);
             singleFeatureCounters.put(sourceFeatureFilePath.toString(), featureCounter);
         }
-
         logger.info(String.format("- processed %s.", featureFileName), DEFAULT);
-
         return generatedFeaturePaths;
     }
 

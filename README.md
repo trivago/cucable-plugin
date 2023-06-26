@@ -7,17 +7,6 @@
 
 _Run Cucumber Scenarios in Parallel with Maven_
 
----
-
-### Note:
-
-This project is feature-complete. Expect mostly bug fixes from this point on.
-For new projects, you should consider using Cucumber's native parallelization feature instead.
-
-Thanks to everyone using, testing and improving Cucable over the last years!
-
----
-
 ![Cucumber compatible](documentation/img/cucumber-compatible-black-64.png)
 
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->

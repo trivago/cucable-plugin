@@ -148,7 +148,7 @@ public class PropertyManager {
                     resultBuffer.toString(),
                     scenarioLineNumbers
             );
-            
+
             cucableFeatures.add(cucableFeature);
         }
         return cucableFeatures;
@@ -295,6 +295,7 @@ public class PropertyManager {
         CucableLogLevel[] logLevels = new CucableLogLevel[]{DEFAULT, COMPACT};
 
         if (sourceFeatures != null) {
+            logger.info("- sourceFeatures:", logLevels);
             String currentOrigin = null;
             for (CucableFeature sourceFeature : sourceFeatures) {
                 if (Objects.equals(currentOrigin, sourceFeature.getOrigin())) {

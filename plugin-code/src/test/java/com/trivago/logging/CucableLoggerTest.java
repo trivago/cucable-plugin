@@ -61,6 +61,6 @@ public class CucableLoggerTest {
         logger.initialize(mockedLogger, "default");
         logger.logInfoSeparator(CucableLogger.CucableLogLevel.DEFAULT);
         verify(mockedLogger, times(1))
-                .info("-------------------------------------");
+                .info("--------------------------------------");
     }
 }
