@@ -17,10 +17,12 @@
 package com.trivago.files;
 
 import com.trivago.exceptions.CucablePluginException;
+import com.trivago.exceptions.filesystem.FileCreationException;
 import com.trivago.exceptions.filesystem.FileDeletionException;
+import com.trivago.exceptions.filesystem.MissingFileException;
 import com.trivago.exceptions.filesystem.PathCreationException;
-import com.trivago.properties.PropertyManager;
 import com.trivago.vo.CucableFeature;
+import org.codehaus.plexus.util.FileUtils;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -36,12 +38,11 @@ import java.util.stream.Collectors;
 @Singleton
 public class FileSystemManager {
 
-    private static final String FEATURE_FILE_EXTENSION = ".feature";
-    private final PropertyManager propertyManager;
+    public static final String FEATURE_FILE_EXTENSION = "feature";
+    public static final String TEXT_FILE_EXTENSION = "txt";
 
     @Inject
-    public FileSystemManager(PropertyManager propertyManager) {
-        this.propertyManager = propertyManager;
+    public FileSystemManager() {
     }
 
     /**
@@ -71,7 +72,7 @@ public class FileSystemManager {
         }
 
         if (sourceFeaturesFile.isDirectory()) {
-            return getFilesWithFeatureExtension(sourceFeatures);
+            return getFilesWithExtension(sourceFeatures, FEATURE_FILE_EXTENSION);
         }
 
         throw new CucablePluginException(
@@ -83,31 +84,32 @@ public class FileSystemManager {
      * Returns a list of feature files in the given directory.
      *
      * @param sourceFeatureDirectory The source directory to scan for feature files.
+     * @param extension              The file extension to look for.
      * @return A list of feature files in the given directory.
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
-    private List<Path> getFilesWithFeatureExtension(final String sourceFeatureDirectory) throws
+    public List<Path> getFilesWithExtension(final String sourceFeatureDirectory, final String extension) throws
             CucablePluginException {
         try {
             return Files.walk(Paths.get(sourceFeatureDirectory))
                     .filter(Files::isRegularFile)
-                    .filter(p -> p.toString().endsWith(FEATURE_FILE_EXTENSION))
+                    .filter(p -> p.toString().endsWith("." + extension))
                     .collect(Collectors.toList());
         } catch (IOException e) {
             throw new CucablePluginException(
-                    "Unable to traverse feature files in " + sourceFeatureDirectory + ": " + e.getMessage());
+                    "Unable to traverse " + extension + " files in " + sourceFeatureDirectory + ": " + e.getMessage());
         }
     }
 
     /**
      * Create generated feature and runner dirs if they don't exist and clear their contents.
      */
-    public void prepareGeneratedFeatureAndRunnerDirectories() throws CucablePluginException {
-        createDirIfNotExists(propertyManager.getGeneratedFeatureDirectory());
-        removeFilesFromPath(propertyManager.getGeneratedFeatureDirectory(), "feature");
+    public void prepareGeneratedFeatureAndRunnerDirectories(final String runnerDir, final String featureDir) throws CucablePluginException {
+        createDirIfNotExists(featureDir);
+        removeFilesFromPath(featureDir, "feature");
 
-        createDirIfNotExists(propertyManager.getGeneratedRunnerDirectory());
-        removeFilesFromPath(propertyManager.getGeneratedRunnerDirectory(), "java");
+        createDirIfNotExists(runnerDir);
+        removeFilesFromPath(runnerDir, "java");
     }
 
     /**
@@ -139,6 +141,36 @@ public class FileSystemManager {
                     throw new FileDeletionException(file.getName());
                 }
             }
+        }
+    }
+
+    /**
+     * Writes string content to a file.
+     *
+     * @param content  the string content to be written.
+     * @param filePath the complete path to the target file.
+     * @throws FileCreationException a {@link FileCreationException} in case the file cannot be created.
+     */
+    public void writeContentToFile(String content, String filePath) throws FileCreationException {
+        try {
+            FileUtils.fileWrite(filePath, "UTF-8", content);
+        } catch (IOException e) {
+            throw new FileCreationException(filePath);
+        }
+    }
+
+    /**
+     * Reads string content from a file.
+     *
+     * @param filePath the complete path to the source file.
+     * @return the file contents as a string.
+     * @throws MissingFileException a {@link MissingFileException} in case the file does not exist.
+     */
+    public String readContentFromFile(String filePath) throws MissingFileException {
+        try {
+            return FileUtils.fileRead(filePath, "UTF-8");
+        } catch (IOException e) {
+            throw new MissingFileException(filePath);
         }
     }
 }

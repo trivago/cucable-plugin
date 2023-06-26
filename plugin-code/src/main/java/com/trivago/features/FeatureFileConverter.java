@@ -19,7 +19,6 @@ package com.trivago.features;
 import com.trivago.exceptions.CucablePluginException;
 import com.trivago.exceptions.filesystem.FileCreationException;
 import com.trivago.exceptions.filesystem.MissingFileException;
-import com.trivago.files.FileIO;
 import com.trivago.files.FileSystemManager;
 import com.trivago.gherkin.GherkinDocumentParser;
 import com.trivago.logging.CucableLogger;
@@ -36,16 +35,9 @@ import gherkin.ast.GherkinDocument;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.nio.file.Path;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.UUID;
+import java.util.*;
 
-import static com.trivago.logging.CucableLogger.CucableLogLevel.COMPACT;
-import static com.trivago.logging.CucableLogger.CucableLogLevel.DEFAULT;
-import static com.trivago.logging.CucableLogger.CucableLogLevel.MINIMAL;
+import static com.trivago.logging.CucableLogger.CucableLogLevel.*;
 
 /**
  * This class is responsible for converting feature files
@@ -67,7 +59,6 @@ public class FeatureFileConverter {
     private final GherkinDocumentParser gherkinDocumentParser;
     private final FeatureFileContentRenderer featureFileContentRenderer;
     private final RunnerFileContentRenderer runnerFileContentRenderer;
-    private final FileIO fileIO;
     private final FileSystemManager fileSystemManager;
     private final CucableLogger logger;
 
@@ -81,7 +72,6 @@ public class FeatureFileConverter {
             GherkinDocumentParser gherkinDocumentParser,
             FeatureFileContentRenderer featureFileContentRenderer,
             RunnerFileContentRenderer runnerFileContentRenderer,
-            FileIO fileIO,
             FileSystemManager fileSystemManager,
             CucableLogger logger
     ) {
@@ -89,7 +79,6 @@ public class FeatureFileConverter {
         this.gherkinDocumentParser = gherkinDocumentParser;
         this.featureFileContentRenderer = featureFileContentRenderer;
         this.runnerFileContentRenderer = runnerFileContentRenderer;
-        this.fileIO = fileIO;
         this.fileSystemManager = fileSystemManager;
         this.logger = logger;
     }
@@ -112,10 +101,15 @@ public class FeatureFileConverter {
                 logger.warn("No features and runners could be created. Please check your properties!");
             }
             for (Path path : paths) {
-                List<String> generatedFeatureFilePaths = generateParallelizableFeatures(path, cucableFeature.getLineNumbers());
+                List<String> generatedFeatureFilePaths =
+                        generateParallelizableFeatures(path, cucableFeature.getLineNumbers());
                 allGeneratedFeaturePaths.addAll(generatedFeatureFilePaths);
                 featureFileCounter += generatedFeatureFilePaths.size();
             }
+        }
+
+        for (Map.Entry<String, Integer> entry : singleFeatureCounters.entrySet()) {
+            logFeatureFileConversionMessage(entry.getKey(), entry.getValue());
         }
 
         int runnerFileCounter;
@@ -147,7 +141,6 @@ public class FeatureFileConverter {
      *
      * @param sourceFeatureFilePath feature file to process.
      * @param lineNumbers           scenario line numbers.
-     * @return Number of created scenarios.
      * @throws CucablePluginException see {@link CucablePluginException}
      */
     private List<String> generateParallelizableFeatures(
@@ -170,7 +163,7 @@ public class FeatureFileConverter {
     private List<String> generateFeaturesWithFeaturesParallelizationMode(final Path sourceFeatureFilePath) throws
             CucablePluginException {
         String featureFilePathString = sourceFeatureFilePath.toString();
-        String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
+        String featureFileContent = fileSystemManager.readContentFromFile(featureFilePathString);
         return generateFeatureFiles(sourceFeatureFilePath, featureFileContent);
     }
 
@@ -187,11 +180,11 @@ public class FeatureFileConverter {
             final List<Integer> lineNumbers) throws CucablePluginException {
 
         String featureFilePathString = sourceFeatureFilePath.toString();
-        if (featureFilePathString == null || featureFilePathString.equals("")) {
+        if (featureFilePathString.equals("")) {
             throw new MissingFileException(featureFilePathString);
         }
 
-        String featureFileContent = fileIO.readContentFromFile(featureFilePathString);
+        String featureFileContent = fileSystemManager.readContentFromFile(featureFilePathString);
 
         List<SingleScenario> singleScenarios;
         singleScenarios =
@@ -221,7 +214,7 @@ public class FeatureFileConverter {
         // Default parallelization mode
         for (SingleScenario singleScenario : singleScenarios) {
             String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
-            Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
+            Integer featureCounter = singleFeatureCounters.getOrDefault(sourceFeatureFilePath.toString(), 0);
             featureCounter++;
             String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
             for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
@@ -231,20 +224,15 @@ public class FeatureFileConverter {
 
                 String testRunsCounterFilenamePart = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
                 generatedFileName = generatedFileName.concat(testRunsCounterFilenamePart);
-                if (propertyManager.isCucumberFeatureListFileSource()) {
-                    generatedFileName = generatedFileName.concat(TEST_RERUNS_FORMAT);
-                }
                 generatedFileName = generatedFileName.concat(INTEGRATION_TEST_POSTFIX);
                 saveFeature(
                         generatedFileName,
                         featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)
                 );
                 generatedFeaturePaths.add(generatedFileName);
-                singleFeatureCounters.put(featureFileName, featureCounter);
+                singleFeatureCounters.put(sourceFeatureFilePath.toString(), featureCounter);
             }
         }
-
-        logFeatureFileConversionMessage(sourceFeatureFilePath.toString(), singleScenarios.size());
         return generatedFeaturePaths;
     }
 
@@ -264,7 +252,7 @@ public class FeatureFileConverter {
 
         // Only parallelize complete features
         String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
-        Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
+        Integer featureCounter = singleFeatureCounters.getOrDefault(sourceFeatureFilePath.toString(), 0);
         featureCounter++;
         String featureCounterFilenamePart = String.format(FEATURE_COUNTER_FORMAT, featureCounter);
         for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
@@ -279,11 +267,9 @@ public class FeatureFileConverter {
                     featureFileContent
             );
             generatedFeaturePaths.add(generatedFileName);
-            singleFeatureCounters.put(featureFileName, featureCounter);
+            singleFeatureCounters.put(sourceFeatureFilePath.toString(), featureCounter);
         }
-
         logger.info(String.format("- processed %s.", featureFileName), DEFAULT);
-
         return generatedFeaturePaths;
     }
 
@@ -304,7 +290,7 @@ public class FeatureFileConverter {
                         .concat(FEATURE_FILE_EXTENSION);
 
         // Save scenario information to new feature file
-        fileIO.writeContentToFile(renderedFeatureFileContent, generatedFeatureFilePath);
+        fileSystemManager.writeContentToFile(renderedFeatureFileContent, generatedFeatureFilePath);
     }
 
     /**
@@ -341,7 +327,7 @@ public class FeatureFileConverter {
                 }
             } else {
                 // Move all scenarios matching a scenario name into its own group.
-                String scenarioText = fileIO.readContentFromFile(propertyManager.getGeneratedFeatureDirectory() + "/" + generatedFeatureName + ".feature");
+                String scenarioText = fileSystemManager.readContentFromFile(propertyManager.getGeneratedFeatureDirectory() + "/" + generatedFeatureName + ".feature");
                 if (scenarioText != null) {
                     Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
                     String language = parser.parse(scenarioText).getFeature().getLanguage();
@@ -438,7 +424,7 @@ public class FeatureFileConverter {
                         .concat(runnerClassName)
                         .concat(RUNNER_FILE_EXTENSION);
 
-        fileIO.writeContentToFile(renderedRunnerClassContent, generatedRunnerClassFilePath);
+        fileSystemManager.writeContentToFile(renderedRunnerClassContent, generatedRunnerClassFilePath);
     }
 
     /**
@@ -451,14 +437,12 @@ public class FeatureFileConverter {
             final String featureFileName,
             final int createdScenarios) {
 
-        String logPostfix = ".";
         logger.info(
-                String.format("- generated %3d %s %s%s",
+                String.format("- generated %3d %s %s",
                         createdScenarios,
-                        Language.singularPlural(createdScenarios, " scenario from", "scenarios from"),
-                        featureFileName,
-                        logPostfix
-                ), DEFAULT);
+                        Language.singularPlural(createdScenarios, "scenario  from", "scenarios from"),
+                        featureFileName
+               ), DEFAULT);
     }
 
     /**

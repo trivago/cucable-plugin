@@ -49,7 +49,7 @@ public class CucableLogger {
     }
 
     public void logInfoSeparator(final CucableLogLevel... cucableLogLevels) {
-        info("-------------------------------------", cucableLogLevels);
+        info("--------------------------------------", cucableLogLevels);
     }
 
     /**

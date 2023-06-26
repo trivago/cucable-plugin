@@ -21,6 +21,7 @@ import com.trivago.features.FeatureFileConverter;
 import com.trivago.files.FileSystemManager;
 import com.trivago.logging.CucableLogger;
 import com.trivago.properties.PropertyManager;
+import com.trivago.vo.CucableFeature;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -73,7 +74,7 @@ CucablePlugin extends AbstractMojo {
 
     /**
      * Optional Cucumber tag expression to include or exclude certain tagged scenarios.
-     * See also https://docs.cucumber.io/cucumber/api/#tag-expressions
+     * See also <a href="https://docs.cucumber.io/cucumber/api/#tag-expressions"></a>
      */
     @Parameter(property = "parallel.includeScenarioTags")
     private String includeScenarioTags;
@@ -166,10 +167,12 @@ CucablePlugin extends AbstractMojo {
         propertyManager.logProperties();
 
         // Create the necessary directories if missing.
-        fileManager.prepareGeneratedFeatureAndRunnerDirectories();
-
+        fileManager.prepareGeneratedFeatureAndRunnerDirectories(
+                propertyManager.getGeneratedRunnerDirectory(),
+                propertyManager.getGeneratedFeatureDirectory()
+        );
         // Conversion of scenarios into single scenarios and runners.
-       featureFileConverter.generateParallelizableFeatures(propertyManager.getSourceFeatures());
+        featureFileConverter.generateParallelizableFeatures(propertyManager.getSourceFeatures());
     }
 
     /**

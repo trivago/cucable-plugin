@@ -21,10 +21,23 @@ import java.util.List;
 public class CucableFeature {
     private final String name;
     private final List<Integer> lineNumbers;
+    private final String origin;
+    private final String originTextFile;
 
-    public CucableFeature(final String name, final List<Integer> lineNumbers) {
+    public CucableFeature(
+            final String origin,
+            final String originTextFile,
+            final String name,
+            final List<Integer> lineNumbers
+    ) {
+        this.origin = origin;
+        this.originTextFile = originTextFile;
         this.name = name;
         this.lineNumbers = lineNumbers;
+    }
+
+    public boolean isFromTextFileOrigin() {
+        return !originTextFile.equals("");
     }
 
     public String getName() {
@@ -37,5 +50,23 @@ public class CucableFeature {
 
     public boolean hasValidScenarioLineNumbers() {
         return lineNumbers != null && !lineNumbers.isEmpty();
+    }
+
+    public String getOrigin() {
+        return this.origin;
+    }
+
+    public String getOriginTextFile() {
+        return originTextFile;
+    }
+
+    @Override
+    public String toString() {
+        return "CucableFeature{" +
+                "name='" + name + '\'' +
+                ", lineNumbers=" + lineNumbers +
+                ", origin='" + origin + '\'' +
+                ", originTextFile='" + originTextFile + '\'' +
+                '}';
     }
 }
