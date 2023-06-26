@@ -25,6 +25,7 @@ import com.trivago.vo.CucableFeature;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.File;
 import java.nio.file.Path;
 import java.util.*;
 import java.util.regex.Matcher;
@@ -50,7 +51,6 @@ public class PropertyManager {
     private int desiredNumberOfRunners;
     private int desiredNumberOfFeaturesPerRunner;
     private List<String> scenarioNames = new ArrayList<>();
-    private SortedMap<String, Integer> scenarioCountByName = new TreeMap<String, Integer>();
 
     @Inject
     public PropertyManager(final CucableLogger logger, final FileSystemManager fileSystemManager) {
@@ -137,7 +137,7 @@ public class PropertyManager {
                     scenarioLineNumbers.add(Integer.parseInt(matcher.group(1)));
                     matcher.appendReplacement(resultBuffer, "");
                 } catch (NumberFormatException ignored) {
-                    // Ignore unparsable line numbers
+                    // Ignore non-existing line numbers
                 }
             }
             matcher.appendTail(resultBuffer);
@@ -148,12 +148,7 @@ public class PropertyManager {
                     resultBuffer.toString(),
                     scenarioLineNumbers
             );
-
-            if (!scenarioCountByName.containsKey(cucableFeature.getName())) {
-                scenarioCountByName.put(cucableFeature.getName(), 1);
-            } else {
-                scenarioCountByName.put(cucableFeature.getName(), scenarioCountByName.get(cucableFeature.getName()) + 1);
-            }
+            
             cucableFeatures.add(cucableFeature);
         }
         return cucableFeatures;
@@ -279,7 +274,9 @@ public class PropertyManager {
         }
 
         String errorMessage = "";
-        if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
+        if (!new File(String.valueOf(sourceFeatures.get(0).getName())).isDirectory()) {
+            errorMessage = "sourceFeatures should point to a directory!";
+        } else if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {
             errorMessage = "you cannot specify includeScenarioTags!";
         } else if (scenarioNames != null && !scenarioNames.isEmpty()) {
             errorMessage = "you cannot specify scenarioNames!";

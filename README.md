@@ -23,10 +23,9 @@ Thanks to everyone using, testing and improving Cucable over the last years!
 <!-- START doctoc generated TOC please keep comment here to allow auto update -->
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
-
 - [Cucable Maven Plugin](#cucable-maven-plugin)
   - [Cucumber 4](#cucumber-4)
-  - [Cucumber 5](#cucumber-5)
+  - [Cucumber 5 and higher](#cucumber-5-and-higher)
   - [Repository Structure](#repository-structure)
   - [Changelog](#changelog)
   - [Maven dependency](#maven-dependency)
@@ -44,6 +43,7 @@ Thanks to everyone using, testing and improving Cucable over the last years!
         - [Using a java file as a runner template](#using-a-java-file-as-a-runner-template)
         - [Using a text file as a runner template](#using-a-text-file-as-a-runner-template)
       - [sourceFeatures](#sourcefeatures)
+      - [Combining different feature sources](#combining-different-feature-sources)
       - [generatedFeatureDirectory](#generatedfeaturedirectory)
       - [generatedRunnerDirectory](#generatedrunnerdirectory)
     - [Optional Parameters](#optional-parameters)
@@ -95,9 +95,9 @@ Even though Cucumber 4 supports basic parallel runs, Cucable has more options th
 * You don't need any test framework changes because Cucable runs before the framework invocations
 * You have full control over your runners because of template variables and custom placeholders
 
-## Cucumber 5
+## Cucumber 5 and higher
 
-* Cucumber 5 (using testng or junit 5) can natively run features and scenarios in parallel. Cucable __can__ be used but does not __have__ to be.
+* Cucumber starting with version 5 (using testng or junit 5) can natively run features and scenarios in parallel. Cucable __can__ be used but does not __have__ to be.
 
 ## Repository Structure
 
@@ -325,7 +325,7 @@ If you use a text file (e.g. _src/test/resources/cucable.template_), all **[CUCA
 
 #### sourceFeatures
 
-This property specifies the location of the features that Cucable should process. It must point to one of the following:
+This property specifies the location of the features that Cucable should process. It must point to one or more of the following:
 
 * the root path of your __existing__ [Cucumber](https://cucumber.io) _.feature_ files, e.g.
  `src/test/resources/features`
@@ -333,22 +333,34 @@ This property specifies the location of the features that Cucable should process
   `src/test/resources/features/MyFeature.feature`
 * the path to a specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file with optional line numbers of specific scenarios e.g.
   `src/test/resources/features/MyFeature.feature:12:19`
-* comma separated paths to specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file(s) with optional line numbers or feature directories e.g.
-  ```
-  src/test/resources/features/MyFeature.feature:12:19, src/test/resources/features/MyOther.feature, src/test/some/other/feature/directory
-  ```
 * the path to a [Cucumber](https://cucumber.io) text file containing the path to a feature including line number(s) per line (as written by the [Cucumber rerun reporter plugin](https://cucumber.io/docs/cucumber/reporting/?sbsearch=rerun#built-in-reporter-plugins), e.g.
   ```
   @src/test/resources/rerun.txt
   ```
-  
-  __Note:__ The path to a text file has to start with an `@` character! 
-  
+  __Note:__ The path to a text file has to start with an `@` character!
+
   The file contents can look like this:
   ```
   file:///pathToProject/resources/features/feature1.feature:12
   file:///pathToProject/resources/features/feature4.feature:6
   ```
+  
+* the root path of your __existing__ [Cucumber](https://cucumber.io) text files (also starting with an `@`), e.g.
+  ```
+  @src/test/resources
+  ```
+
+#### Combining different feature sources
+
+Starting from Cucumber 1.10.0, you can use any combination of sources by separating them with commas, e.g.
+
+```xml
+<sourceFeatures>src/test/resources/features, @src/test/rerun.txt</sourceFeatures>
+```
+
+This example would use all `.feature` files in `src/test/resources/features` __plus__ all features that are defined in `src/test/rerun.txt`!
+
+__Note:__ You need to be careful when selecting multiple sources as the same feature could be generated multiple times if it appears in more than one source.
 
 #### generatedFeatureDirectory
 

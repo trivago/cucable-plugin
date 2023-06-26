@@ -108,6 +108,10 @@ public class FeatureFileConverter {
             }
         }
 
+        for (Map.Entry<String, Integer> entry : singleFeatureCounters.entrySet()) {
+            logFeatureFileConversionMessage(entry.getKey(), entry.getValue());
+        }
+
         int runnerFileCounter;
         if (propertyManager.getDesiredNumberOfFeaturesPerRunner() > 0) {
             runnerFileCounter = generateRunnerClassesWithDesiredNumberOfFeatures(
@@ -210,7 +214,8 @@ public class FeatureFileConverter {
         // Default parallelization mode
         for (SingleScenario singleScenario : singleScenarios) {
             String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
-            Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
+            System.out.println(sourceFeatureFilePath);
+            Integer featureCounter = singleFeatureCounters.getOrDefault(sourceFeatureFilePath.toString(), 0);
             featureCounter++;
             String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
             for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
@@ -220,20 +225,23 @@ public class FeatureFileConverter {
 
                 String testRunsCounterFilenamePart = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
                 generatedFileName = generatedFileName.concat(testRunsCounterFilenamePart);
-                if (propertyManager.isCucumberFeatureListFileSource()) {
-                    generatedFileName = generatedFileName.concat(TEST_RERUNS_FORMAT);
-                }
+
+                // TODO: check if this comes from a text file
+
+//                if (propertyManager.isCucumberFeatureListFileSource()) {
+//                    generatedFileName = generatedFileName.concat(TEST_RERUNS_FORMAT);
+//                }
                 generatedFileName = generatedFileName.concat(INTEGRATION_TEST_POSTFIX);
                 saveFeature(
                         generatedFileName,
                         featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)
                 );
                 generatedFeaturePaths.add(generatedFileName);
-                singleFeatureCounters.put(featureFileName, featureCounter);
+                singleFeatureCounters.put(sourceFeatureFilePath.toString(), featureCounter);
             }
         }
 
-        logFeatureFileConversionMessage(sourceFeatureFilePath.toString(), singleScenarios.size());
+        //logFeatureFileConversionMessage(sourceFeatureFilePath.toString(), singleScenarios.size());
         return generatedFeaturePaths;
     }
 
@@ -253,7 +261,7 @@ public class FeatureFileConverter {
 
         // Only parallelize complete features
         String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
-        Integer featureCounter = singleFeatureCounters.getOrDefault(featureFileName, 0);
+        Integer featureCounter = singleFeatureCounters.getOrDefault(sourceFeatureFilePath.toString(), 0);
         featureCounter++;
         String featureCounterFilenamePart = String.format(FEATURE_COUNTER_FORMAT, featureCounter);
         for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
@@ -268,7 +276,7 @@ public class FeatureFileConverter {
                     featureFileContent
             );
             generatedFeaturePaths.add(generatedFileName);
-            singleFeatureCounters.put(featureFileName, featureCounter);
+            singleFeatureCounters.put(sourceFeatureFilePath.toString(), featureCounter);
         }
 
         logger.info(String.format("- processed %s.", featureFileName), DEFAULT);
@@ -440,14 +448,12 @@ public class FeatureFileConverter {
             final String featureFileName,
             final int createdScenarios) {
 
-        String logPostfix = ".";
         logger.info(
-                String.format("- generated %3d %s %s%s",
+                String.format("- generated %3d %s %s",
                         createdScenarios,
-                        Language.singularPlural(createdScenarios, " scenario from", "scenarios from"),
-                        featureFileName,
-                        logPostfix
-                ), DEFAULT);
+                        Language.singularPlural(createdScenarios, "scenario  from", "scenarios from"),
+                        featureFileName
+               ), DEFAULT);
     }
 
     /**

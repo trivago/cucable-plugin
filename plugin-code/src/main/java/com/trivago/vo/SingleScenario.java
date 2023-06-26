@@ -36,6 +36,9 @@ public final class SingleScenario {
     private List<String> exampleTags = new ArrayList<>();
     private List<Step> steps = new ArrayList<>();
 
+    private String featureOriginPath;
+    private boolean isFromTextFile;
+
     public SingleScenario(
             final String featureName,
             final String featureFilePath,

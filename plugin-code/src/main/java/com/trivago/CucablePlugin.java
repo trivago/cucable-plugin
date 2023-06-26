@@ -74,7 +74,7 @@ CucablePlugin extends AbstractMojo {
 
     /**
      * Optional Cucumber tag expression to include or exclude certain tagged scenarios.
-     * See also https://docs.cucumber.io/cucumber/api/#tag-expressions
+     * See also <a href="https://docs.cucumber.io/cucumber/api/#tag-expressions"></a>
      */
     @Parameter(property = "parallel.includeScenarioTags")
     private String includeScenarioTags;
@@ -171,11 +171,6 @@ CucablePlugin extends AbstractMojo {
                 propertyManager.getGeneratedRunnerDirectory(),
                 propertyManager.getGeneratedFeatureDirectory()
         );
-
-        for (CucableFeature sourceFeature : propertyManager.getSourceFeatures()) {
-            System.out.println(sourceFeature);
-        }
-
         // Conversion of scenarios into single scenarios and runners.
         featureFileConverter.generateParallelizableFeatures(propertyManager.getSourceFeatures());
     }
