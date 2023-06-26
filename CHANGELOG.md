@@ -8,6 +8,12 @@ Back to [Readme](README.md).
 
 ## [1.10.0] - UNRELEASED
 
+### Added
+
+* Ability added to specify a folder containing rerun text files [183]
+* Feature source options can now be freely combined
+* Cucable version is now mentioned in the generated runners and features
+
 ### Changed
 
 * Dependency updates 
