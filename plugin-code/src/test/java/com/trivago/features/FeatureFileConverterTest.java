@@ -120,7 +120,7 @@ public class FeatureFileConverterTest {
                 any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
         );
         assertThat(logCaptor.getAllValues().get(0), is("Cucable created 1 separate feature file and 1 runner."));
-        verify(fileSystemManager, times(2)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(3)).writeContentToFile(anyString(), anyString());
     }
 
     @Test
@@ -167,7 +167,7 @@ public class FeatureFileConverterTest {
                 any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
         );
         assertThat(logCaptor.getAllValues().get(0), is("Cucable created 1 separate feature file and 1 runner."));
-        verify(fileSystemManager, times(2)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(3)).writeContentToFile(anyString(), anyString());
     }
 
     @Test
@@ -246,7 +246,7 @@ public class FeatureFileConverterTest {
 
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
 
-        verify(fileSystemManager, times(3)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(5)).writeContentToFile(anyString(), anyString());
     }
 
     @Test
@@ -303,7 +303,7 @@ public class FeatureFileConverterTest {
                 any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
         );
         assertThat(logCaptor.getAllValues().get(0), is("Cucable created 2 separate feature files and 2 runners."));
-        verify(fileSystemManager, times(4)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(6)).writeContentToFile(anyString(), anyString());
     }
 
     @Test
@@ -360,7 +360,7 @@ public class FeatureFileConverterTest {
                 any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
         );
         assertThat(logCaptor.getAllValues().get(0), is("Cucable created 2 separate feature files and 2 runners."));
-        verify(fileSystemManager, times(4)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(6)).writeContentToFile(anyString(), anyString());
     }
 
     @Test

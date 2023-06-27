@@ -116,11 +116,6 @@ public class GherkinDocumentParser {
                 continue;
             }
 
-            System.out.println(".....");
-            System.out.println(featureFilePath);
-            System.out.println(scenarioDefinition.getLocation().getLine());
-            System.out.println(".....");
-
             if (scenarioDefinition instanceof Scenario) {
                 Scenario scenario = (Scenario) scenarioDefinition;
                 if (scenarioLineNumbers == null

@@ -11,12 +11,13 @@ Back to [Readme](README.md).
 ### Added
 
 * Ability added to specify a folder containing rerun text files [183]
+* Additional `generated-features.properties` file in the generated feature directory that stores all generated feature names and their reference to the respective source feature [184]
 * Feature source options can now be freely combined
 * Cucable version is now mentioned in the generated runners and features
 
 ### Changed
 
-* Dependency updates 
+* Various dependency updates 
 
 ## [1.9.0] - 2020-11-26
 

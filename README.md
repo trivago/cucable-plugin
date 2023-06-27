@@ -355,6 +355,8 @@ __Note:__ You need to be careful when selecting multiple sources as the same fea
 
 The path where the __generated__ [Cucumber](https://cucumber.io) .feature files should be located (e.g. _src/test/resources/parallel_).
 
+Additionally, a file called `generated-features.properties` will be generated there that shows all generated features along with their reference to the respective source feature.
+
 **Note:** This directory should be located under a valid resource folder to be included as a test source by Maven.
 If you want to use a directory inside Maven's target folder, [check this example](#generating-runners-and-features-inside-target-directory).
 

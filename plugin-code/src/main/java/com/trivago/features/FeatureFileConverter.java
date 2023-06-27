@@ -36,7 +36,6 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.nio.file.Path;
 import java.util.*;
-import java.util.concurrent.LinkedTransferQueue;
 
 import static com.trivago.logging.CucableLogger.CucableLogLevel.*;
 
@@ -93,40 +92,21 @@ public class FeatureFileConverter {
     public void generateParallelizableFeatures(
             final List<CucableFeature> cucableFeatures) throws CucablePluginException {
 
-        StringBuilder propertiesFileContent = new StringBuilder();
-
         int featureFileCounter = 0;
         List<String> allGeneratedFeaturePaths = new ArrayList<>();
 
         for (CucableFeature cucableFeature : cucableFeatures) {
-            System.out.println("SOURCE " + cucableFeature.getOrigin());
-            System.out.println("SOURCE " + cucableFeature.getLineNumbers());
-
             List<Path> paths = fileSystemManager.getPathsFromCucableFeature(cucableFeature);
             if (paths.size() == 0) {
                 logger.warn("No features and runners could be created. Please check your properties!");
             }
             for (Path path : paths) {
-                System.out.println("PATH " + path);
                 List<String> generatedFeatureFilePaths =
                         generateParallelizableFeatures(path, cucableFeature.getLineNumbers());
-
-                for (String generatedFeatureFilePath : generatedFeatureFilePaths) {
-                    propertiesFileContent
-                            .append(generatedFeatureFilePath)
-                            .append("=")
-                            .append(path)
-                            .append("\n");
-                }
-
                 allGeneratedFeaturePaths.addAll(generatedFeatureFilePaths);
                 featureFileCounter += generatedFeatureFilePaths.size();
             }
         }
-
-        System.out.println("/////////////////////");
-        System.out.println(propertiesFileContent);
-        System.out.println("/////////////////////");
 
         for (Map.Entry<String, Integer> entry : singleFeatureCounters.entrySet()) {
             logFeatureFileConversionMessage(entry.getKey(), entry.getValue());
@@ -262,8 +242,15 @@ public class FeatureFileConverter {
                 );
                 generatedFeaturePaths.add(generatedFileName);
                 singleFeatureCounters.put(sourceFeatureFilePath.toString(), featureCounter);
+
+                fileSystemManager.writeContentToFile(
+                        generatedFileName + "=" +
+                                singleScenario.getFeatureFilePath() + ":" + singleScenario.getLineNumber() + "\n",
+                        propertyManager.getGeneratedFeatureDirectory() +
+                                "/generated-features.properties");
             }
         }
+
         return generatedFeaturePaths;
     }
 
