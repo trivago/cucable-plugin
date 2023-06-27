@@ -20,5 +20,5 @@ jobs:
         distribution: 'temurin'
         cache: maven
     - name: Test with Maven
-      working-directory: ./cucable-plugin
+      working-directory: plugin-code
       run: mvn test
