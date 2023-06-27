@@ -71,7 +71,7 @@ public class PropertyManager {
     }
 
     public void setGeneratedRunnerDirectory(final String generatedRunnerDirectory) {
-        this.generatedRunnerDirectory = generatedRunnerDirectory;
+        this.generatedRunnerDirectory = generatedRunnerDirectory.replaceAll("/$", "");
     }
 
     public List<CucableFeature> getSourceFeatures() {
@@ -159,7 +159,7 @@ public class PropertyManager {
     }
 
     public void setGeneratedFeatureDirectory(final String generatedFeatureDirectory) {
-        this.generatedFeatureDirectory = generatedFeatureDirectory;
+        this.generatedFeatureDirectory = generatedFeatureDirectory.replaceAll("/$", "");
     }
 
     public int getNumberOfTestRuns() {

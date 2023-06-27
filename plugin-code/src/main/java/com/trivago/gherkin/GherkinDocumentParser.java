@@ -83,7 +83,6 @@ public class GherkinDocumentParser {
             final String featureFilePath,
             final List<Integer> scenarioLineNumbers
     ) throws CucablePluginException {
-
         String escapedFeatureContent = featureContent.replace("\\n", "\\\\n");
         GherkinDocument gherkinDocument;
         try {
@@ -117,6 +116,11 @@ public class GherkinDocumentParser {
                 continue;
             }
 
+            System.out.println(".....");
+            System.out.println(featureFilePath);
+            System.out.println(scenarioDefinition.getLocation().getLine());
+            System.out.println(".....");
+
             if (scenarioDefinition instanceof Scenario) {
                 Scenario scenario = (Scenario) scenarioDefinition;
                 if (scenarioLineNumbers == null
@@ -129,6 +133,7 @@ public class GherkinDocumentParser {
                                     featureLanguage,
                                     featureDescription,
                                     scenarioName,
+                                    scenario.getLocation().getLine(),
                                     scenarioDescription,
                                     featureTags,
                                     backgroundSteps
@@ -222,6 +227,7 @@ public class GherkinDocumentParser {
                                 featureLanguage,
                                 featureDescription,
                                 replacePlaceholderInString(scenarioName, exampleMap, rowIndex),
+                                scenarioOutline.getLocation().getLine(),
                                 scenarioDescription,
                                 featureTags,
                                 backgroundSteps

@@ -29,6 +29,7 @@ public final class SingleScenario {
     private final String featureLanguage;
     private final String featureDescription;
     private final String scenarioName;
+    private final int lineNumber;
     private final String scenarioDescription;
     private final List<String> featureTags;
     private final List<Step> backgroundSteps;
@@ -42,6 +43,7 @@ public final class SingleScenario {
             final String featureLanguage,
             final String featureDescription,
             final String scenarioName,
+            final int lineNumber,
             final String scenarioDescription,
             final List<String> featureTags,
             final List<Step> backgroundSteps
@@ -51,6 +53,7 @@ public final class SingleScenario {
         this.featureLanguage = featureLanguage;
         this.featureDescription = featureDescription;
         this.scenarioName = scenarioName;
+        this.lineNumber = lineNumber;
         this.scenarioDescription = scenarioDescription;
         this.featureTags = featureTags;
         this.backgroundSteps = backgroundSteps;
@@ -127,5 +130,9 @@ public final class SingleScenario {
                 ", exampleTags=" + exampleTags +
                 ", steps=" + steps +
                 '}';
+    }
+
+    public int getLineNumber() {
+        return lineNumber;
     }
 }

@@ -73,10 +73,10 @@
                     <!-- <sourceFeatures>@src/test/resources/cucumber-feature-list.txt</sourceFeatures> -->
 
                     <!-- process a folder that hosts text files containing paths to features and line numbers (as it is written by the Cucumber rerun formatter) -->
-                    <sourceFeatures>@src/test/resources</sourceFeatures>
+<!--                    <sourceFeatures>@src/test/resources</sourceFeatures>-->
 
                     <!-- process a specific feature file and specific line numbers in the given directory -->
-                    <!--<sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>-->
+                    <sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature</sourceFeatures>
 
                     <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
                     <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
@@ -100,7 +100,7 @@
 
                     <!-- optional: number of test runs to create runners and features multiple times
                          if set to a number greater than 1 -->
-                    <!--<numberOfTestRuns>1</numberOfTestRuns>-->
+                    <!-- <numberOfTestRuns>1</numberOfTestRuns> -->
 
                     <!-- optional: generate a fixed number of runners and distribute all features round-robin.
                      This can only be used if desiredNumberOfFeaturesPerRunner is NOT used! -->
