@@ -258,56 +258,56 @@ public class PropertyManagerTest {
         propertyManager.checkForDisallowedPropertyCombinations();
     }
 
-//    @Test
-//    public void logMandatoryPropertiesTest() throws CucablePluginException {
-//        ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
-//        propertyManager.setParallelizationMode("scenarios");
-//        propertyManager.logProperties();
-//        verify(logger, times(6)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class),
-//                                      any(CucableLogger.CucableLogLevel.class)
-//        );
-//        List<String> capturedLogs = logCaptor.getAllValues();
-//        assertThat(capturedLogs.get(0), is("- sourceFeatures:"));
-//        assertThat(capturedLogs.get(1), is("- sourceRunnerTemplateFile     : null"));
-//        assertThat(capturedLogs.get(2), is("- generatedRunnerDirectory     : null"));
-//        assertThat(capturedLogs.get(3), is("- generatedFeatureDirectory    : null"));
-//        assertThat(capturedLogs.get(4), is("- parallelizationMode          : scenarios"));
-//        assertThat(capturedLogs.get(5), is("- numberOfTestRuns             : 0"));
-//    }
+    @Test
+    public void logMandatoryPropertiesTest() throws CucablePluginException {
+        ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
+        propertyManager.setParallelizationMode("scenarios");
+        propertyManager.logProperties();
+        verify(logger, times(6)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class),
+                                      any(CucableLogger.CucableLogLevel.class)
+        );
+        List<String> capturedLogs = logCaptor.getAllValues();
+        assertThat(capturedLogs.get(0), is("- sourceFeatures               : not specified"));
+        assertThat(capturedLogs.get(1), is("- sourceRunnerTemplateFile     : null"));
+        assertThat(capturedLogs.get(2), is("- generatedFeatureDirectory    : null"));
+        assertThat(capturedLogs.get(3), is("- generatedRunnerDirectory     : null"));
+        assertThat(capturedLogs.get(4), is("- parallelizationMode          : scenarios"));
+        assertThat(capturedLogs.get(5), is("- numberOfTestRuns             : 0"));
+    }
 
-//    @Test
-//    public void logExtendedPropertiesTest() throws CucablePluginException {
-//        ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
-//        propertyManager.setIncludeScenarioTags("@include1 and @include2");
-//
-//        Map<String, String> customPlaceholders = new HashMap<>();
-//        customPlaceholders.put("key1", "value1");
-//        customPlaceholders.put("key2", "value2");
-//        propertyManager.setCustomPlaceholders(customPlaceholders);
-//
-//        propertyManager.setSourceFeatures("test.feature:3");
-//        propertyManager.setDesiredNumberOfRunners(2);
-//        propertyManager.setParallelizationMode("features");
-//
-//        propertyManager.logProperties();
-//
-//        verify(logger, times(12)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class),
-//                                       any(CucableLogger.CucableLogLevel.class)
-//        );
-//        List<String> capturedLogs = logCaptor.getAllValues();
-//        assertThat(capturedLogs.get(0), is("- sourceFeatures:"));
-//        assertThat(capturedLogs.get(1), is("  - test.feature:3"));
-//        assertThat(capturedLogs.get(2), is("- sourceRunnerTemplateFile     : null"));
-//        assertThat(capturedLogs.get(3), is("- generatedRunnerDirectory     : null"));
-//        assertThat(capturedLogs.get(4), is("- generatedFeatureDirectory    : null"));
-//        assertThat(capturedLogs.get(5), is("- includeScenarioTags          : @include1 and @include2"));
-//        assertThat(capturedLogs.get(6), is("- customPlaceholders           :"));
-//        assertThat(capturedLogs.get(7), is("  key1 => value1"));
-//        assertThat(capturedLogs.get(8), is("  key2 => value2"));
-//        assertThat(capturedLogs.get(9), is("- parallelizationMode          : features"));
-//        assertThat(capturedLogs.get(10), is("- numberOfTestRuns             : 0"));
-//        assertThat(capturedLogs.get(11), is("- desiredNumberOfRunners       : 2"));
-//    }
+    @Test
+    public void logExtendedPropertiesTest() throws CucablePluginException {
+        ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
+        propertyManager.setIncludeScenarioTags("@include1 and @include2");
+
+        Map<String, String> customPlaceholders = new HashMap<>();
+        customPlaceholders.put("key1", "value1");
+        customPlaceholders.put("key2", "value2");
+        propertyManager.setCustomPlaceholders(customPlaceholders);
+
+        propertyManager.setSourceFeatures("test.feature:3");
+        propertyManager.setDesiredNumberOfRunners(2);
+        propertyManager.setParallelizationMode("features");
+
+        propertyManager.logProperties();
+
+        verify(logger, times(12)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class),
+                                       any(CucableLogger.CucableLogLevel.class)
+        );
+        List<String> capturedLogs = logCaptor.getAllValues();
+        assertThat(capturedLogs.get(0), is("- sourceFeatures:"));
+        assertThat(capturedLogs.get(1), is("  - test.feature:3"));
+        assertThat(capturedLogs.get(2), is("- sourceRunnerTemplateFile     : null"));
+        assertThat(capturedLogs.get(3), is("- generatedFeatureDirectory    : null"));
+        assertThat(capturedLogs.get(4), is("- generatedRunnerDirectory     : null"));
+        assertThat(capturedLogs.get(5), is("- includeScenarioTags          : @include1 and @include2"));
+        assertThat(capturedLogs.get(6), is("- customPlaceholders           :"));
+        assertThat(capturedLogs.get(7), is("  key1 => value1"));
+        assertThat(capturedLogs.get(8), is("  key2 => value2"));
+        assertThat(capturedLogs.get(9), is("- parallelizationMode          : features"));
+        assertThat(capturedLogs.get(10), is("- numberOfTestRuns             : 0"));
+        assertThat(capturedLogs.get(11), is("- desiredNumberOfRunners       : 2"));
+    }
 
     @Test
     public void logMissingPropertiesTest() throws CucablePluginException {

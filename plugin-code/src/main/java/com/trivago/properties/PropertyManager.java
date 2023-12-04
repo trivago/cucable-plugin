@@ -48,7 +48,7 @@ public class PropertyManager {
     private String includeScenarioTags;
     private ParallelizationMode parallelizationMode;
     private Map<String, String> customPlaceholders;
-    private int desiredNumberOfRunners;
+    private int desiredNumberOfRunners = -1;
     private int desiredNumberOfFeaturesPerRunner;
     private List<String> scenarioNames = new ArrayList<>();
 
@@ -71,6 +71,9 @@ public class PropertyManager {
     }
 
     public void setGeneratedRunnerDirectory(final String generatedRunnerDirectory) {
+        if (generatedRunnerDirectory == null) {
+            return;
+        }
         this.generatedRunnerDirectory = generatedRunnerDirectory.replaceAll("/$", "");
     }
 
@@ -245,10 +248,16 @@ public class PropertyManager {
         List<String> missingProperties = new ArrayList<>();
 
         if (sourceFeatures == null || sourceFeatures.isEmpty()) {
-            saveMissingProperty("", "<sourceFeatures>", missingProperties);
+            missingProperties.add("<sourceFeatures>");
         }
-        saveMissingProperty(sourceRunnerTemplateFile, "<sourceRunnerTemplateFile>", missingProperties);
-        saveMissingProperty(generatedRunnerDirectory, "<generatedRunnerDirectory>", missingProperties);
+        if (desiredNumberOfRunners != 0) {
+            if (sourceRunnerTemplateFile == null || sourceRunnerTemplateFile.isEmpty()) {
+                saveMissingProperty(sourceRunnerTemplateFile, "<sourceRunnerTemplateFile>", missingProperties);
+            }
+            if (generatedRunnerDirectory == null || generatedRunnerDirectory.isEmpty()) {
+                saveMissingProperty(generatedRunnerDirectory, "<generatedRunnerDirectory>", missingProperties);
+            }
+        }
         saveMissingProperty(generatedFeatureDirectory, "<generatedFeatureDirectory>", missingProperties);
 
         if (!missingProperties.isEmpty()) {
@@ -305,13 +314,19 @@ public class PropertyManager {
                 String logLine = "  - " + currentOrigin;
                 logger.info(logLine, logLevels);
             }
+        } else {
+            logger.info("- sourceFeatures               : not specified", logLevels);
         }
 
-        logger.info(String.format("- sourceRunnerTemplateFile     : %s", sourceRunnerTemplateFile), logLevels);
+        if (desiredNumberOfRunners != 0) {
+            logger.info(String.format("- sourceRunnerTemplateFile     : %s", sourceRunnerTemplateFile), logLevels);
+        }
 
         logger.logInfoSeparator(DEFAULT);
-        logger.info(String.format("- generatedRunnerDirectory     : %s", generatedRunnerDirectory), logLevels);
         logger.info(String.format("- generatedFeatureDirectory    : %s", generatedFeatureDirectory), logLevels);
+        if (desiredNumberOfRunners != 0) {
+            logger.info(String.format("- generatedRunnerDirectory     : %s", generatedRunnerDirectory), logLevels);
+        }
         logger.logInfoSeparator(DEFAULT);
 
         if (includeScenarioTags != null && !includeScenarioTags.isEmpty()) {

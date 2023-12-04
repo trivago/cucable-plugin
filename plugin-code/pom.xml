@@ -6,7 +6,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-plugin</artifactId>
-    <version>1.10.0</version>
+    <version>1.11.0</version>
     <url>https://github.com/trivago/cucable-plugin</url>
 
     <name>Cucable Maven Plugin</name>
@@ -17,14 +17,14 @@
 
     <organization>
         <name>trivago N.V.</name>
-        <url>http://www.trivago.de</url>
+        <url>https://www.trivago.com</url>
     </organization>
 
     <developers>
         <developer>
             <name>Benjamin Bischoff</name>
             <organization>trivago N.V.</organization>
-            <organizationUrl>http://www.trivago.de</organizationUrl>
+            <organizationUrl>https://www.trivago.com</organizationUrl>
             <roles>
                 <role>Test Automation Engineer</role>
                 <role>Knowledge Lead Test Automation</role>
@@ -84,7 +84,7 @@
         <mockito.version>3.6.28</mockito.version>
         <junit5.vintage.version>5.7.0</junit5.vintage.version>
         <openpojo.version>0.9.1</openpojo.version>
-        <plexus-utils.version>3.5.0</plexus-utils.version>
+        <plexus-utils.version>3.5.1</plexus-utils.version>
     </properties>
 
     <profiles>
@@ -129,8 +129,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin.version}</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <source>11</source>
+                    <target>11</target>
                 </configuration>
             </plugin>
             <plugin>

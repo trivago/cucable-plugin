@@ -7,7 +7,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-test-project</artifactId>
-    <version>1.10.0</version>
+    <version>1.11.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -53,8 +53,8 @@
                 </executions>
                 <configuration>
                     <!-- This can be either a Java class file or a text based template -->
-                    <sourceRunnerTemplateFile>src/test/java/some/template/CucableJavaTemplate.java
-                    </sourceRunnerTemplateFile>
+<!--                    <sourceRunnerTemplateFile>src/test/java/some/template/CucableJavaTemplate.java-->
+<!--                    </sourceRunnerTemplateFile>-->
                     <!--<sourceRunnerTemplateFile>src/test/resources/cucable.template</sourceRunnerTemplateFile>-->
 
                     <!-- process all features in the given directory -->
@@ -79,7 +79,7 @@
                     <sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>
 
                     <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
-                    <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>
+<!--                    <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>-->
 
                     <!-- optional: custom data that is available in Cucable placeholders in a template -->
                     <!--<customPlaceholders>-->
@@ -104,7 +104,7 @@
 
                     <!-- optional: generate a fixed number of runners and distribute all features round-robin.
                      This can only be used if desiredNumberOfFeaturesPerRunner is NOT used! -->
-                    <!--<desiredNumberOfRunners>2</desiredNumberOfRunners>-->
+                    <desiredNumberOfRunners>0</desiredNumberOfRunners>
 
                     <!-- optional: distribute a fixed number features per runner round-robin.
                     This can only be used if desiredNumberOfRunners is NOT used! -->

@@ -6,6 +6,22 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.11.0] - 2023-12-04
+
+### Added
+
+* New way to only generate features without runners by specifying `<desiredNumberOfRunners>0</desiredNumberOfRunners>`.
+
+### Changed
+
+* Default value of `<desiredNumberOfRunners>` was changed from `0` to `-1`:
+  * `-1` means that the number generated runners should be equal to the number generated scenarios. 
+  * `0` means that no runners should be generated at all.
+
+### Changed
+
+* Updated dependencies
+
 ## [1.10.0] - 2023-06-27
 
 ### Added
@@ -330,6 +346,7 @@ Back to [Readme](README.md).
 
 Initial project version on GitHub and Maven Central.
 
+[1.11.0]: https://github.com/trivago/cucable-plugin/compare/1.9.0...1.10.0
 [1.10.0]: https://github.com/trivago/cucable-plugin/compare/1.9.0...1.10.0
 [1.9.0]: https://github.com/trivago/cucable-plugin/compare/1.8.0...1.9.0
 [1.8.0]: https://github.com/trivago/cucable-plugin/compare/1.7.2...1.8.0

@@ -124,6 +124,43 @@ public class FeatureFileConverterTest {
     }
 
     @Test
+    public void convertToSingleScenariosWithoutRunnersTest() throws Exception {
+        String generatedFeatureDir = testFolder.getRoot().getPath().concat("/features/");
+
+        final String FEATURE_FILE_NAME = "FEATURE_FILE.feature";
+
+        propertyManager.setNumberOfTestRuns(1);
+        propertyManager.setDesiredNumberOfRunners(0);
+        propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
+
+        when(fileSystemManager.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
+
+        List<CucableFeature> cucableFeatures = new ArrayList<>();
+        CucableFeature cucableFeature = new CucableFeature("", "", FEATURE_FILE_NAME, null);
+        cucableFeatures.add(cucableFeature);
+
+        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
+                .thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
+
+        List<SingleScenario> scenarioList = new ArrayList<>();
+        SingleScenario singleScenario = getSingleScenario();
+        scenarioList.add(singleScenario);
+        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null))
+                .thenReturn(scenarioList);
+
+        String featureFileContent = "test";
+        when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
+        featureFileConverter.generateParallelizableFeatures(cucableFeatures);
+
+        ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
+        verify(logger, times(1)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class),
+                any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
+        );
+        assertThat(logCaptor.getAllValues().get(0), is("Cucable created 1 separate feature file and 0 runners."));
+        verify(fileSystemManager, times(2)).writeContentToFile(anyString(), anyString());
+    }
+
+    @Test
     public void convertToSingleScenariosAndRunnersWithScenarioNameTest() throws Exception {
         String generatedFeatureDir = testFolder.getRoot().getPath().concat("/features/");
         String generatedRunnerDir = testFolder.getRoot().getPath().concat("/runners/");
