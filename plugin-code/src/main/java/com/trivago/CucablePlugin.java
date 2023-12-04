@@ -45,13 +45,13 @@ CucablePlugin extends AbstractMojo {
     /**
      * The complete path to the runner template file.
      */
-    @Parameter(property = "parallel.sourceRunnerTemplateFile", required = true)
+    @Parameter(property = "parallel.sourceRunnerTemplateFile", required = false, defaultValue = "")
     private String sourceRunnerTemplateFile;
 
     /**
      * The path where the generated runner classes should be created.
      */
-    @Parameter(property = "parallel.generatedRunnerDirectory", required = true)
+    @Parameter(property = "parallel.generatedRunnerDirectory", required = false, defaultValue = "")
     private String generatedRunnerDirectory;
 
     /**
@@ -90,7 +90,7 @@ CucablePlugin extends AbstractMojo {
     /**
      * Optional desired number of test runners that each run multiple features in sequence.
      */
-    @Parameter(property = "parallel.desiredNumberOfRunners", defaultValue = "0")
+    @Parameter(property = "parallel.desiredNumberOfRunners", defaultValue = "-1")
     private int desiredNumberOfRunners;
 
     /**

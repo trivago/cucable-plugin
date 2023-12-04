@@ -325,8 +325,10 @@ public class FeatureFileConverter {
         int targetRunnerNumber = numberOfDesiredRunners;
         List<String> scenarioNames = propertyManager.getScenarioNames();
 
-        if (targetRunnerNumber == 0) {
+        if (targetRunnerNumber == -1) {
             targetRunnerNumber = generatedFeatureNames.size();
+        } else if (targetRunnerNumber == 0) {
+            return 0;
         }
 
         List<List<String>> generatedFeatureNamesPerRunner = new ArrayList<>(targetRunnerNumber);
@@ -367,7 +369,7 @@ public class FeatureFileConverter {
 
         int runnerFileCounter = 0;
         for (List<String> generatedFeatureNamesForSingleRunner : generatedFeatureNamesPerRunner) {
-            if (generatedFeatureNamesForSingleRunner.size() > 0) {
+            if (!generatedFeatureNamesForSingleRunner.isEmpty()) {
                 generateRunnerClass(generatedFeatureNamesForSingleRunner);
                 runnerFileCounter++;
             }

@@ -7,20 +7,21 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-test-project</artifactId>
-    <version>1.10.0</version>
+    <version>1.11.0</version>
     <packaging>jar</packaging>
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
-        <maven.failsafe.plugin.version>3.0.0-M3</maven.failsafe.plugin.version>
-        <maven.build.helper.plugin.version>3.0.0</maven.build.helper.plugin.version>
-        <cucumber.version>6.9.0</cucumber.version>
-        <maven.compiler.plugin.version>3.7.0</maven.compiler.plugin.version>
+        <maven.failsafe.plugin.version>3.1.2</maven.failsafe.plugin.version>
+        <maven.build.helper.plugin.version>3.4.0</maven.build.helper.plugin.version>
+        <cucumber.version>7.11.1</cucumber.version>
+        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
         <maven.jar.plugin.version>3.1.2</maven.jar.plugin.version>
 
         <generated.runner.directory>${project.build.directory}/parallel/runners</generated.runner.directory>
         <generated.feature.directory>${project.build.directory}/parallel/features</generated.feature.directory>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     </properties>
 
     <dependencies>
@@ -53,7 +54,7 @@
                 </executions>
                 <configuration>
                     <!-- This can be either a Java class file or a text based template -->
-                    <sourceRunnerTemplateFile>src/test/java/some/template/CucableJavaTemplate.java
+                    <sourceRunnerTemplateFile>src/test/java/some/template/CucableTemplate.java
                     </sourceRunnerTemplateFile>
                     <!--<sourceRunnerTemplateFile>src/test/resources/cucable.template</sourceRunnerTemplateFile>-->
 
@@ -73,7 +74,7 @@
                     <!-- <sourceFeatures>@src/test/resources/cucumber-feature-list.txt</sourceFeatures> -->
 
                     <!-- process a folder that hosts text files containing paths to features and line numbers (as it is written by the Cucumber rerun formatter) -->
-<!--                    <sourceFeatures>@src/test/resources</sourceFeatures>-->
+                    <!-- <sourceFeatures>@src/test/resources</sourceFeatures> -->
 
                     <!-- process a specific feature file and specific line numbers in the given directory -->
                     <sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>
@@ -104,7 +105,7 @@
 
                     <!-- optional: generate a fixed number of runners and distribute all features round-robin.
                      This can only be used if desiredNumberOfFeaturesPerRunner is NOT used! -->
-                    <!--<desiredNumberOfRunners>2</desiredNumberOfRunners>-->
+                    <!-- <desiredNumberOfRunners>0</desiredNumberOfRunners> -->
 
                     <!-- optional: distribute a fixed number features per runner round-robin.
                     This can only be used if desiredNumberOfRunners is NOT used! -->
@@ -156,11 +157,15 @@
             </plugin>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin.version}</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <release>11</release>
                 </configuration>
             </plugin>
             <plugin>

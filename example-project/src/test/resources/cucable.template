@@ -9,6 +9,6 @@ import org.junit.runner.RunWith;
         features = {"target/parallel/features/[CUCABLE:FEATURE].feature"},
         plugin = {"json:target/cucumber-report/[CUCABLE:RUNNER].json"}
 )
-public class CucableJavaTemplate {
+public class CucableTemplate {
     // [CUCABLE:CUSTOM:comment]
 }

@@ -28,13 +28,14 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 import java.io.File;
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Singleton
 public class FileSystemManager {
@@ -91,8 +92,8 @@ public class FileSystemManager {
      */
     public List<Path> getFilesWithExtension(final String sourceFeatureDirectory, final String extension) throws
             CucablePluginException {
-        try {
-            return Files.walk(Paths.get(sourceFeatureDirectory))
+        try (Stream<Path> paths = Files.walk(Paths.get(sourceFeatureDirectory))) {
+            return paths
                     .filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith("." + extension))
                     .collect(Collectors.toList());
@@ -109,8 +110,10 @@ public class FileSystemManager {
         createDirIfNotExists(featureDir);
         removeFilesFromPath(featureDir, "feature");
 
-        createDirIfNotExists(runnerDir);
-        removeFilesFromPath(runnerDir, "java");
+        if (runnerDir != null && !runnerDir.isEmpty()) {
+            createDirIfNotExists(runnerDir);
+            removeFilesFromPath(runnerDir, "java");
+        }
     }
 
     /**
@@ -154,8 +157,9 @@ public class FileSystemManager {
      */
     public void writeContentToFile(String content, String filePath) throws FileCreationException {
         try {
-            FileUtils.fileAppend(filePath, "UTF-8", content);
-        } catch (IOException e) {
+            Path path = Paths.get(filePath);
+            Files.write(path, content.getBytes(StandardCharsets.UTF_8));
+        } catch (Exception e) {
             throw new FileCreationException(filePath);
         }
     }

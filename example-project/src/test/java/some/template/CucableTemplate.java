@@ -7,10 +7,9 @@ import org.junit.runner.RunWith;
 @RunWith(Cucumber.class)
 @CucumberOptions(
         glue = "steps",
-        strict = true,
         features = {"target/parallel/features/[CUCABLE:FEATURE].feature"},
         plugin = {"json:target/cucumber-report/[CUCABLE:RUNNER].json"}
 )
-public class CucableJavaTemplate {
+public class CucableTemplate {
     // [CUCABLE:CUSTOM:comment]
 }

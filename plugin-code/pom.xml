@@ -6,7 +6,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-plugin</artifactId>
-    <version>1.10.0</version>
+    <version>1.11.0</version>
     <url>https://github.com/trivago/cucable-plugin</url>
 
     <name>Cucable Maven Plugin</name>
@@ -17,14 +17,14 @@
 
     <organization>
         <name>trivago N.V.</name>
-        <url>http://www.trivago.de</url>
+        <url>https://www.trivago.com</url>
     </organization>
 
     <developers>
         <developer>
             <name>Benjamin Bischoff</name>
             <organization>trivago N.V.</organization>
-            <organizationUrl>http://www.trivago.de</organizationUrl>
+            <organizationUrl>https://www.trivago.com</organizationUrl>
             <roles>
                 <role>Test Automation Engineer</role>
                 <role>Knowledge Lead Test Automation</role>
@@ -70,21 +70,20 @@
         <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
         <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
         <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
-        <jacoco.maven.plugin>0.8.10</jacoco.maven.plugin>
-        <plexus.component.annotations.version>2.1.0</plexus.component.annotations.version>
-        <maven.plugin.annotations.version>3.6.0</maven.plugin.annotations.version>
+        <jacoco.maven.plugin>0.8.11</jacoco.maven.plugin>
+        <plexus.component.annotations.version>2.1.1</plexus.component.annotations.version>
+        <maven.plugin.annotations.version>3.10.2</maven.plugin.annotations.version>
         <maven.source.plugin.version>3.3.0</maven.source.plugin.version>
-        <maven.compiler.source>1.8</maven.compiler.source>
-        <maven.compiler.target>1.8</maven.compiler.target>
-        <maven.compiler.release>8</maven.compiler.release>
         <gherkin.version>5.2.0</gherkin.version>
-        <tag.expressions.version>5.0.1</tag.expressions.version>
-        <apache.commons.version>3.12.0</apache.commons.version>
+        <tag.expressions.version>6.0.0</tag.expressions.version>
+        <apache.commons.version>3.14.0</apache.commons.version>
 
-        <mockito.version>3.6.28</mockito.version>
-        <junit5.vintage.version>5.7.0</junit5.vintage.version>
+        <mockito.version>4.11.0</mockito.version>
+        <junit5.vintage.version>5.10.1</junit5.vintage.version>
         <openpojo.version>0.9.1</openpojo.version>
-        <plexus-utils.version>3.5.0</plexus-utils.version>
+        <plexus-utils.version>4.0.0</plexus-utils.version>
+        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
+        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     </properties>
 
     <profiles>
@@ -126,11 +125,15 @@
         <plugins>
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>${maven-resources-plugin.version}</version>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin.version}</version>
                 <configuration>
-                    <source>8</source>
-                    <target>8</target>
+                    <release>11</release>
                 </configuration>
             </plugin>
             <plugin>

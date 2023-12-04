@@ -36,7 +36,7 @@ public class FileSystemManagerTest {
         fileSystemManager.prepareGeneratedFeatureAndRunnerDirectories("", "");
     }
 
-    @Test(expected = PathCreationException.class)
+    @Test
     public void prepareGeneratedFeatureAndRunnerDirsMissingRunnerDirTest() throws Exception {
         String featurePath = testFolder.getRoot().getPath().concat("/featureDir");
         fileSystemManager.prepareGeneratedFeatureAndRunnerDirectories("", featurePath);

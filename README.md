@@ -13,19 +13,21 @@ _Run Cucumber Scenarios in Parallel with Maven_
 - [Cucable Maven Plugin](#cucable-maven-plugin)
   - [Cucumber 4](#cucumber-4)
   - [Cucumber 5 and higher](#cucumber-5-and-higher)
+  - [JUnit 5](#junit-5)
   - [Repository Structure](#repository-structure)
   - [Changelog](#changelog)
   - [Maven dependency](#maven-dependency)
 - [How it works](#how-it-works)
-  - [Template placeholders](#template-placeholders)
+  - [Runner template placeholders](#runner-template-placeholders)
     - [[CUCABLE:RUNNER]](#cucablerunner)
     - [[CUCABLE:FEATURE]](#cucablefeature)
     - [Custom template placeholders - [CUCABLE:CUSTOM:xxx]](#custom-template-placeholders---cucablecustomxxx)
   - [One runner per generated scenario](#one-runner-per-generated-scenario)
   - [One runner per group of generated scenarios](#one-runner-per-group-of-generated-scenarios)
+  - [No runners](#no-runners)
 - [Typical workflow](#typical-workflow)
   - [1. Generation of runners and features](#1-generation-of-runners-and-features)
-    - [Required Parameters](#required-parameters)
+    - [Parameters](#parameters)
       - [sourceRunnerTemplateFile](#sourcerunnertemplatefile)
         - [Using a java file as a runner template](#using-a-java-file-as-a-runner-template)
         - [Using a text file as a runner template](#using-a-text-file-as-a-runner-template)
@@ -33,7 +35,6 @@ _Run Cucumber Scenarios in Parallel with Maven_
       - [Combining different feature sources](#combining-different-feature-sources)
       - [generatedFeatureDirectory](#generatedfeaturedirectory)
       - [generatedRunnerDirectory](#generatedrunnerdirectory)
-    - [Optional Parameters](#optional-parameters)
       - [numberOfTestRuns](#numberoftestruns)
       - [includeScenarioTags](#includescenariotags)
       - [parallelizationMode](#parallelizationmode)
@@ -86,6 +87,10 @@ Even though Cucumber 4 supports basic parallel runs, Cucable has more options th
 
 * Cucumber starting with version 5 (using testng or junit 5) can natively run features and scenarios in parallel. Cucable __can__ be used but does not __have__ to be.
 
+## JUnit 5
+
+When using the JUnit 5 platform, Cucable can still help parallelize scenarios more fine-grained and with more options than the standard JUnit and Cucumber properties. 
+
 ## Repository Structure
 
 * [plugin-code](plugin-code) contains the full plugin source code.
@@ -111,9 +116,12 @@ All changes are documented in the [full changelog](CHANGELOG.md).
 * Each generated feature file includes a single scenario
 * After this, the runner classes for those generated features are generated based on a provided template file, either
   * one runner per generated "single scenario" feature file or
-  * one runner per group of "single scenario" feature files
+  * one runner per group of "single scenario" feature files or
+  * no runners at all (not needed if your tests are run as unit tests with JUnit 5 or TestNG)
 
-## Template placeholders
+## Runner template placeholders
+
+__Note:__ If you don't need runner classes to be generated, you can skip this section.
 
 ### [CUCABLE:RUNNER]
 
@@ -177,7 +185,7 @@ public class [CUCABLE:RUNNER] {
 }
 </pre>
 
-**Note:** The custom placeholder names are case sensitive!
+**Note:** The custom placeholder names are case-sensitive!
 
 ## One runner per generated scenario
 
@@ -194,6 +202,12 @@ This means that it will only generate the specified number of runners (or featur
 **Note:** If a runner runs only one feature, it automatically has the same name as the feature. Otherwise it will have a unique auto-generated name.
 
 ![Multi feature runner generation](documentation/img/cucable_flow_multi_runner.png)
+
+## No runners
+
+If you set `desiredNumberOfRunners` to `0`, this means that Cucable will not generate runner classes at all. In this case, you do not need to set these properties:
+* `sourceRunnerTemplateFile` (as you do not need a template file)
+* `generatedRunnerDirectory` (as no runners will be generated)
 
 # Typical workflow
 
@@ -237,9 +251,11 @@ The following sections break down the above steps.
 </plugin>
 ```
 
-### Required Parameters
+### Parameters
 
 #### sourceRunnerTemplateFile
+
+__Note:__ This is only needed, when you want to generate runner classes!
 
 The specified file will be used to generate runner classes for the generated feature file that can be run using [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/).
 
@@ -362,14 +378,14 @@ If you want to use a directory inside Maven's target folder, [check this example
 
 #### generatedRunnerDirectory
 
+__Note:__ This is only needed, when you want to generate runner classes!
+
 The path where the __generated__ runner classes should be located (e.g. _src/test/java/parallel/runners_).
 
 **Note:** This directory should be located under a valid source folder to be included as a test source by Maven.
 If you want to use a directory inside Maven's target folder, [check this example](#generating-runners-and-features-inside-target-directory).
 
 **Caution:** This directory will be wiped prior to the runner file generation!
-
-### Optional Parameters
 
 #### numberOfTestRuns
 
@@ -449,7 +465,7 @@ This can be configured by passing the `logLevel` property:
 
 If you set this options, all generated features will be distributed to a fixed set of runner classes. This means that one runner can potentially run multiple features in sequence.
 
-If this option is not set, its default value is `0` which basically means "Generate a dedicated runner for every generated feature".
+If this option is not set, its default value is `-1` which basically means "Generate a dedicated runner for every generated feature".
 
 __Note:__ This cannot be used together with `desiredNumberOfFeaturesPerRunner`!
 
