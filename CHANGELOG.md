@@ -17,6 +17,7 @@ Back to [Readme](README.md).
 * Default value of `<desiredNumberOfRunners>` was changed from `0` to `-1`:
   * `-1` means that the number generated runners should be equal to the number generated scenarios. 
   * `0` means that no runners should be generated at all.
+* Java 11 requirement
 
 ### Changed
 
