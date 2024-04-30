@@ -25,7 +25,7 @@ import java.util.Collections;
 import java.util.List;
 
 @Singleton
-class FeatureFileContentRenderer {
+public class FeatureFileContentRenderer {
 
     private static final String LINE_SEPARATOR = System.lineSeparator();
 

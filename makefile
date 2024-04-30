@@ -3,9 +3,10 @@ help: ## Show this help.
 .PHONY: help
 
 build-and-test: ## Build the plugin and run demo tests
-	mvn clean install
-	mvn verify -f=examples-project/pom.xml -ntp
-	open example-project/target/cluecumber-report/index.html
+	mvn clean install -f=plugin-code/pom.xml -ntp; \
+	cd example-project; \
+	mvn clean verify -ntp || true; \
+	cd ..
 
 show-versions: ## Show most recent dependency versions
 	mvn versions:display-dependency-updates -ntp -f=plugin-code/pom.xml

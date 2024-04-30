@@ -142,8 +142,8 @@ CucablePlugin extends AbstractMojo {
      */
     public void execute() throws CucablePluginException {
 
-        // Initialize logger to be available outside the AbstractMojo class
-        logger.initialize(getLog(), logLevel);
+        // Initialize the log level
+        logger.initialize(logLevel);
 
         // Initialize passed POM properties
         propertyManager.setSourceRunnerTemplateFile(sourceRunnerTemplateFile);
