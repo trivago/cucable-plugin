@@ -3,11 +3,11 @@ help: ## Show this help.
 .PHONY: help
 
 build-and-test: ## Build the plugin and run demo tests
-	mvn clean install -f=plugin-code/pom.xml -ntp; \
+	plugin-code/mvnw clean install -f=plugin-code/pom.xml -ntp; \
 	cd example-project; \
-	mvn clean verify -ntp || true; \
+	../plugin-code/mvnw clean verify -ntp || true; \
 	cd ..
 
 show-versions: ## Show most recent dependency versions
-	mvn versions:display-dependency-updates -ntp -f=plugin-code/pom.xml
+	plugin-code/mvnw versions:display-dependency-updates -ntp -f=plugin-code/pom.xml
 .PHONY: show-versions
