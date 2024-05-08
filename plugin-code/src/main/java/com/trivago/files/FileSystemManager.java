@@ -32,6 +32,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
+import java.nio.file.StandardOpenOption;
 import java.util.Collections;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -158,7 +159,7 @@ public class FileSystemManager {
     public void writeContentToFile(String content, String filePath) throws FileCreationException {
         try {
             Path path = Paths.get(filePath);
-            Files.write(path, content.getBytes(StandardCharsets.UTF_8));
+            Files.write(path, content.getBytes(StandardCharsets.UTF_8), StandardOpenOption.CREATE, StandardOpenOption.APPEND);
         } catch (Exception e) {
             throw new FileCreationException(filePath);
         }
