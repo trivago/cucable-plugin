@@ -21,4 +21,4 @@ jobs:
         cache: maven
     - name: Test with Maven
       working-directory: plugin-code
-      run: mvn test
+      run: ./mvnw test

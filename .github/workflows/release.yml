@@ -32,7 +32,7 @@ jobs:
 
       - name: Publish to Apache Maven Central
         working-directory: plugin-code
-        run: mvn deploy -B -Prelease
+        run: ./mvnw deploy -B -Prelease
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
