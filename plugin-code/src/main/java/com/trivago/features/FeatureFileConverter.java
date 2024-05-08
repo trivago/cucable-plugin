@@ -51,7 +51,6 @@ public class FeatureFileConverter {
     private static final String INTEGRATION_TEST_POSTFIX = "_IT";
     private static final String PATH_SEPARATOR = "/";
     private static final String TEST_RUNS_COUNTER_FORMAT = "_run%03d";
-    private static final String TEST_RERUNS_FORMAT = "_rerun";
     private static final String FEATURE_COUNTER_FORMAT = "_feature%03d";
     private static final String SCENARIO_COUNTER_FORMAT = "_scenario%03d";
 
@@ -97,7 +96,7 @@ public class FeatureFileConverter {
 
         for (CucableFeature cucableFeature : cucableFeatures) {
             List<Path> paths = fileSystemManager.getPathsFromCucableFeature(cucableFeature);
-            if (paths.size() == 0) {
+            if (paths.isEmpty()) {
                 logger.warn("No features and runners could be created. Please check your properties!");
             }
             for (Path path : paths) {
@@ -153,16 +152,6 @@ public class FeatureFileConverter {
         return generateFeaturesWithScenariosParallelizationMode(sourceFeatureFilePath, lineNumbers);
     }
 
-    private List<String> generateParallelizableFeatures(
-            final Path sourceFeatureFilePath,
-            final Integer lineNumber) throws CucablePluginException {
-
-        if (propertyManager.getParallelizationMode() == PropertyManager.ParallelizationMode.FEATURES) {
-            return generateFeaturesWithFeaturesParallelizationMode(sourceFeatureFilePath);
-        }
-        return generateFeaturesWithScenariosParallelizationMode(sourceFeatureFilePath, Collections.singletonList(lineNumber));
-    }
-
     /**
      * Generate features with parallelization mode 'features'.
      *
@@ -190,7 +179,7 @@ public class FeatureFileConverter {
             final List<Integer> lineNumbers) throws CucablePluginException {
 
         String featureFilePathString = sourceFeatureFilePath.toString();
-        if (featureFilePathString.equals("")) {
+        if (featureFilePathString.isEmpty()) {
             throw new MissingFileException(featureFilePathString);
         }
 

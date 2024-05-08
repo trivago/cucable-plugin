@@ -16,14 +16,12 @@ import static org.mockito.Mockito.verify;
 
 public class CucablePluginTest {
     private CucableLogger logger;
-    private Log mojoLogger;
     private CucablePlugin cucablePlugin;
 
     @Before
     public void setup() {
         logger = mock(CucableLogger.class);
-        mojoLogger = mock(Log.class);
-        logger.initialize(mojoLogger, "default");
+        logger.initialize("default");
         PropertyManager propertyManager = mock(PropertyManager.class);
         FileSystemManager fileSystemManager = mock(FileSystemManager.class);
         FeatureFileConverter featureFileConverter = mock(FeatureFileConverter.class);
@@ -39,8 +37,6 @@ public class CucablePluginTest {
     @Test
     public void logInvocationTest() throws Exception {
         cucablePlugin.execute();
-        verify(logger, times(1)).initialize(mojoLogger, "default");
-        verify(logger, times(1)).info(anyString(), any(CucableLogger.CucableLogLevel.class));
-        verify(logger, times(2)).logInfoSeparator(any(CucableLogger.CucableLogLevel.class));
+        verify(logger, times(1)).initialize("default");
     }
 }

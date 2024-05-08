@@ -6,7 +6,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-plugin</artifactId>
-    <version>1.11.0</version>
+    <version>1.12.0</version>
     <url>https://github.com/trivago/cucable-plugin</url>
 
     <name>Cucable Maven Plugin</name>
@@ -63,27 +63,28 @@
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 
-        <maven.version>3.6.3</maven.version>
+        <maven.version>4.0.0-alpha-13</maven.version>
         <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
         <nexus.staging.maven.plugin.version>1.6.13</nexus.staging.maven.plugin.version>
         <maven.plugin.plugin.version>3.9.0</maven.plugin.plugin.version>
         <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
         <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
-        <maven.plugin.testing.harness.version>3.3.0</maven.plugin.testing.harness.version>
+        <maven.plugin.testing.harness.version>4.0.0-alpha-2</maven.plugin.testing.harness.version>
         <jacoco.maven.plugin>0.8.11</jacoco.maven.plugin>
-        <plexus.component.annotations.version>2.1.1</plexus.component.annotations.version>
-        <maven.plugin.annotations.version>3.10.2</maven.plugin.annotations.version>
+        <plexus.component.annotations.version>2.2.0</plexus.component.annotations.version>
+        <maven.plugin.annotations.version>3.13.0</maven.plugin.annotations.version>
         <maven.source.plugin.version>3.3.0</maven.source.plugin.version>
         <gherkin.version>5.2.0</gherkin.version>
-        <tag.expressions.version>6.0.0</tag.expressions.version>
+        <tag.expressions.version>6.1.0</tag.expressions.version>
         <apache.commons.version>3.14.0</apache.commons.version>
 
-        <mockito.version>4.11.0</mockito.version>
-        <junit5.vintage.version>5.10.1</junit5.vintage.version>
+        <mockito.version>5.11.0</mockito.version>
+        <junit5.vintage.version>5.11.0-M1</junit5.vintage.version>
         <openpojo.version>0.9.1</openpojo.version>
-        <plexus-utils.version>4.0.0</plexus-utils.version>
+        <plexus-utils.version>4.0.1</plexus-utils.version>
         <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <slf4j-api.version>2.1.0-alpha1</slf4j-api.version>
     </properties>
 
     <profiles>
@@ -230,6 +231,12 @@
         </dependency>
 
         <dependency>
+            <groupId>org.slf4j</groupId>
+            <artifactId>slf4j-api</artifactId>
+            <version>${slf4j-api.version}</version>
+        </dependency>
+
+        <dependency>
             <groupId>org.apache.commons</groupId>
             <artifactId>commons-lang3</artifactId>
             <version>${apache.commons.version}</version>
@@ -281,5 +288,18 @@
             <artifactId>tag-expressions</artifactId>
             <version>${tag.expressions.version}</version>
         </dependency>
+        <dependency>
+            <groupId>javax.inject</groupId>
+            <artifactId>javax.inject</artifactId>
+            <version>1</version>
+            <scope>compile</scope>
+        </dependency>
     </dependencies>
+    <repositories>
+        <repository>
+            <id>maven_central</id>
+            <name>Maven Central</name>
+            <url>https://repo.maven.apache.org/maven2/</url>
+        </repository>
+    </repositories>
 </project>

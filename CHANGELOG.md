@@ -1,10 +1,22 @@
 # Changelog
+
 All notable changes to this project will be documented in this file.
 
 The format is based on [Keep a Changelog](http://keepachangelog.com/en/1.0.0/)
 and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.html).
 
 Back to [Readme](README.md).
+
+## [1.12.0] - 2024-05-08
+
+### Fixed
+
+* `generated-features.properties` only included the last generated feature, not all
+
+### Changed
+
+* Updated dependencies
+* Infrastructure changes (GitHub workflow, Maven wrapper, etc.)
 
 ## [1.11.0] - 2023-12-04
 
@@ -15,8 +27,8 @@ Back to [Readme](README.md).
 ### Changed
 
 * Default value of `<desiredNumberOfRunners>` was changed from `0` to `-1`:
-  * `-1` means that the number generated runners should be equal to the number generated scenarios. 
-  * `0` means that no runners should be generated at all.
+    * `-1` means that the number generated runners should be equal to the number generated scenarios.
+    * `0` means that no runners should be generated at all.
 * Java 11 requirement
 
 ### Changed
@@ -28,17 +40,19 @@ Back to [Readme](README.md).
 ### Added
 
 * Ability added to specify a folder containing rerun text files [183]
-* Additional `generated-features.properties` file in the generated feature directory that stores all generated feature names and their reference to the respective source feature [184]
+* Additional `generated-features.properties` file in the generated feature directory that stores all generated feature
+  names and their reference to the respective source feature [184]
 * Feature source options can now be freely combined
 * Cucable version is now mentioned in the generated runners and features
 
 ### Changed
 
-* Various dependency updates 
+* Various dependency updates
 
 ## [1.9.0] - 2020-11-26
 
 ### Added
+
 * Better error messages when features cannot be parsed (#173)
 * `Background` steps are now preserved as `Background` in generated scenarios (#160)
 
@@ -75,7 +89,8 @@ Back to [Readme](README.md).
 
 ### Changed
 
-* Cucable is now more resilient when trying to deal with unparsable features - these are skipped instead of stopping the overall execution.
+* Cucable is now more resilient when trying to deal with unparsable features - these are skipped instead of stopping the
+  overall execution.
 
 ### Fixed
 
@@ -99,7 +114,8 @@ Back to [Readme](README.md).
 
 ### Fixed
 
-* Potentially wrong handling of scenarios without tags when a tag expression is provided in `<includeScenarioTags>` (#107)
+* Potentially wrong handling of scenarios without tags when a tag expression is provided in `<includeScenarioTags>` (
+  #107)
 
 ## [1.5.0] - 2019-03-11
 
@@ -114,7 +130,8 @@ Back to [Readme](README.md).
 
 ### Removed
 
-* Removed parameters `excludeScenarioTags`, `includeScenarioTagsConnector` and `excludeScenarioTagsConnector` in favor of [Cucumber tag expressions](https://docs.cucumber.io/cucumber/api/#tag-expressions) in `includeScenarioTags`
+* Removed parameters `excludeScenarioTags`, `includeScenarioTagsConnector` and `excludeScenarioTagsConnector` in favor
+  of [Cucumber tag expressions](https://docs.cucumber.io/cucumber/api/#tag-expressions) in `includeScenarioTags`
 
 ### Changed
 
@@ -124,7 +141,8 @@ Back to [Readme](README.md).
 
 ### Added
 
-- Support for `and` and `or` mode for `includeScenarioTags` and `excludeScenarioTags` via `includeScenarioTagsConnector` and `excludeScenarioTagsConnector` parameters (default: 'or') (#88):
+- Support for `and` and `or` mode for `includeScenarioTags` and `excludeScenarioTags` via `includeScenarioTagsConnector`
+  and `excludeScenarioTagsConnector` parameters (default: 'or') (#88):
 
     ```
     <includeScenarioTagsConnector>and</includeScenarioTagsConnector>
@@ -138,22 +156,22 @@ Back to [Readme](README.md).
         src/test/resources/features/MyFeature.feature:8:15
     </sourceFeatures>
     ```
-    
+
 - Ability to generate runners with a specific number of features by specifying `desiredNumberOfFeaturesPerRunner` (#70)
 
 ### Changed
 
 - `includeScenarioTags` and `excludeScenarioTags` are now specified as a list of strings:
-  
+
     ```
     <includeScenarioTags>@tag1,@tag2</includeScenarioTags>
     <excludeScenarioTags>@tag3</excludeScenarioTags>
     ```
 - `includeScenarioTags` and `excludeScenarioTags` can now be used without the preceding `@`:
 
-     `<includeScenarioTags>tag1,tag2</includeScenarioTags>`
-    
-- Completely rewritten feature handling to support more options 
+  `<includeScenarioTags>tag1,tag2</includeScenarioTags>`
+
+- Completely rewritten feature handling to support more options
 
 ## [1.3.2] - 2019-02-01
 
@@ -182,7 +200,8 @@ Back to [Readme](README.md).
 
 ### Added
 
-- New property `parallelizationMode` so that Cucable can optionally parallelize complete features instead of individual scenarios
+- New property `parallelizationMode` so that Cucable can optionally parallelize complete features instead of individual
+  scenarios
 
 ### Changed
 
@@ -200,7 +219,8 @@ Back to [Readme](README.md).
 
 - Support a fixed number of runners running multiple scenarios in sequence
 - New `[CUCABLE:RUNNER]` template placeholder that is substituted with the current runner name
-- New `[CUCABLE:FEATURE]` template placeholder that is substituted with the one or multiple features in the generated runner
+- New `[CUCABLE:FEATURE]` template placeholder that is substituted with the one or multiple features in the generated
+  runner
 
 ### Changed
 
@@ -208,11 +228,13 @@ Back to [Readme](README.md).
 
 ### Fixed
 
-- Better logging for missing example table placeholders in scenario outlines  (contributed by [@daczczcz1](https://github.com/daczczcz1))
+- Better logging for missing example table placeholders in scenario outlines  (contributed
+  by [@daczczcz1](https://github.com/daczczcz1))
 
 ### Removed
 
-- Template placeholder `[FEATURE_FILE_NAME]` is not supported anymore, please use `[CUCABLE:FEATURE]` and `[CUCABLE:RUNNER]` instead
+- Template placeholder `[FEATURE_FILE_NAME]` is not supported anymore, please use `[CUCABLE:FEATURE]`
+  and `[CUCABLE:RUNNER]` instead
 
 ## [0.1.11] - 2018-05-08
 
@@ -256,14 +278,16 @@ Back to [Readme](README.md).
 
 ### Added
 
-- Ability to use example placeholders in scenario outline names (contributed by [@daczczcz1](https://github.com/daczczcz1))
+- Ability to use example placeholders in scenario outline names (contributed
+  by [@daczczcz1](https://github.com/daczczcz1))
 
 ## [0.1.5] - 2018-02-07
 
 ### Added
 
 - Docstring support in steps
-- Possibility to specify multiple line numbers to process specific scenarios (like in Cucumber), e.g. ```myFeature.feature:12:42:111```. 
+- Possibility to specify multiple line numbers to process specific scenarios (like in Cucumber),
+  e.g. ```myFeature.feature:12:42:111```.
 
 ## [0.1.4] - 2018-02-05
 
@@ -274,113 +298,167 @@ Back to [Readme](README.md).
 ## [0.1.3] - 2017-12-20
 
 ### Fixed
+
 - Fixed handling of data tables that include example table values
 
 ## [0.1.2] - 2017-12-05
 
 ### Fixed
+
 - Tag filtering now also considers feature tags
 
 ## [0.1.1] - 2017-11-28
 
 ### Fixed
+
 - Removed debug logs
 
 ## [0.1.0] - 2017-11-28
 
 ### Added
+
 - Ability to include and exclude scenarios based on certain tags
 - More unit tests
 
 ## [0.0.9] - 2017-10-27
 
 ### Changed
+
 - Logging is now more compact
 - Changed license blocks from trivago GmbH to trivago N.V.
 
 ### Added
-- It is now possible to process a specific scenario inside a feature file by specifying a line number prefix (like in Cucumber), e.g. ```myFeature.feature:12```.
+
+- It is now possible to process a specific scenario inside a feature file by specifying a line number prefix (like in
+  Cucumber), e.g. ```myFeature.feature:12```.
 - More unit tests added.
 
 ## [0.0.8] - 2017-09-24
 
 ### Changed
+
 - Fixed parse error on empty cells in data tables
 - Fixed file name generation bug with special chars in source feature file names
 
 ### Added
+
 - Unit tests for data table handling
 
 ## [0.0.7] - 2017-09-20
 
 ### Changed
+
 - Complete rewrite of the internal logic of the plugin to support all edge cases like
-  - empty scenarios
-  - background steps (also with data tables)
-  - scenario steps with data tables
-  - complex scenario outlines
+    - empty scenarios
+    - background steps (also with data tables)
+    - scenario steps with data tables
+    - complex scenario outlines
 
 ### Added
+
 - Better logging (including plugin version)
 - Clearer error messages
 
 ## [0.0.6] - 2017-08-31
 
 ### Added
+
 - Ability to run single features multiple times in parallel
 - Properties are now logged on plugin start
 - More unit tests
 
 ### Changed
+
 - Complete project now uses dependency injection via Google [Guice](https://github.com/google/guice)
-- POM parameter _featureFileDirectory_ was renamed to _sourceFeatures_ since it now supports specifying either a directory or a single feature file
+- POM parameter _featureFileDirectory_ was renamed to _sourceFeatures_ since it now supports specifying either a
+  directory or a single feature file
 
 ## [0.0.5] - 2017-08-18
 
 ### Added
+
 - Cucumber 'Background' is now supported in feature files
 
 ### Changed
+
 - More logging added.
 
 ## [0.0.4] - 2017-06-01
 
 Initial project version on GitHub and Maven Central.
 
-[1.11.0]: https://github.com/trivago/cucable-plugin/compare/1.9.0...1.10.0
+[1.12.0]: https://github.com/trivago/cucable-plugin/compare/1.11.0...1.12.0
+
+[1.11.0]: https://github.com/trivago/cucable-plugin/compare/1.10.0...1.11.0
+
 [1.10.0]: https://github.com/trivago/cucable-plugin/compare/1.9.0...1.10.0
+
 [1.9.0]: https://github.com/trivago/cucable-plugin/compare/1.8.0...1.9.0
+
 [1.8.0]: https://github.com/trivago/cucable-plugin/compare/1.7.2...1.8.0
+
 [1.7.2]: https://github.com/trivago/cucable-plugin/compare/1.7.1...1.7.2
+
 [1.7.1]: https://github.com/trivago/cucable-plugin/compare/1.7.0...1.7.1
+
 [1.7.0]: https://github.com/trivago/cucable-plugin/compare/1.6.0...1.7.0
+
 [1.6.0]: https://github.com/trivago/cucable-plugin/compare/1.5.3...1.6.0
+
 [1.5.3]: https://github.com/trivago/cucable-plugin/compare/1.5.2...1.5.3
+
 [1.5.2]: https://github.com/trivago/cucable-plugin/compare/1.5.1...1.5.2
+
 [1.5.1]: https://github.com/trivago/cucable-plugin/compare/1.5.0...1.5.1
+
 [1.5.0]: https://github.com/trivago/cucable-plugin/compare/1.4.0...1.5.0
+
 [1.4.0]: https://github.com/trivago/cucable-plugin/compare/1.3.2...1.4.0
+
 [1.3.2]: https://github.com/trivago/cucable-plugin/compare/1.3.1...1.3.2
+
 [1.3.1]: https://github.com/trivago/cucable-plugin/compare/1.3.0...1.3.1
+
 [1.3.0]: https://github.com/trivago/cucable-plugin/compare/1.2.0...1.3.0
+
 [1.2.0]: https://github.com/trivago/cucable-plugin/compare/1.1.0...1.2.0
+
 [1.1.0]: https://github.com/trivago/cucable-plugin/compare/1.0.0...1.1.0
+
 [1.0.0]: https://github.com/trivago/cucable-plugin/compare/0.1.11...1.0.0
+
 [0.1.11]: https://github.com/trivago/cucable-plugin/compare/0.1.10...0.1.11
+
 [0.1.10]: https://github.com/trivago/cucable-plugin/compare/0.1.9...0.1.10
+
 [0.1.9]: https://github.com/trivago/cucable-plugin/compare/0.1.8...0.1.9
+
 [0.1.8]: https://github.com/trivago/cucable-plugin/compare/0.1.7...0.1.8
+
 [0.1.7]: https://github.com/trivago/cucable-plugin/compare/0.1.6...0.1.7
+
 [0.1.6]: https://github.com/trivago/cucable-plugin/compare/0.1.5...0.1.6
+
 [0.1.5]: https://github.com/trivago/cucable-plugin/compare/0.1.4...0.1.5
+
 [0.1.4]: https://github.com/trivago/cucable-plugin/compare/0.1.3...0.1.4
+
 [0.1.3]: https://github.com/trivago/cucable-plugin/compare/0.1.2...0.1.3
+
 [0.1.2]: https://github.com/trivago/cucable-plugin/compare/0.1.1...0.1.2
+
 [0.1.1]: https://github.com/trivago/cucable-plugin/compare/0.1.0...0.1.1
+
 [0.1.0]: https://github.com/trivago/cucable-plugin/compare/0.0.9...0.1.0
+
 [0.0.9]: https://github.com/trivago/cucable-plugin/compare/0.0.8...0.0.9
+
 [0.0.8]: https://github.com/trivago/cucable-plugin/compare/0.0.7...0.0.8
+
 [0.0.7]: https://github.com/trivago/cucable-plugin/compare/0.0.6...0.0.7
+
 [0.0.6]: https://github.com/trivago/cucable-plugin/compare/0.0.5...0.0.6
+
 [0.0.5]: https://github.com/trivago/cucable-plugin/compare/v0.0.4...0.0.5
+
 [0.0.4]: https://github.com/trivago/cucable-plugin/tree/v0.0.4

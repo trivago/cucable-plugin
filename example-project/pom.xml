@@ -6,8 +6,8 @@
     <modelVersion>4.0.0</modelVersion>
 
     <groupId>com.trivago.rta</groupId>
-    <artifactId>cucable-test-project</artifactId>
-    <version>1.11.0</version>
+    <artifactId>example-project</artifactId>
+    <version>1.12.0</version>
     <packaging>jar</packaging>
 
     <properties>

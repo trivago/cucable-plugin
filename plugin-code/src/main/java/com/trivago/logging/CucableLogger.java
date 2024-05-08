@@ -16,7 +16,8 @@
 
 package com.trivago.logging;
 
-import org.apache.maven.plugin.logging.Log;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import javax.inject.Singleton;
 import java.util.Arrays;
@@ -24,17 +25,16 @@ import java.util.Arrays;
 @Singleton
 public class CucableLogger {
 
-    private Log mojoLogger;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CucableLogger.class);
+
     private CucableLogLevel currentLogLevel;
 
     /**
-     * Set the mojo logger so it can be used in any class that injects a CucableLogger.
+     * Set the Log level.
      *
-     * @param mojoLogger      The current {@link Log}.
      * @param currentLogLevel the log level that the logger should react to.
      */
-    public void initialize(final Log mojoLogger, final String currentLogLevel) {
-        this.mojoLogger = mojoLogger;
+    public void initialize(final String currentLogLevel) {
         if (currentLogLevel == null) {
             this.currentLogLevel = CucableLogger.CucableLogLevel.DEFAULT;
             return;
@@ -58,7 +58,7 @@ public class CucableLogger {
      * @param logString        The {@link String} to be logged.
      * @param cucableLogLevels The log levels ({@link CucableLogLevel} list) in which the message should be displayed.
      */
-    public void info(final CharSequence logString, CucableLogLevel... cucableLogLevels) {
+    public void info(final String logString, CucableLogLevel... cucableLogLevels) {
         log(LogLevel.INFO, logString, cucableLogLevels);
     }
 
@@ -67,7 +67,7 @@ public class CucableLogger {
      *
      * @param logString The {@link String} to be logged.
      */
-    public void warn(final CharSequence logString) {
+    public void warn(final String logString) {
         CucableLogLevel[] logLevels =
                 new CucableLogLevel[]{CucableLogLevel.DEFAULT, CucableLogLevel.COMPACT, CucableLogLevel.MINIMAL};
         log(LogLevel.WARN, logString, logLevels);
@@ -79,19 +79,20 @@ public class CucableLogger {
      * @param logString        The {@link String} to be logged.
      * @param cucableLogLevels The log levels ({@link CucableLogLevel} list) in which the message should be displayed.
      */
-    private void log(final LogLevel logLevel, final CharSequence logString, CucableLogLevel... cucableLogLevels) {
+    private void log(final LogLevel logLevel, final String logString, CucableLogLevel... cucableLogLevels) {
+
         if (currentLogLevel != null
-                && cucableLogLevels != null
-                && cucableLogLevels.length > 0
-                && Arrays.stream(cucableLogLevels).noneMatch(cucableLogLevel -> cucableLogLevel == currentLogLevel)) {
+            && cucableLogLevels != null
+            && cucableLogLevels.length > 0
+            && Arrays.stream(cucableLogLevels).noneMatch(cucableLogLevel -> cucableLogLevel == currentLogLevel)) {
             return;
         }
         switch (logLevel) {
             case INFO:
-                mojoLogger.info(logString);
+                LOGGER.info(logString);
                 break;
             case WARN:
-                mojoLogger.warn(logString);
+                LOGGER.warn(logString);
                 break;
         }
     }
