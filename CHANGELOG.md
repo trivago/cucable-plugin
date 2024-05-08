@@ -16,6 +16,7 @@ Back to [Readme](README.md).
 ### Changed
 
 * Updated dependencies
+* Infrastructure changes (GitHub workflow, Maven wrapper, etc.)
 
 ## [1.11.0] - 2023-12-04
 
