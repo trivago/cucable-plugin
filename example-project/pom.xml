@@ -7,15 +7,16 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>example-project</artifactId>
-    <version>1.12.0</version>
+    <version>1.13.0</version>
     <packaging>jar</packaging>
 
     <properties>
+        <maven.version>3.9.9</maven.version>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
         <maven.failsafe.plugin.version>3.1.2</maven.failsafe.plugin.version>
         <maven.build.helper.plugin.version>3.4.0</maven.build.helper.plugin.version>
-        <cucumber.version>7.11.1</cucumber.version>
+        <cucumber-bom.version>7.11.1</cucumber-bom.version>
         <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
         <maven.jar.plugin.version>3.1.2</maven.jar.plugin.version>
 
@@ -24,21 +25,51 @@
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
     </properties>
 
+    <dependencyManagement>
+        <dependencies>
+            <dependency>
+                <groupId>io.cucumber</groupId>
+                <artifactId>cucumber-bom</artifactId>
+                <version>${cucumber-bom.version}</version>
+                <type>pom</type>
+                <scope>import</scope>
+            </dependency>
+        </dependencies>
+    </dependencyManagement>
+
     <dependencies>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-java</artifactId>
-            <version>${cucumber.version}</version>
         </dependency>
         <dependency>
             <groupId>io.cucumber</groupId>
             <artifactId>cucumber-junit</artifactId>
-            <version>${cucumber.version}</version>
         </dependency>
     </dependencies>
 
     <build>
         <plugins>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-enforcer-plugin</artifactId>
+                <version>3.5.0</version>
+                <executions>
+                    <execution>
+                        <id>enforce-maven</id>
+                        <goals>
+                            <goal>enforce</goal>
+                        </goals>
+                        <configuration>
+                            <rules>
+                                <requireMavenVersion>
+                                    <version>${maven.version}</version>
+                                </requireMavenVersion>
+                            </rules>
+                        </configuration>
+                    </execution>
+                </executions>
+            </plugin>
             <plugin>
                 <groupId>com.trivago.rta</groupId>
                 <artifactId>cucable-plugin</artifactId>
@@ -101,7 +132,7 @@
 
                     <!-- optional: number of test runs to create runners and features multiple times
                          if set to a number greater than 1 -->
-                     <!-- <numberOfTestRuns>5</numberOfTestRuns> -->
+                    <!-- <numberOfTestRuns>5</numberOfTestRuns> -->
 
                     <!-- optional: generate a fixed number of runners and distribute all features round-robin.
                      This can only be used if desiredNumberOfFeaturesPerRunner is NOT used! -->

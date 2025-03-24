@@ -7,6 +7,19 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.13.0] - 2025-03-24
+
+### Changed
+
+* Updated Maven Testing Harness to `4.0.0-beta-3`
+* Updated Jacoco to `0.8.12`
+* Updated Maven Source version to `3.3.1`
+* Updated Apache Commons version to `3.17.0`
+* Updated Plexus utils version to `4.0.2`
+* Updated Maven wrapper version to `3.9.9`
+* Updated JUnit Vintage Engine to `5.12.1`
+* Updated Mockito to `5.16.1`
+
 ## [1.12.0] - 2024-05-08
 
 ### Fixed
