@@ -31,10 +31,8 @@ jobs:
           gpg-passphrase: MAVEN_GPG_PASSPHRASE
 
       - name: Publish to Apache Maven Central
-        working-directory: plugin-code
-        run: ./mvnw deploy -B -Prelease -no-transfer-progress
+        run: make deploy
         env:
           MAVEN_USERNAME: ${{ secrets.OSSRH_USERNAME }}
           MAVEN_PASSWORD: ${{ secrets.OSSRH_TOKEN }}
           MAVEN_GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
-          GPG_PASSPHRASE: ${{ secrets.MAVEN_GPG_PASSPHRASE }}
