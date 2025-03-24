@@ -9,5 +9,11 @@ build-and-test: ## Build the plugin and run demo tests
 	cd ..
 
 show-versions: ## Show most recent dependency versions
-	plugin-code/mvnw versions:display-dependency-updates -ntp -f=plugin-code/pom.xml
+	plugin-code/mvnw versions:display-dependency-updates versions:display-plugin-updates -ntp -f=plugin-code/pom.xml
 .PHONY: show-versions
+
+set-maven-version: ## Change the version of the Maven wrapper
+	@if test -z "$(MAVEN_VERSION)"; then echo "No MAVEN_VERSION set!"; exit 1; fi
+	mvn wrapper:3.3.2:wrapper -Dmaven=${MAVEN_VERSION} -f=plugin-code/pom.xml
+	@plugin-code/mvnw --version
+.PHONY: set-maven-version
