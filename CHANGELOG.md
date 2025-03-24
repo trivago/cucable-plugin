@@ -7,6 +7,10 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.13.1] - UNRELEASED
+
+
+
 ## [1.13.0] - 2025-03-24
 
 ### Changed
@@ -404,6 +408,10 @@ recent versions of the underlying Cucumber dependencies.
 ## [0.0.4] - 2017-06-01
 
 Initial project version on GitHub and Maven Central.
+
+[1.13.1]: https://github.com/trivago/cucable-plugin/compare/1.13.0...1.13.1
+
+[1.13.0]: https://github.com/trivago/cucable-plugin/compare/1.12.0...1.13.0
 
 [1.12.0]: https://github.com/trivago/cucable-plugin/compare/1.11.0...1.12.0
 

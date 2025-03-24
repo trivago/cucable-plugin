@@ -7,7 +7,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>example-project</artifactId>
-    <version>1.13.0</version>
+    <version>1.13.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -132,7 +132,7 @@
 
                     <!-- optional: number of test runs to create runners and features multiple times
                          if set to a number greater than 1 -->
-                    <!-- <numberOfTestRuns>5</numberOfTestRuns> -->
+                     <!-- <numberOfTestRuns>5</numberOfTestRuns> -->
 
                     <!-- optional: generate a fixed number of runners and distribute all features round-robin.
                      This can only be used if desiredNumberOfFeaturesPerRunner is NOT used! -->
