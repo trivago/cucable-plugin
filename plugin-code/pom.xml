@@ -62,10 +62,14 @@
 
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <maven.compiler.source>11</maven.compiler.source>
+        <maven.compiler.target>11</maven.compiler.target>
+        <maven.compiler.release>11</maven.compiler.release>
 
         <maven.version>3.9.9</maven.version>
-        <maven.gpg.plugin.version>1.6</maven.gpg.plugin.version>
-        <nexus.staging.maven.plugin.version>1.6.13</nexus.staging.maven.plugin.version>
+        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
+        <maven.gpg.plugin.version>3.2.7</maven.gpg.plugin.version>
+        <nexus.staging.maven.plugin.version>1.7.0</nexus.staging.maven.plugin.version>
         <maven.plugin.plugin.version>3.9.0</maven.plugin.plugin.version>
         <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
         <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
@@ -82,7 +86,6 @@
         <junit5.vintage.version>5.12.1</junit5.vintage.version>
         <openpojo.version>0.9.1</openpojo.version>
         <plexus-utils.version>4.0.2</plexus-utils.version>
-        <maven-compiler-plugin.version>3.11.0</maven-compiler-plugin.version>
         <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
         <slf4j-api.version>2.1.0-alpha1</slf4j-api.version>
     </properties>
@@ -153,9 +156,6 @@
                 <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>${maven.compiler.plugin.version}</version>
-                <configuration>
-                    <release>11</release>
-                </configuration>
             </plugin>
             <plugin>
                 <groupId>org.jacoco</groupId>
@@ -225,6 +225,11 @@
                         </goals>
                     </execution>
                 </executions>
+            </plugin>
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-javadoc-plugin</artifactId>
+                <version>${maven-javadoc-plugin.version}</version>
             </plugin>
         </plugins>
     </build>

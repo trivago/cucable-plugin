@@ -421,7 +421,7 @@ folder, [check this example](#generating-runners-and-features-inside-target-dire
 #### numberOfTestRuns
 
 Optional number of test runs. This can be used if specific scenarios should be run multiple times.
-If this options is not set, its default value is __1__.
+If this option is not set, its default value is __1__.
 
 For each test run, the whole set of features and runners is generated like this:
 

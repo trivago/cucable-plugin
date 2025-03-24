@@ -11,6 +11,11 @@ Back to [Readme](README.md).
 
 ### Changed
 
+This release is supposed to be the starting point for a more active development of the plugin and migrating to more
+recent versions of the underlying Cucumber dependencies.
+
+* Updated Nexus Staging Plugin to `1.7.0`
+* Updated GPG Plugin to `3.2.7`
 * Updated Maven Testing Harness to `4.0.0-beta-3`
 * Updated Jacoco to `0.8.12`
 * Updated Maven Source version to `3.3.1`
