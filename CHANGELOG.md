@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
-## [1.13.0] - UNRELEASED
+## [1.14.0] - UNRELEASED
 
+### Changed
 
+* Updated Cucumber tag-expressions to `6.1.2`
+* Updated Jacoco to `0.8.13`
+* Updated Mockito to `5.17.0`
+* Updated Maven compiler plugin to `3.14.0`
+* Updated Maven JAR plugin to `3.4.2`
 
 ## [1.13.0] - 2025-03-24
 
@@ -408,6 +414,10 @@ recent versions of the underlying Cucumber dependencies.
 ## [0.0.4] - 2017-06-01
 
 Initial project version on GitHub and Maven Central.
+
+[1.14.0]: https://github.com/trivago/cucable-plugin/compare/1.13.0...1.14.0
+
+[1.13.0]: https://github.com/trivago/cucable-plugin/compare/1.12.0...1.13.0
 
 [1.12.0]: https://github.com/trivago/cucable-plugin/compare/1.11.0...1.12.0
 

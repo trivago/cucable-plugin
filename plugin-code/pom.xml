@@ -71,18 +71,18 @@
         <maven.gpg.plugin.version>3.2.7</maven.gpg.plugin.version>
         <nexus.staging.maven.plugin.version>1.7.0</nexus.staging.maven.plugin.version>
         <maven.plugin.plugin.version>3.9.0</maven.plugin.plugin.version>
-        <maven.jar.plugin.version>3.3.0</maven.jar.plugin.version>
-        <maven.compiler.plugin.version>3.11.0</maven.compiler.plugin.version>
+        <maven.jar.plugin.version>3.4.2</maven.jar.plugin.version>
+        <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
         <maven.plugin.testing.harness.version>4.0.0-alpha-2</maven.plugin.testing.harness.version>
-        <jacoco.maven.plugin>0.8.12</jacoco.maven.plugin>
+        <jacoco.maven.plugin>0.8.13</jacoco.maven.plugin>
         <plexus.component.annotations.version>2.2.0</plexus.component.annotations.version>
         <maven.plugin.annotations.version>3.13.0</maven.plugin.annotations.version>
         <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
         <gherkin.version>5.2.0</gherkin.version>
-        <tag.expressions.version>6.1.0</tag.expressions.version>
+        <tag.expressions.version>6.1.2</tag.expressions.version>
         <apache.commons.version>3.17.0</apache.commons.version>
 
-        <mockito.version>5.16.1</mockito.version>
+        <mockito.version>5.17.0</mockito.version>
         <junit5.vintage.version>5.12.1</junit5.vintage.version>
         <openpojo.version>0.9.1</openpojo.version>
         <plexus-utils.version>4.0.2</plexus-utils.version>
