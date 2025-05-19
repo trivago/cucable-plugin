@@ -7,7 +7,11 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
-## [1.14.0] - UNRELEASED
+## [1.14.0] - 2025-05-19
+
+### Fixed
+
+* Scenario generation did not work correctly with features sharing the same filename in different directories (#192)
 
 ### Changed
 
