@@ -7,7 +7,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>example-project</artifactId>
-    <version>1.13.0</version>
+    <version>1.14.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -108,7 +108,7 @@
                     <!-- <sourceFeatures>@src/test/resources</sourceFeatures> -->
 
                     <!-- process a specific feature file and specific line numbers in the given directory -->
-                    <sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures>
+                    <!-- <sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures> -->
 
                     <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
                     <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>

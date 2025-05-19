@@ -63,7 +63,10 @@ public class FeatureFileConverter {
 
     // Holds the current number of single features per feature key
     // (in a scenario outline, each example yields a single feature with the same key).
-    private final Map<String, Integer> singleFeatureCounters = new HashMap<>();
+    private final Map<String, Integer> scenarioPerFeatureCounters = new HashMap<>();
+
+    // Holds the postfixes for the generated feature files in case of duplicate feature names.
+    private int featurePostfix = 0;
 
     @Inject
     public FeatureFileConverter(
@@ -107,7 +110,7 @@ public class FeatureFileConverter {
             }
         }
 
-        for (Map.Entry<String, Integer> entry : singleFeatureCounters.entrySet()) {
+        for (Map.Entry<String, Integer> entry : scenarioPerFeatureCounters.entrySet()) {
             logFeatureFileConversionMessage(entry.getKey(), entry.getValue());
         }
 
@@ -184,7 +187,6 @@ public class FeatureFileConverter {
         }
 
         String featureFileContent = fileSystemManager.readContentFromFile(featureFilePathString);
-
         List<SingleScenario> singleScenarios;
         singleScenarios =
                 gherkinDocumentParser.getSingleScenariosFromFeature(
@@ -211,32 +213,35 @@ public class FeatureFileConverter {
         // Stores all generated feature file names and associated source feature paths for later runner creation
         List<String> generatedFeaturePaths = new ArrayList<>();
 
+        featurePostfix++;
+
         // Default parallelization mode
         for (SingleScenario singleScenario : singleScenarios) {
-            String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
-            Integer featureCounter = singleFeatureCounters.getOrDefault(sourceFeatureFilePath.toString(), 0);
-            featureCounter++;
-            String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, featureCounter);
+            String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath) + "_" + featurePostfix;
+            Integer scenarioPerFeatureCounter =
+                    scenarioPerFeatureCounters.getOrDefault(sourceFeatureFilePath.toString(), 0);
+            scenarioPerFeatureCounter++;
+            String scenarioCounterFilenamePart = String.format(SCENARIO_COUNTER_FORMAT, scenarioPerFeatureCounter);
             for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
                 String generatedFileName =
                         featureFileName
                                 .concat(scenarioCounterFilenamePart);
 
                 String testRunsCounterFilenamePart = String.format(TEST_RUNS_COUNTER_FORMAT, testRuns);
-                generatedFileName = generatedFileName.concat(testRunsCounterFilenamePart);
-                generatedFileName = generatedFileName.concat(INTEGRATION_TEST_POSTFIX);
+                generatedFileName =
+                        generatedFileName.concat(testRunsCounterFilenamePart).concat(INTEGRATION_TEST_POSTFIX);
                 saveFeature(
                         generatedFileName,
                         featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)
                 );
                 generatedFeaturePaths.add(generatedFileName);
-                singleFeatureCounters.put(sourceFeatureFilePath.toString(), featureCounter);
+                scenarioPerFeatureCounters.put(sourceFeatureFilePath.toString(), scenarioPerFeatureCounter);
 
                 fileSystemManager.writeContentToFile(
                         generatedFileName + "=" +
-                                singleScenario.getFeatureFilePath() + ":" + singleScenario.getLineNumber() + "\n",
+                        singleScenario.getFeatureFilePath() + ":" + singleScenario.getLineNumber() + "\n",
                         propertyManager.getGeneratedFeatureDirectory() +
-                                "/generated-features.properties");
+                        "/generated-features.properties");
             }
         }
 
@@ -259,7 +264,7 @@ public class FeatureFileConverter {
 
         // Only parallelize complete features
         String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
-        Integer featureCounter = singleFeatureCounters.getOrDefault(sourceFeatureFilePath.toString(), 0);
+        Integer featureCounter = scenarioPerFeatureCounters.getOrDefault(sourceFeatureFilePath.toString(), 0);
         featureCounter++;
         String featureCounterFilenamePart = String.format(FEATURE_COUNTER_FORMAT, featureCounter);
         for (int testRuns = 1; testRuns <= propertyManager.getNumberOfTestRuns(); testRuns++) {
@@ -274,7 +279,7 @@ public class FeatureFileConverter {
                     featureFileContent
             );
             generatedFeaturePaths.add(generatedFileName);
-            singleFeatureCounters.put(sourceFeatureFilePath.toString(), featureCounter);
+            scenarioPerFeatureCounters.put(sourceFeatureFilePath.toString(), featureCounter);
         }
         logger.info(String.format("- processed %s.", featureFileName), DEFAULT);
         return generatedFeaturePaths;
@@ -389,7 +394,7 @@ public class FeatureFileConverter {
             currentRunnerFeatureCount++;
             totalFeatureCount++;
             if (totalFeatureCount == generatedFeatureNames.size() ||
-                    currentRunnerFeatureCount >= numberOfDesiredFeaturesPerRunner) {
+                currentRunnerFeatureCount >= numberOfDesiredFeaturesPerRunner) {
                 runnerFileCounter++;
                 generateRunnerClass(generatedFeatureNamesForSingleRunner);
                 currentRunnerFeatureCount = 0;

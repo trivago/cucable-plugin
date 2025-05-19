@@ -167,7 +167,7 @@ public class FeatureFileConverterTest {
         String scenarioMatchText = "Feature: feature1\n Scenario: scenarioName1";
 
         final String FEATURE_FILE_NAME = "FEATURE_FILE.feature";
-        final String GENERATED_FEATURE_FILE_NAME = "FEATURE_FILE_scenario001_run001_IT.feature";
+        final String GENERATED_FEATURE_FILE_NAME = "FEATURE_FILE_1_scenario001_run001_IT.feature";
 
         propertyManager.setNumberOfTestRuns(1);
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
@@ -294,8 +294,8 @@ public class FeatureFileConverterTest {
         final String scenarioMatch2Text = "Feature: feature2\n Scenario: scenarioName2";
 
         final String FEATURE_FILE_NAME = "FEATURE_FILE.feature";
-        final String GENERATED_FEATURE_FILE_NAME1 = "FEATURE_FILE_scenario001_run001_IT.feature";
-        final String GENERATED_FEATURE_FILE_NAME2 = "FEATURE_FILE_scenario002_run001_IT.feature";
+        final String GENERATED_FEATURE_FILE_NAME1 = "FEATURE_FILE_1_scenario001_run001_IT.feature";
+        final String GENERATED_FEATURE_FILE_NAME2 = "FEATURE_FILE_1_scenario002_run001_IT.feature";
 
         propertyManager.setNumberOfTestRuns(1);
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
@@ -351,8 +351,8 @@ public class FeatureFileConverterTest {
         final String scenarioMatch2Text = "Feature: feature2\n Example: scenarioName2";
 
         final String FEATURE_FILE_NAME = "FEATURE_FILE.feature";
-        final String GENERATED_FEATURE_FILE_NAME1 = "FEATURE_FILE_scenario001_run001_IT.feature";
-        final String GENERATED_FEATURE_FILE_NAME2 = "FEATURE_FILE_scenario002_run001_IT.feature";
+        final String GENERATED_FEATURE_FILE_NAME1 = "FEATURE_FILE_1_scenario001_run001_IT.feature";
+        final String GENERATED_FEATURE_FILE_NAME2 = "FEATURE_FILE_1_scenario002_run001_IT.feature";
 
         propertyManager.setNumberOfTestRuns(1);
         propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
