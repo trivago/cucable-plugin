@@ -16,6 +16,7 @@ Back to [Readme](README.md).
 
 ### Changed
 
+* Better logging for feature file generation
 * Updated Mockito to `5.18.0`
 
 ## [1.14.0] - 2025-05-19
