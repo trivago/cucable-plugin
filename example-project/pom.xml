@@ -139,13 +139,13 @@
 
                     <!-- optional: distribute a fixed number features per runner round-robin.
                     This can only be used if desiredNumberOfRunners is NOT used! -->
-                    <!--<desiredNumberOfFeaturesPerRunner>4</desiredNumberOfFeaturesPerRunner>-->
+                    <!-- <desiredNumberOfFeaturesPerRunner>4</desiredNumberOfFeaturesPerRunner> -->
 
                     <!-- optional: Cucable log level -->
-                    <!--<logLevel>default</logLevel>-->
-                    <!--<logLevel>compact</logLevel>-->
-                    <!--<logLevel>minimal</logLevel>-->
-                    <!--<logLevel>off</logLevel>-->
+                    <!-- <logLevel>default</logLevel> -->
+                    <!-- <logLevel>compact</logLevel> -->
+                    <!-- <logLevel>minimal</logLevel> -->
+                    <!-- <logLevel>off</logLevel> -->
                 </configuration>
             </plugin>
             <plugin>
