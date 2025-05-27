@@ -7,7 +7,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>example-project</artifactId>
-    <version>1.14.0</version>
+    <version>1.14.1</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -127,8 +127,7 @@
                     <!--<scenarioNames>Scenario 1, Scenario 2, Mulțumesc</scenarioNames>-->
 
                     <!-- optional: change parallelization mode of Cucable (default: 'scenarios')-->
-                    <!--<parallelizationMode>scenarios</parallelizationMode>-->
-                    <!--<parallelizationMode>features</parallelizationMode>-->
+                    <!-- <parallelizationMode>features</parallelizationMode> -->
 
                     <!-- optional: number of test runs to create runners and features multiple times
                          if set to a number greater than 1 -->

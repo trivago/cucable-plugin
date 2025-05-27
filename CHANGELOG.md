@@ -7,6 +7,17 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.14.1] - 2025-05-27
+
+### Fixed
+
+* Fixed scenario generation with features sharing the same filename in different directories did not work in "feature"
+  mode (#192)
+
+### Changed
+
+* Updated Mockito to `5.18.0`
+
 ## [1.14.0] - 2025-05-19
 
 ### Fixed
@@ -418,6 +429,8 @@ recent versions of the underlying Cucumber dependencies.
 ## [0.0.4] - 2017-06-01
 
 Initial project version on GitHub and Maven Central.
+
+[1.14.1]: https://github.com/trivago/cucable-plugin/compare/1.14.0...1.14.1
 
 [1.14.0]: https://github.com/trivago/cucable-plugin/compare/1.13.0...1.14.0
 
