@@ -86,7 +86,7 @@ public class ExampleSteps {
     public void romanianValue(int value) {
     }
 
-    @Given("^I am on a page with text '(.*)'$")
+    @Given("I am on a page with text {string}")
     public void iAmOnAPageWithTextText(String text) {
     }
 }

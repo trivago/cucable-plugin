@@ -212,7 +212,6 @@ public class FeatureFileConverter {
 
         // Stores all generated feature file names and associated source feature paths for later runner creation
         List<String> generatedFeaturePaths = new ArrayList<>();
-
         featurePostfix++;
 
         // Default parallelization mode
@@ -261,9 +260,10 @@ public class FeatureFileConverter {
 
         // Stores all generated feature file names and associated source feature paths for later runner creation
         List<String> generatedFeaturePaths = new ArrayList<>();
+        featurePostfix++;
 
         // Only parallelize complete features
-        String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath);
+        String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath) +  "_" + featurePostfix;
         Integer featureCounter = scenarioPerFeatureCounters.getOrDefault(sourceFeatureFilePath.toString(), 0);
         featureCounter++;
         String featureCounterFilenamePart = String.format(FEATURE_COUNTER_FORMAT, featureCounter);
@@ -281,7 +281,6 @@ public class FeatureFileConverter {
             generatedFeaturePaths.add(generatedFileName);
             scenarioPerFeatureCounters.put(sourceFeatureFilePath.toString(), featureCounter);
         }
-        logger.info(String.format("- processed %s.", featureFileName), DEFAULT);
         return generatedFeaturePaths;
     }
 
@@ -454,7 +453,7 @@ public class FeatureFileConverter {
         logger.info(
                 String.format("- generated %3d %s %s",
                         createdScenarios,
-                        Language.singularPlural(createdScenarios, "scenario  from", "scenarios from"),
+                        Language.singularPlural(createdScenarios, "feature file  from", "feature files from"),
                         featureFileName
                 ), DEFAULT);
     }
