@@ -39,6 +39,7 @@ public final class SingleScenario {
     private boolean isScenarioOutline = false;
     private List<String> exampleHeaders = new ArrayList<>();
     private List<String> exampleRow = new ArrayList<>();
+    private String examplesKeyword = "Examples:";
 
     public SingleScenario(
             final String featureName,
@@ -140,6 +141,14 @@ public final class SingleScenario {
 
     public void setExampleRow(final List<String> exampleRow) {
         this.exampleRow = exampleRow;
+    }
+
+    public String getExamplesKeyword() {
+        return examplesKeyword;
+    }
+
+    public void setExamplesKeyword(final String examplesKeyword) {
+        this.examplesKeyword = examplesKeyword;
     }
 
     @Override

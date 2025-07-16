@@ -135,12 +135,10 @@ public class GherkinDocumentParser {
             }
             
             for (io.cucumber.messages.types.Pickle pickle : pickles) {
-                // REMOVED: background filtering logic. Always include all pickles.
-                // REMOVED: check that skips pickles with empty or 'background' names.
-                int lineNumber = 0; // Default fallback
+                int lineNumber = 0;
                 
                 // Get the actual scenario keyword from the source file
-                String scenarioKeyword = "Scenario"; // fallback
+                String scenarioKeyword = "Scenario";
                 io.cucumber.messages.types.Scenario originalScenario = null;
                 if (!pickle.getAstNodeIds().isEmpty()) {
                     String scenarioId = pickle.getAstNodeIds().get(0);
@@ -163,7 +161,6 @@ public class GherkinDocumentParser {
                     // For scenario outlines, keep the original name with placeholders
                     scenarioName = scenarioKeyword + ": " + originalScenario.getName();
                 } else {
-                    // For regular scenarios, use the pickle name (which has values substituted)
                     scenarioName = scenarioKeyword + ": " + pickle.getName();
                 }
                 
@@ -185,9 +182,14 @@ public class GherkinDocumentParser {
                     singleScenario.setScenarioOutline(true);
                     List<String> headers = new ArrayList<>();
                     List<String> rowValues = new ArrayList<>();
+                    String examplesKeyword = "Examples:";
                     // For each Examples block
                     if (originalScenario != null && originalScenario.getExamples() != null) {
                         for (io.cucumber.messages.types.Examples examples : originalScenario.getExamples()) {
+                            // Extract the examples keyword from the source
+                            if (examples.getKeyword() != null && !examples.getKeyword().isEmpty()) {
+                                examplesKeyword = examples.getKeyword();
+                            }
                             if (examples.getTableHeader().isPresent()) {
                                 headers = examples.getTableHeader().get().getCells().stream()
                                     .map(io.cucumber.messages.types.TableCell::getValue)
@@ -209,6 +211,7 @@ public class GherkinDocumentParser {
                     }
                     singleScenario.setExampleHeaders(headers);
                     singleScenario.setExampleRow(rowValues);
+                    singleScenario.setExamplesKeyword(examplesKeyword);
                 }
                 
                 // Tags
@@ -249,7 +252,6 @@ public class GherkinDocumentParser {
                                 if (gherkinStep.getKeyword().equals(keyword) && 
                                     gherkinStep.getText().contains("<") && 
                                     gherkinStep.getText().contains(">")) {
-                                    // This is likely the matching step, use its original text
                                     stepText = gherkinStep.getText();
                                     break;
                                 }

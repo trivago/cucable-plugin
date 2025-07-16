@@ -23,13 +23,8 @@ import java.util.List;
  */
 public final class FeatureRunner {
 
-    // The path to the runner file template.
     private final String runnerTemplatePath;
-
-    // The name of the generated runner class.
     private final String runnerClassName;
-
-    // The name of the feature file this runner belongs to.
     private final List<String> featureFileNames;
 
     /**

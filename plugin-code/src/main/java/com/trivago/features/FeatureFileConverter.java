@@ -211,13 +211,9 @@ public class FeatureFileConverter {
             final Path sourceFeatureFilePath,
             final List<SingleScenario> singleScenarios) throws FileCreationException {
 
-
-
-        // Stores all generated feature file names and associated source feature paths for later runner creation
         List<String> generatedFeaturePaths = new ArrayList<>();
         featurePostfix++;
 
-        // Default parallelization mode
         for (SingleScenario singleScenario : singleScenarios) {
             String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath) + "_" + featurePostfix;
             Integer scenarioPerFeatureCounter =
@@ -262,13 +258,10 @@ public class FeatureFileConverter {
     private List<String> generateFeatureFiles(
             final Path sourceFeatureFilePath, final String featureFileContent) throws FileCreationException {
 
-
-
-        // Stores all generated feature file names and associated source feature paths for later runner creation
         List<String> generatedFeaturePaths = new ArrayList<>();
         featurePostfix++;
 
-        // Only parallelize complete features
+
         String featureFileName = getFeatureFileNameFromPath(sourceFeatureFilePath) +  "_" + featurePostfix;
         Integer featureCounter = scenarioPerFeatureCounters.getOrDefault(sourceFeatureFilePath.toString(), 0);
         featureCounter++;
@@ -284,7 +277,7 @@ public class FeatureFileConverter {
                     generatedFileName,
                     featureFileContent
             );
-            // Always write to the properties file, even in features mode
+
             fileSystemManager.writeContentToFile(
                 generatedFileName + "=" + sourceFeatureFilePath.toString() + ":1\n",
                 propertyManager.getGeneratedFeatureDirectory() + "/generated-features.properties");
@@ -353,7 +346,7 @@ public class FeatureFileConverter {
                 String scenarioText = fileSystemManager.readContentFromFile(propertyManager.getGeneratedFeatureDirectory() + "/" + generatedFeatureName + ".feature");
                 if (scenarioText != null) {
                     GherkinParser parser = GherkinParser.builder().build();
-                    String language = "en"; // Default language
+                    String language = "en";
                     try {
                         language = parser.parse("scenario.feature", new ByteArrayInputStream(scenarioText.getBytes(StandardCharsets.UTF_8)))
                                 .filter(envelope -> envelope.getGherkinDocument().isPresent())
@@ -363,7 +356,7 @@ public class FeatureFileConverter {
                                 .findFirst()
                                 .orElse("en");
                     } catch (IOException e) {
-                        // Use default language if parsing fails
+                        // Ignore parsing errors
                     }
 
                     int listIndex = gherkinDocumentParser.matchScenarioWithScenarioNames(language, scenarioText);
@@ -435,8 +428,7 @@ public class FeatureFileConverter {
      * @throws CucablePluginException see {@link CucablePluginException}.
      */
     private void generateRunnerClass(final List<String> generatedFeatureFileNames) throws CucablePluginException {
-        // The runner class name will be equal to the feature name if there is only one feature to run.
-        // Otherwise, a generated runner class name is used.
+
         String runnerClassName;
         if (generatedFeatureFileNames.size() == 1) {
             runnerClassName = "Runner_" + generatedFeatureFileNames.get(0);
