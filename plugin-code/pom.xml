@@ -78,7 +78,7 @@
         <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
         <gherkin.version>33.0.0</gherkin.version>
         <tag.expressions.version>6.1.2</tag.expressions.version>
-        <apache.commons.version>3.17.0</apache.commons.version>
+        <apache.commons.version>3.18.0</apache.commons.version>
 
         <mockito.version>5.18.0</mockito.version>
         <junit5.vintage.version>5.13.1</junit5.vintage.version>
