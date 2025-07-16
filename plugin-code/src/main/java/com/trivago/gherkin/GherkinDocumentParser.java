@@ -48,19 +48,16 @@ import java.util.HashMap;
 public class GherkinDocumentParser {
 
     private final GherkinToCucableConverter gherkinToCucableConverter;
-    private final GherkinTranslations gherkinTranslations;
     private final PropertyManager propertyManager;
     private final CucableLogger cucableLogger;
 
     @Inject
     GherkinDocumentParser(
             final GherkinToCucableConverter gherkinToCucableConverter,
-            final GherkinTranslations gherkinTranslations,
             final PropertyManager propertyManager,
             final CucableLogger logger
     ) {
         this.gherkinToCucableConverter = gherkinToCucableConverter;
-        this.gherkinTranslations = gherkinTranslations;
         this.propertyManager = propertyManager;
         this.cucableLogger = logger;
     }
@@ -116,6 +113,10 @@ public class GherkinDocumentParser {
             
             // Build a map from step ID to GherkinStep for keyword extraction
             Map<String, io.cucumber.messages.types.Step> stepIdMap = new HashMap<>();
+            // Build a map from scenario ID to scenario keyword
+            Map<String, String> scenarioKeywordMap = new HashMap<>();
+            // Build a map from scenario ID to scenario outline info
+            Map<String, io.cucumber.messages.types.Scenario> scenarioMap = new HashMap<>();
             for (FeatureChild child : feature.getChildren()) {
                 if (child.getBackground().isPresent()) {
                     for (io.cucumber.messages.types.Step step : child.getBackground().get().getSteps()) {
@@ -123,7 +124,10 @@ public class GherkinDocumentParser {
                     }
                 }
                 if (child.getScenario().isPresent()) {
-                    for (io.cucumber.messages.types.Step step : child.getScenario().get().getSteps()) {
+                    io.cucumber.messages.types.Scenario scenario = child.getScenario().get();
+                    scenarioKeywordMap.put(scenario.getId(), scenario.getKeyword());
+                    scenarioMap.put(scenario.getId(), scenario);
+                    for (io.cucumber.messages.types.Step step : scenario.getSteps()) {
                         stepIdMap.put(step.getId(), step);
                     }
                 }
@@ -133,8 +137,29 @@ public class GherkinDocumentParser {
                 // REMOVED: background filtering logic. Always include all pickles.
                 // REMOVED: check that skips pickles with empty or 'background' names.
                 int lineNumber = 0; // Placeholder, as Pickle does not expose line directly
-                String scenarioKeyword = gherkinTranslations.getScenarioKeyword(featureLanguage);
-                String scenarioName = scenarioKeyword + ": " + pickle.getName();
+                
+                // Get the actual scenario keyword from the source file
+                String scenarioKeyword = "Scenario"; // fallback
+                io.cucumber.messages.types.Scenario originalScenario = null;
+                if (!pickle.getAstNodeIds().isEmpty()) {
+                    String scenarioId = pickle.getAstNodeIds().get(0);
+                    scenarioKeyword = scenarioKeywordMap.getOrDefault(scenarioId, "Scenario");
+                    originalScenario = scenarioMap.get(scenarioId);
+                }
+                
+                // Check if this is a scenario outline (has examples)
+                boolean isScenarioOutline = originalScenario != null && 
+                    originalScenario.getExamples() != null && 
+                    !originalScenario.getExamples().isEmpty();
+                
+                String scenarioName;
+                if (isScenarioOutline) {
+                    // For scenario outlines, keep the original name with placeholders
+                    scenarioName = scenarioKeyword + ": " + originalScenario.getName();
+                } else {
+                    // For regular scenarios, use the pickle name (which has values substituted)
+                    scenarioName = scenarioKeyword + ": " + pickle.getName();
+                }
                 
                 SingleScenario singleScenario = new SingleScenario(
                     featureName,
@@ -147,6 +172,37 @@ public class GherkinDocumentParser {
                     featureTags,
                     backgroundSteps
                 );
+                
+                // Set scenario outline flag and extract examples if needed
+                if (isScenarioOutline) {
+                    singleScenario.setScenarioOutline(true);
+                    List<String> headers = new ArrayList<>();
+                    List<String> rowValues = new ArrayList<>();
+                    // For each Examples block
+                    if (originalScenario != null && originalScenario.getExamples() != null) {
+                        for (io.cucumber.messages.types.Examples examples : originalScenario.getExamples()) {
+                            if (examples.getTableHeader().isPresent()) {
+                                headers = examples.getTableHeader().get().getCells().stream()
+                                    .map(io.cucumber.messages.types.TableCell::getValue)
+                                    .collect(Collectors.toList());
+                            }
+                            // For each row, check if its ID matches any pickle AST node ID
+                            for (io.cucumber.messages.types.TableRow tableRow : examples.getTableBody()) {
+                                if (pickle.getAstNodeIds().contains(tableRow.getId())) {
+                                    rowValues = tableRow.getCells().stream()
+                                        .map(io.cucumber.messages.types.TableCell::getValue)
+                                        .collect(Collectors.toList());
+                                    break;
+                                }
+                            }
+                            if (!rowValues.isEmpty()) {
+                                break;
+                            }
+                        }
+                    }
+                    singleScenario.setExampleHeaders(headers);
+                    singleScenario.setExampleRow(rowValues);
+                }
                 
                 // Tags
                 List<String> tags = pickle.getTags().stream()
@@ -164,6 +220,7 @@ public class GherkinDocumentParser {
                     }
                 }
                 // Steps: only those not in backgroundStepIds
+                final io.cucumber.messages.types.Scenario finalOriginalScenario = originalScenario;
                 List<Step> steps = pickle.getSteps().stream()
                     .filter(pickleStep -> pickleStep.getAstNodeIds().stream().noneMatch(backgroundStepIds::contains))
                     .map(pickleStep -> {
@@ -177,6 +234,21 @@ public class GherkinDocumentParser {
                                 break;
                             }
                         }
+                        
+                        // For scenario outlines, we need to reconstruct the original step with placeholders
+                        if (isScenarioOutline && finalOriginalScenario != null) {
+                            // Find the original step in the scenario outline
+                            for (io.cucumber.messages.types.Step gherkinStep : finalOriginalScenario.getSteps()) {
+                                if (gherkinStep.getKeyword().equals(keyword) && 
+                                    gherkinStep.getText().contains("<") && 
+                                    gherkinStep.getText().contains(">")) {
+                                    // This is likely the matching step, use its original text
+                                    stepText = gherkinStep.getText();
+                                    break;
+                                }
+                            }
+                        }
+                        
                         // Handle DataTable and DocString from PickleStep argument (only one allowed)
                         com.trivago.vo.DataTable dataTable = null;
                         String docString = null;
@@ -267,7 +339,6 @@ public class GherkinDocumentParser {
      */
     public int matchScenarioWithScenarioNames(String language, String stringToMatch) {
         List<String> scenarioNames = propertyManager.getScenarioNames();
-        String scenarioKeyword = gherkinTranslations.getScenarioKeyword(language);
         int matchIndex = -1;
 
         if (scenarioNames == null || scenarioNames.isEmpty()) {
@@ -275,7 +346,8 @@ public class GherkinDocumentParser {
         }
 
         for (String scenarioName : scenarioNames) {
-            String regex = scenarioKeyword + ":.+" + scenarioName;
+            // Match any scenario keyword followed by colon and the scenario name
+            String regex = ".*:.+" + scenarioName;
             Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
             Matcher matcher = pattern.matcher(stringToMatch);
             if (matcher.find()) {

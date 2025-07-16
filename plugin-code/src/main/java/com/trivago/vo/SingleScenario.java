@@ -36,6 +36,9 @@ public final class SingleScenario {
     private List<String> scenarioTags = new ArrayList<>();
     private List<String> exampleTags = new ArrayList<>();
     private List<Step> steps = new ArrayList<>();
+    private boolean isScenarioOutline = false;
+    private List<String> exampleHeaders = new ArrayList<>();
+    private List<String> exampleRow = new ArrayList<>();
 
     public SingleScenario(
             final String featureName,
@@ -113,6 +116,30 @@ public final class SingleScenario {
 
     public void setExampleTags(final List<String> exampleTags) {
         this.exampleTags = exampleTags;
+    }
+
+    public boolean isScenarioOutline() {
+        return isScenarioOutline;
+    }
+
+    public void setScenarioOutline(final boolean scenarioOutline) {
+        isScenarioOutline = scenarioOutline;
+    }
+
+    public List<String> getExampleHeaders() {
+        return exampleHeaders;
+    }
+
+    public void setExampleHeaders(final List<String> exampleHeaders) {
+        this.exampleHeaders = exampleHeaders;
+    }
+
+    public List<String> getExampleRow() {
+        return exampleRow;
+    }
+
+    public void setExampleRow(final List<String> exampleRow) {
+        this.exampleRow = exampleRow;
     }
 
     @Override

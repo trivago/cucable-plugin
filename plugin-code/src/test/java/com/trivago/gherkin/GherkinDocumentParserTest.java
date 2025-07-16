@@ -30,13 +30,10 @@ public class GherkinDocumentParserTest {
     @Before
     public void setup() {
         GherkinToCucableConverter gherkinToCucableConverter = new GherkinToCucableConverter();
-        GherkinTranslations gherkinTranslations = new GherkinTranslations();
         propertyManager = mock(PropertyManager.class);
         mockedLogger = mock(CucableLogger.class);
         gherkinDocumentParser =
-                new GherkinDocumentParser(gherkinToCucableConverter, gherkinTranslations, propertyManager,
-                                          mockedLogger
-                );
+                new GherkinDocumentParser(gherkinToCucableConverter, propertyManager, mockedLogger);
     }
 
     @Test
@@ -288,23 +285,31 @@ public class GherkinDocumentParserTest {
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
 
-        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline"));
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: This is a scenario outline"));
+        assertThat(scenario.isScenarioOutline(), is(true));
         assertThat(scenario.getSteps().size(), is(2));
         assertThat(scenario.getBackgroundSteps().size(), is(0));
         assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
 
-        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key 1"));
-        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value 'one'"));
+        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key <key>"));
+        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value '<value>'"));
+        
+        assertThat(scenario.getExampleHeaders(), is(Arrays.asList("key", "value")));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("1", "one")));
 
         scenario = singleScenariosFromFeature.get(1);
 
-        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline"));
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: This is a scenario outline"));
+        assertThat(scenario.isScenarioOutline(), is(true));
         assertThat(scenario.getSteps().size(), is(2));
         assertThat(scenario.getBackgroundSteps().size(), is(0));
         assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
 
-        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key 2"));
-        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value 'two'"));
+        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key <key>"));
+        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value '<value>'"));
+        
+        assertThat(scenario.getExampleHeaders(), is(Arrays.asList("key", "value")));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("2", "two")));
     }
 
     @Test
@@ -511,6 +516,63 @@ public class GherkinDocumentParserTest {
         List<SingleScenario> singleScenariosFromFeature =
                 gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(0));
+    }
+
+    @Test
+    public void scenarioOutlineWithOneExampleRowTest() throws Exception {
+        String featureContent = "Feature: test feature\n" +
+                "\n" +
+                "  Scenario Outline: Outline with one row\n" +
+                "    Given a step with <param>\n" +
+                "\n" +
+                "    Examples:\n" +
+                "      | param |\n" +
+                "      | foo   |";
+
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+        SingleScenario scenario = singleScenariosFromFeature.get(0);
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: Outline with one row"));
+        assertThat(scenario.isScenarioOutline(), is(true));
+        assertThat(scenario.getSteps().get(0).getName(), is("Given a step with <param>"));
+        assertThat(scenario.getExampleHeaders(), is(Arrays.asList("param")));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("foo")));
+    }
+
+    @Test
+    public void scenarioAndScenarioOutlineInOneFeatureTest() throws Exception {
+        String featureContent = "Feature: test feature\n" +
+                "\n" +
+                "  Scenario: Just a scenario\n" +
+                "    Given a simple step\n" +
+                "\n" +
+                "  Scenario Outline: Outline\n" +
+                "    Given a step with <param>\n" +
+                "\n" +
+                "    Examples:\n" +
+                "      | param |\n" +
+                "      | foo   |\n" +
+                "      | bar   |";
+
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(3));
+        // First: scenario
+        SingleScenario scenario = singleScenariosFromFeature.get(0);
+        assertThat(scenario.getScenarioName(), is("Scenario: Just a scenario"));
+        assertThat(scenario.isScenarioOutline(), is(false));
+        assertThat(scenario.getSteps().get(0).getName(), is("Given a simple step"));
+        // Second: scenario outline, first row
+        scenario = singleScenariosFromFeature.get(1);
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: Outline"));
+        assertThat(scenario.isScenarioOutline(), is(true));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("foo")));
+        // Third: scenario outline, second row
+        scenario = singleScenariosFromFeature.get(2);
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: Outline"));
+        assertThat(scenario.isScenarioOutline(), is(true));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("bar")));
     }
 
     private String getScenarioWithFeatureAndExampleTags() {

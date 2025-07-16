@@ -64,6 +64,11 @@ public class FeatureFileContentRenderer {
                     singleScenario.getScenarioDescription()
             );
             addSteps(renderedContent, singleScenario.getSteps());
+            
+            // Add examples table for scenario outlines
+            if (singleScenario.isScenarioOutline()) {
+                addExamplesTable(renderedContent, singleScenario.getExampleHeaders(), singleScenario.getExampleRow());
+            }
         }
 
         addComments(renderedContent, firstScenario.getFeatureFilePath());
@@ -209,5 +214,34 @@ public class FeatureFileContentRenderer {
             return "";
         }
         return "\"\"\"" + LINE_SEPARATOR + docString + LINE_SEPARATOR + "\"\"\"" + LINE_SEPARATOR;
+    }
+
+    /**
+     * Adds an examples table to the generated feature file content.
+     *
+     * @param stringBuilder The current feature {@link StringBuilder} instance.
+     * @param headers The list of column headers.
+     * @param row The list of row values.
+     */
+    private void addExamplesTable(final StringBuilder stringBuilder, final List<String> headers, final List<String> row) {
+        if (headers == null || headers.isEmpty() || row == null || row.isEmpty()) {
+            return;
+        }
+        
+        stringBuilder.append(LINE_SEPARATOR).append("Examples:").append(LINE_SEPARATOR);
+        
+        // Add header row
+        stringBuilder.append("|");
+        for (String header : headers) {
+            stringBuilder.append(header).append("|");
+        }
+        stringBuilder.append(LINE_SEPARATOR);
+        
+        // Add data row
+        stringBuilder.append("|");
+        for (String value : row) {
+            stringBuilder.append(value).append("|");
+        }
+        stringBuilder.append(LINE_SEPARATOR);
     }
 }
