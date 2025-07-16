@@ -407,6 +407,7 @@ recent versions of the underlying Cucumber dependencies.
     - background steps (also with data tables)
     - scenario steps with data tables
     - complex scenario outlines
+- Scenario outlines will be scenario outlines with a single example table row instead of a single scenario
 
 ### Added
 
