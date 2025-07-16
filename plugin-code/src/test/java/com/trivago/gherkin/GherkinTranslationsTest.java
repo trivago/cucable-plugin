@@ -15,6 +15,14 @@ public class GherkinTranslationsTest {
     }
 
     @Test
+    public void debugScenarioKeywords() {
+        System.out.println("English: " + gherkinTranslations.getScenarioKeyword("en"));
+        System.out.println("German: " + gherkinTranslations.getScenarioKeyword("de"));
+        System.out.println("French: " + gherkinTranslations.getScenarioKeyword("fr"));
+        System.out.println("Spanish: " + gherkinTranslations.getScenarioKeyword("es"));
+    }
+
+    @Test
     public void getScenarioKeywordTesnt() {
         assertThat(gherkinTranslations.getScenarioKeyword("en"), is("Scenario"));
         assertThat(gherkinTranslations.getScenarioKeyword("de"), is("Szenario"));

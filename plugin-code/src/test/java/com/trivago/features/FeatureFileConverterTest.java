@@ -12,7 +12,6 @@ import com.trivago.vo.SingleScenario;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 
@@ -31,8 +30,6 @@ public class FeatureFileConverterTest {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     private FeatureFileConverter featureFileConverter;
     private PropertyManager propertyManager;

@@ -12,7 +12,6 @@ import io.cucumber.java.ro.Atunci;
 import io.cucumber.java.ro.Cand;
 import io.cucumber.java.ro.Datefiind;
 
-@SuppressWarnings("unused")
 public class ExampleSteps {
     @Given("^this is a given step$")
     public void thisIsAGivenStep() {

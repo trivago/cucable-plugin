@@ -1,10 +1,10 @@
 package com.trivago.gherkin;
 
-import gherkin.GherkinDialect;
-import gherkin.GherkinDialectProvider;
+import io.cucumber.gherkin.GherkinDialectProvider;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.util.List;
 
 @Singleton
 class GherkinTranslations {
@@ -19,12 +19,28 @@ class GherkinTranslations {
     }
 
     String getScenarioKeyword(final String language) {
-        GherkinDialect dialect;
         try {
-            dialect = gherkinDialectProvider.getDialect(language, null);
+            return gherkinDialectProvider.getDialect(language)
+                    .map(dialect -> {
+                        List<String> scenarioKeywords = dialect.getScenarioKeywords();
+                        // Prefer 'Scenario' (or translation) over 'Example'
+                        for (String keyword : scenarioKeywords) {
+                            if (keyword.trim().equalsIgnoreCase("Scenario") || keyword.trim().equalsIgnoreCase("Szenario") || keyword.trim().equalsIgnoreCase("Scénario") || keyword.trim().equalsIgnoreCase("Scenariu") || keyword.trim().equalsIgnoreCase("Сценарий")) {
+                                return keyword.trim();
+                            }
+                        }
+                        if (!scenarioKeywords.isEmpty()) {
+                            return scenarioKeywords.get(0).trim();
+                        }
+                        List<String> exampleKeywords = dialect.getExamplesKeywords();
+                        if (!exampleKeywords.isEmpty()) {
+                            return exampleKeywords.get(0).trim();
+                        }
+                        return SCENARIO;
+                    })
+                    .orElse(SCENARIO);
         } catch (Exception e) {
             return SCENARIO;
         }
-        return dialect.getScenarioKeywords().get(0);
     }
 }

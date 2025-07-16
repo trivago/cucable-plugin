@@ -28,9 +28,10 @@ import com.trivago.runners.RunnerFileContentRenderer;
 import com.trivago.vo.CucableFeature;
 import com.trivago.vo.FeatureRunner;
 import com.trivago.vo.SingleScenario;
-import gherkin.AstBuilder;
-import gherkin.Parser;
-import gherkin.ast.GherkinDocument;
+import io.cucumber.gherkin.GherkinParser;
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
@@ -342,8 +343,19 @@ public class FeatureFileConverter {
                 // Move all scenarios matching a scenario name into its own group.
                 String scenarioText = fileSystemManager.readContentFromFile(propertyManager.getGeneratedFeatureDirectory() + "/" + generatedFeatureName + ".feature");
                 if (scenarioText != null) {
-                    Parser<GherkinDocument> parser = new Parser<>(new AstBuilder());
-                    String language = parser.parse(scenarioText).getFeature().getLanguage();
+                    GherkinParser parser = GherkinParser.builder().build();
+                    String language = "en"; // Default language
+                    try {
+                        language = parser.parse("scenario.feature", new ByteArrayInputStream(scenarioText.getBytes(StandardCharsets.UTF_8)))
+                                .filter(envelope -> envelope.getGherkinDocument().isPresent())
+                                .map(envelope -> envelope.getGherkinDocument().get().getFeature())
+                                .filter(feature -> feature.isPresent())
+                                .map(feature -> feature.get().getLanguage())
+                                .findFirst()
+                                .orElse("en");
+                    } catch (IOException e) {
+                        // Use default language if parsing fails
+                    }
 
                     int listIndex = gherkinDocumentParser.matchScenarioWithScenarioNames(language, scenarioText);
                     if (listIndex >= 0) {

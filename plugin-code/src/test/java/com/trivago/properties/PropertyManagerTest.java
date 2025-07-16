@@ -8,7 +8,6 @@ import com.trivago.vo.CucableFeature;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 
@@ -27,8 +26,6 @@ import static org.mockito.Mockito.*;
 public class PropertyManagerTest {
     @Rule
     public final TemporaryFolder testFolder = new TemporaryFolder();
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
     private PropertyManager propertyManager;
     private CucableLogger logger;
     private FileSystemManager fileSystemManager;
@@ -105,11 +102,8 @@ public class PropertyManagerTest {
         assertThat(propertyManager.getParallelizationMode(), is(PropertyManager.ParallelizationMode.SCENARIOS));
     }
 
-    @Test
+    @Test(expected = CucablePluginException.class)
     public void wrongParallelizationModeTest() throws CucablePluginException {
-        expectedException.expect(CucablePluginException.class);
-        expectedException
-                .expectMessage("Unknown <parallelizationMode> 'unknown'. Please use 'scenarios' or 'features'.");
         propertyManager.setParallelizationMode("unknown");
     }
 
@@ -208,23 +202,16 @@ public class PropertyManagerTest {
         propertyManager.checkForDisallowedPropertyCombinations();
     }
 
-    @Test
+    @Test(expected = CucablePluginException.class)
     public void checkForDisallowedParallelizationModePropertiesSourceFeaturesIsNotDirectoryTest()
             throws CucablePluginException {
-        expectedException.expect(CucablePluginException.class);
-        expectedException
-                .expectMessage("In parallelizationMode = features, sourceFeatures should point to a directory!");
-
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
         propertyManager.setSourceFeatures("my.feature");
         propertyManager.checkForDisallowedPropertyCombinations();
     }
 
-    @Test
+    @Test(expected = CucablePluginException.class)
     public void checkForDisallowedParallelizationModePropertiesIncludeTagsSpecified() throws CucablePluginException {
-        expectedException.expect(CucablePluginException.class);
-        expectedException.expectMessage("In parallelizationMode = features, you cannot specify includeScenarioTags!");
-
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
         propertyManager.setSourceFeatures(testFolder.getRoot().getPath());
         propertyManager.setIncludeScenarioTags("someTag");
@@ -232,11 +219,8 @@ public class PropertyManagerTest {
         propertyManager.checkForDisallowedPropertyCombinations();
     }
 
-    @Test
+    @Test(expected = CucablePluginException.class)
     public void checkForDisallowedParallelizationModePropertiesScenarioNamesSpecified() throws CucablePluginException {
-        expectedException.expect(CucablePluginException.class);
-        expectedException.expectMessage("In parallelizationMode = features, you cannot specify scenarioNames!");
-
         propertyManager.setParallelizationMode(PropertyManager.ParallelizationMode.FEATURES.toString());
         propertyManager.setSourceFeatures(testFolder.getRoot().getPath());
         propertyManager.setScenarioNames("name1");
@@ -309,11 +293,8 @@ public class PropertyManagerTest {
         assertThat(capturedLogs.get(11), is("- desiredNumberOfRunners       : 2"));
     }
 
-    @Test
+    @Test(expected = WrongOrMissingPropertiesException.class)
     public void logMissingPropertiesTest() throws CucablePluginException {
-        expectedException.expect(WrongOrMissingPropertiesException.class);
-        expectedException.expectMessage(
-                "Properties not specified correctly in the configuration section of your pom file: [<sourceFeatures>, <sourceRunnerTemplateFile>, <generatedRunnerDirectory>, <generatedFeatureDirectory>]");
         propertyManager.checkForMissingMandatoryProperties();
 
     }

@@ -4,7 +4,6 @@ import com.trivago.exceptions.CucablePluginException;
 import com.trivago.exceptions.filesystem.FileCreationException;
 import com.trivago.exceptions.filesystem.MissingFileException;
 import com.trivago.exceptions.filesystem.PathCreationException;
-import com.trivago.properties.PropertyManager;
 import com.trivago.vo.CucableFeature;
 import org.hamcrest.core.Is;
 import org.junit.Before;
@@ -18,8 +17,6 @@ import java.util.List;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.mock;
-import static org.mockito.Mockito.when;
 
 public class FileSystemManagerTest {
     @Rule
