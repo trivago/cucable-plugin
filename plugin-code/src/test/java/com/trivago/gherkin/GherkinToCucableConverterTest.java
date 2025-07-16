@@ -18,7 +18,7 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 
-class GherkinToCucableConverterTest {
+public class GherkinToCucableConverterTest {
 
     private GherkinToCucableConverter gherkinToCucableConverter;
 
@@ -81,7 +81,7 @@ class GherkinToCucableConverterTest {
     }
 
     @Test
-    void convertGherkinDataTableToCucableDataTable() {
+    public void convertGherkinDataTableToCucableDataTable() {
         // Given
         List<TableCell> headerCells = new ArrayList<>();
         headerCells.add(new TableCell(new Location(1L, 1L), "Name"));
@@ -126,7 +126,7 @@ class GherkinToCucableConverterTest {
     }
 
     @Test
-    void convertGherkinExampleTableToCucableExampleMap() {
+    public void convertGherkinExampleTableToCucableExampleMap() {
         // Given
         List<TableCell> headerCells = new ArrayList<>();
         headerCells.add(new TableCell(new Location(1L, 1L), "Name"));

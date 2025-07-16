@@ -142,6 +142,8 @@ CucablePlugin extends AbstractMojo {
      */
     public void execute() throws CucablePluginException {
 
+
+
         // Initialize the log level
         logger.initialize(logLevel);
 

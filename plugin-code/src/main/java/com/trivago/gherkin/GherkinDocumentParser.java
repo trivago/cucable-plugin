@@ -75,6 +75,7 @@ public class GherkinDocumentParser {
             final String featureFilePath,
             final List<Integer> scenarioLineNumbers
     ) throws CucablePluginException {
+
         String escapedFeatureContent = featureContent.replace("\\n", "\\\\n");
         List<SingleScenario> singleScenarioFeatures = new ArrayList<>();
         
@@ -136,7 +137,7 @@ public class GherkinDocumentParser {
             for (io.cucumber.messages.types.Pickle pickle : pickles) {
                 // REMOVED: background filtering logic. Always include all pickles.
                 // REMOVED: check that skips pickles with empty or 'background' names.
-                int lineNumber = 0; // Placeholder, as Pickle does not expose line directly
+                int lineNumber = 0; // Default fallback
                 
                 // Get the actual scenario keyword from the source file
                 String scenarioKeyword = "Scenario"; // fallback
@@ -145,6 +146,11 @@ public class GherkinDocumentParser {
                     String scenarioId = pickle.getAstNodeIds().get(0);
                     scenarioKeyword = scenarioKeywordMap.getOrDefault(scenarioId, "Scenario");
                     originalScenario = scenarioMap.get(scenarioId);
+                    
+                    // Get line number from the scenario's location
+                    if (originalScenario != null && originalScenario.getLocation() != null) {
+                        lineNumber = originalScenario.getLocation().getLine().intValue();
+                    }
                 }
                 
                 // Check if this is a scenario outline (has examples)
@@ -172,6 +178,7 @@ public class GherkinDocumentParser {
                     featureTags,
                     backgroundSteps
                 );
+
                 
                 // Set scenario outline flag and extract examples if needed
                 if (isScenarioOutline) {
@@ -337,9 +344,13 @@ public class GherkinDocumentParser {
      * @return index of the scenarioName value in the scenarioNames list if a match exists.
      * -1 if no match exists.
      */
-    public int matchScenarioWithScenarioNames(String language, String stringToMatch) {
+    public int matchScenarioWithScenarioNames(final String language, final String stringToMatch) {
         List<String> scenarioNames = propertyManager.getScenarioNames();
         int matchIndex = -1;
+
+        System.out.println("language: " + language);
+        System.out.println("stringToMatch: " + stringToMatch);
+        System.out.println("scenarioNames: " + scenarioNames);
 
         if (scenarioNames == null || scenarioNames.isEmpty()) {
             return 0;
@@ -358,4 +369,6 @@ public class GherkinDocumentParser {
 
         return matchIndex;
     }
+
+
 }

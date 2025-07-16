@@ -41,7 +41,7 @@ class GherkinToCucableConverter {
      * @param gherkinSteps a {@link Step} list.
      * @return a {@link com.trivago.vo.Step} list.
      */
-    List<com.trivago.vo.Step> convertGherkinStepsToCucableSteps(final List<Step> gherkinSteps) {
+    public List<com.trivago.vo.Step> convertGherkinStepsToCucableSteps(final List<Step> gherkinSteps) {
         List<com.trivago.vo.Step> steps = new ArrayList<>();
 
         for (Step gherkinStep : gherkinSteps) {
@@ -93,7 +93,7 @@ class GherkinToCucableConverter {
      * @param exampleTable a Gherkin {@link Examples} instance.
      * @return a map where the keys are the column headers and the values are lists of strings.
      */
-    Map<String, List<String>> convertGherkinExampleTableToCucableExampleMap(
+    public Map<String, List<String>> convertGherkinExampleTableToCucableExampleMap(
             final Examples exampleTable
     ) {
         Map<String, List<String>> exampleMap;

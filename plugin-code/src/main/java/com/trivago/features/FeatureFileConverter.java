@@ -149,11 +149,11 @@ public class FeatureFileConverter {
     private List<String> generateParallelizableFeatures(
             final Path sourceFeatureFilePath,
             final List<Integer> lineNumbers) throws CucablePluginException {
-
-        if (propertyManager.getParallelizationMode() == PropertyManager.ParallelizationMode.FEATURES) {
+        if (propertyManager.getParallelizationMode() == PropertyManager.ParallelizationMode.SCENARIOS) {
+            return generateFeaturesWithScenariosParallelizationMode(sourceFeatureFilePath, lineNumbers);
+        } else {
             return generateFeaturesWithFeaturesParallelizationMode(sourceFeatureFilePath);
         }
-        return generateFeaturesWithScenariosParallelizationMode(sourceFeatureFilePath, lineNumbers);
     }
 
     /**
@@ -211,6 +211,8 @@ public class FeatureFileConverter {
             final Path sourceFeatureFilePath,
             final List<SingleScenario> singleScenarios) throws FileCreationException {
 
+
+
         // Stores all generated feature file names and associated source feature paths for later runner creation
         List<String> generatedFeaturePaths = new ArrayList<>();
         featurePostfix++;
@@ -237,6 +239,7 @@ public class FeatureFileConverter {
                 generatedFeaturePaths.add(generatedFileName);
                 scenarioPerFeatureCounters.put(sourceFeatureFilePath.toString(), scenarioPerFeatureCounter);
 
+
                 fileSystemManager.writeContentToFile(
                         generatedFileName + "=" +
                         singleScenario.getFeatureFilePath() + ":" + singleScenario.getLineNumber() + "\n",
@@ -259,6 +262,8 @@ public class FeatureFileConverter {
     private List<String> generateFeatureFiles(
             final Path sourceFeatureFilePath, final String featureFileContent) throws FileCreationException {
 
+
+
         // Stores all generated feature file names and associated source feature paths for later runner creation
         List<String> generatedFeaturePaths = new ArrayList<>();
         featurePostfix++;
@@ -279,6 +284,10 @@ public class FeatureFileConverter {
                     generatedFileName,
                     featureFileContent
             );
+            // Always write to the properties file, even in features mode
+            fileSystemManager.writeContentToFile(
+                generatedFileName + "=" + sourceFeatureFilePath.toString() + ":1\n",
+                propertyManager.getGeneratedFeatureDirectory() + "/generated-features.properties");
             generatedFeaturePaths.add(generatedFileName);
             scenarioPerFeatureCounters.put(sourceFeatureFilePath.toString(), featureCounter);
         }
@@ -365,6 +374,8 @@ public class FeatureFileConverter {
                 }
             }
         }
+
+
 
         if (!scenarioNames.isEmpty() && matchCount == 0) {
             throw new CucablePluginException(
