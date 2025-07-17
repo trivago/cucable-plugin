@@ -30,13 +30,10 @@ public class GherkinDocumentParserTest {
     @Before
     public void setup() {
         GherkinToCucableConverter gherkinToCucableConverter = new GherkinToCucableConverter();
-        GherkinTranslations gherkinTranslations = new GherkinTranslations();
         propertyManager = mock(PropertyManager.class);
         mockedLogger = mock(CucableLogger.class);
         gherkinDocumentParser =
-                new GherkinDocumentParser(gherkinToCucableConverter, gherkinTranslations, propertyManager,
-                                          mockedLogger
-                );
+                new GherkinDocumentParser(gherkinToCucableConverter, propertyManager, mockedLogger);
     }
 
     @Test
@@ -98,6 +95,108 @@ public class GherkinDocumentParserTest {
         List<SingleScenario> singleScenariosFromFeature =
                 gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(2));
+    }
+
+    @Test
+    public void comprehensiveScenarioNameFilteringTest() throws Exception {
+        String featureContent = "@featureTag\n" +
+                "Feature: Comprehensive Scenario Filtering Test\n" +
+                "\n" +
+                "@tag1\n" +
+                "Scenario: Login with valid credentials\n" +
+                "    Given I am on the login page\n" +
+                "    When I enter valid username and password\n" +
+                "    Then I should be logged in successfully\n" +
+                "\n" +
+                "@tag2\n" +
+                "Scenario: Login with invalid credentials\n" +
+                "    Given I am on the login page\n" +
+                "    When I enter invalid username and password\n" +
+                "    Then I should see an error message\n" +
+                "\n" +
+                "@tag3\n" +
+                "Scenario: User registration process\n" +
+                "    Given I am on the registration page\n" +
+                "    When I fill in all required fields\n" +
+                "    Then my account should be created\n" +
+                "\n" +
+                "@tag4\n" +
+                "Scenario: Password reset functionality\n" +
+                "    Given I forgot my password\n" +
+                "    When I request a password reset\n" +
+                "    Then I should receive a reset email\n" +
+                "\n" +
+                "@tag5\n" +
+                "Scenario: Special characters: !@#$%^&*()\n" +
+                "    Given I have a scenario with special chars\n" +
+                "    When I process it\n" +
+                "    Then it should work correctly\n" +
+                "\n" +
+                "@tag6\n" +
+                "Scenario: UPPERCASE SCENARIO NAME\n" +
+                "    Given I have an uppercase scenario\n" +
+                "    When I test it\n" +
+                "    Then it should match case-insensitive\n" +
+                "\n" +
+                "@tag7\n" +
+                "Scenario: Mixed Case Scenario Name\n" +
+                "    Given I have a mixed case scenario\n" +
+                "    When I test it\n" +
+                "    Then it should work properly";
+
+        // Test 1: Exact match
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("Login with valid credentials"));
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+        assertThat(singleScenariosFromFeature.get(0).getScenarioName(), is("Scenario: Login with valid credentials"));
+
+        // Test 2: Partial match
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("Login"));
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(2));
+        assertThat(singleScenariosFromFeature.get(0).getScenarioName(), is("Scenario: Login with valid credentials"));
+        assertThat(singleScenariosFromFeature.get(1).getScenarioName(), is("Scenario: Login with invalid credentials"));
+
+        // Test 3: Case insensitive match
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("uppercase scenario name"));
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+        assertThat(singleScenariosFromFeature.get(0).getScenarioName(), is("Scenario: UPPERCASE SCENARIO NAME"));
+
+        // Test 4: Multiple scenario names
+        when(propertyManager.getScenarioNames()).thenReturn(Arrays.asList("Login with valid credentials", "User registration process"));
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(2));
+        assertThat(singleScenariosFromFeature.get(0).getScenarioName(), is("Scenario: Login with valid credentials"));
+        assertThat(singleScenariosFromFeature.get(1).getScenarioName(), is("Scenario: User registration process"));
+
+        // Test 5: Special characters
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("Special characters: !@#$%^&*()"));
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+        assertThat(singleScenariosFromFeature.get(0).getScenarioName(), is("Scenario: Special characters: !@#$%^&*()"));
+
+        // Test 6: Mixed case scenario name
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("mixed case scenario name"));
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+        assertThat(singleScenariosFromFeature.get(0).getScenarioName(), is("Scenario: Mixed Case Scenario Name"));
+
+        // Test 7: No match
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("Non-existent scenario"));
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(0));
+
+        // Test 8: Empty scenario name (should return all scenarios)
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList(""));
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(7));
+
+        // Test 9: Null scenario names (should return all scenarios)
+        when(propertyManager.getScenarioNames()).thenReturn(null);
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(7));
     }
 
     @Test(expected = CucablePluginException.class)
@@ -288,23 +387,31 @@ public class GherkinDocumentParserTest {
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
 
-        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline"));
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: This is a scenario outline"));
+        assertThat(scenario.isScenarioOutline(), is(true));
         assertThat(scenario.getSteps().size(), is(2));
         assertThat(scenario.getBackgroundSteps().size(), is(0));
         assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
 
-        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key 1"));
-        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value 'one'"));
+        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key <key>"));
+        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value '<value>'"));
+        
+        assertThat(scenario.getExampleHeaders(), is(Arrays.asList("key", "value")));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("1", "one")));
 
         scenario = singleScenariosFromFeature.get(1);
 
-        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline"));
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: This is a scenario outline"));
+        assertThat(scenario.isScenarioOutline(), is(true));
         assertThat(scenario.getSteps().size(), is(2));
         assertThat(scenario.getBackgroundSteps().size(), is(0));
         assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
 
-        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key 2"));
-        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value 'two'"));
+        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key <key>"));
+        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value '<value>'"));
+        
+        assertThat(scenario.getExampleHeaders(), is(Arrays.asList("key", "value")));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("2", "two")));
     }
 
     @Test
@@ -331,43 +438,51 @@ public class GherkinDocumentParserTest {
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
 
-        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline"));
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: This is a scenario outline"));
+        assertThat(scenario.isScenarioOutline(), is(true));
         assertThat(scenario.getSteps().size(), is(2));
         assertThat(scenario.getBackgroundSteps().size(), is(0));
         assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
 
-        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key 1"));
-        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value 'one'"));
+        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key <key>"));
+        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value '<value>'"));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("1", "one")));
 
         scenario = singleScenariosFromFeature.get(1);
 
-        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline"));
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: This is a scenario outline"));
+        assertThat(scenario.isScenarioOutline(), is(true));
         assertThat(scenario.getSteps().size(), is(2));
         assertThat(scenario.getBackgroundSteps().size(), is(0));
         assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
 
-        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key 2"));
-        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value 'two'"));
+        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key <key>"));
+        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value '<value>'"));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("2", "two")));
 
         scenario = singleScenariosFromFeature.get(2);
 
-        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline"));
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: This is a scenario outline"));
+        assertThat(scenario.isScenarioOutline(), is(true));
         assertThat(scenario.getSteps().size(), is(2));
         assertThat(scenario.getBackgroundSteps().size(), is(0));
         assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
 
-        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key 1"));
-        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value 'uno'"));
+        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key <key>"));
+        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value '<value>'"));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("1", "uno")));
 
         scenario = singleScenariosFromFeature.get(3);
 
-        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline"));
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: This is a scenario outline"));
+        assertThat(scenario.isScenarioOutline(), is(true));
         assertThat(scenario.getSteps().size(), is(2));
         assertThat(scenario.getBackgroundSteps().size(), is(0));
         assertThat(scenario.getSteps().get(0).getDataTable(), is(nullValue()));
 
-        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key 2"));
-        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value 'dos'"));
+        assertThat(scenario.getSteps().get(0).getName(), is("When I search for key <key>"));
+        assertThat(scenario.getSteps().get(1).getName(), is("Then I see the value '<value>'"));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("2", "dos")));
     }
 
     @Test
@@ -388,9 +503,13 @@ public class GherkinDocumentParserTest {
         assertThat(singleScenariosFromFeature.size(), is(2));
 
         SingleScenario scenario = singleScenariosFromFeature.get(0);
-        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline, key = 1, value = one"));
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: This is a scenario outline, key = <key>, value = <value>"));
+        assertThat(scenario.isScenarioOutline(), is(true));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("1", "one")));
         scenario = singleScenariosFromFeature.get(1);
-        assertThat(scenario.getScenarioName(), is("Scenario: This is a scenario outline, key = 2, value = two"));
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: This is a scenario outline, key = <key>, value = <value>"));
+        assertThat(scenario.isScenarioOutline(), is(true));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("2", "two")));
     }
 
     @Test
@@ -408,7 +527,8 @@ public class GherkinDocumentParserTest {
         List<SingleScenario> singleScenariosFromFeature =
                 gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         String stepName = singleScenariosFromFeature.get(1).getSteps().get(0).getName();
-        assertThat(stepName, is("Given this is a step with 23 and two\\nthree"));
+        assertThat(stepName, is("Given this is a step with <key> and <value>"));
+        assertThat(singleScenariosFromFeature.get(1).getExampleRow(), is(Arrays.asList("23", "two\\nthree")));
     }
 
     @Test
@@ -425,8 +545,10 @@ public class GherkinDocumentParserTest {
                 gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(
                 singleScenariosFromFeature.get(0).getScenarioName(),
-                is("Scenario: This is a scenario with 1 and one!")
+                is("Scenario Outline: This is a scenario with <key> and <value>!")
         );
+        assertThat(singleScenariosFromFeature.get(0).isScenarioOutline(), is(true));
+        assertThat(singleScenariosFromFeature.get(0).getExampleRow(), is(Arrays.asList("1", "one")));
     }
 
     @Test
@@ -443,8 +565,10 @@ public class GherkinDocumentParserTest {
                 gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(
                 singleScenariosFromFeature.get(0).getScenarioName(),
-                is("Scenario: This is a scenario with <key> and <value>!")
+                is("Scenario Outline: This is a scenario with <key> and <value>!")
         );
+        assertThat(singleScenariosFromFeature.get(0).isScenarioOutline(), is(true));
+        assertThat(singleScenariosFromFeature.get(0).getExampleRow(), is(Arrays.asList("1", "one")));
     }
 
     @Test
@@ -511,6 +635,63 @@ public class GherkinDocumentParserTest {
         List<SingleScenario> singleScenariosFromFeature =
                 gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(0));
+    }
+
+    @Test
+    public void scenarioOutlineWithOneExampleRowTest() throws Exception {
+        String featureContent = "Feature: test feature\n" +
+                "\n" +
+                "  Scenario Outline: Outline with one row\n" +
+                "    Given a step with <param>\n" +
+                "\n" +
+                "    Examples:\n" +
+                "      | param |\n" +
+                "      | foo   |";
+
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+        SingleScenario scenario = singleScenariosFromFeature.get(0);
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: Outline with one row"));
+        assertThat(scenario.isScenarioOutline(), is(true));
+        assertThat(scenario.getSteps().get(0).getName(), is("Given a step with <param>"));
+        assertThat(scenario.getExampleHeaders(), is(Arrays.asList("param")));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("foo")));
+    }
+
+    @Test
+    public void scenarioAndScenarioOutlineInOneFeatureTest() throws Exception {
+        String featureContent = "Feature: test feature\n" +
+                "\n" +
+                "  Scenario: Just a scenario\n" +
+                "    Given a simple step\n" +
+                "\n" +
+                "  Scenario Outline: Outline\n" +
+                "    Given a step with <param>\n" +
+                "\n" +
+                "    Examples:\n" +
+                "      | param |\n" +
+                "      | foo   |\n" +
+                "      | bar   |";
+
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(3));
+        // First: scenario
+        SingleScenario scenario = singleScenariosFromFeature.get(0);
+        assertThat(scenario.getScenarioName(), is("Scenario: Just a scenario"));
+        assertThat(scenario.isScenarioOutline(), is(false));
+        assertThat(scenario.getSteps().get(0).getName(), is("Given a simple step"));
+        // Second: scenario outline, first row
+        scenario = singleScenariosFromFeature.get(1);
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: Outline"));
+        assertThat(scenario.isScenarioOutline(), is(true));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("foo")));
+        // Third: scenario outline, second row
+        scenario = singleScenariosFromFeature.get(2);
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: Outline"));
+        assertThat(scenario.isScenarioOutline(), is(true));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("bar")));
     }
 
     private String getScenarioWithFeatureAndExampleTags() {

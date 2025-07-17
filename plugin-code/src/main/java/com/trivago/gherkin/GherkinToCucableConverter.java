@@ -16,14 +16,13 @@
 
 package com.trivago.gherkin;
 
-import gherkin.ast.DataTable;
-import gherkin.ast.DocString;
-import gherkin.ast.Examples;
-import gherkin.ast.Node;
-import gherkin.ast.Step;
-import gherkin.ast.TableCell;
-import gherkin.ast.TableRow;
-import gherkin.ast.Tag;
+import io.cucumber.messages.types.DataTable;
+import io.cucumber.messages.types.DocString;
+import io.cucumber.messages.types.Examples;
+import io.cucumber.messages.types.Step;
+import io.cucumber.messages.types.TableCell;
+import io.cucumber.messages.types.TableRow;
+import io.cucumber.messages.types.Tag;
 
 import javax.inject.Singleton;
 import java.util.ArrayList;
@@ -42,20 +41,17 @@ class GherkinToCucableConverter {
      * @param gherkinSteps a {@link Step} list.
      * @return a {@link com.trivago.vo.Step} list.
      */
-    List<com.trivago.vo.Step> convertGherkinStepsToCucableSteps(final List<Step> gherkinSteps) {
+    public List<com.trivago.vo.Step> convertGherkinStepsToCucableSteps(final List<Step> gherkinSteps) {
         List<com.trivago.vo.Step> steps = new ArrayList<>();
 
         for (Step gherkinStep : gherkinSteps) {
             com.trivago.vo.Step step;
-            com.trivago.vo.DataTable dataTable = null;
-            String docString = null;
-
-            Node argument = gherkinStep.getArgument();
-            if (argument instanceof DataTable) {
-                dataTable = convertGherkinDataTableToCucableDataTable((DataTable) argument);
-            } else if (argument instanceof DocString) {
-                docString = ((DocString) argument).getContent();
-            }
+            com.trivago.vo.DataTable dataTable = gherkinStep.getDataTable()
+                    .map(this::convertGherkinDataTableToCucableDataTable)
+                    .orElse(null);
+            String docString = gherkinStep.getDocString()
+                    .map(DocString::getContent)
+                    .orElse(null);
 
             String keywordAndName = gherkinStep.getKeyword().concat(gherkinStep.getText());
             step = new com.trivago.vo.Step(keywordAndName, dataTable, docString);
@@ -70,11 +66,12 @@ class GherkinToCucableConverter {
      * @param gherkinDataTable a {@link DataTable}.
      * @return a {@link com.trivago.vo.DataTable}.
      */
-    private com.trivago.vo.DataTable convertGherkinDataTableToCucableDataTable(
+    public com.trivago.vo.DataTable convertGherkinDataTableToCucableDataTable(
             final DataTable gherkinDataTable) {
 
         com.trivago.vo.DataTable dataTable = new com.trivago.vo.DataTable();
-        gherkinDataTable.getRows().stream().map(TableRow::getCells)
+        gherkinDataTable.getRows().stream()
+                .map(TableRow::getCells)
                 .map(cells -> cells.stream().map(TableCell::getValue).collect(Collectors.toList()))
                 .forEachOrdered(dataTable::addRow);
         return dataTable;
@@ -96,12 +93,13 @@ class GherkinToCucableConverter {
      * @param exampleTable a Gherkin {@link Examples} instance.
      * @return a map where the keys are the column headers and the values are lists of strings.
      */
-    Map<String, List<String>> convertGherkinExampleTableToCucableExampleMap(
+    public Map<String, List<String>> convertGherkinExampleTableToCucableExampleMap(
             final Examples exampleTable
     ) {
         Map<String, List<String>> exampleMap;
 
-        List<TableCell> headerCells = exampleTable.getTableHeader().getCells();
+        List<TableCell> headerCells = exampleTable.getTableHeader().orElseThrow(() -> 
+            new IllegalArgumentException("Examples table must have a header")).getCells();
         exampleMap = headerCells.stream().collect(
                 Collectors.toMap(headerCell -> "<" + headerCell.getValue() + ">",
                         headerCell -> new ArrayList<>(), (a, b) -> b, LinkedHashMap::new));
@@ -115,5 +113,21 @@ class GherkinToCucableConverter {
                     values.add(cells.get(i).getValue());
                 }));
         return exampleMap;
+    }
+
+    /**
+     * Converts a PickleTable (from PickleStep) to a Cucable DataTable.
+     *
+     * @param pickleTable a {@link io.cucumber.messages.types.PickleTable}.
+     * @return a {@link com.trivago.vo.DataTable}.
+     */
+    public com.trivago.vo.DataTable convertPickleTableToCucableDataTable(
+            final io.cucumber.messages.types.PickleTable pickleTable) {
+        com.trivago.vo.DataTable dataTable = new com.trivago.vo.DataTable();
+        pickleTable.getRows().forEach(row -> {
+            List<String> values = row.getCells().stream().map(io.cucumber.messages.types.PickleTableCell::getValue).collect(Collectors.toList());
+            dataTable.addRow(values);
+        });
+        return dataTable;
     }
 }

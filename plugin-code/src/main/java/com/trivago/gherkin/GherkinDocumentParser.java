@@ -20,25 +20,21 @@ import com.trivago.exceptions.CucablePluginException;
 import com.trivago.exceptions.filesystem.FeatureFileParseException;
 import com.trivago.logging.CucableLogger;
 import com.trivago.properties.PropertyManager;
-import com.trivago.vo.DataTable;
 import com.trivago.vo.SingleScenario;
 import com.trivago.vo.Step;
-import gherkin.AstBuilder;
-import gherkin.Parser;
-import gherkin.ParserException;
-import gherkin.ast.Background;
-import gherkin.ast.Examples;
-import gherkin.ast.Feature;
-import gherkin.ast.GherkinDocument;
-import gherkin.ast.Scenario;
-import gherkin.ast.ScenarioDefinition;
-import gherkin.ast.ScenarioOutline;
+import io.cucumber.gherkin.GherkinParser;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.Background;
+import io.cucumber.messages.types.Feature;
+import io.cucumber.messages.types.FeatureChild;
 import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionException;
 import io.cucumber.tagexpressions.TagExpressionParser;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -46,26 +42,22 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
+import java.util.HashMap;
 
 @Singleton
 public class GherkinDocumentParser {
 
-    private static final Pattern SCENARIO_OUTLINE_PLACEHOLDER_PATTERN = Pattern.compile("<.+?>");
-
     private final GherkinToCucableConverter gherkinToCucableConverter;
-    private final GherkinTranslations gherkinTranslations;
     private final PropertyManager propertyManager;
     private final CucableLogger cucableLogger;
 
     @Inject
     GherkinDocumentParser(
             final GherkinToCucableConverter gherkinToCucableConverter,
-            final GherkinTranslations gherkinTranslations,
             final PropertyManager propertyManager,
             final CucableLogger logger
     ) {
         this.gherkinToCucableConverter = gherkinToCucableConverter;
-        this.gherkinTranslations = gherkinTranslations;
         this.propertyManager = propertyManager;
         this.cucableLogger = logger;
     }
@@ -83,263 +75,234 @@ public class GherkinDocumentParser {
             final String featureFilePath,
             final List<Integer> scenarioLineNumbers
     ) throws CucablePluginException {
+
         String escapedFeatureContent = featureContent.replace("\\n", "\\\\n");
-        GherkinDocument gherkinDocument;
-        try {
-            gherkinDocument = getGherkinDocumentFromFeatureFileContent(escapedFeatureContent);
-        } catch (CucablePluginException e) {
-            throw new FeatureFileParseException(featureFilePath, e.getMessage());
-        }
-
-        Feature feature = gherkinDocument.getFeature();
-        if (feature == null) {
-            return Collections.emptyList();
-        }
-
-        String featureName = feature.getKeyword() + ": " + feature.getName();
-        String featureLanguage = feature.getLanguage();
-        String featureDescription = feature.getDescription();
-        List<String> featureTags = gherkinToCucableConverter.convertGherkinTagsToCucableTags(feature.getTags());
-
-        ArrayList<SingleScenario> singleScenarioFeatures = new ArrayList<>();
-        List<Step> backgroundSteps = new ArrayList<>();
-
-        List<ScenarioDefinition> scenarioDefinitions = feature.getChildren();
-        for (ScenarioDefinition scenarioDefinition : scenarioDefinitions) {
-            String scenarioName = scenarioDefinition.getKeyword() + ": " + scenarioDefinition.getName();
-            String scenarioDescription = scenarioDefinition.getDescription();
-
-            if (scenarioDefinition instanceof Background) {
-                // Save background steps in order to add them to every scenario inside the same feature
-                Background background = (Background) scenarioDefinition;
-                backgroundSteps = gherkinToCucableConverter.convertGherkinStepsToCucableSteps(background.getSteps());
-                continue;
+        List<SingleScenario> singleScenarioFeatures = new ArrayList<>();
+        
+        try (ByteArrayInputStream inputStream = new ByteArrayInputStream(escapedFeatureContent.getBytes(StandardCharsets.UTF_8))) {
+            GherkinParser gherkinParser = GherkinParser.builder().build();
+            List<io.cucumber.messages.types.Pickle> pickles = new ArrayList<>();
+            Feature feature = null;
+            List<Envelope> envelopes = gherkinParser.parse(featureFilePath, inputStream).collect(Collectors.toList());
+            
+            // Check if parsing was successful
+            boolean hasParseErrors = envelopes.stream()
+                .anyMatch(envelope -> envelope.getParseError().isPresent());
+            if (hasParseErrors) {
+                throw new CucablePluginException("Failed to parse Gherkin feature file: " + featureFilePath);
             }
-
-            if (scenarioDefinition instanceof Scenario) {
-                Scenario scenario = (Scenario) scenarioDefinition;
-                if (scenarioLineNumbers == null
-                    || scenarioLineNumbers.isEmpty()
-                    || scenarioLineNumbers.contains(scenario.getLocation().getLine())) {
-                    SingleScenario singleScenario =
-                            new SingleScenario(
-                                    featureName,
-                                    featureFilePath,
-                                    featureLanguage,
-                                    featureDescription,
-                                    scenarioName,
-                                    scenario.getLocation().getLine(),
-                                    scenarioDescription,
-                                    featureTags,
-                                    backgroundSteps
-                            );
-                    addGherkinScenarioInformationToSingleScenario(scenario, singleScenario);
-                    if (scenarioShouldBeIncluded(singleScenario)) {
-                        singleScenarioFeatures.add(singleScenario);
+            
+            for (Envelope envelope : envelopes) {
+                if (envelope.getGherkinDocument().isPresent() && envelope.getGherkinDocument().get().getFeature().isPresent()) {
+                    feature = envelope.getGherkinDocument().get().getFeature().get();
+                }
+                if (envelope.getPickle().isPresent()) {
+                    pickles.add(envelope.getPickle().get());
+                }
+            }
+            
+            if (feature == null) {
+                cucableLogger.warn("No parsable gherkin.");
+                return Collections.emptyList();
+            }
+            
+            String featureName = feature.getKeyword() + ": " + feature.getName();
+            String featureLanguage = feature.getLanguage();
+            String featureDescription = feature.getDescription();
+            List<String> featureTags = gherkinToCucableConverter.convertGherkinTagsToCucableTags(feature.getTags());
+            List<Step> backgroundSteps = getBackgroundSteps(feature);
+            
+            // Build a map from step ID to GherkinStep for keyword extraction
+            Map<String, io.cucumber.messages.types.Step> stepIdMap = new HashMap<>();
+            // Build a map from scenario ID to scenario keyword
+            Map<String, String> scenarioKeywordMap = new HashMap<>();
+            // Build a map from scenario ID to scenario outline info
+            Map<String, io.cucumber.messages.types.Scenario> scenarioMap = new HashMap<>();
+            for (FeatureChild child : feature.getChildren()) {
+                if (child.getBackground().isPresent()) {
+                    for (io.cucumber.messages.types.Step step : child.getBackground().get().getSteps()) {
+                        stepIdMap.put(step.getId(), step);
                     }
                 }
-                continue;
+                if (child.getScenario().isPresent()) {
+                    io.cucumber.messages.types.Scenario scenario = child.getScenario().get();
+                    scenarioKeywordMap.put(scenario.getId(), scenario.getKeyword());
+                    scenarioMap.put(scenario.getId(), scenario);
+                    for (io.cucumber.messages.types.Step step : scenario.getSteps()) {
+                        stepIdMap.put(step.getId(), step);
+                    }
+                }
             }
+            
+            for (io.cucumber.messages.types.Pickle pickle : pickles) {
+                int lineNumber = 0;
+                
+                // Get the actual scenario keyword from the source file
+                String scenarioKeyword = "Scenario";
+                io.cucumber.messages.types.Scenario originalScenario = null;
+                if (!pickle.getAstNodeIds().isEmpty()) {
+                    String scenarioId = pickle.getAstNodeIds().get(0);
+                    scenarioKeyword = scenarioKeywordMap.getOrDefault(scenarioId, "Scenario");
+                    originalScenario = scenarioMap.get(scenarioId);
+                    
+                    // Get line number from the scenario's location
+                    if (originalScenario != null && originalScenario.getLocation() != null) {
+                        lineNumber = originalScenario.getLocation().getLine().intValue();
+                    }
+                }
+                
+                // Check if this is a scenario outline (has examples)
+                boolean isScenarioOutline = originalScenario != null && 
+                    originalScenario.getExamples() != null && 
+                    !originalScenario.getExamples().isEmpty();
+                
+                String scenarioName;
+                if (isScenarioOutline) {
+                    // For scenario outlines, keep the original name with placeholders
+                    scenarioName = scenarioKeyword + ": " + originalScenario.getName();
+                } else {
+                    scenarioName = scenarioKeyword + ": " + pickle.getName();
+                }
+                
+                SingleScenario singleScenario = new SingleScenario(
+                    featureName,
+                    featureFilePath,
+                    featureLanguage,
+                    featureDescription,
+                    scenarioName,
+                    lineNumber,
+                    "", // Pickle does not have a description
+                    featureTags,
+                    backgroundSteps
+                );
 
-            if (scenarioDefinition instanceof ScenarioOutline) {
-                ScenarioOutline scenarioOutline = (ScenarioOutline) scenarioDefinition;
-
-                if (scenarioLineNumbers == null
-                    || scenarioLineNumbers.isEmpty()
-                    || scenarioLineNumbers.contains(scenarioOutline.getLocation().getLine())) {
-                    List<SingleScenario> outlineScenarios =
-                            getSingleScenariosFromOutline(
-                                    scenarioOutline,
-                                    featureName,
-                                    featureFilePath,
-                                    featureLanguage,
-                                    featureDescription,
-                                    featureTags,
-                                    backgroundSteps
-                            );
-
-                    for (SingleScenario singleScenario : outlineScenarios) {
-                        if (scenarioShouldBeIncluded(singleScenario)) {
-                            singleScenarioFeatures.add(singleScenario);
+                
+                // Set scenario outline flag and extract examples if needed
+                if (isScenarioOutline) {
+                    singleScenario.setScenarioOutline(true);
+                    List<String> headers = new ArrayList<>();
+                    List<String> rowValues = new ArrayList<>();
+                    String examplesKeyword = "Examples:";
+                    // For each Examples block
+                    if (originalScenario != null && originalScenario.getExamples() != null) {
+                        for (io.cucumber.messages.types.Examples examples : originalScenario.getExamples()) {
+                            // Extract the examples keyword from the source
+                            if (examples.getKeyword() != null && !examples.getKeyword().isEmpty()) {
+                                examplesKeyword = examples.getKeyword();
+                            }
+                            if (examples.getTableHeader().isPresent()) {
+                                headers = examples.getTableHeader().get().getCells().stream()
+                                    .map(io.cucumber.messages.types.TableCell::getValue)
+                                    .collect(Collectors.toList());
+                            }
+                            // For each row, check if its ID matches any pickle AST node ID
+                            for (io.cucumber.messages.types.TableRow tableRow : examples.getTableBody()) {
+                                if (pickle.getAstNodeIds().contains(tableRow.getId())) {
+                                    rowValues = tableRow.getCells().stream()
+                                        .map(io.cucumber.messages.types.TableCell::getValue)
+                                        .collect(Collectors.toList());
+                                    break;
+                                }
+                            }
+                            if (!rowValues.isEmpty()) {
+                                break;
+                            }
+                        }
+                    }
+                    singleScenario.setExampleHeaders(headers);
+                    singleScenario.setExampleRow(rowValues);
+                    singleScenario.setExamplesKeyword(examplesKeyword);
+                }
+                
+                // Tags
+                List<String> tags = pickle.getTags().stream()
+                    .map(io.cucumber.messages.types.PickleTag::getName)
+                    .collect(Collectors.toList());
+                singleScenario.setScenarioTags(tags);
+                
+                // Collect background step IDs
+                List<String> backgroundStepIds = new ArrayList<>();
+                for (FeatureChild child : feature.getChildren()) {
+                    if (child.getBackground().isPresent()) {
+                        for (io.cucumber.messages.types.Step step : child.getBackground().get().getSteps()) {
+                            backgroundStepIds.add(step.getId());
                         }
                     }
                 }
+                // Steps: only those not in backgroundStepIds
+                final io.cucumber.messages.types.Scenario finalOriginalScenario = originalScenario;
+                List<Step> steps = pickle.getSteps().stream()
+                    .filter(pickleStep -> pickleStep.getAstNodeIds().stream().noneMatch(backgroundStepIds::contains))
+                    .map(pickleStep -> {
+                        String stepText = pickleStep.getText();
+                        String keyword = "";
+                        // Find the original Gherkin step by AST node ID
+                        for (String astId : pickleStep.getAstNodeIds()) {
+                            io.cucumber.messages.types.Step gherkinStep = stepIdMap.get(astId);
+                            if (gherkinStep != null) {
+                                keyword = gherkinStep.getKeyword();
+                                break;
+                            }
+                        }
+                        
+                        // For scenario outlines, we need to reconstruct the original step with placeholders
+                        if (isScenarioOutline && finalOriginalScenario != null) {
+                            // Find the original step in the scenario outline
+                            for (io.cucumber.messages.types.Step gherkinStep : finalOriginalScenario.getSteps()) {
+                                if (gherkinStep.getKeyword().equals(keyword) && 
+                                    gherkinStep.getText().contains("<") && 
+                                    gherkinStep.getText().contains(">")) {
+                                    stepText = gherkinStep.getText();
+                                    break;
+                                }
+                            }
+                        }
+                        
+                        // Handle DataTable and DocString from PickleStep argument (only one allowed)
+                        com.trivago.vo.DataTable dataTable = null;
+                        String docString = null;
+                        if (pickleStep.getArgument().isPresent()) {
+                            io.cucumber.messages.types.PickleStepArgument argument = pickleStep.getArgument().get();
+                            if (argument.getDataTable().isPresent()) {
+                                dataTable = gherkinToCucableConverter.convertPickleTableToCucableDataTable(
+                                    argument.getDataTable().get());
+                            }
+                            if (argument.getDocString().isPresent()) {
+                                docString = argument.getDocString().get().getContent();
+                            }
+                        }
+                        return new Step(
+                            (keyword + stepText).trim(),
+                            dataTable,
+                            docString
+                        );
+                    }).collect(Collectors.toList());
+                singleScenario.setSteps(steps);
+                
+                if (scenarioShouldBeIncluded(singleScenario)) {
+                    singleScenarioFeatures.add(singleScenario);
+                }
             }
+        } catch (CucablePluginException e) {
+            throw e;
+        } catch (Exception e) {
+            throw new FeatureFileParseException(featureFilePath, e.getMessage());
         }
-
+        
         return singleScenarioFeatures;
     }
 
     /**
-     * Returns a list of Cucable single scenarios from a Gherkin scenario outline.
-     *
-     * @param scenarioOutline A Gherkin {@link ScenarioOutline}.
-     * @param featureName     The name of the feature this scenario outline belongs to.
-     * @param featureFilePath The source path of the feature file.
-     * @param featureLanguage The feature language this scenario outline belongs to.
-     * @param featureTags     The feature tags of the parent feature.
-     * @param backgroundSteps Return a Cucable {@link SingleScenario} list.
+     * Extracts background steps from a feature.
      */
-    private List<SingleScenario> getSingleScenariosFromOutline(
-            final ScenarioOutline scenarioOutline,
-            final String featureName,
-            final String featureFilePath,
-            final String featureLanguage,
-            final String featureDescription,
-            final List<String> featureTags,
-            final List<Step> backgroundSteps
-    ) {
-
-        // Retrieve the translation of "Scenario" in the target language and add it to the scenario
-        String translatedScenarioKeyword = gherkinTranslations.getScenarioKeyword(featureLanguage);
-        String scenarioName = translatedScenarioKeyword + ": " + scenarioOutline.getName();
-
-        String scenarioDescription = scenarioOutline.getDescription();
-        List<String> scenarioTags =
-                gherkinToCucableConverter.convertGherkinTagsToCucableTags(scenarioOutline.getTags());
-
-        List<SingleScenario> outlineScenarios = new ArrayList<>();
-        List<Step> steps = gherkinToCucableConverter.convertGherkinStepsToCucableSteps(scenarioOutline.getSteps());
-
-        if (scenarioOutline.getExamples().isEmpty()) {
-            cucableLogger.warn("Scenario outline '" + scenarioOutline.getName() + "' without example table!");
-            return outlineScenarios;
-        }
-
-        for (Examples exampleTable : scenarioOutline.getExamples()) {
-            Map<String, List<String>> exampleMap =
-                    gherkinToCucableConverter.convertGherkinExampleTableToCucableExampleMap(exampleTable);
-
-            String firstColumnHeader = (String) exampleMap.keySet().toArray()[0];
-            int rowCount = exampleMap.get(firstColumnHeader).size();
-
-            // For each example row, create a new single scenario
-            for (int rowIndex = 0; rowIndex < rowCount; rowIndex++) {
-                SingleScenario singleScenario =
-                        new SingleScenario(
-                                featureName,
-                                featureFilePath,
-                                featureLanguage,
-                                featureDescription,
-                                replacePlaceholderInString(scenarioName, exampleMap, rowIndex),
-                                scenarioOutline.getLocation().getLine(),
-                                scenarioDescription,
-                                featureTags,
-                                backgroundSteps
-                        );
-
-                List<Step> substitutedSteps = substituteStepExamplePlaceholders(steps, exampleMap, rowIndex);
-                singleScenario.setSteps(substitutedSteps);
-                singleScenario.setScenarioTags(scenarioTags);
-
-                singleScenario.setExampleTags(
-                        gherkinToCucableConverter.convertGherkinTagsToCucableTags(exampleTable.getTags())
-                );
-                outlineScenarios.add(singleScenario);
+    private List<Step> getBackgroundSteps(Feature feature) {
+        for (FeatureChild child : feature.getChildren()) {
+            if (child.getBackground().isPresent()) {
+                Background background = child.getBackground().get();
+                return gherkinToCucableConverter.convertGherkinStepsToCucableSteps(background.getSteps());
             }
         }
-
-        return outlineScenarios;
-    }
-
-    /**
-     * Replaces the example value placeholders in steps by the actual example table values.
-     *
-     * @param steps      The Cucable {@link Step} list.
-     * @param exampleMap The generated example map from an example table.
-     * @param rowIndex   The row index of the example table to consider.
-     * @return A {@link Step} list with substituted names.
-     */
-    private List<Step> substituteStepExamplePlaceholders(
-            final List<Step> steps, final Map<String, List<String>> exampleMap, final int rowIndex
-    ) {
-
-        List<Step> substitutedSteps = new ArrayList<>();
-        for (Step step : steps) {
-            String stepName = step.getName();
-            // substitute values in the step
-            DataTable dataTable = step.getDataTable();
-
-            String substitutedStepName = replacePlaceholderInString(stepName, exampleMap, rowIndex);
-            DataTable substitutedDataTable = replaceDataTableExamplePlaceholder(dataTable, exampleMap, rowIndex);
-
-            substitutedSteps.add(new Step(substitutedStepName, substitutedDataTable, step.getDocString()));
-        }
-
-        return substitutedSteps;
-    }
-
-    /**
-     * Replaces the example value placeholders in step data tables by the actual example table values.
-     *
-     * @param dataTable  The source {@link DataTable}.
-     * @param exampleMap The generated example map from an example table.
-     * @param rowIndex   The row index of the example table to consider.
-     * @return The resulting {@link DataTable}.
-     */
-    private DataTable replaceDataTableExamplePlaceholder(
-            final DataTable dataTable,
-            final Map<String, List<String>> exampleMap,
-            final int rowIndex
-    ) {
-        if (dataTable == null) {
-            return null;
-        }
-
-        List<List<String>> dataTableRows = dataTable.getRows();
-        DataTable replacedDataTable = new DataTable();
-        for (List<String> dataTableRow : dataTableRows) {
-            List<String> replacedDataTableRow = new ArrayList<>();
-            for (String dataTableCell : dataTableRow) {
-                replacedDataTableRow.add(replacePlaceholderInString(dataTableCell, exampleMap, rowIndex));
-            }
-            replacedDataTable.addRow(replacedDataTableRow);
-        }
-
-        return replacedDataTable;
-    }
-
-    /**
-     * Adds tags and steps from a Gherkin scenario to an existing single scenario.
-     *
-     * @param gherkinScenario a Gherkin {@link Scenario}.
-     * @param singleScenario  an existing Cucable {@link SingleScenario}.
-     */
-    private void addGherkinScenarioInformationToSingleScenario(
-            final Scenario gherkinScenario, final SingleScenario singleScenario
-    ) {
-
-        List<String> tags = gherkinToCucableConverter.convertGherkinTagsToCucableTags(gherkinScenario.getTags());
-        singleScenario.setScenarioTags(tags);
-
-        List<Step> steps = gherkinToCucableConverter.convertGherkinStepsToCucableSteps(gherkinScenario.getSteps());
-        singleScenario.setSteps(steps);
-    }
-
-    /**
-     * Get a {@link GherkinDocument} from a feature file for further processing.
-     *
-     * @param featureContent a feature string.
-     * @return a {@link GherkinDocument}.
-     * @throws CucablePluginException see {@link CucablePluginException}.
-     */
-    private GherkinDocument getGherkinDocumentFromFeatureFileContent(final String featureContent)
-            throws CucablePluginException {
-
-        Parser<GherkinDocument> gherkinDocumentParser = new Parser<>(new AstBuilder());
-        GherkinDocument gherkinDocument;
-
-        try {
-            gherkinDocument = gherkinDocumentParser.parse(featureContent);
-        } catch (ParserException parserException) {
-            throw new CucablePluginException(parserException.getMessage());
-        }
-
-        if (gherkinDocument == null || gherkinDocument.getFeature() == null) {
-            cucableLogger.warn("No parsable gherkin.");
-        }
-
-        return gherkinDocument;
+        return new ArrayList<>();
     }
 
     /**
@@ -383,9 +346,8 @@ public class GherkinDocumentParser {
      * @return index of the scenarioName value in the scenarioNames list if a match exists.
      * -1 if no match exists.
      */
-    public int matchScenarioWithScenarioNames(String language, String stringToMatch) {
+    public int matchScenarioWithScenarioNames(final String language, final String stringToMatch) {
         List<String> scenarioNames = propertyManager.getScenarioNames();
-        String scenarioKeyword = gherkinTranslations.getScenarioKeyword(language);
         int matchIndex = -1;
 
         if (scenarioNames == null || scenarioNames.isEmpty()) {
@@ -393,8 +355,10 @@ public class GherkinDocumentParser {
         }
 
         for (String scenarioName : scenarioNames) {
-            String regex = scenarioKeyword + ":.+" + scenarioName;
-            Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+            // Match any scenario keyword followed by colon and the scenario name
+            // Case-insensitive matching for better user experience
+            String regex = ".*:.+" + Pattern.quote(scenarioName);
+            Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(stringToMatch);
             if (matcher.find()) {
                 matchIndex = scenarioNames.indexOf(scenarioName);
@@ -405,29 +369,5 @@ public class GherkinDocumentParser {
         return matchIndex;
     }
 
-    /**
-     * Replaces the example value placeholders in a String by the actual example table values.
-     *
-     * @param sourceString The source string.
-     * @param exampleMap   The generated example map from an example table.
-     * @param rowIndex     The row index of the example table to consider.
-     * @return a {@link String} with placeholders substituted for actual values from the example table.
-     */
-    private String replacePlaceholderInString(
-            final String sourceString,
-            final Map<String, List<String>> exampleMap,
-            final int rowIndex
-    ) {
 
-        String result = sourceString;
-        Matcher m = SCENARIO_OUTLINE_PLACEHOLDER_PATTERN.matcher(sourceString);
-        while (m.find()) {
-            String currentPlaceholder = m.group(0);
-            List<String> placeholderColumn = exampleMap.get(currentPlaceholder);
-            if (placeholderColumn != null) {
-                result = result.replace(currentPlaceholder, placeholderColumn.get(rowIndex));
-            }
-        }
-        return result;
-    }
 }

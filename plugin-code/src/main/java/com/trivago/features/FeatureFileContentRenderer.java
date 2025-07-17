@@ -64,6 +64,11 @@ public class FeatureFileContentRenderer {
                     singleScenario.getScenarioDescription()
             );
             addSteps(renderedContent, singleScenario.getSteps());
+            
+            // Add examples table for scenario outlines
+            if (singleScenario.isScenarioOutline()) {
+                addExamplesTable(renderedContent, singleScenario.getExampleHeaders(), singleScenario.getExampleRow(), singleScenario.getExamplesKeyword());
+            }
         }
 
         addComments(renderedContent, firstScenario.getFeatureFilePath());
@@ -122,7 +127,7 @@ public class FeatureFileContentRenderer {
             return;
         }
         for (Step step : steps) {
-            stringBuilder.append(step.getName()).append(LINE_SEPARATOR);
+            stringBuilder.append("    ").append(step.getName()).append(LINE_SEPARATOR);
             stringBuilder.append(formatDocString(step.getDocString()));
             stringBuilder.append(formatDataTableString(step.getDataTable()));
         }
@@ -189,9 +194,9 @@ public class FeatureFileContentRenderer {
         char dataTableSeparator = '|';
         StringBuilder dataTableStringBuilder = new StringBuilder();
         for (List<String> rowValues : dataTable.getRows()) {
-            dataTableStringBuilder.append(dataTableSeparator);
+            dataTableStringBuilder.append("      ").append(dataTableSeparator);
             for (String rowValue : rowValues) {
-                dataTableStringBuilder.append(rowValue).append(dataTableSeparator);
+                dataTableStringBuilder.append(" ").append(rowValue).append(" ").append(dataTableSeparator);
             }
             dataTableStringBuilder.append(LINE_SEPARATOR);
         }
@@ -209,5 +214,41 @@ public class FeatureFileContentRenderer {
             return "";
         }
         return "\"\"\"" + LINE_SEPARATOR + docString + LINE_SEPARATOR + "\"\"\"" + LINE_SEPARATOR;
+    }
+
+    /**
+     * Adds an examples table to the generated feature file content.
+     *
+     * @param stringBuilder The current feature {@link StringBuilder} instance.
+     * @param headers The list of column headers.
+     * @param row The list of row values.
+     * @param examplesKeyword The examples keyword from the source file.
+     */
+    private void addExamplesTable(final StringBuilder stringBuilder, final List<String> headers, final List<String> row, final String examplesKeyword) {
+        if (headers == null || headers.isEmpty() || row == null || row.isEmpty()) {
+            return;
+        }
+        
+        // Ensure the keyword has a colon
+        String keyword = examplesKeyword;
+        if (!keyword.endsWith(":")) {
+            keyword = keyword + ":";
+        }
+        
+        stringBuilder.append(LINE_SEPARATOR).append("  ").append(keyword).append(LINE_SEPARATOR);
+        
+        // Add header row
+        stringBuilder.append("      |");
+        for (String header : headers) {
+            stringBuilder.append(" ").append(header).append(" |");
+        }
+        stringBuilder.append(LINE_SEPARATOR);
+        
+        // Add data row
+        stringBuilder.append("      |");
+        for (String value : row) {
+            stringBuilder.append(" ").append(value).append(" |");
+        }
+        stringBuilder.append(LINE_SEPARATOR);
     }
 }

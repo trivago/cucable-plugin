@@ -12,7 +12,6 @@ import com.trivago.vo.SingleScenario;
 import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
-import org.junit.rules.ExpectedException;
 import org.junit.rules.TemporaryFolder;
 import org.mockito.ArgumentCaptor;
 
@@ -26,13 +25,12 @@ import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyString;
 import static org.mockito.Mockito.*;
+import static org.mockito.ArgumentMatchers.eq;
 
 public class FeatureFileConverterTest {
 
     @Rule
     public TemporaryFolder testFolder = new TemporaryFolder();
-    @Rule
-    public ExpectedException expectedException = ExpectedException.none();
 
     private FeatureFileConverter featureFileConverter;
     private PropertyManager propertyManager;
@@ -120,7 +118,7 @@ public class FeatureFileConverterTest {
                 any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
         );
         assertThat(logCaptor.getAllValues().get(0), is("Cucable created 1 separate feature file and 1 runner."));
-        verify(fileSystemManager, times(3)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(3)).writeContentToFile(anyString(), anyString()); // feature file, runner file, properties file
     }
 
     @Test
@@ -157,55 +155,10 @@ public class FeatureFileConverterTest {
                 any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
         );
         assertThat(logCaptor.getAllValues().get(0), is("Cucable created 1 separate feature file and 0 runners."));
-        verify(fileSystemManager, times(2)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(2)).writeContentToFile(anyString(), anyString()); // feature file, properties file
     }
 
-    @Test
-    public void convertToSingleScenariosAndRunnersWithScenarioNameTest() throws Exception {
-        String generatedFeatureDir = testFolder.getRoot().getPath().concat("/features/");
-        String generatedRunnerDir = testFolder.getRoot().getPath().concat("/runners/");
-        String scenarioMatchText = "Feature: feature1\n Scenario: scenarioName1";
 
-        final String FEATURE_FILE_NAME = "FEATURE_FILE.feature";
-        final String GENERATED_FEATURE_FILE_NAME = "FEATURE_FILE_1_scenario001_run001_IT.feature";
-
-        propertyManager.setNumberOfTestRuns(1);
-        propertyManager.setGeneratedFeatureDirectory(generatedFeatureDir);
-        propertyManager.setGeneratedRunnerDirectory(generatedRunnerDir);
-        propertyManager.setScenarioNames("scenarioName1");
-
-        when(fileSystemManager.readContentFromFile(FEATURE_FILE_NAME)).thenReturn("TEST_CONTENT");
-        when(fileSystemManager.readContentFromFile(generatedFeatureDir + GENERATED_FEATURE_FILE_NAME))
-                .thenReturn(scenarioMatchText);
-
-        List<CucableFeature> cucableFeatures = new ArrayList<>();
-        CucableFeature cucableFeature = new CucableFeature("", "", FEATURE_FILE_NAME, null);
-        cucableFeatures.add(cucableFeature);
-
-        when(fileSystemManager.getPathsFromCucableFeature(cucableFeature))
-                .thenReturn(Collections.singletonList(Paths.get(cucableFeature.getName())));
-
-        List<SingleScenario> scenarioList = new ArrayList<>();
-        SingleScenario singleScenario = getSingleScenario();
-        scenarioList.add(singleScenario);
-        when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null))
-                .thenReturn(scenarioList);
-        when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatchText)).thenReturn(0);
-
-        String featureFileContent = "test";
-        when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
-        when(runnerFileContentRenderer.getRenderedRunnerFileContent(any(FeatureRunner.class)))
-                .thenReturn("RUNNER_CONTENT");
-
-        featureFileConverter.generateParallelizableFeatures(cucableFeatures);
-
-        ArgumentCaptor<String> logCaptor = ArgumentCaptor.forClass(String.class);
-        verify(logger, times(1)).info(logCaptor.capture(), any(CucableLogger.CucableLogLevel.class),
-                any(CucableLogger.CucableLogLevel.class), any(CucableLogger.CucableLogLevel.class)
-        );
-        assertThat(logCaptor.getAllValues().get(0), is("Cucable created 1 separate feature file and 1 runner."));
-        verify(fileSystemManager, times(3)).writeContentToFile(anyString(), anyString());
-    }
 
     @Test
     public void convertToSingleScenariosAndRunnersWithFeaturesModeTest() throws Exception {
@@ -243,7 +196,7 @@ public class FeatureFileConverterTest {
 
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
 
-        verify(fileSystemManager, times(2)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(3)).writeContentToFile(anyString(), anyString()); // feature file, runner file, properties file
     }
 
     @Test
@@ -427,7 +380,7 @@ public class FeatureFileConverterTest {
 
         featureFileConverter.generateParallelizableFeatures(cucableFeatures);
 
-        verify(fileSystemManager, times(2)).writeContentToFile(anyString(), anyString());
+        verify(fileSystemManager, times(3)).writeContentToFile(anyString(), anyString()); // feature file, runner file, properties file
     }
 
     @Test(expected = CucablePluginException.class)

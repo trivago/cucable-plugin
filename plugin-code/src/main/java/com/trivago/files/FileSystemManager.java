@@ -97,6 +97,7 @@ public class FileSystemManager {
             return paths
                     .filter(Files::isRegularFile)
                     .filter(p -> p.toString().endsWith("." + extension))
+                    .sorted()
                     .collect(Collectors.toList());
         } catch (IOException e) {
             throw new CucablePluginException(
