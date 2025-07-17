@@ -97,6 +97,108 @@ public class GherkinDocumentParserTest {
         assertThat(singleScenariosFromFeature.size(), is(2));
     }
 
+    @Test
+    public void comprehensiveScenarioNameFilteringTest() throws Exception {
+        String featureContent = "@featureTag\n" +
+                "Feature: Comprehensive Scenario Filtering Test\n" +
+                "\n" +
+                "@tag1\n" +
+                "Scenario: Login with valid credentials\n" +
+                "    Given I am on the login page\n" +
+                "    When I enter valid username and password\n" +
+                "    Then I should be logged in successfully\n" +
+                "\n" +
+                "@tag2\n" +
+                "Scenario: Login with invalid credentials\n" +
+                "    Given I am on the login page\n" +
+                "    When I enter invalid username and password\n" +
+                "    Then I should see an error message\n" +
+                "\n" +
+                "@tag3\n" +
+                "Scenario: User registration process\n" +
+                "    Given I am on the registration page\n" +
+                "    When I fill in all required fields\n" +
+                "    Then my account should be created\n" +
+                "\n" +
+                "@tag4\n" +
+                "Scenario: Password reset functionality\n" +
+                "    Given I forgot my password\n" +
+                "    When I request a password reset\n" +
+                "    Then I should receive a reset email\n" +
+                "\n" +
+                "@tag5\n" +
+                "Scenario: Special characters: !@#$%^&*()\n" +
+                "    Given I have a scenario with special chars\n" +
+                "    When I process it\n" +
+                "    Then it should work correctly\n" +
+                "\n" +
+                "@tag6\n" +
+                "Scenario: UPPERCASE SCENARIO NAME\n" +
+                "    Given I have an uppercase scenario\n" +
+                "    When I test it\n" +
+                "    Then it should match case-insensitive\n" +
+                "\n" +
+                "@tag7\n" +
+                "Scenario: Mixed Case Scenario Name\n" +
+                "    Given I have a mixed case scenario\n" +
+                "    When I test it\n" +
+                "    Then it should work properly";
+
+        // Test 1: Exact match
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("Login with valid credentials"));
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+        assertThat(singleScenariosFromFeature.get(0).getScenarioName(), is("Scenario: Login with valid credentials"));
+
+        // Test 2: Partial match
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("Login"));
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(2));
+        assertThat(singleScenariosFromFeature.get(0).getScenarioName(), is("Scenario: Login with valid credentials"));
+        assertThat(singleScenariosFromFeature.get(1).getScenarioName(), is("Scenario: Login with invalid credentials"));
+
+        // Test 3: Case insensitive match
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("uppercase scenario name"));
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+        assertThat(singleScenariosFromFeature.get(0).getScenarioName(), is("Scenario: UPPERCASE SCENARIO NAME"));
+
+        // Test 4: Multiple scenario names
+        when(propertyManager.getScenarioNames()).thenReturn(Arrays.asList("Login with valid credentials", "User registration process"));
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(2));
+        assertThat(singleScenariosFromFeature.get(0).getScenarioName(), is("Scenario: Login with valid credentials"));
+        assertThat(singleScenariosFromFeature.get(1).getScenarioName(), is("Scenario: User registration process"));
+
+        // Test 5: Special characters
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("Special characters: !@#$%^&*()"));
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+        assertThat(singleScenariosFromFeature.get(0).getScenarioName(), is("Scenario: Special characters: !@#$%^&*()"));
+
+        // Test 6: Mixed case scenario name
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("mixed case scenario name"));
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(1));
+        assertThat(singleScenariosFromFeature.get(0).getScenarioName(), is("Scenario: Mixed Case Scenario Name"));
+
+        // Test 7: No match
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList("Non-existent scenario"));
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(0));
+
+        // Test 8: Empty scenario name (should return all scenarios)
+        when(propertyManager.getScenarioNames()).thenReturn(Collections.singletonList(""));
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(7));
+
+        // Test 9: Null scenario names (should return all scenarios)
+        when(propertyManager.getScenarioNames()).thenReturn(null);
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(7));
+    }
+
     @Test(expected = CucablePluginException.class)
     public void invalidFeatureOneIncludeTagTest() throws Exception {
         String featureContent = getTwoScenariosWithTags();

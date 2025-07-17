@@ -64,16 +64,15 @@ parallel test runs.
 
 This plugin does the following:
 
-- Generate single [Cucumber](https://cucumber.io) features containing one single scenario each (scenario outlines are
-  also split up into separate scenarios)
+- Generate single [Cucumber](https://cucumber.io) features containing one single scenario each (scenario outlines are also split up into separate scenarios)
 - Generating [Cucumber](https://cucumber.io) runners
     - for every generated "single scenario" feature file or
     - for multiple generated "single scenario" feature files
 
 Those generated runners and features can then be used
-with [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/) in order to parallelize test runs.
+with [Maven Surefire](http://maven.apache.org/surefire/maven-surefire-plugin/), [Maven Failsafe](http://maven.apache.org/surefire/maven-failsafe-plugin/) or directly in test runners like JUnit or TestNG in order to parallelize test runs.
 
-This also works for **non-english** feature files!
+This also works for **non-english** feature files - all language specific keywords in the source feature files are preserved in the generated ones!
 
 ## Cucable vs Cucumber native parallel runs
 
@@ -90,8 +89,7 @@ Even though Cucumber supports basic parallel runs, Cucable has more options that
 
 ## JUnit 5
 
-When using the JUnit 5 platform, Cucable can still help parallelize scenarios more fine-grained and with more options
-than the standard JUnit and Cucumber properties.
+When using the JUnit 5 platform, Cucable can still help parallelize scenarios more fine-grained and with way more options than the standard JUnit and Cucumber properties.
 
 ## Repository Structure
 
@@ -116,7 +114,7 @@ All changes are documented in the [full changelog](CHANGELOG.md).
 # How it works
 
 * Cucable will cut up feature file into the smallest possible runnable scenarios
-* Each generated feature file includes a single scenario
+* Each generated feature file includes a single scenario or scenario outline with one example each
 * After this, the runner classes for those generated features are generated based on a provided template file, either
     * one runner per generated "single scenario" feature file or
     * one runner per group of "single scenario" feature files or
@@ -546,6 +544,11 @@ For example, if the following scenario names are specified:
     name2
 </scenarioNames>
 ```
+
+Examples:
+- `"login"` - matches any scenario containing "login" (case-insensitive)
+- `"Login with valid credentials"` - exact match (case-insensitive)
+- `"UPPERCASE SCENARIO"` - matches "uppercase scenario" or "Uppercase Scenario"
 
 2 runner files will be generated. The first file will contain all the scenarios matching `name1` and the second file
 will contain all the scenarios matching `name2`.

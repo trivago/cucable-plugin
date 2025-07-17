@@ -350,18 +350,15 @@ public class GherkinDocumentParser {
         List<String> scenarioNames = propertyManager.getScenarioNames();
         int matchIndex = -1;
 
-        System.out.println("language: " + language);
-        System.out.println("stringToMatch: " + stringToMatch);
-        System.out.println("scenarioNames: " + scenarioNames);
-
         if (scenarioNames == null || scenarioNames.isEmpty()) {
             return 0;
         }
 
         for (String scenarioName : scenarioNames) {
             // Match any scenario keyword followed by colon and the scenario name
-            String regex = ".*:.+" + scenarioName;
-            Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE);
+            // Case-insensitive matching for better user experience
+            String regex = ".*:.+" + Pattern.quote(scenarioName);
+            Pattern pattern = Pattern.compile(regex, Pattern.MULTILINE | Pattern.CASE_INSENSITIVE);
             Matcher matcher = pattern.matcher(stringToMatch);
             if (matcher.find()) {
                 matchIndex = scenarioNames.indexOf(scenarioName);
