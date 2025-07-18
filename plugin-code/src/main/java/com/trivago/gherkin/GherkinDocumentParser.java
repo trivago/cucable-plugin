@@ -247,11 +247,9 @@ public class GherkinDocumentParser {
                         
                         // For scenario outlines, we need to reconstruct the original step with placeholders
                         if (isScenarioOutline && finalOriginalScenario != null) {
-                            // Find the original step in the scenario outline
+                            // Find the original step in the scenario outline by matching the pickle step's AST node ID
                             for (io.cucumber.messages.types.Step gherkinStep : finalOriginalScenario.getSteps()) {
-                                if (gherkinStep.getKeyword().equals(keyword) && 
-                                    gherkinStep.getText().contains("<") && 
-                                    gherkinStep.getText().contains(">")) {
+                                if (pickleStep.getAstNodeIds().contains(gherkinStep.getId())) {
                                     stepText = gherkinStep.getText();
                                     break;
                                 }

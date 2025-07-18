@@ -694,6 +694,46 @@ public class GherkinDocumentParserTest {
         assertThat(scenario.getExampleRow(), is(Arrays.asList("bar")));
     }
 
+    @Test
+    public void scenarioOutlineWithMultipleStepsWithSameKeywordTest() throws Exception {
+        String featureContent = "Feature: Sorting\n" +
+                "\n" +
+                "  Scenario Outline: Strict sorting by '<SortOption>'\n" +
+                "    Given I am on the page with configuration\n" +
+                "      | paramA | valueA |\n" +
+                "      | paramB | valueB |\n" +
+                "    And I perform a setup action\n" +
+                "    And I sort by '<SortOption>'\n" +
+                "    Then I get more than 0 results\n" +
+                "    And I see that the list is sorted strictly by '<SortOption>'\n" +
+                "    And Log with id <LogId> and the following filters exist 1 times\n" +
+                "      | reference | <Reference> |\n" +
+                "\n" +
+                "    Examples:\n" +
+                "      | SortOption   | LogId | Reference |\n" +
+                "      | Price        | 1001  | 41        |\n" +
+                "      | Rating       | 1002  | 32        |\n" +
+                "      | Distance     | 1003  | 21        |";
+
+        List<SingleScenario> singleScenariosFromFeature =
+                gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
+        assertThat(singleScenariosFromFeature.size(), is(3));
+
+        SingleScenario scenario = singleScenariosFromFeature.get(0);
+        assertThat(scenario.getScenarioName(), is("Scenario Outline: Strict sorting by '<SortOption>'"));
+        assertThat(scenario.isScenarioOutline(), is(true));
+        assertThat(scenario.getSteps().size(), is(6));
+        // Verify the steps are in the correct order and have the right content
+        assertThat(scenario.getSteps().get(0).getName(), is("Given I am on the page with configuration"));
+        assertThat(scenario.getSteps().get(1).getName(), is("And I perform a setup action"));
+        assertThat(scenario.getSteps().get(2).getName(), is("And I sort by '<SortOption>'"));
+        assertThat(scenario.getSteps().get(3).getName(), is("Then I get more than 0 results"));
+        assertThat(scenario.getSteps().get(4).getName(), is("And I see that the list is sorted strictly by '<SortOption>'"));
+        assertThat(scenario.getSteps().get(5).getName(), is("And Log with id <LogId> and the following filters exist 1 times"));
+        assertThat(scenario.getExampleHeaders(), is(Arrays.asList("SortOption", "LogId", "Reference")));
+        assertThat(scenario.getExampleRow(), is(Arrays.asList("Price", "1001", "41")));
+    }
+
     private String getScenarioWithFeatureAndExampleTags() {
         return "@featureTag\n" +
                "Feature: test feature 3\n" +

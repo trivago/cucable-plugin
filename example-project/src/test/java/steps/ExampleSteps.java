@@ -88,4 +88,8 @@ public class ExampleSteps {
     @Given("I am on a page with text {string}")
     public void iAmOnAPageWithTextText(String text) {
     }
+
+    @Given("I do something with {string}")
+    public void iDoSomethingWith(String string) {        
+    }
 }
