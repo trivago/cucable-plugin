@@ -7,7 +7,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>example-project</artifactId>
-    <version>1.15.0</version>
+    <version>1.15.1</version>
     <packaging>jar</packaging>
 
     <properties>
