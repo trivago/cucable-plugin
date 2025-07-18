@@ -7,6 +7,12 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.15.1] - 2025-07-18
+
+### Fix
+
+* Major bug with step generation with example table references. (#199)
+
 ## [1.15.0] - 2025-07-17
 
 ### Changed
