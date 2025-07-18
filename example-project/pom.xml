@@ -129,7 +129,7 @@
                     <!--</customPlaceholders>-->
 
                     <!-- optional: Cucumber tag expression to include or exclude scenarios with certain tags (see https://docs.cucumber.io/cucumber/api/#tag-expressions) -->
-                    <includeScenarioTags>@exampleRows</includeScenarioTags>
+                    <!-- <includeScenarioTags>@scenario1Tag1</includeScenarioTags> -->
                     <!--<includeScenarioTags>not @skipMe</includeScenarioTags>-->
                     <!--<includeScenarioTags>(@scenario1Tag1 or @scenario1Tag2) and not @skipMe</includeScenarioTags>-->
 
