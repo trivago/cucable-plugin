@@ -197,6 +197,18 @@ public class GherkinDocumentParserTest {
         when(propertyManager.getScenarioNames()).thenReturn(null);
         singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", null);
         assertThat(singleScenariosFromFeature.size(), is(7));
+
+        // Test 10: Empty feature content (should return no scenarios)
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature("", "", null);
+        assertThat(singleScenariosFromFeature.size(), is(0));
+
+        // Test 11: One line number
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", Collections.singletonList(5));
+        assertThat(singleScenariosFromFeature.size(), is(1));
+
+        // Test 11: Multiple line numbers
+        singleScenariosFromFeature = gherkinDocumentParser.getSingleScenariosFromFeature(featureContent, "", Arrays.asList(5, 17));
+        assertThat(singleScenariosFromFeature.size(), is(2));
     }
 
     @Test(expected = CucablePluginException.class)
@@ -655,8 +667,8 @@ public class GherkinDocumentParserTest {
         assertThat(scenario.getScenarioName(), is("Scenario Outline: Outline with one row"));
         assertThat(scenario.isScenarioOutline(), is(true));
         assertThat(scenario.getSteps().get(0).getName(), is("Given a step with <param>"));
-        assertThat(scenario.getExampleHeaders(), is(Arrays.asList("param")));
-        assertThat(scenario.getExampleRow(), is(Arrays.asList("foo")));
+        assertThat(scenario.getExampleHeaders(), is(List.of("param")));
+        assertThat(scenario.getExampleRow(), is(List.of("foo")));
     }
 
     @Test
@@ -686,12 +698,12 @@ public class GherkinDocumentParserTest {
         scenario = singleScenariosFromFeature.get(1);
         assertThat(scenario.getScenarioName(), is("Scenario Outline: Outline"));
         assertThat(scenario.isScenarioOutline(), is(true));
-        assertThat(scenario.getExampleRow(), is(Arrays.asList("foo")));
+        assertThat(scenario.getExampleRow(), is(List.of("foo")));
         // Third: scenario outline, second row
         scenario = singleScenariosFromFeature.get(2);
         assertThat(scenario.getScenarioName(), is("Scenario Outline: Outline"));
         assertThat(scenario.isScenarioOutline(), is(true));
-        assertThat(scenario.getExampleRow(), is(Arrays.asList("bar")));
+        assertThat(scenario.getExampleRow(), is(List.of("bar")));
     }
 
     @Test

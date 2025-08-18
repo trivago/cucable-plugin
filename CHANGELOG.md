@@ -7,9 +7,15 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.15.2] - 2025-08-18
+
+### Fixed
+
+* Line numbers were ignored when generating scenarios from feature files (#200)
+
 ## [1.15.1] - 2025-07-18
 
-### Fix
+### Fixed
 
 * Major bug with step generation with example table references. (#199)
 
