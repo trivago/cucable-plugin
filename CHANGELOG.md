@@ -454,6 +454,10 @@ recent versions of the underlying Cucumber dependencies.
 
 Initial project version on GitHub and Maven Central.
 
+[1.15.2]: https://github.com/trivago/cucable-plugin/compare/1.15.1...1.15.2
+
+[1.15.1]: https://github.com/trivago/cucable-plugin/compare/1.15.0...1.15.1
+
 [1.15.0]: https://github.com/trivago/cucable-plugin/compare/1.14.1...1.15.0
 
 [1.14.1]: https://github.com/trivago/cucable-plugin/compare/1.14.0...1.14.1
