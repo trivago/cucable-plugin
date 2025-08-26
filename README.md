@@ -377,7 +377,7 @@ following:
 
 #### Combining different feature sources
 
-Starting from Cucumber 1.10.0, you can use any combination of sources by separating them with commas, e.g.
+Starting from Cucable 1.10.0, you can use any combination of sources by separating them with commas, e.g.
 
 ```xml
 
