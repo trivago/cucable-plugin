@@ -1,8 +1,8 @@
-Feature: MyTest6
+Feature: MyTest5
   This is a feature description
 
   @test
-  Scenario Outline: Test
+  Scenario Outline: Test <type> with scope <scopeID>
   This is a scenario description
 
     Given this is a given step

@@ -7,6 +7,13 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.16.0] - UNRELEASED
+
+### Changed
+
+* When line numbers are specified for example table rows, these rows are now generated as individual scenario outlines
+  with the specified rows each.
+
 ## [1.15.2] - 2025-08-18
 
 ### Fixed
@@ -24,9 +31,9 @@ Back to [Readme](README.md).
 ### Changed
 
 * **Major upgrade**: Updated Gherkin library from v5.2.0 to v33.0.0
-  * Migrated from AST-based to message-based API using Pickles
-  * All existing functionality preserved (scenario slicing, backgrounds, outlines, DataTables, etc.)
-  * Improved performance and memory efficiency
+    * Migrated from AST-based to message-based API using Pickles
+    * All existing functionality preserved (scenario slicing, backgrounds, outlines, DataTables, etc.)
+    * Improved performance and memory efficiency
 * Updated JUnit Vintage Engine to `5.13.1`
 
 ## [1.14.1] - 2025-05-27
@@ -453,6 +460,8 @@ recent versions of the underlying Cucumber dependencies.
 ## [0.0.4] - 2017-06-01
 
 Initial project version on GitHub and Maven Central.
+
+[1.16.0]: https://github.com/trivago/cucable-plugin/compare/1.15.2...1.16.0
 
 [1.15.2]: https://github.com/trivago/cucable-plugin/compare/1.15.1...1.15.2
 
