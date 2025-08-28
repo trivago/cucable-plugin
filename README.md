@@ -355,6 +355,8 @@ following:
 * the path to a specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file with optional line numbers of
   specific scenarios e.g.
   `src/test/resources/features/MyFeature.feature:12:19`
+* The path to a specific __existing__ [Cucumber](https://cucumber.io) _.feature_ file with optional line numbers of example table rows in a scenario outline, e.g.
+  `src/test/resources/features/MyFeature.feature:15` (15 would be the line number of the example table row)
 * the path to a [Cucumber](https://cucumber.io) text file containing the path to a feature including line number(s) per
   line (as written by
   the [Cucumber rerun reporter plugin](https://cucumber.io/docs/cucumber/reporting/?sbsearch=rerun#built-in-reporter-plugins),
@@ -380,12 +382,11 @@ following:
 Starting from Cucable 1.10.0, you can use any combination of sources by separating them with commas, e.g.
 
 ```xml
-
-<sourceFeatures>src/test/resources/features, @src/test/rerun.txt</sourceFeatures>
+<sourceFeatures>features/smoketest,features/Cool.feature:14:123,@rerun.txt</sourceFeatures>
 ```
 
-This example would use all `.feature` files in `src/test/resources/features` __plus__ all features that are defined in
-`src/test/rerun.txt`!
+This example would use all `.feature` files in `features/smoketest` __plus__ scenarios located in lines 14 and 123 in `features/Cool.feature` __plus__ all features that are listed in
+`rerun.txt`!
 
 __Note:__ You need to be careful when selecting multiple sources as the same feature could be generated multiple times
 if it appears in more than one source.
@@ -396,9 +397,18 @@ The path where the __generated__ [Cucumber](https://cucumber.io) .feature files 
 _src/test/resources/parallel_).
 
 Additionally, a file called `generated-features.properties` will be generated there that shows all generated features
-along with their reference to the respective source feature.
+along with their reference to the respective source feature and their line numbers.
 
-**Note:** This directory should be located under a valid resource folder to be included as a test source by Maven.
+Example:
+```
+MyTest_1_scenario001_run001_IT=features/testfeature/MyTest.feature:15
+MyTest_1_scenario002_run001_IT=features/testfeature/MyTest.feature:16
+MyTest_1_scenario003_run001_IT=features/testfeature/MyTest.feature:29
+```
+
+**Notes:**
+* The line numbers can either refer to the line the respective scenario is located or, in case of scenario outlines, to the line of the individual example table row.
+* This directory should be located under a valid resource folder to be included as a test source by Maven.
 If you want to use a directory inside Maven's target
 folder, [check this example](#generating-runners-and-features-inside-target-directory).
 

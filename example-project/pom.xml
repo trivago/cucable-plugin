@@ -7,7 +7,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>example-project</artifactId>
-    <version>1.15.2</version>
+    <version>1.16.0</version>
     <packaging>jar</packaging>
 
     <properties>
@@ -112,13 +112,13 @@
                     <!--</sourceFeatures>-->
 
                     <!-- process a text file containing paths to features and line numbers (as it is written by the Cucumber rerun formatter) -->
-                    <!-- <sourceFeatures>@src/test/resources/cucumber-feature-list.txt</sourceFeatures> -->
+                    <!-- <sourceFeatures>@src/test/resources/cucumber-feature-list3.txt</sourceFeatures> -->
 
                     <!-- process a folder that hosts text files containing paths to features and line numbers (as it is written by the Cucumber rerun formatter) -->
                     <!-- <sourceFeatures>@src/test/resources</sourceFeatures> -->
 
-                    <!-- process a specific feature file and specific line numbers in the given directory -->
-                    <!-- <sourceFeatures>src/test/resources/features/testfeature/MyTest1.feature:8:19</sourceFeatures> -->
+                    <!-- process a specific feature file and specific line numbers of scenarios or example rows in the given directory -->
+                    <!-- <sourceFeatures>src/test/resources/features/testfeature/MyTest5.feature:15:16</sourceFeatures> -->
 
                     <generatedFeatureDirectory>${generated.feature.directory}</generatedFeatureDirectory>
                     <generatedRunnerDirectory>${generated.runner.directory}</generatedRunnerDirectory>

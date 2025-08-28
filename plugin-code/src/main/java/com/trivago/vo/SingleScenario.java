@@ -30,6 +30,7 @@ public final class SingleScenario {
     private final String featureDescription;
     private final String scenarioName;
     private final int lineNumber;
+    private int exampleLineNumber = 0;
     private final String scenarioDescription;
     private final List<String> featureTags;
     private final List<Step> backgroundSteps;
@@ -154,21 +155,44 @@ public final class SingleScenario {
     @Override
     public String toString() {
         return "SingleScenario{" +
-                "featureName='" + featureName + '\'' +
-                ", featureFilePath='" + featureFilePath + '\'' +
-                ", featureLanguage='" + featureLanguage + '\'' +
-                ", featureDescription='" + featureDescription + '\'' +
-                ", scenarioName='" + scenarioName + '\'' +
-                ", scenarioDescription='" + scenarioDescription + '\'' +
-                ", featureTags=" + featureTags +
-                ", backgroundSteps=" + backgroundSteps +
-                ", scenarioTags=" + scenarioTags +
-                ", exampleTags=" + exampleTags +
-                ", steps=" + steps +
-                '}';
+               "featureName='" + featureName + '\'' +
+               ", featureFilePath='" + featureFilePath + '\'' +
+               ", featureLanguage='" + featureLanguage + '\'' +
+               ", featureDescription='" + featureDescription + '\'' +
+               ", scenarioName='" + scenarioName + '\'' +
+               ", scenarioDescription='" + scenarioDescription + '\'' +
+               ", featureTags=" + featureTags +
+               ", backgroundSteps=" + backgroundSteps +
+               ", scenarioTags=" + scenarioTags +
+               ", exampleTags=" + exampleTags +
+               ", steps=" + steps +
+               '}';
     }
 
     public int getLineNumber() {
         return lineNumber;
     }
+
+    public int getExampleLineNumber() {
+        return exampleLineNumber;
+    }
+
+    public void setExampleLineNumber(int exampleLineNumber) {
+        this.exampleLineNumber = exampleLineNumber;
+    }
+
+    /**
+     * Returns the effective line number to use for reporting.
+     * If an example line number is set (> 0), it returns that,
+     * otherwise it returns the scenario line number.
+     *
+     * @return the line number to use for reporting
+     */
+    public int getEffectiveLineNumber() {
+        if (exampleLineNumber > 0) {
+            return exampleLineNumber;
+        }
+        return lineNumber;
+    }
+
 }
