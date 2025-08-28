@@ -277,8 +277,8 @@ public class FeatureFileConverterTest {
         scenarioList.add(singleScenario);
         when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null))
                 .thenReturn(scenarioList);
-        when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatch1Text)).thenReturn(0);
-        when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatch2Text)).thenReturn(1);
+        when(gherkinDocumentParser.matchScenarioWithScenarioNames(scenarioMatch1Text)).thenReturn(0);
+        when(gherkinDocumentParser.matchScenarioWithScenarioNames(scenarioMatch2Text)).thenReturn(1);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
@@ -334,8 +334,8 @@ public class FeatureFileConverterTest {
         scenarioList.add(singleScenario);
         when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null))
                 .thenReturn(scenarioList);
-        when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatch1Text)).thenReturn(0);
-        when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioMatch2Text)).thenReturn(1);
+        when(gherkinDocumentParser.matchScenarioWithScenarioNames(scenarioMatch1Text)).thenReturn(0);
+        when(gherkinDocumentParser.matchScenarioWithScenarioNames(scenarioMatch2Text)).thenReturn(1);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);
@@ -413,7 +413,7 @@ public class FeatureFileConverterTest {
         scenarioList.add(singleScenario);
         when(gherkinDocumentParser.getSingleScenariosFromFeature("TEST_CONTENT", FEATURE_FILE_NAME, null))
                 .thenReturn(scenarioList);
-        when(gherkinDocumentParser.matchScenarioWithScenarioNames("en", scenarioNoMatchText)).thenReturn(-1);
+        when(gherkinDocumentParser.matchScenarioWithScenarioNames(scenarioNoMatchText)).thenReturn(-1);
 
         String featureFileContent = "test";
         when(featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario)).thenReturn(featureFileContent);

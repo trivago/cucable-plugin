@@ -15,4 +15,4 @@ This directory contains the complete Cucable source code.
 
 To build, use `mvn clean install`. This will create the Cucable jar file in Maven's `target` folder.
 
-Requires Maven >= 3.3.9 and Java >= 8.
+Requires Maven >= 3.3.9 and Java >= 11.

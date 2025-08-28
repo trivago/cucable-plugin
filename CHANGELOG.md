@@ -11,8 +11,13 @@ Back to [Readme](README.md).
 
 ### Changed
 
-* When line numbers are specified for example table rows, these rows are now generated as individual scenario outlines
+__Breaking changes:__
+
+* When line numbers are specified that match example table rows, these rows are now generated as individual scenario
+  outlines
   with the specified rows each.
+* When individual scenario are generated from scenario outlines, the `generated-features.properties` file is now
+  containing line numbers that point to the individual example tables.
 
 ## [1.15.2] - 2025-08-18
 

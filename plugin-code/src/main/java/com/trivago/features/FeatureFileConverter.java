@@ -235,10 +235,9 @@ public class FeatureFileConverter {
                 generatedFeaturePaths.add(generatedFileName);
                 scenarioPerFeatureCounters.put(sourceFeatureFilePath.toString(), scenarioPerFeatureCounter);
 
-
                 fileSystemManager.writeContentToFile(
                         generatedFileName + "=" +
-                        singleScenario.getFeatureFilePath() + ":" + singleScenario.getLineNumber() + "\n",
+                        singleScenario.getFeatureFilePath() + ":" + singleScenario.getEffectiveLineNumber() + "\n",
                         propertyManager.getGeneratedFeatureDirectory() +
                         "/generated-features.properties");
             }
@@ -279,7 +278,7 @@ public class FeatureFileConverter {
             );
 
             fileSystemManager.writeContentToFile(
-                generatedFileName + "=" + sourceFeatureFilePath.toString() + ":1\n",
+                    generatedFileName + "=" + sourceFeatureFilePath + ":1\n",
                 propertyManager.getGeneratedFeatureDirectory() + "/generated-features.properties");
             generatedFeaturePaths.add(generatedFileName);
             scenarioPerFeatureCounters.put(sourceFeatureFilePath.toString(), featureCounter);
@@ -359,7 +358,7 @@ public class FeatureFileConverter {
                         // Ignore parsing errors
                     }
 
-                    int listIndex = gherkinDocumentParser.matchScenarioWithScenarioNames(language, scenarioText);
+                    int listIndex = gherkinDocumentParser.matchScenarioWithScenarioNames(scenarioText);
                     if (listIndex >= 0) {
                         generatedFeatureNamesPerRunner.get(listIndex).add(generatedFeatureName);
                         matchCount++;

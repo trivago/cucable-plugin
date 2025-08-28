@@ -23,10 +23,14 @@ import com.trivago.properties.PropertyManager;
 import com.trivago.vo.SingleScenario;
 import com.trivago.vo.Step;
 import io.cucumber.gherkin.GherkinParser;
-import io.cucumber.messages.types.Envelope;
 import io.cucumber.messages.types.Background;
+import io.cucumber.messages.types.Envelope;
+import io.cucumber.messages.types.Examples;
 import io.cucumber.messages.types.Feature;
 import io.cucumber.messages.types.FeatureChild;
+import io.cucumber.messages.types.Pickle;
+import io.cucumber.messages.types.Scenario;
+import io.cucumber.messages.types.TableRow;
 import io.cucumber.tagexpressions.Expression;
 import io.cucumber.tagexpressions.TagExpressionException;
 import io.cucumber.tagexpressions.TagExpressionParser;
@@ -37,12 +41,14 @@ import java.io.ByteArrayInputStream;
 import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
-import java.util.HashMap;
 
 @Singleton
 public class GherkinDocumentParser {
@@ -61,6 +67,7 @@ public class GherkinDocumentParser {
         this.propertyManager = propertyManager;
         this.cucableLogger = logger;
     }
+
 
     /**
      * Returns a {@link SingleScenario} list from a given feature file.
@@ -102,7 +109,7 @@ public class GherkinDocumentParser {
             }
 
             if (feature == null) {
-                cucableLogger.warn("No parsable gherkin.");
+                cucableLogger.warn("No parsable gherkin in feature file: " + getFeatureFileNameFromPath(featureFilePath));
                 return Collections.emptyList();
             }
 
@@ -116,7 +123,7 @@ public class GherkinDocumentParser {
             Map<String, io.cucumber.messages.types.Step> stepIdMap = new HashMap<>();
             // Build a map from scenario ID to scenario keyword
             Map<String, String> scenarioKeywordMap = new HashMap<>();
-            // Build a map from scenario ID to scenario outline info
+            // Build a map from scenario ID to scenario object
             Map<String, io.cucumber.messages.types.Scenario> scenarioMap = new HashMap<>();
             for (FeatureChild child : feature.getChildren()) {
                 if (child.getBackground().isPresent()) {
@@ -134,8 +141,12 @@ public class GherkinDocumentParser {
                 }
             }
 
+            boolean hasLineNumberFilter = scenarioLineNumbers != null && !scenarioLineNumbers.isEmpty();
+            List<Integer> requestedLineNumbers = hasLineNumberFilter ? new ArrayList<>(scenarioLineNumbers) : new ArrayList<>();
+            Set<Integer> matchedLineNumbers = new HashSet<>();
+
             for (io.cucumber.messages.types.Pickle pickle : pickles) {
-                int lineNumber = 0;
+                int parentScenarioLineNumber = 0;
 
                 // Get the actual scenario keyword from the source file
                 String scenarioKeyword = "Scenario";
@@ -147,21 +158,38 @@ public class GherkinDocumentParser {
 
                     // Get line number from the scenario's location
                     if (originalScenario != null && originalScenario.getLocation() != null) {
-                        lineNumber = originalScenario.getLocation().getLine().intValue();
+                        parentScenarioLineNumber = originalScenario.getLocation().getLine().intValue();
                     }
                 }
 
-                // Skip this scenario if line numbers are specified but none match
-                if (scenarioLineNumbers != null
-                    && !scenarioLineNumbers.isEmpty()
-                    && !scenarioLineNumbers.contains(lineNumber)) {
-                    continue;
+                // Check if this is a scenario outline (has examples)
+                boolean isScenarioOutline = originalScenario != null
+                                            && originalScenario.getExamples() != null
+                                            && !originalScenario.getExamples().isEmpty();
+
+                // Filtering by line numbers:
+                // - If no filter provided: include all pickles
+                // - If filter contains parentScenarioLineNumber: include this pickle
+                // - Else, if it's a SO: include only if THIS pickle's row line is requested
+                boolean includeThisPickle = true;
+                if (hasLineNumberFilter) {
+                    if (requestedLineNumbers.contains(parentScenarioLineNumber)) {
+                        includeThisPickle = true;
+                        matchedLineNumbers.add(parentScenarioLineNumber);
+                    } else if (isScenarioOutline) {
+                        Integer currentPickleRowLine = getInteger(pickle, originalScenario);
+                        includeThisPickle = currentPickleRowLine != null && requestedLineNumbers.contains(currentPickleRowLine);
+                        if (includeThisPickle && currentPickleRowLine != null) {
+                            matchedLineNumbers.add(currentPickleRowLine);
+                        }
+                    } else {
+                        includeThisPickle = false;
+                    }
                 }
 
-                // Check if this is a scenario outline (has examples)
-                boolean isScenarioOutline = originalScenario != null &&
-                                            originalScenario.getExamples() != null &&
-                                            !originalScenario.getExamples().isEmpty();
+                if (!includeThisPickle) {
+                    continue;
+                }
 
                 String scenarioName;
                 if (isScenarioOutline) {
@@ -177,23 +205,23 @@ public class GherkinDocumentParser {
                         featureLanguage,
                         featureDescription,
                         scenarioName,
-                        lineNumber,
+                        parentScenarioLineNumber,
                         "", // Pickle does not have a description
                         featureTags,
                         backgroundSteps
                 );
 
-
                 // Set scenario outline flag and extract examples if needed
                 if (isScenarioOutline) {
                     singleScenario.setScenarioOutline(true);
+
                     List<String> headers = new ArrayList<>();
                     List<String> rowValues = new ArrayList<>();
                     String examplesKeyword = "Examples:";
-                    // For each Examples block
-                    if (originalScenario != null && originalScenario.getExamples() != null) {
+                    Integer currentExampleRowLineNumber = null;
+
+                    if (originalScenario.getExamples() != null) {
                         for (io.cucumber.messages.types.Examples examples : originalScenario.getExamples()) {
-                            // Extract the examples keyword from the source
                             if (examples.getKeyword() != null && !examples.getKeyword().isEmpty()) {
                                 examplesKeyword = examples.getKeyword();
                             }
@@ -202,12 +230,16 @@ public class GherkinDocumentParser {
                                         .map(io.cucumber.messages.types.TableCell::getValue)
                                         .collect(Collectors.toList());
                             }
-                            // For each row, check if its ID matches any pickle AST node ID
+                            // For this pickle, pick the matching row (by id) to get row values and line number
                             for (io.cucumber.messages.types.TableRow tableRow : examples.getTableBody()) {
                                 if (pickle.getAstNodeIds().contains(tableRow.getId())) {
                                     rowValues = tableRow.getCells().stream()
                                             .map(io.cucumber.messages.types.TableCell::getValue)
                                             .collect(Collectors.toList());
+                                    // Always capture the example row line number for scenario outlines
+                                    if (tableRow.getLocation() != null) {
+                                        currentExampleRowLineNumber = tableRow.getLocation().getLine().intValue();
+                                    }
                                     break;
                                 }
                             }
@@ -216,6 +248,12 @@ public class GherkinDocumentParser {
                             }
                         }
                     }
+
+                    // Always set the example line number for scenario outlines
+                    if (currentExampleRowLineNumber != null) {
+                        singleScenario.setExampleLineNumber(currentExampleRowLineNumber);
+                    }
+
                     singleScenario.setExampleHeaders(headers);
                     singleScenario.setExampleRow(rowValues);
                     singleScenario.setExamplesKeyword(examplesKeyword);
@@ -288,6 +326,12 @@ public class GherkinDocumentParser {
                     singleScenarioFeatures.add(singleScenario);
                 }
             }
+
+            // Log warnings for unmatched line numbers (only once per unmatched line number)
+            if (hasLineNumberFilter) {
+                logSkippedLineNumberWarnings(requestedLineNumbers, matchedLineNumbers, featureFilePath);
+            }
+
         } catch (CucablePluginException e) {
             throw e;
         } catch (Exception e) {
@@ -295,6 +339,50 @@ public class GherkinDocumentParser {
         }
 
         return singleScenarioFeatures;
+    }
+
+    private static Integer getInteger(Pickle pickle, Scenario originalScenario) {
+        Integer currentPickleRowLine = null;
+        outer:
+        for (Examples examples : originalScenario.getExamples()) {
+            for (TableRow tableRow : examples.getTableBody()) {
+                if (pickle.getAstNodeIds().contains(tableRow.getId())) {
+                    if (tableRow.getLocation() != null) {
+                        currentPickleRowLine = tableRow.getLocation().getLine().intValue();
+                    }
+                    break outer;
+                }
+            }
+        }
+        return currentPickleRowLine;
+    }
+
+    private void logSkippedLineNumberWarnings(List<Integer> requestedLineNumbers, Set<Integer> matchedLineNumbers, String featureFilePath) {
+        String featureFileName = getFeatureFileNameFromPath(featureFilePath);
+        for (Integer requestedLineNumber : requestedLineNumbers) {
+            if (!matchedLineNumbers.contains(requestedLineNumber)) {
+                cucableLogger.warn("Skipping line " + requestedLineNumber +
+                                   " in feature " + featureFileName +
+                                   ": no scenario or example row found.");
+            }
+        }
+    }
+
+    /**
+     * Get the feature file name from the full feature file path.
+     *
+     * @param featureFilePath The path to the feature file.
+     * @return The feature file name.
+     */
+    private String getFeatureFileNameFromPath(final String featureFilePath) {
+        if (featureFilePath == null || featureFilePath.isEmpty()) {
+            return "unknown";
+        }
+        String[] pathParts = featureFilePath.split("[/\\\\]");
+        if (pathParts.length > 0) {
+            return pathParts[pathParts.length - 1];
+        }
+        return featureFilePath;
     }
 
     /**
@@ -320,9 +408,8 @@ public class GherkinDocumentParser {
     private boolean scenarioShouldBeIncluded(final SingleScenario singleScenario) throws CucablePluginException {
 
         String includeScenarioTags = propertyManager.getIncludeScenarioTags();
-        String language = singleScenario.getFeatureLanguage();
         String scenarioName = singleScenario.getScenarioName();
-        boolean scenarioNameMatchExists = matchScenarioWithScenarioNames(language, scenarioName) >= 0;
+        boolean scenarioNameMatchExists = matchScenarioWithScenarioNames(scenarioName) >= 0;
 
         List<String> combinedScenarioTags = new ArrayList<>(singleScenario.getScenarioTags());
         combinedScenarioTags.addAll(singleScenario.getFeatureTags());
@@ -346,12 +433,11 @@ public class GherkinDocumentParser {
     /**
      * Checks if a scenarioName value matches with the scenario name.
      *
-     * @param language      Feature file language ("en", "ro" etc).
      * @param stringToMatch the string that will be matched with the scenarioName value.
      * @return index of the scenarioName value in the scenarioNames list if a match exists.
      * -1 if no match exists.
      */
-    public int matchScenarioWithScenarioNames(final String language, final String stringToMatch) {
+    public int matchScenarioWithScenarioNames(final String stringToMatch) {
         List<String> scenarioNames = propertyManager.getScenarioNames();
         int matchIndex = -1;
 
@@ -373,6 +459,4 @@ public class GherkinDocumentParser {
 
         return matchIndex;
     }
-
-
 }
