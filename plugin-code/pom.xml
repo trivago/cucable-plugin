@@ -6,7 +6,7 @@
 
     <groupId>com.trivago.rta</groupId>
     <artifactId>cucable-plugin</artifactId>
-    <version>1.16.0</version>
+    <version>1.16.1</version>
     <url>https://github.com/trivago/cucable-plugin</url>
 
     <name>Cucable Maven Plugin</name>
@@ -66,15 +66,15 @@
         <maven.compiler.release>11</maven.compiler.release>
 
         <maven.version>3.9.9</maven.version>
-        <maven-javadoc-plugin.version>3.11.2</maven-javadoc-plugin.version>
-        <maven.gpg.plugin.version>3.2.7</maven.gpg.plugin.version>
+        <maven-javadoc-plugin.version>3.12.0</maven-javadoc-plugin.version>
+        <maven.gpg.plugin.version>3.2.8</maven.gpg.plugin.version>
         <maven.plugin.plugin.version>3.9.0</maven.plugin.plugin.version>
-        <maven.jar.plugin.version>3.4.2</maven.jar.plugin.version>
-        <maven.compiler.plugin.version>3.14.0</maven.compiler.plugin.version>
+        <maven.jar.plugin.version>3.5.1</maven.jar.plugin.version>
+        <maven.compiler.plugin.version>3.15.0</maven.compiler.plugin.version>
         <jacoco.maven.plugin>0.8.13</jacoco.maven.plugin>
         <plexus.component.annotations.version>2.2.0</plexus.component.annotations.version>
         <maven.plugin.annotations.version>3.13.0</maven.plugin.annotations.version>
-        <maven.source.plugin.version>3.3.1</maven.source.plugin.version>
+        <maven.source.plugin.version>3.4.0</maven.source.plugin.version>
         <gherkin.version>33.0.0</gherkin.version>
         <tag.expressions.version>6.1.2</tag.expressions.version>
         <apache.commons.version>3.18.0</apache.commons.version>
@@ -83,11 +83,11 @@
         <junit5.vintage.version>5.13.1</junit5.vintage.version>
         <openpojo.version>0.9.1</openpojo.version>
         <plexus-utils.version>4.0.2</plexus-utils.version>
-        <maven-resources-plugin.version>3.3.1</maven-resources-plugin.version>
+        <maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
         <slf4j-api.version>2.1.0-alpha1</slf4j-api.version>
-        <maven-enforcer-plugin.version>3.5.0</maven-enforcer-plugin.version>
+        <maven-enforcer-plugin.version>3.6.3</maven-enforcer-plugin.version>
         <maven-surefire-plugin.version>3.5.3</maven-surefire-plugin.version>
-        <central-publishing-maven-plugin.version>0.8.0</central-publishing-maven-plugin.version>
+        <central-publishing-maven-plugin.version>0.11.0</central-publishing-maven-plugin.version>
     </properties>
 
     <profiles>

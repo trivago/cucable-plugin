@@ -13,3 +13,10 @@ Feature: ExampleRows
       | gummy bear | 1      |
       | lollypop   | 2      |
 
+
+  Scenario Outline: This is a scenario outline with '<candy>'
+    Given I do something with '<candy>'
+
+    Examples:
+      | candy    |
+      | foo\|bar |
