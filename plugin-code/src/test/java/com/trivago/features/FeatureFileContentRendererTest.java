@@ -3,13 +3,18 @@ package com.trivago.features;
 import com.trivago.vo.DataTable;
 import com.trivago.vo.SingleScenario;
 import com.trivago.vo.Step;
+import io.cucumber.gherkin.GherkinParser;
+import io.cucumber.messages.types.Envelope;
 import org.junit.Before;
 import org.junit.Test;
 
+import java.io.ByteArrayInputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.core.Is.is;
@@ -170,6 +175,49 @@ public class FeatureFileContentRendererTest {
         renderedFeatureFileContent = renderedFeatureFileContent.replaceAll("\\r\\n", "\n");
 
         assertThat(renderedFeatureFileContent, is(expectedOutput));
+    }
+
+    @Test
+    public void formatDataTableStringWithEscapedPipeInValueRoundTripTest() {
+        // A cell value that originally contained an escaped pipe (\|) in the source feature
+        // is delivered to the renderer already unescaped by the Gherkin parser, i.e. as a
+        // literal '|'. When the renderer writes it back into a "| ... |" row without
+        // re-escaping, the pipe is treated as an extra column separator and re-parsing the
+        // generated feature fails with "inconsistent cell count within the table".
+        DataTable dataTable = new DataTable();
+        dataTable.addRow(Arrays.asList("cell11", "cell12|cell12b", "cell13"));
+        dataTable.addRow(Arrays.asList("cell21", "cell22", "cell23"));
+
+        List<Step> steps = Collections.singletonList(new Step("Given Step 1", dataTable, null));
+
+        String featureName = "Feature: featureName";
+        String scenarioName = "Scenario: scenarioName";
+        String featureFilePath = "TESTPATH";
+        SingleScenario singleScenario =
+                new SingleScenario(featureName, featureFilePath, "", "featureDescription", scenarioName,
+                        1, "scenarioDescription", new ArrayList<>(), new ArrayList<>()
+                );
+        singleScenario.setSteps(steps);
+
+        String renderedFeatureFileContent = featureFileContentRenderer.getRenderedFeatureFileContent(singleScenario);
+
+        // The rendered feature must re-parse cleanly - no "inconsistent cell count" error.
+        GherkinParser gherkinParser = GherkinParser.builder().build();
+        List<Envelope> envelopes;
+        try (ByteArrayInputStream inputStream =
+                     new ByteArrayInputStream(renderedFeatureFileContent.getBytes(StandardCharsets.UTF_8))) {
+            envelopes = gherkinParser.parse(featureFilePath, inputStream).collect(Collectors.toList());
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+
+        List<String> parseErrors = envelopes.stream()
+                .filter(envelope -> envelope.getParseError().isPresent())
+                .map(envelope -> envelope.getParseError().get().getMessage())
+                .collect(Collectors.toList());
+
+        assertThat("Rendered feature should re-parse without errors but got: " + parseErrors,
+                parseErrors.isEmpty(), is(true));
     }
 
     @Test
