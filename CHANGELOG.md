@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](http://semver.org/spec/v2.0.0.
 
 Back to [Readme](README.md).
 
+## [1.16.1] - 2026-07-27
+
+### Fixed
+
+* Escaped pipes (\|) in tables cause scenarios to be silently dropped (#203, fixed by @ivanjensen-ep)
+
+### Changed
+
+* Updated Maven Compiler Plugin to `3.15.0`
+* Updated Maven Enforcer Plugin to `3.6.3`
+* Updated Maven GPG Plugin to `3.2.8`
+* Updated Maven JAR Plugin to `3.5.1`
+* Updated Maven Javadoc Plugin to `3.12.0`
+* Updated Maven Resources Plugin to `3.5.0`
+* Updated Maven Source Plugin to `3.4.0`
+* Updated Central Publishing Maven Plugin to `0.11.0`
+
 ## [1.16.0] - 2025-08-28
 
 ### Changed
@@ -465,6 +482,8 @@ recent versions of the underlying Cucumber dependencies.
 ## [0.0.4] - 2017-06-01
 
 Initial project version on GitHub and Maven Central.
+
+[1.16.1]: https://github.com/trivago/cucable-plugin/compare/1.16.0...1.16.1
 
 [1.16.0]: https://github.com/trivago/cucable-plugin/compare/1.15.2...1.16.0
 
