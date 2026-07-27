@@ -196,7 +196,7 @@ public class FeatureFileContentRenderer {
         for (List<String> rowValues : dataTable.getRows()) {
             dataTableStringBuilder.append("      ").append(dataTableSeparator);
             for (String rowValue : rowValues) {
-                dataTableStringBuilder.append(" ").append(rowValue).append(" ").append(dataTableSeparator);
+                dataTableStringBuilder.append(" ").append(escapeCellValue(rowValue)).append(" ").append(dataTableSeparator);
             }
             dataTableStringBuilder.append(LINE_SEPARATOR);
         }
@@ -240,15 +240,31 @@ public class FeatureFileContentRenderer {
         // Add header row
         stringBuilder.append("      |");
         for (String header : headers) {
-            stringBuilder.append(" ").append(header).append(" |");
+            stringBuilder.append(" ").append(escapeCellValue(header)).append(" |");
         }
         stringBuilder.append(LINE_SEPARATOR);
-        
+
         // Add data row
         stringBuilder.append("      |");
         for (String value : row) {
-            stringBuilder.append(" ").append(value).append(" |");
+            stringBuilder.append(" ").append(escapeCellValue(value)).append(" |");
         }
         stringBuilder.append(LINE_SEPARATOR);
+    }
+
+    /**
+     * Escapes a table cell value so that literal pipe characters are not treated as column
+     * separators when the generated feature file is parsed again. The Gherkin parser unescapes
+     * "\|" to "|" when reading the source feature, so it must be re-escaped on render to avoid
+     * an "inconsistent cell count within the table" error.
+     *
+     * @param value the raw cell value.
+     * @return the cell value with pipe characters escaped.
+     */
+    private String escapeCellValue(final String value) {
+        if (value == null) {
+            return "";
+        }
+        return value.replace("|", "\\|");
     }
 }
