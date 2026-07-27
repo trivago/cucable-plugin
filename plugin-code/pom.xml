@@ -82,7 +82,7 @@
         <mockito.version>5.18.0</mockito.version>
         <junit5.vintage.version>5.13.1</junit5.vintage.version>
         <openpojo.version>0.9.1</openpojo.version>
-        <plexus-utils.version>4.0.2</plexus-utils.version>
+        <plexus-utils.version>4.0.3</plexus-utils.version>
         <maven-resources-plugin.version>3.5.0</maven-resources-plugin.version>
         <slf4j-api.version>2.1.0-alpha1</slf4j-api.version>
         <maven-enforcer-plugin.version>3.6.3</maven-enforcer-plugin.version>
