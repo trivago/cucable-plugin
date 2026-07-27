@@ -9,6 +9,10 @@ Back to [Readme](README.md).
 
 ## [1.16.1] - 2026-07-27
 
+### Fixed
+
+* Escaped pipes (\|) in tables cause scenarios to be silently dropped (#203, fixed by @ivanjensen-ep)
+
 ### Changed
 
 * Updated Maven Compiler Plugin to `3.15.0`
